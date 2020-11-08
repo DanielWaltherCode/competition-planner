@@ -17,10 +17,9 @@ class PlayerRepository(
         playerRecord.lastName = playerDTO.lastName
         playerRecord.clubId = playerDTO.clubId
         playerRecord.dateOfBirth = playerDTO.dateOfBirth
+        playerRecord.store()
 
-        val dataBaseId: Int = playerRecord.store()
-
-        return Player(dataBaseId, playerDTO.firstName, playerDTO.lastName, playerDTO.clubId, playerDTO.dateOfBirth)
+        return Player(playerRecord.id, playerDTO.firstName, playerDTO.lastName, playerDTO.clubId, playerDTO.dateOfBirth)
     }
 
     fun deletePlayer(playerId: Int): Boolean {
@@ -39,9 +38,9 @@ class PlayerRepository(
         playerRecord.lastName = playerDTO.lastName
         playerRecord.clubId = playerDTO.clubId
         playerRecord.dateOfBirth = playerDTO.dateOfBirth
+        playerRecord.store()
 
-        val dataBaseId: Int = playerRecord.store()
-        return Player(dataBaseId, playerDTO.firstName, playerDTO.lastName, playerDTO.clubId, playerDTO.dateOfBirth)
+        return Player(playerRecord.id, playerDTO.firstName, playerDTO.lastName, playerDTO.clubId, playerDTO.dateOfBirth)
     }
 
     fun getPlayer(id: Int): Player? {

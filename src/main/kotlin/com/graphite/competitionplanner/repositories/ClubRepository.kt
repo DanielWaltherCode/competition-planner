@@ -17,9 +17,23 @@ class ClubRepository(val dslContext: DSLContext) {
         }
         clubRecord.name = clubDTO.name
         clubRecord.address = clubDTO.address
-        val clubId = clubRecord.store()
+        clubRecord.store()
 
-        return Club(clubId, clubRecord.name, clubRecord.address)
+        return Club(clubRecord.id, clubRecord.name, clubRecord.address)
+    }
+
+    fun updateClub(clubDTO: ClubDTO): Club {
+        val clubRecord: ClubRecord = dslContext.newRecord(CLUB)
+        clubRecord.id = clubDTO.id
+        clubRecord.name = clubDTO.name
+        clubRecord.address = clubDTO.address
+        clubRecord.store()
+
+        return Club(clubRecord.id, clubRecord.name, clubRecord.address)
+    }
+
+    fun getAll(): List<Club> {
+        return dslContext.select().from(CLUB).fetchInto(Club::class.java)
     }
 
     fun findByName(name: String): Club? {
