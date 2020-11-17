@@ -1,92 +1,84 @@
 package com.graphite.competitionplanner.repositories
 
-import com.graphite.competitionplanner.api.CompetitionDTO
+import com.graphite.competitionplanner.service.CompetitionDTO
 import com.graphite.competitionplanner.tables.Club.CLUB
 import com.graphite.competitionplanner.tables.Competition.COMPETITION
 import com.graphite.competitionplanner.tables.CompetitionPlayingCategory.COMPETITION_PLAYING_CATEGORY
 import com.graphite.competitionplanner.tables.PlayingCategory.PLAYING_CATEGORY
-import com.graphite.competitionplanner.tables.pojos.Competition
 import com.graphite.competitionplanner.tables.pojos.CompetitionPlayingCategory
 import com.graphite.competitionplanner.tables.pojos.PlayingCategory
 import com.graphite.competitionplanner.tables.records.CompetitionPlayingCategoryRecord
+import com.graphite.competitionplanner.tables.records.CompetitionRecord
 import org.jooq.DSLContext
+import org.jooq.Record
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 @Repository
 class CompetitionRepository(val dslContext: DSLContext) {
 
-    fun addCompetition(competitionDTO: CompetitionDTO): Competition {
+    fun addCompetition(competitionDTO: CompetitionDTO): CompetitionRecord {
         val competitionRecord = dslContext.newRecord(COMPETITION)
         competitionRecord.location = competitionDTO.location
         competitionRecord.welcomeText = competitionDTO.welcomeText
-        competitionRecord.organizingClub = competitionDTO.organizingClub
+        competitionRecord.organizingClub = competitionDTO.organizingClub.id
         competitionRecord.startDate = competitionDTO.startDate
         competitionRecord.endDate = competitionDTO.endDate
         competitionRecord.store()
-
-        val competitionId: Int = competitionRecord.id
-        return Competition(competitionId,
-                competitionRecord.location,
-                competitionRecord.welcomeText,
-                competitionRecord.organizingClub,
-                competitionRecord.startDate,
-                competitionRecord.endDate)
+        return competitionRecord
     }
 
-    fun getCompetitions(weekStartDate: LocalDate?, weekEndDate: LocalDate?): List<Competition> {
+    // Returns a join of competition and club
+    fun getCompetitions(weekStartDate: LocalDate?, weekEndDate: LocalDate?): List<Record> {
         if (weekStartDate == null) {
             return dslContext
-                    .select(COMPETITION.ID, COMPETITION.ORGANIZING_CLUB, COMPETITION.LOCATION, COMPETITION.WELCOME_TEXT, COMPETITION.END_DATE, COMPETITION.START_DATE)
+                    .select()
                     .from(COMPETITION)
+                    .join(CLUB)
+                    .on(COMPETITION.ORGANIZING_CLUB.eq(CLUB.ID))
                     .limit(10)
-                    .fetchInto(Competition::class.java)
+                    .fetch()
         }
         else {
             return dslContext
-                    .select(COMPETITION.ID, COMPETITION.ORGANIZING_CLUB, COMPETITION.LOCATION, COMPETITION.WELCOME_TEXT, COMPETITION.END_DATE, COMPETITION.START_DATE)
+                    .select()
                     .from(COMPETITION)
+                    .join(CLUB)
+                    .on(COMPETITION.ORGANIZING_CLUB.eq(CLUB.ID))
                     .where(COMPETITION.START_DATE.between(weekStartDate, weekEndDate).or(COMPETITION.END_DATE.between(weekStartDate, weekEndDate)))
-                    .fetchInto(Competition::class.java)
+                    .fetch()
         }
     }
 
-    fun getByClubName(clubName: String): List<Competition> {
-        return dslContext.select(COMPETITION.ID, COMPETITION.ORGANIZING_CLUB, COMPETITION.LOCATION, COMPETITION.WELCOME_TEXT, COMPETITION.END_DATE, COMPETITION.START_DATE)
-                .from(COMPETITION)
-                .join(CLUB)
-                .on(COMPETITION.ORGANIZING_CLUB.eq(CLUB.ID))
-                .where(CLUB.NAME.eq(clubName))
-                .fetchInto(Competition::class.java)
+    fun deleteCompetition(competitionId: Int): Boolean {
+       val deletedRows = dslContext.deleteFrom(COMPETITION).where(COMPETITION.ID.eq(competitionId)).execute()
+        return deletedRows >= 1
     }
 
-    fun deleteCompetition(competitionId: Int) {
-        dslContext.deleteFrom(COMPETITION).where(COMPETITION.ID.eq(competitionId)).execute()
+    fun getById(competitionId: Int): Record {
+        return dslContext.select().from(COMPETITION).join(CLUB).on(COMPETITION.ORGANIZING_CLUB.eq(CLUB.ID)).where(COMPETITION.ID.eq(competitionId)).fetchOne()
     }
 
-    fun updateCompetition(competitionDTO: CompetitionDTO): Competition {
+    fun getByClubId(clubId: Int): List<Record> {
+        return dslContext.select().from(COMPETITION).join(CLUB).on(COMPETITION.ORGANIZING_CLUB.eq(CLUB.ID)).where(CLUB.ID.eq(clubId)).fetch()
+    }
+
+    fun updateCompetition(competitionDTO: CompetitionDTO): CompetitionRecord {
         val competitionRecord = dslContext.newRecord(COMPETITION)
         competitionRecord.id = competitionDTO.id
         competitionRecord.location = competitionDTO.location
         competitionRecord.welcomeText = competitionDTO.welcomeText
-        competitionRecord.organizingClub = competitionDTO.organizingClub
+        competitionRecord.organizingClub = competitionDTO.organizingClub.id
         competitionRecord.startDate = competitionDTO.startDate
         competitionRecord.endDate = competitionDTO.endDate
         competitionRecord.update()
-
-        val competitionId: Int = competitionRecord.id
-        return Competition(competitionId,
-                competitionRecord.location,
-                competitionRecord.welcomeText,
-                competitionRecord.organizingClub,
-                competitionRecord.startDate,
-                competitionRecord.endDate)
+        return competitionRecord
     }
 
     fun clearTable() = dslContext.deleteFrom(COMPETITION).execute()
 
-    fun getAll(): List<Competition> {
-        return dslContext.select().from(COMPETITION).fetchInto(Competition::class.java)
+    fun getAll(): List<Record> {
+        return dslContext.select().from(COMPETITION).join(CLUB).on(COMPETITION.ORGANIZING_CLUB.eq(CLUB.ID)).fetch()
     }
 }
 

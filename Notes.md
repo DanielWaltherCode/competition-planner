@@ -1,8 +1,21 @@
 # Tävlingsplaneraren
 
 ## Scope och !Scope
+Sätta upp (1) och hålla (2) tävlingar inom bordtennis
+1. Ange tävlingsinfo, start och slutdatum
+2. Göra tävlingen tillgänglig online så att andra klubbar kan anmäla sina spelare (inga email, och mycket mindre ansvar för tävlingsledare)
+3. Förifyllda klasser där klubbarna lägger in sina spelare. Tävlingsform (pool eller cup) anges
+4. Lottning enligt förvalda kriterier. Rankingpoäng hämtas från central databas, seedning görs av oss baserat på anmälningar.
+5. Tidssättning/schema. Man bör kunna ange i vilken ordning klasser ska spelas, få ett turnummer för varje match och sen automatiskt skapa scheman för klasserna baserat på antal bord, deltagare och klasser.
+6. Resultatrappoortering. Man bör kunna mata in resultatet per match och vinnaren räknas ut baserat på tävlingssystemet valt för den klassen. Att kunna rapportera in löpande i en app vore en fin bonus via "plus"- och "minus"-knappar
+7. Fakturor: Få kostnad totalt för en klubb och för en spelare, möjlighet att skapa och skicka fakturor. 
+
+### !Scope
+-  Gratistjänst där man kan anordna sina egna tävlingar
+- Egen funktionalitet för ranking, poäng -- detta bör hämtas
 
 
+##
 
 ## Konkurrenter
 Lite konkurrentresearch som bakgrund och för idé generering.

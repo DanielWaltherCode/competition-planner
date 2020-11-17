@@ -1,8 +1,12 @@
 package com.graphite.competitionplanner.api
 
 import com.graphite.competitionplanner.repositories.CompetitionRepository
+import com.graphite.competitionplanner.service.CompetitionDTO
+import com.graphite.competitionplanner.service.CompetitionService
 import com.graphite.competitionplanner.tables.pojos.Competition
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
 import javax.validation.Valid
 import javax.validation.constraints.NotNull
@@ -11,49 +15,32 @@ import kotlin.streams.toList
 
 @RestController
 @RequestMapping("/competition")
-class CompetitionApi(val competitionRepository: CompetitionRepository) {
+class CompetitionApi(val competitionRepository: CompetitionRepository, val competitionService: CompetitionService) {
 
     @PostMapping
     fun addCompetition(@Valid @RequestBody competitionDTO: CompetitionDTO): CompetitionDTO {
-        val addedCompetition = competitionRepository.addCompetition(competitionDTO)
-        return CompetitionDTO(addedCompetition.id, addedCompetition.location, addedCompetition.welcomeText,
-                addedCompetition.organizingClub, addedCompetition.startDate, addedCompetition.endDate)
+        return competitionService.addCompetition(competitionDTO)
     }
 
     @PutMapping
     fun updateCompetition(@Valid @RequestBody competitionDTO: CompetitionDTO): CompetitionDTO {
-        val addedCompetition = competitionRepository.updateCompetition(competitionDTO)
-        return CompetitionDTO(addedCompetition.id, addedCompetition.location, addedCompetition.welcomeText,
-                addedCompetition.organizingClub, addedCompetition.startDate, addedCompetition.endDate)
+        if (competitionDTO.id == null) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Competition id should not be null")
+        }
+        return competitionService.updateCompetition(competitionDTO)
+    }
+
+    @GetMapping("/{competitionId}")
+    fun getCompetition(@PathVariable competitionId: Int): CompetitionDTO {
+        return competitionService.getById(competitionId)
     }
 
     @GetMapping
     fun getAll(@RequestParam(required = false) weekStartDate: LocalDate?,
                @RequestParam(required = false) weekEndDate: LocalDate?): List<CompetitionDTO> {
-        val competitions = competitionRepository.getCompetitions(weekStartDate, weekEndDate)
-        return competitions.stream().map { c ->
-            CompetitionDTO(
-                    c.id,
-                    c.location,
-                    c.welcomeText,
-                    c.organizingClub,
-                    c.startDate,
-                    c.endDate
-            )
-        }.toList()
+        return competitionService.getCompetitions(weekStartDate, weekEndDate)
     }
+
 }
 
-data class CompetitionDTO(
-        val id: Int?,
-        @NotNull
-        val location: String,
-        @NotNull
-        val welcomeText: String,
-        @NotNull
-        val organizingClub: Int,
-        @NotNull
-        val startDate: LocalDate,
-        @NotNull
-        val endDate: LocalDate
-)
+

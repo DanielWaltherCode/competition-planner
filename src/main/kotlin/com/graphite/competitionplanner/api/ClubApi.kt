@@ -17,36 +17,48 @@ class ClubApi(val clubRepository: ClubRepository) {
 
     @PostMapping
     fun addClub(@Valid @RequestBody clubDTO: ClubDTO): ClubDTO {
-        val club: Club = clubRepository.addClub(clubDTO)
+        val club = clubRepository.addClub(clubDTO)
         return ClubDTO(club.id, club.name, club.address)
     }
 
     @PutMapping
     fun updateClub(@Valid @RequestBody clubDTO: ClubDTO): ClubDTO {
-        val club: Club = clubRepository.updateClub(clubDTO)
+        val club = clubRepository.updateClub(clubDTO)
         return ClubDTO(club.id, club.name, club.address)
     }
 
     @GetMapping("/{clubName}")
     fun findByName(@PathVariable clubName: String): ClubDTO {
-        val club = clubRepository.findByName(clubName)
-        if (club == null) {
-            throw ResponseStatusException(HttpStatus.NOT_FOUND)
-        }
+        val club = clubRepository.findByName(clubName) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         return ClubDTO(club.id, club.name, club.address)
     }
+
+    @GetMapping("/{clubId}")
+    fun findById(@PathVariable clubId: Int): ClubDTO {
+        val club = clubRepository.getById(clubId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        return ClubDTO(club.id, club.name, club.address)
+    }
+
 
     @GetMapping
     fun getAll(): List<ClubDTO> {
         val clubs = clubRepository.getAll()
         return clubs.stream().map { c -> ClubDTO(c.id, c.name, c.address) }.toList()
     }
+
+    @DeleteMapping("/{clubId}")
+    fun deleteClub(@PathVariable clubId: Int): Boolean {
+        return clubRepository.deleteClub(clubId)
+    }
 }
 
 data class ClubDTO(
         val id: Int? = null,
-        @NotNull
         val name: String,
-        @NotNull
         val address: String
+)
+
+data class ClubNoAddressDTO(
+        val id: Int,
+        val name: String?
 )

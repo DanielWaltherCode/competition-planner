@@ -1,36 +1,54 @@
 package com.graphite.competitionplanner.api
 
 import com.graphite.competitionplanner.repositories.PlayerRepository
+import com.graphite.competitionplanner.service.PlayerDTO
+import com.graphite.competitionplanner.service.PlayerService
 import com.graphite.competitionplanner.tables.pojos.Player
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
 import javax.validation.Valid
 import javax.validation.constraints.NotNull
+import kotlin.streams.toList
 
 
 @RestController
 @RequestMapping("/player")
 class PlayerApi(
-        val playerRepository: PlayerRepository
-) {
+        val playerRepository: PlayerRepository,
+        val playerService: PlayerService) {
+
     @PostMapping
     fun addPlayer(@Valid @RequestBody playerDTO: PlayerDTO): PlayerDTO {
-        val playerPojo: Player = playerRepository.addPlayer(playerDTO)
-        return PlayerDTO(playerPojo.id, playerPojo.firstName, playerPojo.lastName, playerPojo.clubId, playerPojo.dateOfBirth)
+        return playerService.addPlayer(playerDTO)
     }
+
+    @PutMapping
+    fun updatePlayer(@Valid @RequestBody playerDTO: PlayerDTO): PlayerDTO {
+        return playerService.updatePlayer(playerDTO)
+    }
+
+    @GetMapping("/{playerId}")
+    fun getPlayer(@PathVariable playerId: Int): PlayerDTO {
+        return playerService.getPlayer(playerId)
+    }
+
+    @GetMapping("name-search")
+    fun searchByName(@RequestParam partOfName: String): List<PlayerDTO> {
+        return playerService.findByName(partOfName)
+    }
+
+    @GetMapping
+    fun getPlayersByClubId(@RequestParam clubId: Int): List<PlayerDTO> {
+       return playerService.getPlayersByClubId(clubId)
+    }
+
+    @DeleteMapping("/{playerId}")
+    fun deletePlayer(@PathVariable playerId: Int): Boolean {
+        return playerRepository.deletePlayer(playerId)
+    }
+
+
 }
 
-data class PlayerDTO(
-        val id: Int?,
-        @NotNull
-        val firstName: String,
-        @NotNull
-        val lastName: String,
-        @NotNull
-        val clubId: Int = 0,
-        @NotNull
-        val dateOfBirth: LocalDate
-)

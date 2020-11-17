@@ -1,25 +1,29 @@
 package com.graphite.competitionplanner.repositories
 
-import com.graphite.competitionplanner.api.PlayerDTO
+import com.graphite.competitionplanner.Tables.CLUB
+import com.graphite.competitionplanner.service.PlayerDTO
 import com.graphite.competitionplanner.tables.Player.PLAYER
-import com.graphite.competitionplanner.tables.pojos.Player
+import com.graphite.competitionplanner.tables.records.PlayerRecord
 import org.jooq.DSLContext
+import org.jooq.Record
+import org.jooq.Result
 import org.springframework.stereotype.Repository
 
 @Repository
 class PlayerRepository(
-        val dslContext: DSLContext
+        val dslContext: DSLContext,
+        val clubRepository: ClubRepository
 ) {
 
-    fun addPlayer(playerDTO: PlayerDTO): Player {
+    fun addPlayer(playerDTO: PlayerDTO): PlayerRecord {
         val playerRecord = dslContext.newRecord(PLAYER)
         playerRecord.firstName = playerDTO.firstName
         playerRecord.lastName = playerDTO.lastName
-        playerRecord.clubId = playerDTO.clubId
+        playerRecord.clubId = playerDTO.club.id
         playerRecord.dateOfBirth = playerDTO.dateOfBirth
         playerRecord.store()
 
-        return Player(playerRecord.id, playerDTO.firstName, playerDTO.lastName, playerDTO.clubId, playerDTO.dateOfBirth)
+        return playerRecord
     }
 
     fun deletePlayer(playerId: Int): Boolean {
@@ -27,32 +31,33 @@ class PlayerRepository(
         return deletedRows >= 1
     }
 
-    fun getPlayers(): List<Player> {
-        return dslContext.selectFrom(PLAYER).fetchInto(Player::class.java)
+    fun getPlayersByClub(clubId: Int): List<Record> {
+        return dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).fetch()
     }
 
-    fun updatePlayer(playerDTO: PlayerDTO): Player {
+    fun updatePlayer(playerDTO: PlayerDTO): PlayerRecord {
         val playerRecord = dslContext.newRecord(PLAYER)
         playerRecord.id = playerDTO.id
         playerRecord.firstName = playerDTO.firstName
         playerRecord.lastName = playerDTO.lastName
-        playerRecord.clubId = playerDTO.clubId
+        playerRecord.clubId = playerDTO.club.id
         playerRecord.dateOfBirth = playerDTO.dateOfBirth
         playerRecord.store()
 
-        return Player(playerRecord.id, playerDTO.firstName, playerDTO.lastName, playerDTO.clubId, playerDTO.dateOfBirth)
+        return playerRecord
     }
 
-    fun getPlayer(id: Int): Player? {
-        return dslContext.select().from(PLAYER).where(PLAYER.ID.eq(id)).fetchOneInto(Player::class.java)
+    fun getPlayer(id: Int): Record? {
+        return dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(PLAYER.ID.eq(id)).fetchOne()
     }
 
-    fun findPlayersByPartOfName(partOfName: String): List<Player>? {
-        return dslContext.select().from(PLAYER).where(PLAYER.FIRST_NAME.startsWithIgnoreCase(partOfName)
-                .or(PLAYER.LAST_NAME.startsWithIgnoreCase(partOfName))).fetchInto(Player::class.java)
+    fun findPlayersByPartOfName(partOfName: String): List<Record> {
+        return dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(PLAYER.FIRST_NAME.startsWithIgnoreCase(partOfName)
+                .or(PLAYER.LAST_NAME.startsWithIgnoreCase(partOfName))).fetch()
     }
 
     fun clearTable() {
         dslContext.deleteFrom(PLAYER).execute()
     }
+
 }

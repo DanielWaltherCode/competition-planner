@@ -1,9 +1,8 @@
 package com.graphite.competitionplanner
 
-import com.graphite.competitionplanner.api.PlayerDTO
-import com.graphite.competitionplanner.repositories.ClubRepository
+import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.repositories.PlayerRepository
-import com.graphite.competitionplanner.tables.pojos.Club
+import com.graphite.competitionplanner.service.PlayerDTO
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -17,14 +16,14 @@ class TestPlayers(@Autowired val playerRepository: PlayerRepository,
 
     @Test
     fun testAddPlayer() {
-        val originalSize = playerRepository.getPlayers().size
         val clubId = util.getClubIdOrDefault("Lugi")
+        val originalSize = playerRepository.getPlayersByClub(clubId).size
         val player = playerRepository.addPlayer(PlayerDTO(
                 null, "Anders", "Hansson",
-                clubId, LocalDate.now().minusMonths(170)
+                ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
         ))
         Assertions.assertNotNull(player.id)
-        Assertions.assertEquals(originalSize + 1, playerRepository.getPlayers().size)
+        Assertions.assertEquals(originalSize + 1, playerRepository.getPlayersByClub(clubId).size)
     }
 
     @Test
@@ -34,15 +33,15 @@ class TestPlayers(@Autowired val playerRepository: PlayerRepository,
 
         playerRepository.addPlayer(PlayerDTO(
                 null, "Aanders", "Hansson",
-                clubId, LocalDate.now().minusMonths(170)
+                ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
         ))
         playerRepository.addPlayer(PlayerDTO(
                 null, "Hasse", "Andersson",
-                clubId, LocalDate.now().minusMonths(170)
+                ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
         ))
         playerRepository.addPlayer(PlayerDTO(
                 null, "Aaa", "Haf",
-                clubId, LocalDate.now().minusMonths(170)
+                ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
         ))
         val playersWithTwoAs = playerRepository.findPlayersByPartOfName("aa")
         Assertions.assertEquals(2, playersWithTwoAs?.size)
