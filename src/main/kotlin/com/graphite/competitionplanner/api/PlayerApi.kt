@@ -3,14 +3,8 @@ package com.graphite.competitionplanner.api
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.service.PlayerDTO
 import com.graphite.competitionplanner.service.PlayerService
-import com.graphite.competitionplanner.tables.pojos.Player
-import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
-import java.time.LocalDate
 import javax.validation.Valid
-import javax.validation.constraints.NotNull
-import kotlin.streams.toList
 
 
 @RestController

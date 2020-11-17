@@ -5,7 +5,6 @@ import com.graphite.competitionplanner.repositories.ClubRepository
 import com.graphite.competitionplanner.repositories.CompetitionRepository
 import com.graphite.competitionplanner.service.CompetitionDTO
 import com.graphite.competitionplanner.service.CompetitionService
-import com.graphite.competitionplanner.tables.pojos.Competition
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

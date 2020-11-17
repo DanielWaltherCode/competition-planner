@@ -161,7 +161,6 @@
                         </target>
                         <generate>
                             <javaTimeTypes>true</javaTimeTypes>
-                            <pojos>true</pojos>
                         </generate>
                     </generator>
                 </configuration>

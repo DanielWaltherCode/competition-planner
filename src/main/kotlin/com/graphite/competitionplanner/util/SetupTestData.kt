@@ -2,7 +2,6 @@ package com.graphite.competitionplanner.util
 
 import com.graphite.competitionplanner.api.ClubDTO
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
-import com.graphite.competitionplanner.api.RegistrationSinglesDTO
 import com.graphite.competitionplanner.repositories.*
 import com.graphite.competitionplanner.service.*
 import org.springframework.context.event.ContextRefreshedEvent

@@ -3,9 +3,6 @@ package com.graphite.competitionplanner.repositories
 import com.graphite.competitionplanner.Tables.PLAYING_IN
 import com.graphite.competitionplanner.tables.PlayerRegistration.PLAYER_REGISTRATION
 import com.graphite.competitionplanner.tables.Registration.REGISTRATION
-import com.graphite.competitionplanner.tables.pojos.PlayerRegistration
-import com.graphite.competitionplanner.tables.pojos.PlayingIn
-import com.graphite.competitionplanner.tables.pojos.Registration
 import com.graphite.competitionplanner.tables.records.PlayerRegistrationRecord
 import com.graphite.competitionplanner.tables.records.PlayingInRecord
 import com.graphite.competitionplanner.tables.records.RegistrationRecord
@@ -17,38 +14,35 @@ import java.time.LocalDate
 class RegistrationRepository(val dslContext: DSLContext) {
 
     // Sets up base registration. Double players playing together will have same registration id
-    fun addRegistration(date: LocalDate): Registration {
+    fun addRegistration(date: LocalDate): RegistrationRecord {
         val registration: RegistrationRecord = dslContext.newRecord(REGISTRATION)
         registration.registrationDate = date
         registration.store()
-
-        return Registration(registration.id, registration.registrationDate)
+        return registration
     }
 
     fun clearRegistration() = dslContext.deleteFrom(REGISTRATION).execute()
 
 
     // Links player to registration
-    fun registerPlayer(registrationId: Int, playerId: Int): PlayerRegistration {
+    fun registerPlayer(registrationId: Int, playerId: Int): PlayerRegistrationRecord {
         val record: PlayerRegistrationRecord = dslContext.newRecord(PLAYER_REGISTRATION)
         record.registrationId = registrationId
         record.playerId = playerId
         record.store()
-
-        return PlayerRegistration(record.id, record.registrationId, record.playerId)
+        return record
     }
 
     fun clearPlayerRegistration() = dslContext.deleteFrom(PLAYER_REGISTRATION).execute()
 
     // Links a registration to a specific category in the competition. Also includes the seed.
-    fun registerPlayingIn(registrationId: Int, seed: Int?, competitionPlayingCategory: Int): PlayingIn {
+    fun registerPlayingIn(registrationId: Int, seed: Int?, competitionPlayingCategory: Int): PlayingInRecord {
         val record: PlayingInRecord = dslContext.newRecord(PLAYING_IN)
         record.registrationId = registrationId;
         record.seed = seed;
         record.competitionPlayingCategoryId = competitionPlayingCategory
         record.store()
-
-        return PlayingIn(record.id, record.registrationId, record.seed, record.competitionPlayingCategoryId)
+        return record
     }
 
     fun clearPlayingIn() = dslContext.deleteFrom(PLAYING_IN).execute()

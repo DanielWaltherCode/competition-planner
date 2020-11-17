@@ -1,7 +1,8 @@
 package com.graphite.competitionplanner.api
 
+import com.graphite.competitionplanner.service.RegistrationDoublesDTO
 import com.graphite.competitionplanner.service.RegistrationService
-import com.graphite.competitionplanner.tables.pojos.PlayingIn
+import com.graphite.competitionplanner.service.RegistrationSinglesDTO
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -12,8 +13,7 @@ class RegistrationApi(val registrationService: RegistrationService ) {
 
     @PostMapping("/singles")
     fun registerPlayerSingles(registrationSinglesDTO: RegistrationSinglesDTO): Boolean {
-        val playingIn: PlayingIn = registrationService.registerPlayerSingles(registrationSinglesDTO)
-        return (playingIn.id != null)
+        return registrationService.registerPlayerSingles(registrationSinglesDTO)
     }
 
     @PostMapping("/doubles")
@@ -22,15 +22,3 @@ class RegistrationApi(val registrationService: RegistrationService ) {
     }
 }
 
-data class RegistrationSinglesDTO(
-        val id: Int?,
-        val playerId: Int,
-        val competitionPlayingCategoryId: Int
-)
-
-data class RegistrationDoublesDTO(
-        val id: Int?,
-        val firstPlayerId: Int,
-        val secondPlayerId: Int,
-        val competitionPlayingCategoryId: Int
-)

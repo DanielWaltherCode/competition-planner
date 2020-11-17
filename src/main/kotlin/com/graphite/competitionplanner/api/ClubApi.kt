@@ -1,13 +1,10 @@
 package com.graphite.competitionplanner.api
 
 import com.graphite.competitionplanner.repositories.ClubRepository
-import com.graphite.competitionplanner.tables.pojos.Club
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.server.ResponseStatusException
 import javax.validation.Valid
-import javax.validation.constraints.NotNull
 import kotlin.streams.toList
 
 
@@ -38,7 +35,6 @@ class ClubApi(val clubRepository: ClubRepository) {
         val club = clubRepository.getById(clubId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
         return ClubDTO(club.id, club.name, club.address)
     }
-
 
     @GetMapping
     fun getAll(): List<ClubDTO> {

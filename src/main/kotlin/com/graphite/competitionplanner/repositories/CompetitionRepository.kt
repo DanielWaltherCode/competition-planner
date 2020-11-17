@@ -5,10 +5,9 @@ import com.graphite.competitionplanner.tables.Club.CLUB
 import com.graphite.competitionplanner.tables.Competition.COMPETITION
 import com.graphite.competitionplanner.tables.CompetitionPlayingCategory.COMPETITION_PLAYING_CATEGORY
 import com.graphite.competitionplanner.tables.PlayingCategory.PLAYING_CATEGORY
-import com.graphite.competitionplanner.tables.pojos.CompetitionPlayingCategory
-import com.graphite.competitionplanner.tables.pojos.PlayingCategory
 import com.graphite.competitionplanner.tables.records.CompetitionPlayingCategoryRecord
 import com.graphite.competitionplanner.tables.records.CompetitionRecord
+import com.graphite.competitionplanner.tables.records.PlayingCategoryRecord
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.springframework.stereotype.Repository
@@ -93,8 +92,9 @@ class PlayingCategoryRepository(val dslContext: DSLContext) {
                 .values(playingCategory).execute()
     }
 
-    fun getByName(name: String): PlayingCategory {
-        return dslContext.selectFrom(PLAYING_CATEGORY).where(PLAYING_CATEGORY.CATEGORY_NAME.eq(name)).fetchOneInto(PlayingCategory::class.java)
+    fun getByName(name: String): PlayingCategoryRecord {
+        return dslContext.selectFrom(PLAYING_CATEGORY).where(PLAYING_CATEGORY.CATEGORY_NAME.eq(name)).fetchOne()
+
     }
 
     fun clearTable() = dslContext.deleteFrom(PLAYING_CATEGORY).execute()
@@ -113,8 +113,8 @@ class CompetitionAndPlayingCategoryRepository(val dslContext: DSLContext) {
         record.store()
     }
 
-    fun getCompetitionCategories(): List<CompetitionPlayingCategory> {
-        return dslContext.selectFrom(COMPETITION_PLAYING_CATEGORY).fetchInto(CompetitionPlayingCategory::class.java)
+    fun getCompetitionCategories(): List<CompetitionPlayingCategoryRecord> {
+        return dslContext.selectFrom(COMPETITION_PLAYING_CATEGORY).fetch()
     }
 
     fun clearTable() = dslContext.deleteFrom(COMPETITION_PLAYING_CATEGORY).execute()
