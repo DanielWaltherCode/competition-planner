@@ -71,6 +71,17 @@
             <artifactId>spring-boot-starter-jooq</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-meta-extensions</artifactId>
+            <version>${jooq.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.liquibase</groupId>
+                    <artifactId>liquibase-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.2.18</version>
@@ -132,6 +143,7 @@
                 <!-- The plugin should hook into the generate goal -->
                 <executions>
                     <execution>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -140,20 +152,28 @@
 
                 <!-- Specify the plugin configuration.
                      The configuration format is the same as for the standalone code generator -->
-                <configuration>
-                    <jdbc>
-                        <driver>org.postgresql.Driver</driver>
-                        <url>jdbc:postgresql://localhost:5432/competition</url>
-                        <user>competition</user>
-                        <password>competition</password>
-                    </jdbc>
-                    <!-- Generator parameters -->
+                <configuration >
                     <generator>
                         <database>
-                            <name>org.jooq.meta.postgres.PostgresDatabase</name>
-                            <inputSchema>public</inputSchema>
-                            <outputSchemaToDefault>true</outputSchemaToDefault>
-                            <outputCatalogToDefault>true</outputCatalogToDefault>
+                            <name>org.jooq.meta.extensions.ddl.DDLDatabase</name>
+                            <properties>
+                                <property>
+                                    <key>sort</key>
+                                    <value>flyway</value>
+                                </property>
+                                <property>
+                                    <key>scripts</key>
+                                    <value>src/main/resources/db/migration</value>
+                                </property>
+                                <property>
+                                    <key>unqualifiedSchema</key>
+                                    <value>none</value>
+                                </property>
+                                <property>
+                                    <key>defaultNameCase</key>
+                                    <value>lower</value>
+                                </property>
+                            </properties>
                         </database>
                         <target>
                             <packageName>com.graphite.competitionplanner</packageName>
