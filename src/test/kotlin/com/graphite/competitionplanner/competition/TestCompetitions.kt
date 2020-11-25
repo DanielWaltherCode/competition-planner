@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner
+package com.graphite.competitionplanner.competition
 
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.repositories.ClubRepository
@@ -78,7 +78,8 @@ class TestCompetitionsService(@Autowired val competitionService: CompetitionServ
 
     @Test
     fun getCategoriesInCompetition() {
-        val competitions = competitionService.getCompetitions(null, null)
+        val lugiId = util.getClubIdOrDefault("Lugi")
+        val competitions = competitionService.getByClubId(lugiId)
         val competitionCategories = competitionService.getCategoriesInCompetition(competitions[0].id?:0)
         Assertions.assertTrue(competitionCategories.categories.isNotEmpty())
         Assertions.assertNotNull(competitionCategories.competition.organizingClub)

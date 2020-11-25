@@ -150,13 +150,18 @@ class CompetitionAndPlayingCategoryRepository(val dslContext: DSLContext) {
     }
 
     // Should return competition information, disciplines
-    fun getByPlayerId(playerId: Int): List<CompetitionPlayingCategoryRecord> {
+    fun getByPlayerId(playerId: Int): List<CompetitionAndCategories> {
         // Get combination of competitions and the categories the player plays in them
-        return dslContext.select(Tables.COMPETITION_PLAYING_CATEGORY.COMPETITION_ID, Tables.COMPETITION_PLAYING_CATEGORY.PLAYING_CATEGORY).from(PlayerRegistration.PLAYER_REGISTRATION).join(Tables.PLAYING_IN).on(Tables.PLAYING_IN.REGISTRATION_ID.eq(PlayerRegistration.PLAYER_REGISTRATION.ID))
-                .join(Tables.COMPETITION_PLAYING_CATEGORY).on(Tables.COMPETITION_PLAYING_CATEGORY.ID.eq(Tables.PLAYING_IN.COMPETITION_PLAYING_CATEGORY_ID))
+        val records: List<Record> = dslContext.select(COMPETITION_PLAYING_CATEGORY.COMPETITION_ID, COMPETITION_PLAYING_CATEGORY.ID, PLAYING_CATEGORY.CATEGORY_NAME)
+                .from(PLAYER_REGISTRATION).join(PLAYING_IN).on(PLAYING_IN.REGISTRATION_ID.eq(PLAYER_REGISTRATION.ID))
+                .join(COMPETITION_PLAYING_CATEGORY).on(COMPETITION_PLAYING_CATEGORY.ID.eq(PLAYING_IN.COMPETITION_PLAYING_CATEGORY_ID))
+                .join(PLAYER).on(PLAYER_REGISTRATION.PLAYER_ID.eq(PLAYER.ID))
+                .join(PLAYING_CATEGORY).on(PLAYING_CATEGORY.ID.eq(COMPETITION_PLAYING_CATEGORY.PLAYING_CATEGORY))
                 .where(PLAYER.ID.eq(playerId))
-                .fetchInto(COMPETITION_PLAYING_CATEGORY)
+                .fetch()
 
+        return records.stream().map { CompetitionAndCategories(it.getValue(COMPETITION_PLAYING_CATEGORY.COMPETITION_ID), it.getValue(COMPETITION_PLAYING_CATEGORY.ID),
+                it.getValue(PLAYING_CATEGORY.CATEGORY_NAME))}.toList()
     }
 
     fun clearTable() = dslContext.deleteFrom(COMPETITION_PLAYING_CATEGORY).execute()
@@ -166,6 +171,12 @@ data class CategoriesAndPlayers(
     val playingCategoryId: Int,
     val categoryName: String,
     val playerId: Int
+)
+
+data class CompetitionAndCategories(
+        val competitionId: Int,
+        val playingCategoryId: Int,
+        val categoryName: String
 )
 
 data class CompetitionCategories(

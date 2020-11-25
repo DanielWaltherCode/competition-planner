@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner
+package com.graphite.competitionplanner.player
 
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.repositories.PlayerRepository

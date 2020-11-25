@@ -25,7 +25,7 @@ class TestRegistrationService(@Autowired val competitionService: CompetitionServ
         val competitions = competitionService.getCompetitions(null, null)
         val categories = registrationService.getRegistrationByCompetition(competitions[0].id?: 0)
         Assertions.assertNotNull(categories)
-        Assertions.assertTrue(categories.registrations.isNotEmpty())
+        Assertions.assertNotNull(categories.registrations)
     }
 
     @Test
@@ -44,11 +44,17 @@ class TestRegistrationService(@Autowired val competitionService: CompetitionServ
         val idToRegister = lugiPlayers[0].id ?: 0
 
         val originalRegistrations = registrationService.getRegistrationByPlayerId(idToRegister)
-        val numberOfRegistrationsInCompetitions = originalRegistrations.competitionsAndCategories.size
         val numberOfRegistrationsInCategories = originalRegistrations.competitionsAndCategories[0].categories.size
 
-        val competitionCategories  = competitionAndPlayingCategoryRepository.getCompetitionCategories()
-        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, idToRegister, competitionCategories[2].id))
+        val competitions = competitionService.getByClubId(lugiId)
+        val categoriesInCompetitionOne = competitionAndPlayingCategoryRepository.getCategoriesInCompetition(competitions[0].id?: 0)
+        // Register in same competition different category
+        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, idToRegister, categoriesInCompetitionOne[2].playingCategoryId))
+
+        val newRegistrations = registrationService.getRegistrationByPlayerId(idToRegister)
+        val newNumberOfRegistrationsInCategories = newRegistrations.competitionsAndCategories[0].categories.size
+
+        Assertions.assertEquals(numberOfRegistrationsInCategories + 1, newNumberOfRegistrationsInCategories)
 
     }
 

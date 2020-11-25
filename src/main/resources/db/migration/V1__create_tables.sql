@@ -76,15 +76,15 @@ create table match
 create table result
 (
     id       SERIAL PRIMARY KEY,
-    match_id INTEGER REFERENCES match (id),
+    match_id INTEGER REFERENCES match(id),
     winner   INTEGER NOT NULL
 );
 
-create table set
+create table game
 (
     id                         SERIAL PRIMARY KEY,
-    set_number                 INTEGER NOT NULL,
+    game_number                 INTEGER NOT NULL,
     first_registration_result  INTEGER NOT NULL,
     second_registration_result INTEGER NOT NULL,
-    match_id INTEGER references match(id) ON DELETE CASCADE NOT NULL
-)
+    match_id INTEGER references match (id) ON DELETE CASCADE NOT NULL
+);
