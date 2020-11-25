@@ -39,22 +39,22 @@ class TestRegistrationService(@Autowired val competitionService: CompetitionServ
 
     @Test
     fun addRegistration() {
-        val lugiId = util.getClubIdOrDefault("Lugi")
-        val lugiPlayers = playerService.getPlayersByClubId(lugiId)
+        val umeId = util.getClubIdOrDefault("Umeå IK")
+        val lugiPlayers = playerService.getPlayersByClubId(umeId)
         val idToRegister = lugiPlayers[0].id ?: 0
 
         val originalRegistrations = registrationService.getRegistrationByPlayerId(idToRegister)
-        val numberOfRegistrationsInCategories = originalRegistrations.competitionsAndCategories[0].categories.size
+        val numberOfRegistrations = originalRegistrations.competitionsAndCategories.size
 
-        val competitions = competitionService.getByClubId(lugiId)
+        val competitions = competitionService.getByClubId(umeId)
         val categoriesInCompetitionOne = competitionAndPlayingCategoryRepository.getCategoriesInCompetition(competitions[0].id?: 0)
         // Register in same competition different category
         registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, idToRegister, categoriesInCompetitionOne[2].playingCategoryId))
 
         val newRegistrations = registrationService.getRegistrationByPlayerId(idToRegister)
-        val newNumberOfRegistrationsInCategories = newRegistrations.competitionsAndCategories[0].categories.size
+        val newNumberOfRegistrations = newRegistrations.competitionsAndCategories.size
 
-        Assertions.assertEquals(numberOfRegistrationsInCategories + 1, newNumberOfRegistrationsInCategories)
+        Assertions.assertEquals(numberOfRegistrations + 1, newNumberOfRegistrations)
 
     }
 
