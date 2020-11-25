@@ -1,9 +1,12 @@
 package com.graphite.competitionplanner.repositories
 
+import com.graphite.competitionplanner.Tables
+import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.service.CompetitionDTO
 import com.graphite.competitionplanner.tables.Club.CLUB
 import com.graphite.competitionplanner.tables.Competition.COMPETITION
 import com.graphite.competitionplanner.tables.CompetitionPlayingCategory.COMPETITION_PLAYING_CATEGORY
+import com.graphite.competitionplanner.tables.PlayerRegistration
 import com.graphite.competitionplanner.tables.PlayingCategory.PLAYING_CATEGORY
 import com.graphite.competitionplanner.tables.records.CompetitionPlayingCategoryRecord
 import com.graphite.competitionplanner.tables.records.CompetitionRecord
@@ -12,6 +15,7 @@ import org.jooq.DSLContext
 import org.jooq.Record
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
+import kotlin.streams.toList
 
 @Repository
 class CompetitionRepository(val dslContext: DSLContext) {
@@ -37,8 +41,7 @@ class CompetitionRepository(val dslContext: DSLContext) {
                     .on(COMPETITION.ORGANIZING_CLUB.eq(CLUB.ID))
                     .limit(10)
                     .fetch()
-        }
-        else {
+        } else {
             return dslContext
                     .select()
                     .from(COMPETITION)
@@ -50,7 +53,7 @@ class CompetitionRepository(val dslContext: DSLContext) {
     }
 
     fun deleteCompetition(competitionId: Int): Boolean {
-       val deletedRows = dslContext.deleteFrom(COMPETITION).where(COMPETITION.ID.eq(competitionId)).execute()
+        val deletedRows = dslContext.deleteFrom(COMPETITION).where(COMPETITION.ID.eq(competitionId)).execute()
         return deletedRows >= 1
     }
 
@@ -94,7 +97,10 @@ class PlayingCategoryRepository(val dslContext: DSLContext) {
 
     fun getByName(name: String): PlayingCategoryRecord {
         return dslContext.selectFrom(PLAYING_CATEGORY).where(PLAYING_CATEGORY.CATEGORY_NAME.eq(name)).fetchOne()
+    }
 
+    fun getByIds(ids: List<Int>): List<PlayingCategoryRecord> {
+        return dslContext.select().from(PLAYING_CATEGORY).where(PLAYING_CATEGORY.ID.`in`(ids)).fetchInto(PLAYING_CATEGORY)
     }
 
     fun clearTable() = dslContext.deleteFrom(PLAYING_CATEGORY).execute()
@@ -117,6 +123,52 @@ class CompetitionAndPlayingCategoryRepository(val dslContext: DSLContext) {
         return dslContext.selectFrom(COMPETITION_PLAYING_CATEGORY).fetch()
     }
 
+    fun getCategoriesInCompetition(competitionId: Int): List<CompetitionCategories> {
+        val records: List<Record> = dslContext.select(COMPETITION_PLAYING_CATEGORY.ID, PLAYING_CATEGORY.CATEGORY_NAME).from(COMPETITION)
+                .join(COMPETITION_PLAYING_CATEGORY).on(COMPETITION_PLAYING_CATEGORY.COMPETITION_ID.eq(COMPETITION.ID))
+                .join(PLAYING_CATEGORY).on(PLAYING_CATEGORY.ID.eq(COMPETITION_PLAYING_CATEGORY.PLAYING_CATEGORY))
+                .where(COMPETITION.ID.eq(competitionId))
+                .fetch()
+
+        return records.stream().map { CompetitionCategories(it.getValue(COMPETITION_PLAYING_CATEGORY.ID), it.getValue(PLAYING_CATEGORY.CATEGORY_NAME))}.toList()
+    }
+
+    fun getCategoriesAndPlayers(competitionId: Int): List<CategoriesAndPlayers> {
+        val records: List<Record> = dslContext.select(COMPETITION_PLAYING_CATEGORY.ID, PLAYING_CATEGORY.CATEGORY_NAME, PLAYER.ID)
+                .from(COMPETITION)
+                .join(COMPETITION_PLAYING_CATEGORY).on(COMPETITION_PLAYING_CATEGORY.COMPETITION_ID.eq(COMPETITION.ID))
+                .join(PLAYING_CATEGORY).on(PLAYING_CATEGORY.ID.eq(COMPETITION_PLAYING_CATEGORY.PLAYING_CATEGORY))
+                .join(PLAYING_IN).on(PLAYING_IN.COMPETITION_PLAYING_CATEGORY_ID.eq(COMPETITION_PLAYING_CATEGORY.ID))
+                .join(PLAYER_REGISTRATION).on(PLAYER_REGISTRATION.REGISTRATION_ID.eq(PLAYING_IN.REGISTRATION_ID))
+                .join(PLAYER).on(PLAYER.ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
+                .where(COMPETITION.ID.eq(competitionId))
+                .fetch()
+
+        return records.stream().map { CategoriesAndPlayers(it.getValue(COMPETITION_PLAYING_CATEGORY.ID),
+                it.getValue(PLAYING_CATEGORY.CATEGORY_NAME), it.getValue(PLAYER.ID)) }.toList()
+
+    }
+
+    // Should return competition information, disciplines
+    fun getByPlayerId(playerId: Int): List<CompetitionPlayingCategoryRecord> {
+        // Get combination of competitions and the categories the player plays in them
+        return dslContext.select(Tables.COMPETITION_PLAYING_CATEGORY.COMPETITION_ID, Tables.COMPETITION_PLAYING_CATEGORY.PLAYING_CATEGORY).from(PlayerRegistration.PLAYER_REGISTRATION).join(Tables.PLAYING_IN).on(Tables.PLAYING_IN.REGISTRATION_ID.eq(PlayerRegistration.PLAYER_REGISTRATION.ID))
+                .join(Tables.COMPETITION_PLAYING_CATEGORY).on(Tables.COMPETITION_PLAYING_CATEGORY.ID.eq(Tables.PLAYING_IN.COMPETITION_PLAYING_CATEGORY_ID))
+                .where(PLAYER.ID.eq(playerId))
+                .fetchInto(COMPETITION_PLAYING_CATEGORY)
+
+    }
+
     fun clearTable() = dslContext.deleteFrom(COMPETITION_PLAYING_CATEGORY).execute()
 }
 
+data class CategoriesAndPlayers(
+    val playingCategoryId: Int,
+    val categoryName: String,
+    val playerId: Int
+)
+
+data class CompetitionCategories(
+        val playingCategoryId: Int,
+        val categoryName: String
+)

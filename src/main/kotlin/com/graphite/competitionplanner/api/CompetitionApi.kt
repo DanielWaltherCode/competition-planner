@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.api
 
 import com.graphite.competitionplanner.repositories.CompetitionRepository
+import com.graphite.competitionplanner.service.CompetitionAndCategoriesDTO
 import com.graphite.competitionplanner.service.CompetitionDTO
 import com.graphite.competitionplanner.service.CompetitionService
 import org.springframework.http.HttpStatus
@@ -30,6 +31,11 @@ class CompetitionApi(val competitionRepository: CompetitionRepository, val compe
     @GetMapping("/{competitionId}")
     fun getCompetition(@PathVariable competitionId: Int): CompetitionDTO {
         return competitionService.getById(competitionId)
+    }
+
+    @GetMapping("/{competitionId}/categories")
+    fun getCompetitionCategories(@PathVariable competitionId: Int): CompetitionAndCategoriesDTO {
+        return competitionService.getCategoriesInCompetition(competitionId)
     }
 
     @GetMapping

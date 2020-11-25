@@ -27,14 +27,15 @@ create table competition
 create table playing_category
 (
     id            SERIAL PRIMARY KEY,
-    category_name VARCHAR NOT NULL
+    category_name VARCHAR NOT NULL UNIQUE
 );
 
 create table competition_playing_category
 (
     id               SERIAL PRIMARY KEY,
     competition_id   INTEGER references competition (id),
-    playing_category INTEGER references playing_category (id)
+    playing_category INTEGER references playing_category (id),
+    unique (competition_id, playing_category)
 );
 
 
@@ -56,8 +57,8 @@ create table playing_in
     id                              SERIAL PRIMARY KEY,
     registration_id                 INTEGER REFERENCES registration (id),
     seed                            INTEGER,
-    competition_playing_category_id INTEGER references competition_playing_category (id)
-
+    competition_playing_category_id INTEGER references competition_playing_category (id),
+    unique (registration_id, competition_playing_category_id)
 );
 
 create table match

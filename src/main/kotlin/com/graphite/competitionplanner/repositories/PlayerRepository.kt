@@ -32,7 +32,7 @@ class PlayerRepository(
     }
 
     fun getPlayersByClub(clubId: Int): List<Record> {
-        return dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).fetch()
+        return dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(CLUB.ID.eq(clubId)).fetch()
     }
 
     fun updatePlayer(playerDTO: PlayerDTO): PlayerRecord {
@@ -56,8 +56,11 @@ class PlayerRepository(
                 .or(PLAYER.LAST_NAME.startsWithIgnoreCase(partOfName))).fetch()
     }
 
+    fun getAll(): List<PlayerRecord> {
+        return dslContext.selectFrom(PLAYER).fetchInto(PLAYER)
+    }
+
     fun clearTable() {
         dslContext.deleteFrom(PLAYER).execute()
     }
-
 }

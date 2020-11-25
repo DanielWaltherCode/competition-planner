@@ -1,12 +1,15 @@
 package com.graphite.competitionplanner.repositories
 
+import com.graphite.competitionplanner.Tables.COMPETITION_PLAYING_CATEGORY
 import com.graphite.competitionplanner.Tables.PLAYING_IN
+import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.tables.PlayerRegistration.PLAYER_REGISTRATION
 import com.graphite.competitionplanner.tables.Registration.REGISTRATION
 import com.graphite.competitionplanner.tables.records.PlayerRegistrationRecord
 import com.graphite.competitionplanner.tables.records.PlayingInRecord
 import com.graphite.competitionplanner.tables.records.RegistrationRecord
 import org.jooq.DSLContext
+import org.jooq.Record
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
@@ -19,6 +22,10 @@ class RegistrationRepository(val dslContext: DSLContext) {
         registration.registrationDate = date
         registration.store()
         return registration
+    }
+
+    fun deleteRegistration(registrationId: Int): Boolean {
+        return dslContext.deleteFrom(REGISTRATION).where(REGISTRATION.ID.eq(registrationId)).execute() > 0
     }
 
     fun clearRegistration() = dslContext.deleteFrom(REGISTRATION).execute()
@@ -47,3 +54,5 @@ class RegistrationRepository(val dslContext: DSLContext) {
 
     fun clearPlayingIn() = dslContext.deleteFrom(PLAYING_IN).execute()
 }
+
+

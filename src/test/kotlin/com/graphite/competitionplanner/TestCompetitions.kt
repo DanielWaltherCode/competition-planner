@@ -36,6 +36,20 @@ class TestCompetitionsService(@Autowired val competitionService: CompetitionServ
     }
 
     @Test
+    fun addCompetitionWithoutValidClub() {
+        // No organizing club with id -1
+        Assertions.assertThrows(org.springframework.dao.DataIntegrityViolationException::class.java) {
+            competitionService.addCompetition(CompetitionDTO(null,
+                    location = "Lund",
+                    welcomeText = "Välkomna till Eurofinans",
+                    organizingClub = ClubNoAddressDTO(-1, null),
+                    startDate = LocalDate.now(),
+                    endDate = LocalDate.now().plusDays(10)))
+        }
+
+    }
+
+    @Test
     fun deleteCompetition() {
         val competition = competitionService.addCompetition(CompetitionDTO(null,
                 location = "Lund",
@@ -60,5 +74,13 @@ class TestCompetitionsService(@Autowired val competitionService: CompetitionServ
 
         val updatedDTO = competitionService.updateCompetition(competitionDTO)
         Assertions.assertEquals(updatedText, updatedDTO.welcomeText)
+    }
+
+    @Test
+    fun getCategoriesInCompetition() {
+        val competitions = competitionService.getCompetitions(null, null)
+        val competitionCategories = competitionService.getCategoriesInCompetition(competitions[0].id?:0)
+        Assertions.assertTrue(competitionCategories.categories.isNotEmpty())
+        Assertions.assertNotNull(competitionCategories.competition.organizingClub)
     }
 }

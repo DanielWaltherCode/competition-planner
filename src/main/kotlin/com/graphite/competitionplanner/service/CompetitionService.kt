@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.service
 import com.graphite.competitionplanner.Tables.COMPETITION
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.repositories.ClubRepository
+import com.graphite.competitionplanner.repositories.CompetitionAndPlayingCategoryRepository
 import com.graphite.competitionplanner.repositories.CompetitionRepository
 import com.graphite.competitionplanner.tables.Club.CLUB
 import com.graphite.competitionplanner.tables.records.ClubRecord
@@ -13,7 +14,8 @@ import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
 
 @Service
-class CompetitionService(val competitionRepository: CompetitionRepository, val clubRepository: ClubRepository) {
+class CompetitionService(val competitionRepository: CompetitionRepository, val clubRepository: ClubRepository,
+                         val competitionAndPlayingCategoryRepository: CompetitionAndPlayingCategoryRepository) {
 
     fun getCompetitions(weekStartDate: LocalDate?, weekEndDate: LocalDate?): List<CompetitionDTO> {
         val competitionsAndClubs = competitionRepository.getCompetitions(weekStartDate, weekEndDate)
@@ -25,6 +27,12 @@ class CompetitionService(val competitionRepository: CompetitionRepository, val c
         }
         return competitionDTOs
     }
+
+    fun getCategoriesInCompetition(competitionId: Int): CompetitionAndCategoriesDTO {
+        val competitionCategories = competitionAndPlayingCategoryRepository.getCategoriesInCompetition(competitionId)
+        return CompetitionAndCategoriesDTO(getById(competitionId), competitionCategories.map { Category(it.playingCategoryId, it.categoryName) })
+    }
+
 
     fun addCompetition(competitionDTO: CompetitionDTO): CompetitionDTO {
         val competition = competitionRepository.addCompetition(competitionDTO)

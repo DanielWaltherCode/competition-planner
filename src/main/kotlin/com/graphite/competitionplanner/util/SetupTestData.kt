@@ -62,7 +62,7 @@ val registrationService: RegistrationService) {
         playerRepository.addPlayer(PlayerDTO(null, firstName = "Nils", lastName = "Hansson",
                 club = ClubNoAddressDTO( util.getClubIdOrDefault("Lugi"), null), dateOfBirth = LocalDate.now().minus(14, ChronoUnit.YEARS)))
         playerRepository.addPlayer(PlayerDTO(null, firstName = "Lennart", lastName = "Eriksson",
-                club = ClubNoAddressDTO( util.getClubIdOrDefault("Umeå"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
+                club = ClubNoAddressDTO( util.getClubIdOrDefault("Umeå IK"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
         playerRepository.addPlayer(PlayerDTO(null, firstName = "Kajsa", lastName = "Säfsten",
                 club = ClubNoAddressDTO( util.getClubIdOrDefault("Övriga"), null), dateOfBirth = LocalDate.now().minus(65, ChronoUnit.YEARS)))
     }
@@ -96,8 +96,8 @@ val registrationService: RegistrationService) {
         competitionAndPlayingCategoryRepository.addCompetitionPlayingCategory(lugiCompetitionId, playingCategoryRepository.getByName("HS B").id)
         competitionAndPlayingCategoryRepository.addCompetitionPlayingCategory(lugiCompetitionId, playingCategoryRepository.getByName("DS A").id)
         competitionAndPlayingCategoryRepository.addCompetitionPlayingCategory(lugiCompetitionId, playingCategoryRepository.getByName("DD A").id)
+        competitionAndPlayingCategoryRepository.addCompetitionPlayingCategory(lugiCompetitionId, playingCategoryRepository.getByName("DS B").id)
         competitionAndPlayingCategoryRepository.addCompetitionPlayingCategory(lugiCompetitionId, playingCategoryRepository.getByName("MX A").id)
-        competitionAndPlayingCategoryRepository.addCompetitionPlayingCategory(lugiCompetitionId, playingCategoryRepository.getByName("HS A").id)
 
         val umeaId = util.getClubIdOrDefault("Umeå IK")
         val umeaCompetitions = competitionService.getByClubId(umeaId)
@@ -107,7 +107,6 @@ val registrationService: RegistrationService) {
         competitionAndPlayingCategoryRepository.addCompetitionPlayingCategory(umeaCompetitionId, playingCategoryRepository.getByName("DS A").id)
         competitionAndPlayingCategoryRepository.addCompetitionPlayingCategory(umeaCompetitionId, playingCategoryRepository.getByName("DD A").id)
         competitionAndPlayingCategoryRepository.addCompetitionPlayingCategory(umeaCompetitionId, playingCategoryRepository.getByName("MX A").id)
-        competitionAndPlayingCategoryRepository.addCompetitionPlayingCategory(umeaCompetitionId, playingCategoryRepository.getByName("HS A").id)
     }
 
     fun registerPlayersSingles() {
@@ -117,10 +116,10 @@ val registrationService: RegistrationService) {
         val otherPlayers = playerService.getPlayersByClubId(util.getClubIdOrDefault("Övriga"))
         val competitionCategories  = competitionAndPlayingCategoryRepository.getCompetitionCategories()
         registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, lugiPlayers[0].id ?: 0, competitionCategories[0].id))
+        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, lugiPlayers[0].id ?: 0, competitionCategories[1].id))
         registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, lugiPlayers[1].id ?: 0, competitionCategories[0].id))
         registrationService.registerPlayerSingles( RegistrationSinglesDTO(null, umePlayers[0].id ?: 0, competitionCategories[1].id))
         registrationService.registerPlayerSingles( RegistrationSinglesDTO(null, otherPlayers[0].id ?: 0, competitionCategories[1].id))
-        println("Players registered")
     }
 
     // Must be in correct order depending on foreign keys
