@@ -1,5 +1,8 @@
 # Tävlingsplaneraren
 
+## Att göra
+
+
 ## Scope och !Scope
 Sätta upp (1) och hålla (2) tävlingar inom bordtennis
 1. Ange tävlingsinfo, start och slutdatum

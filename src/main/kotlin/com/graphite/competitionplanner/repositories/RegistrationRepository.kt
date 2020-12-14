@@ -52,6 +52,11 @@ class RegistrationRepository(val dslContext: DSLContext) {
         return record
     }
 
+    fun checkIfCategoryHasRegistrations(competitionPlayingCategory: Int): Boolean {
+        return dslContext.fetchExists(dslContext.selectFrom(PLAYING_IN)
+            .where(PLAYING_IN.COMPETITION_PLAYING_CATEGORY_ID.eq(competitionPlayingCategory)))
+    }
+
     fun clearPlayingIn() = dslContext.deleteFrom(PLAYING_IN).execute()
 }
 

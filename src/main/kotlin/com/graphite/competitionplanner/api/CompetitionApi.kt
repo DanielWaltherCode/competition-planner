@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.api
 
+import com.graphite.competitionplanner.repositories.CompetitionAndPlayingCategoryRepository
 import com.graphite.competitionplanner.repositories.CompetitionRepository
 import com.graphite.competitionplanner.service.CompetitionAndCategoriesDTO
 import com.graphite.competitionplanner.service.CompetitionDTO
@@ -13,7 +14,9 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping("/competition")
-class CompetitionApi(val competitionRepository: CompetitionRepository, val competitionService: CompetitionService) {
+class CompetitionApi(val competitionRepository: CompetitionRepository,
+                     val competitionService: CompetitionService,
+val competitionAndPlayingCategoryRepository: CompetitionAndPlayingCategoryRepository) {
 
     @PostMapping
     fun addCompetition(@Valid @RequestBody competitionDTO: CompetitionDTO): CompetitionDTO {
@@ -33,10 +36,7 @@ class CompetitionApi(val competitionRepository: CompetitionRepository, val compe
         return competitionService.getById(competitionId)
     }
 
-    @GetMapping("/{competitionId}/categories")
-    fun getCompetitionCategories(@PathVariable competitionId: Int): CompetitionAndCategoriesDTO {
-        return competitionService.getCategoriesInCompetition(competitionId)
-    }
+
 
     @GetMapping
     fun getAll(@RequestParam(required = false) weekStartDate: LocalDate?,
@@ -44,6 +44,38 @@ class CompetitionApi(val competitionRepository: CompetitionRepository, val compe
         return competitionService.getCompetitions(weekStartDate, weekEndDate)
     }
 
+    // Handle categories in competitions
+    @PostMapping("/{competitionId}/category")
+    fun addCategoryToCompetition(@RequestBody addCompetitionCategoryDTO: AddCompetitionCategoryDTO): CompetitionAndCategoriesDTO  {
+        competitionAndPlayingCategoryRepository.addCompetitionPlayingCategory(
+            addCompetitionCategoryDTO.competitionId,
+            addCompetitionCategoryDTO.categoryId
+        )
+        return competitionService.getCategoriesInCompetition(addCompetitionCategoryDTO.competitionId);
+    }
+
+    @GetMapping("/{competitionId}/category")
+    fun getCompetitionCategories(@PathVariable competitionId: Int): CompetitionAndCategoriesDTO {
+        return competitionService.getCategoriesInCompetition(competitionId)
+    }
+
+    @DeleteMapping("/{competitionId}/category/{playingCategoryId}")
+    fun deleteCompetitionCategory(@PathVariable competitionId: Int, @PathVariable playingCategoryId: Int) {
+        return competitionService.cancelCategoryInCompetition(playingCategoryId)
+    }
 }
 
+@RestController
+@RequestMapping("/competition/category")
+public class CompetitionCategoryApi(
+    val competitionAndPlayingCategoryRepository: CompetitionAndPlayingCategoryRepository,
+    val competitionService: CompetitionService
+) {
+
+}
+
+data class AddCompetitionCategoryDTO(
+    val competitionId: Int,
+    val categoryId: Int
+)
 

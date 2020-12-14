@@ -35,9 +35,9 @@ create table competition_playing_category
     id               SERIAL PRIMARY KEY,
     competition_id   INTEGER references competition (id),
     playing_category INTEGER references playing_category (id),
+    status VARCHAR(50) DEFAULT 'ACTIVE',
     unique (competition_id, playing_category)
 );
-
 
 create table registration
 (

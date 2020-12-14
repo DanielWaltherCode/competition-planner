@@ -76,12 +76,5 @@ class TestCompetitionsService(@Autowired val competitionService: CompetitionServ
         Assertions.assertEquals(updatedText, updatedDTO.welcomeText)
     }
 
-    @Test
-    fun getCategoriesInCompetition() {
-        val lugiId = util.getClubIdOrDefault("Lugi")
-        val competitions = competitionService.getByClubId(lugiId)
-        val competitionCategories = competitionService.getCategoriesInCompetition(competitions[0].id?:0)
-        Assertions.assertTrue(competitionCategories.categories.isNotEmpty())
-        Assertions.assertNotNull(competitionCategories.competition.organizingClub)
-    }
+
 }
