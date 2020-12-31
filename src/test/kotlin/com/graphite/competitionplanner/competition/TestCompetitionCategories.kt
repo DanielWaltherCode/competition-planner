@@ -1,12 +1,12 @@
 package com.graphite.competitionplanner.competition
 
-import com.graphite.competitionplanner.repositories.CompetitionAndPlayingCategoryRepository
-import com.graphite.competitionplanner.repositories.CompetitionRepository
-import com.graphite.competitionplanner.repositories.PlayingCategoryRepository
+import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
+import com.graphite.competitionplanner.repositories.competition.CategoryRepository
 import com.graphite.competitionplanner.service.CompetitionService
 import com.graphite.competitionplanner.service.PlayerService
 import com.graphite.competitionplanner.service.RegistrationService
 import com.graphite.competitionplanner.service.RegistrationSinglesDTO
+import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
 import com.graphite.competitionplanner.util.TestUtil
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.Assertions
@@ -21,8 +21,8 @@ class TestCompetitionCategories(
     @Autowired val util: Util,
     @Autowired val playerService: PlayerService,
     @Autowired val registrationService: RegistrationService,
-    @Autowired val competitionAndPlayingCategoryRepository: CompetitionAndPlayingCategoryRepository,
-    @Autowired val playingCategoryRepository: PlayingCategoryRepository,
+    @Autowired val competitionCategoryRepository: CompetitionCategoryRepository,
+    @Autowired val competitionCategoryService: CompetitionCategoryService,
     @Autowired val testUtil: TestUtil
 ) {
 
@@ -40,18 +40,18 @@ class TestCompetitionCategories(
 
     @Test
     fun deleteCompetitionCategory() {
-        val originalLength = competitionAndPlayingCategoryRepository.getCompetitionCategories().size
+        val originalLength = competitionCategoryRepository.getCompetitionCategories().size
         val newCategoryId = testUtil.addCompetitionCategory("Herrar 3")
 
         // No players registered in competition, deleting should be fine
-        competitionService.deleteCategoryInCompetition(newCategoryId)
+        competitionCategoryService.deleteCategoryInCompetition(newCategoryId)
 
-        Assertions.assertEquals(originalLength, competitionAndPlayingCategoryRepository.getCompetitionCategories().size )
+        Assertions.assertEquals(originalLength, competitionCategoryRepository.getCompetitionCategories().size )
     }
 
     @Test
     fun deleteCompetitionCategoryAfterRegistration() {
-        val originalLength = competitionAndPlayingCategoryRepository.getCompetitionCategories().size
+        val originalLength = competitionCategoryRepository.getCompetitionCategories().size
         val newCategoryId = testUtil.addCompetitionCategory("Herrar 4")
 
         // Register players
@@ -60,11 +60,11 @@ class TestCompetitionCategories(
 
         // Try deleting after players have registered, should fail
         Assertions.assertThrows(ResponseStatusException::class.java) {
-            competitionService.deleteCategoryInCompetition(newCategoryId)
+            competitionCategoryService.deleteCategoryInCompetition(newCategoryId)
         }
 
         // Assert nothing has been removed
-        val newLength = competitionAndPlayingCategoryRepository.getCompetitionCategories().size
+        val newLength = competitionCategoryRepository.getCompetitionCategories().size
         Assertions.assertEquals(originalLength + 1, newLength)
     }
 
@@ -72,9 +72,9 @@ class TestCompetitionCategories(
     fun cancelCompetitionCategory() {
         val newCategoryId = testUtil.addCompetitionCategory("Herrar 5")
 
-        competitionService.cancelCategoryInCompetition(newCategoryId)
+        competitionCategoryService.cancelCategoryInCompetition(newCategoryId)
 
-        val competitionCategory = competitionAndPlayingCategoryRepository.getById(newCategoryId)
+        val competitionCategory = competitionCategoryRepository.getById(newCategoryId)
         Assertions.assertEquals("CANCELLED", competitionCategory.status)
 
     }

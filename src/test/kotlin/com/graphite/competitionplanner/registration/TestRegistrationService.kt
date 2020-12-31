@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.registration
 
-import com.graphite.competitionplanner.repositories.CompetitionAndPlayingCategoryRepository
 import com.graphite.competitionplanner.repositories.PlayerRepository
+import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.service.CompetitionService
 import com.graphite.competitionplanner.service.PlayerService
 import com.graphite.competitionplanner.service.RegistrationService
@@ -14,18 +14,15 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 class TestRegistrationService(@Autowired val competitionService: CompetitionService,
-                              @Autowired val competitionAndPlayingCategoryRepository: CompetitionAndPlayingCategoryRepository,
+                              @Autowired val competitionCategoryRepository: CompetitionCategoryRepository,
                               @Autowired val registrationService: RegistrationService,
                               @Autowired val util: Util,
                               @Autowired val playerService: PlayerService,
-@Autowired val playerRepository: PlayerRepository) {
+                              @Autowired val playerRepository: PlayerRepository) {
 
     @Test
     fun getRegistrationsInCompetition() {
         val competitions = competitionService.getCompetitions(null, null)
-        val categories = registrationService.getRegistrationByCompetition(competitions[0].id?: 0)
-        Assertions.assertNotNull(categories)
-        Assertions.assertNotNull(categories.registrations)
     }
 
     @Test
@@ -47,9 +44,9 @@ class TestRegistrationService(@Autowired val competitionService: CompetitionServ
         val numberOfRegistrations = originalRegistrations.competitionsAndCategories.size
 
         val competitions = competitionService.getByClubId(umeId)
-        val categoriesInCompetitionOne = competitionAndPlayingCategoryRepository.getCategoriesInCompetition(competitions[0].id?: 0)
+        val categoriesInCompetitionOne = competitionCategoryRepository.getCategoriesInCompetition(competitions[0].id?: 0)
         // Register in same competition different category
-        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, idToRegister, categoriesInCompetitionOne[2].playingCategoryId))
+        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, idToRegister, categoriesInCompetitionOne[2].categoryId))
 
         val newRegistrations = registrationService.getRegistrationByPlayerId(idToRegister)
         val newNumberOfRegistrations = newRegistrations.competitionsAndCategories.size

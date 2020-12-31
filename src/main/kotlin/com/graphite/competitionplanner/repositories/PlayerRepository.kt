@@ -42,7 +42,7 @@ class PlayerRepository(
         playerRecord.lastName = playerDTO.lastName
         playerRecord.clubId = playerDTO.club.id
         playerRecord.dateOfBirth = playerDTO.dateOfBirth
-        playerRecord.store()
+        playerRecord.update()
 
         return playerRecord
     }

@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.competition
 
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.repositories.ClubRepository
-import com.graphite.competitionplanner.repositories.CompetitionRepository
+import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
 import com.graphite.competitionplanner.service.CompetitionDTO
 import com.graphite.competitionplanner.service.CompetitionService
 import com.graphite.competitionplanner.util.Util
@@ -13,7 +13,12 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 
 @SpringBootTest
-class TestCompetitionsService(@Autowired val competitionService: CompetitionService, @Autowired val competitionRepository: CompetitionRepository, @Autowired val clubRepository: ClubRepository, @Autowired val util: Util) {
+class TestCompetitionsService(
+    @Autowired val competitionService: CompetitionService,
+    @Autowired val competitionRepository: CompetitionRepository,
+    @Autowired val clubRepository: ClubRepository,
+    @Autowired val util: Util
+) {
 
     @Test
     fun testGetCompetitions() {
@@ -24,12 +29,16 @@ class TestCompetitionsService(@Autowired val competitionService: CompetitionServ
     @Test
     fun testAddCompetition() {
         val originalSize: Int = competitionRepository.getAll().size
-        val competition = competitionService.addCompetition(CompetitionDTO(null,
+        val competition = competitionService.addCompetition(
+            CompetitionDTO(
+                null,
                 location = "Lund",
                 welcomeText = "Välkomna till Eurofinans",
                 organizingClub = ClubNoAddressDTO(util.getClubIdOrDefault("Lugi"), null),
                 startDate = LocalDate.now(),
-                endDate = LocalDate.now().plusDays(10)))
+                endDate = LocalDate.now().plusDays(10)
+            )
+        )
         Assertions.assertNotNull(competition.id)
         Assertions.assertEquals(competition.endDate, LocalDate.now().plusDays(10))
         Assertions.assertEquals(originalSize + 1, competitionRepository.getAll().size)
@@ -39,24 +48,32 @@ class TestCompetitionsService(@Autowired val competitionService: CompetitionServ
     fun addCompetitionWithoutValidClub() {
         // No organizing club with id -1
         Assertions.assertThrows(org.springframework.dao.DataIntegrityViolationException::class.java) {
-            competitionService.addCompetition(CompetitionDTO(null,
+            competitionService.addCompetition(
+                CompetitionDTO(
+                    null,
                     location = "Lund",
                     welcomeText = "Välkomna till Eurofinans",
                     organizingClub = ClubNoAddressDTO(-1, null),
                     startDate = LocalDate.now(),
-                    endDate = LocalDate.now().plusDays(10)))
+                    endDate = LocalDate.now().plusDays(10)
+                )
+            )
         }
 
     }
 
     @Test
     fun deleteCompetition() {
-        val competition = competitionService.addCompetition(CompetitionDTO(null,
+        val competition = competitionService.addCompetition(
+            CompetitionDTO(
+                null,
                 location = "Lund",
                 welcomeText = "Välkomna till Eurofinans",
                 organizingClub = ClubNoAddressDTO(util.getClubIdOrDefault("Lugi"), null),
                 startDate = LocalDate.now(),
-                endDate = LocalDate.now().plusDays(10)))
+                endDate = LocalDate.now().plusDays(10)
+            )
+        )
 
         val originalSize: Int = competitionRepository.getAll().size
         competitionRepository.deleteCompetition(competition.id ?: 0)
@@ -69,8 +86,10 @@ class TestCompetitionsService(@Autowired val competitionService: CompetitionServ
         val competition = competitions[0]
         val updatedText = "My new description text"
 
-        val competitionDTO = CompetitionDTO(competition.id, competition.location, updatedText,
-                competition.organizingClub, competition.startDate, competition.endDate)
+        val competitionDTO = CompetitionDTO(
+            competition.id, competition.location, updatedText,
+            competition.organizingClub, competition.startDate, competition.endDate
+        )
 
         val updatedDTO = competitionService.updateCompetition(competitionDTO)
         Assertions.assertEquals(updatedText, updatedDTO.welcomeText)

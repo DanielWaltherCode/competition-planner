@@ -1,13 +1,14 @@
 package com.graphite.competitionplanner.repositories
 
-import com.graphite.competitionplanner.Tables.COMPETITION_PLAYING_CATEGORY
-import com.graphite.competitionplanner.Tables.PLAYING_IN
+import com.graphite.competitionplanner.Tables
+import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
+import com.graphite.competitionplanner.tables.Competition
+import com.graphite.competitionplanner.tables.CompetitionCategory
 import com.graphite.competitionplanner.tables.PlayerRegistration.PLAYER_REGISTRATION
+import com.graphite.competitionplanner.tables.Category
 import com.graphite.competitionplanner.tables.Registration.REGISTRATION
-import com.graphite.competitionplanner.tables.records.PlayerRegistrationRecord
-import com.graphite.competitionplanner.tables.records.PlayingInRecord
-import com.graphite.competitionplanner.tables.records.RegistrationRecord
+import com.graphite.competitionplanner.tables.records.*
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.springframework.stereotype.Repository
@@ -43,21 +44,63 @@ class RegistrationRepository(val dslContext: DSLContext) {
     fun clearPlayerRegistration() = dslContext.deleteFrom(PLAYER_REGISTRATION).execute()
 
     // Links a registration to a specific category in the competition. Also includes the seed.
-    fun registerPlayingIn(registrationId: Int, seed: Int?, competitionPlayingCategory: Int): PlayingInRecord {
-        val record: PlayingInRecord = dslContext.newRecord(PLAYING_IN)
+    fun registerInCategory(registrationId: Int, seed: Int?, competitionCategory: Int): CompetitionCategoryRegistrationRecord {
+        val record = dslContext.newRecord(COMPETITION_CATEGORY_REGISTRATION)
         record.registrationId = registrationId;
         record.seed = seed;
-        record.competitionPlayingCategoryId = competitionPlayingCategory
+        record.competitionCategoryId = competitionCategory
         record.store()
         return record
     }
 
-    fun checkIfCategoryHasRegistrations(competitionPlayingCategory: Int): Boolean {
-        return dslContext.fetchExists(dslContext.selectFrom(PLAYING_IN)
-            .where(PLAYING_IN.COMPETITION_PLAYING_CATEGORY_ID.eq(competitionPlayingCategory)))
+    fun checkIfCategoryHasRegistrations(competitionCategory: Int): Boolean {
+        return dslContext.fetchExists(dslContext.selectFrom(COMPETITION_CATEGORY_REGISTRATION)
+            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategory)))
     }
 
-    fun clearPlayingIn() = dslContext.deleteFrom(PLAYING_IN).execute()
+    fun getRegistrationsInCompetition(competitionId: Int): List<PlayerRecord> {
+        return dslContext.select()
+            .from(COMPETITION)
+            .join(COMPETITION_CATEGORY).on(
+                COMPETITION_CATEGORY.COMPETITION_ID.eq(
+                    Competition.COMPETITION.ID))
+            .join(CATEGORY).on(
+                CATEGORY.ID.eq(
+                    COMPETITION_CATEGORY.CATEGORY))
+            .join(COMPETITION_CATEGORY_REGISTRATION).on(
+                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(
+                    COMPETITION_CATEGORY.ID))
+            .join(PLAYER_REGISTRATION).on(PLAYER_REGISTRATION.REGISTRATION_ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+            .join(PLAYER).on(PLAYER.ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
+            .where(Competition.COMPETITION.ID.eq(competitionId))
+            .fetchInto(PLAYER)
+    }
+
+    fun getRegistrationIdsInCategory(competitionCategoryId: Int): List<Int> {
+        return dslContext.select(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID)
+            .from(COMPETITION_CATEGORY_REGISTRATION)
+            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+            .fetchInto(Int::class.java)
+    }
+
+    fun getRegisteredPlayersInCategory(competitionCategoryId: Int): List<PlayerRecord> {
+        return dslContext.select()
+            .from(COMPETITION_CATEGORY_REGISTRATION)
+            .join(PLAYER_REGISTRATION).on(PLAYER_REGISTRATION.REGISTRATION_ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+            .join(PLAYER).on(PLAYER.ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
+            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+            .fetchInto(PLAYER)
+    }
+
+    fun getPlayersFromRegistrationId(registrationId: Int): List<PlayerRecord> {
+        return dslContext.select()
+            .from(PLAYER_REGISTRATION)
+            .join(PLAYER).on(PLAYER.ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
+            .where(PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId))
+            .fetchInto(PLAYER)
+    }
+
+    fun clearPlayingIn() = dslContext.deleteFrom(COMPETITION_CATEGORY_REGISTRATION).execute()
 }
 
 

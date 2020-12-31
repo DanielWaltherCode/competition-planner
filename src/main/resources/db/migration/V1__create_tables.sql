@@ -24,19 +24,20 @@ create table competition
     end_date        DATE
 );
 
-create table playing_category
+create table category
 (
     id            SERIAL PRIMARY KEY,
-    category_name VARCHAR NOT NULL UNIQUE
+    category_name VARCHAR NOT NULL UNIQUE,
+    category_type VARCHAR NOT NULL /* Singles or doubles */
 );
 
-create table competition_playing_category
+create table competition_category
 (
     id               SERIAL PRIMARY KEY,
     competition_id   INTEGER references competition (id),
-    playing_category INTEGER references playing_category (id),
+    category INTEGER references category (id),
     status VARCHAR(50) DEFAULT 'ACTIVE',
-    unique (competition_id, playing_category)
+    unique (competition_id, category)
 );
 
 create table registration
@@ -48,17 +49,17 @@ create table registration
 create table player_registration
 (
     id              SERIAL PRIMARY KEY,
-    registration_id INTEGER REFERENCES registration (id),
+    registration_id INTEGER REFERENCES registration (id) ON DELETE CASCADE,
     player_id       INTEGER REFERENCES player (id)
 );
 
-create table playing_in
+create table competition_category_registration
 (
     id                              SERIAL PRIMARY KEY,
-    registration_id                 INTEGER REFERENCES registration (id),
+    registration_id                 INTEGER REFERENCES registration (id) ON DELETE CASCADE,
     seed                            INTEGER,
-    competition_playing_category_id INTEGER references competition_playing_category (id),
-    unique (registration_id, competition_playing_category_id)
+    competition_category_id INTEGER references competition_category (id),
+    unique (registration_id, competition_category_id)
 );
 
 create table match
@@ -66,10 +67,12 @@ create table match
     id                              SERIAL PRIMARY KEY,
     start_time                      TIMESTAMP NOT NULL,
     end_time                        TIMESTAMP NOT NULL,
-    competition_playing_category_id INTEGER references competition_playing_category (id),
-    round                           VARCHAR   NOT NULL,
+    competition_category_id INTEGER references competition_category (id),
+    match_type                           VARCHAR   NOT NULL,
     first_registration_id           INTEGER REFERENCES registration (id),
-    second_registration_id          INTEGER REFERENCES registration (id)
+    second_registration_id          INTEGER REFERENCES registration (id),
+    match_order_number INTEGER NOT NULL,
+    group_or_round VARCHAR(30)
 );
 
 

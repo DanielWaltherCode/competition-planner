@@ -1,7 +1,8 @@
 # Tävlingsplaneraren
 
 ## Att göra
-
+1. Sätt upp defaulttävling man kan hämta ut när man skapar nytt
+2. lägg in data genom sql istället?
 
 ## Scope och !Scope
 Sätta upp (1) och hålla (2) tävlingar inom bordtennis

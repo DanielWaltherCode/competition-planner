@@ -1,8 +1,10 @@
 package com.graphite.competitionplanner.api
 
 import com.graphite.competitionplanner.repositories.PlayerRepository
+import com.graphite.competitionplanner.service.PlayerCompetitionDTO
 import com.graphite.competitionplanner.service.PlayerDTO
 import com.graphite.competitionplanner.service.PlayerService
+import com.graphite.competitionplanner.service.RegistrationService
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -43,6 +45,16 @@ class PlayerApi(
         return playerRepository.deletePlayer(playerId)
     }
 
-
 }
+
+@RestController
+@RequestMapping("/player/{playerId}/registration")
+class PlayerRegistrationApi(val registrationService: RegistrationService) {
+
+    @GetMapping("/player/{playerId}")
+    fun getByPlayerId(@PathVariable playerId: Int): PlayerCompetitionDTO {
+        return registrationService.getRegistrationByPlayerId(playerId)
+    }
+}
+
 

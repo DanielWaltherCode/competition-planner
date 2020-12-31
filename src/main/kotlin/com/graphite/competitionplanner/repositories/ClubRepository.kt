@@ -25,7 +25,7 @@ class ClubRepository(val dslContext: DSLContext) {
         clubRecord.id = clubDTO.id
         clubRecord.name = clubDTO.name
         clubRecord.address = clubDTO.address
-        clubRecord.store()
+        clubRecord.update()
         return clubRecord
     }
 

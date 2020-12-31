@@ -60,6 +60,7 @@ class PlayerService(val playerRepository: PlayerRepository, val clubRepository: 
         }
         return playerDTOs
     }
+
 }
 
 data class PlayerDTO(

@@ -3,9 +3,9 @@ package com.graphite.competitionplanner.service
 import com.graphite.competitionplanner.Tables.COMPETITION
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.repositories.ClubRepository
-import com.graphite.competitionplanner.repositories.CompetitionAndPlayingCategoryRepository
-import com.graphite.competitionplanner.repositories.CompetitionRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
+import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
+import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
 import com.graphite.competitionplanner.tables.Club.CLUB
 import com.graphite.competitionplanner.tables.records.ClubRecord
 import com.graphite.competitionplanner.tables.records.CompetitionRecord
@@ -17,7 +17,7 @@ import java.time.LocalDate
 @Service
 class CompetitionService(
     val competitionRepository: CompetitionRepository, val clubRepository: ClubRepository,
-    val competitionAndPlayingCategoryRepository: CompetitionAndPlayingCategoryRepository,
+    val competitionCategoryRepository: CompetitionCategoryRepository,
     val registrationRepository: RegistrationRepository
 ) {
 
@@ -33,10 +33,10 @@ class CompetitionService(
     }
 
     fun getCategoriesInCompetition(competitionId: Int): CompetitionAndCategoriesDTO {
-        val competitionCategories = competitionAndPlayingCategoryRepository.getCategoriesInCompetition(competitionId)
+        val competitionCategories = competitionCategoryRepository.getCategoriesInCompetition(competitionId)
         return CompetitionAndCategoriesDTO(
             getById(competitionId),
-            competitionCategories.map { Category(it.playingCategoryId, it.categoryName) })
+            competitionCategories.map { Category(it.categoryId, it.categoryName) })
     }
 
 
@@ -77,28 +77,8 @@ class CompetitionService(
         return competitionDTOs
     }
 
-    /**
-     * Cancel competition category. This is used when players have already
-     * signed up for category. Then we shouldn't delete data but just the category to
-     * cancelled
-     */
-    fun cancelCategoryInCompetition(playingCategoryId: Int) {
-        competitionAndPlayingCategoryRepository.cancelCategoryInCompetition(playingCategoryId)
-    }
-
-    /**
-     * Categories can be deleted if no players are registered yet
-     * Delete from competition categories
-     * Competition category metadata should be deleted on cascade
-     */
-    fun deleteCategoryInCompetition(playingCategoryId: Int) {
-        // Check if playing_in contains this id, if so don't delete
-        if (registrationRepository.checkIfCategoryHasRegistrations(playingCategoryId)) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "A category with registered players should not be deleted")
-        }
-        competitionAndPlayingCategoryRepository.deleteCategoryInCompetition(playingCategoryId)
-    }
 }
+
 
 fun recordsToDto(competition: CompetitionRecord, club: ClubRecord): CompetitionDTO {
     return CompetitionDTO(
@@ -115,3 +95,4 @@ data class CompetitionDTO(
     val startDate: LocalDate,
     val endDate: LocalDate
 )
+
