@@ -6,6 +6,7 @@ import com.graphite.competitionplanner.repositories.DrawTypeRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.service.*
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 
@@ -97,7 +98,7 @@ data class CategoryGameRulesApi(val categoryService: CategoryService) {
         return categoryService.getCategoryGameRules(competitionCategoryId)
     }
 
-    @PostMapping("//{competitionCategoryId}")
+    @PostMapping("/{competitionCategoryId}")
     fun addCategoryGameRules(
         @PathVariable competitionCategoryId: Int,
         @RequestBody gameRulesSpec: CategoryGameRulesSpec
@@ -105,7 +106,7 @@ data class CategoryGameRulesApi(val categoryService: CategoryService) {
         return categoryService.addCategoryGameRules(competitionCategoryId, gameRulesSpec)
     }
 
-    @PutMapping("//{competitionCategoryId}/{categoryGameRulesId}")
+    @PutMapping("/{competitionCategoryId}/{categoryGameRulesId}")
     fun updateCategoryGameRules(
         @PathVariable categoryGameRulesId: Int,
         @PathVariable competitionCategoryId: Int,

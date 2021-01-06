@@ -6,6 +6,7 @@ import com.graphite.competitionplanner.service.PlayerDTO
 import com.graphite.competitionplanner.service.PlayerService
 import com.graphite.competitionplanner.service.RegistrationService
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDate
 import javax.validation.Valid
 
 
@@ -16,13 +17,13 @@ class PlayerApi(
         val playerService: PlayerService) {
 
     @PostMapping
-    fun addPlayer(@Valid @RequestBody playerDTO: PlayerDTO): PlayerDTO {
-        return playerService.addPlayer(playerDTO)
+    fun addPlayer(@Valid @RequestBody playerSpec: PlayerSpec): PlayerDTO {
+        return playerService.addPlayer(playerSpec)
     }
 
-    @PutMapping
-    fun updatePlayer(@Valid @RequestBody playerDTO: PlayerDTO): PlayerDTO {
-        return playerService.updatePlayer(playerDTO)
+    @PutMapping("/{playerId}")
+    fun updatePlayer(@PathVariable playerId: Int, @Valid @RequestBody playerSpec: PlayerSpec): PlayerDTO {
+        return playerService.updatePlayer(playerId, playerSpec)
     }
 
     @GetMapping("/{playerId}")
@@ -31,7 +32,7 @@ class PlayerApi(
     }
 
     @GetMapping("name-search")
-    fun searchByName(@RequestParam partOfName: String): List<PlayerDTO> {
+    fun searchByPartOfName(@RequestParam partOfName: String): List<PlayerDTO> {
         return playerService.findByName(partOfName)
     }
 
@@ -57,4 +58,9 @@ class PlayerRegistrationApi(val registrationService: RegistrationService) {
     }
 }
 
-
+data class PlayerSpec(
+    val firstName: String,
+    val lastName: String,
+    val club: ClubNoAddressDTO,
+    val dateOfBirth: LocalDate
+)

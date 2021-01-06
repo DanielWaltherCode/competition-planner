@@ -4,8 +4,10 @@ import com.graphite.competitionplanner.api.competition.CategoryGameRulesSpec
 import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
 import com.graphite.competitionplanner.repositories.ClubRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
+import com.graphite.competitionplanner.repositories.competition.CompetitionCategory
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.service.CategoryService
+import com.graphite.competitionplanner.service.CompetitionCategoryDTO
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
@@ -33,7 +35,7 @@ class CompetitionCategoryService(
      * Competition category metadata should be deleted on cascade
      */
     fun deleteCategoryInCompetition(categoryId: Int) {
-        // Check if playing_in contains this id, if so don't delete
+        // Check if competition registration contains this id, if so don't delete
         if (registrationRepository.checkIfCategoryHasRegistrations(categoryId)) {
             throw ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
@@ -75,5 +77,9 @@ class CompetitionCategoryService(
         )
         )
         return competitionCategoryId
+    }
+
+    fun getByCompetitionCategoryId(competitionCategoryId: Int): CompetitionCategory {
+        return competitionCategoryRepository.getById(competitionCategoryId)
     }
 }

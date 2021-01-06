@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.util
 
 import com.graphite.competitionplanner.api.ClubDTO
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
+import com.graphite.competitionplanner.api.PlayerSpec
 import com.graphite.competitionplanner.repositories.*
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
@@ -25,7 +26,8 @@ class EventListener(val playerRepository: PlayerRepository,
                     val competitionService: CompetitionService,
                     val drawTypeRepository: DrawTypeRepository,
                     val util: Util,
-                    val registrationService: RegistrationService) {
+                    val registrationService: RegistrationService,
+val matchRepository: MatchRepository) {
 
     @EventListener
     fun onApplicationEvent(event: ContextRefreshedEvent) {
@@ -84,49 +86,51 @@ class EventListener(val playerRepository: PlayerRepository,
     }
 
     fun playerSetup() {
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Oscar", lastName = "Hansson",
-                club = ClubNoAddressDTO( util.getClubIdOrDefault("Lugi"), null), dateOfBirth = LocalDate.now().minus(18, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Nils", lastName = "Hansson",
+        playerRepository.addPlayer(
+            PlayerSpec( firstName = "Oscar", lastName = "Hansson",
+                club = ClubNoAddressDTO( util.getClubIdOrDefault("Lugi"), null), dateOfBirth = LocalDate.now().minus(18, ChronoUnit.YEARS))
+        )
+        playerRepository.addPlayer(PlayerSpec( firstName = "Nils", lastName = "Hansson",
                 club = ClubNoAddressDTO( util.getClubIdOrDefault("Lugi"), null), dateOfBirth = LocalDate.now().minus(14, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Lennart", lastName = "Eriksson",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Lennart", lastName = "Eriksson",
                 club = ClubNoAddressDTO( util.getClubIdOrDefault("Umeå IK"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Kajsa", lastName = "Säfsten",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Kajsa", lastName = "Säfsten",
                 club = ClubNoAddressDTO( util.getClubIdOrDefault("Övriga"), null), dateOfBirth = LocalDate.now().minus(65, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Lennart", lastName = "Eriksson",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Lennart", lastName = "Eriksson",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Lugi"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Lennart", lastName = "Eriksson",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Lennart", lastName = "Eriksson",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Malmö"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Lennart", lastName = "Eriksson",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Lennart", lastName = "Eriksson",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Landskrona"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Mona", lastName = "Nilsson",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Mona", lastName = "Nilsson",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Umeå IK"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Anders", lastName = "And",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Anders", lastName = "And",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Malmö"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Lukas", lastName = "Eriksson",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Lukas", lastName = "Eriksson",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Lugi"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Nina", lastName = "Persson",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Nina", lastName = "Persson",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Umeå IK"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Ola", lastName = "Salo",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Ola", lastName = "Salo",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Landskrona"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Ola", lastName = "Larsson",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Ola", lastName = "Larsson",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Lugi"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Anna", lastName = "Lindh",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Anna", lastName = "Lindh",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Lugi"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Oscar", lastName = "Lilja",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Oscar", lastName = "Lilja",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Landskrona"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Sam", lastName = "Axén",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Sam", lastName = "Axén",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Umeå IK"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Nils", lastName = "Sundling",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Nils", lastName = "Sundling",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Landskrona"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Amanda", lastName = "Skiffer",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Amanda", lastName = "Skiffer",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Lugi"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Eskil", lastName = "Erlandsson",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Eskil", lastName = "Erlandsson",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Lugi"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Erna", lastName = "Solberg",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Erna", lastName = "Solberg",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Umeå IK"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Dwight", lastName = "Johnson",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Dwight", lastName = "Johnson",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Landskrona"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
-        playerRepository.addPlayer(PlayerDTO(null, firstName = "Simon", lastName = "Knutsson",
+        playerRepository.addPlayer(PlayerSpec( firstName = "Simon", lastName = "Knutsson",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Umeå IK"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
 
 
@@ -197,6 +201,7 @@ class EventListener(val playerRepository: PlayerRepository,
         playerRepository.clearTable()
         categoryRepository.clearTable()
         clubRepository.clearClubTable()
+        matchRepository.clearTable()
     }
 
 

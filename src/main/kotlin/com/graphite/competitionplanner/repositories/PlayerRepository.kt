@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.repositories
 
 import com.graphite.competitionplanner.Tables.CLUB
+import com.graphite.competitionplanner.api.PlayerSpec
 import com.graphite.competitionplanner.service.PlayerDTO
 import com.graphite.competitionplanner.tables.Player.PLAYER
 import com.graphite.competitionplanner.tables.records.PlayerRecord
@@ -15,12 +16,12 @@ class PlayerRepository(
         val clubRepository: ClubRepository
 ) {
 
-    fun addPlayer(playerDTO: PlayerDTO): PlayerRecord {
+    fun addPlayer(playerSpec: PlayerSpec): PlayerRecord {
         val playerRecord = dslContext.newRecord(PLAYER)
-        playerRecord.firstName = playerDTO.firstName
-        playerRecord.lastName = playerDTO.lastName
-        playerRecord.clubId = playerDTO.club.id
-        playerRecord.dateOfBirth = playerDTO.dateOfBirth
+        playerRecord.firstName = playerSpec.firstName
+        playerRecord.lastName = playerSpec.lastName
+        playerRecord.clubId = playerSpec.club.id
+        playerRecord.dateOfBirth = playerSpec.dateOfBirth
         playerRecord.store()
 
         return playerRecord
@@ -35,13 +36,13 @@ class PlayerRepository(
         return dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(CLUB.ID.eq(clubId)).fetch()
     }
 
-    fun updatePlayer(playerDTO: PlayerDTO): PlayerRecord {
+    fun updatePlayer(playerId: Int, playerSpec: PlayerSpec): PlayerRecord {
         val playerRecord = dslContext.newRecord(PLAYER)
-        playerRecord.id = playerDTO.id
-        playerRecord.firstName = playerDTO.firstName
-        playerRecord.lastName = playerDTO.lastName
-        playerRecord.clubId = playerDTO.club.id
-        playerRecord.dateOfBirth = playerDTO.dateOfBirth
+        playerRecord.id = playerId
+        playerRecord.firstName = playerSpec.firstName
+        playerRecord.lastName = playerSpec.lastName
+        playerRecord.clubId = playerSpec.club.id
+        playerRecord.dateOfBirth = playerSpec.dateOfBirth
         playerRecord.update()
 
         return playerRecord

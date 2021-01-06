@@ -65,14 +65,14 @@ create table competition_category_registration
 create table match
 (
     id                              SERIAL PRIMARY KEY,
-    start_time                      TIMESTAMP NOT NULL,
-    end_time                        TIMESTAMP NOT NULL,
+    start_time                      TIMESTAMP,
+    end_time                        TIMESTAMP,
     competition_category_id INTEGER references competition_category (id),
-    match_type                           VARCHAR   NOT NULL,
+    match_type                           VARCHAR   NOT NULL, /* Either Group or Playoff */
     first_registration_id           INTEGER REFERENCES registration (id),
     second_registration_id          INTEGER REFERENCES registration (id),
     match_order_number INTEGER NOT NULL,
-    group_or_round VARCHAR(30)
+    group_or_round VARCHAR(30) /* Either which group or which round */
 );
 
 

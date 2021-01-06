@@ -1,6 +1,9 @@
 # Tävlingsplaneraren
 
-## Att göra
+## Att göra kortsiktigt
+1. Fundera på hur man returnerar spelarnummer i poolen och matchordning
+
+## Att göra långsiktigt
 1. Sätt upp defaulttävling man kan hämta ut när man skapar nytt
 2. lägg in data genom sql istället?
 

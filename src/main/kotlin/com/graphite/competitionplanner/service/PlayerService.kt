@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.service
 
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
+import com.graphite.competitionplanner.api.PlayerSpec
 import com.graphite.competitionplanner.repositories.ClubRepository
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.tables.Club.CLUB
@@ -27,15 +28,15 @@ class PlayerService(val playerRepository: PlayerRepository, val clubRepository: 
         return playerDTOs
     }
 
-    fun addPlayer(playerDTO: PlayerDTO): PlayerDTO {
-        val player = playerRepository.addPlayer(playerDTO)
+    fun addPlayer(playerSpec: PlayerSpec): PlayerDTO {
+        val player = playerRepository.addPlayer(playerSpec)
         val club = clubRepository.getById(player.clubId)
                 ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No club with id ${player.clubId} found")
         return recordsToDTO(player, club)
     }
 
-    fun updatePlayer(playerDTO: PlayerDTO): PlayerDTO {
-        val player = playerRepository.updatePlayer(playerDTO)
+    fun updatePlayer(playerId: Int, playerSpec: PlayerSpec): PlayerDTO {
+        val player = playerRepository.updatePlayer(playerId, playerSpec)
         val club = clubRepository.getById(player.clubId)
                 ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No club with id ${player.clubId} found")
         return recordsToDTO(player, club)
@@ -64,7 +65,7 @@ class PlayerService(val playerRepository: PlayerRepository, val clubRepository: 
 }
 
 data class PlayerDTO(
-        val id: Int?,
+        val id: Int,
         val firstName: String,
         val lastName: String,
         val club: ClubNoAddressDTO,

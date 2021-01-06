@@ -86,7 +86,7 @@ class RegistrationService(
     private fun getPlayersInCategories(competitionId: Int): MutableMap<String, Set<PlayerDTO>> {
         val groupingAndPlayers = mutableMapOf<String, Set<PlayerDTO>>()
         val playersAndCategories = competitionCategoryRepository.getCategoriesAndPlayers(competitionId)
-        val uniqueCategories = playersAndCategories.stream().map { it.categoryName }.distinct().toList()
+        val uniqueCategories = playersAndCategories.map { it.categoryName }.distinct()
 
         for (category in uniqueCategories) {
             val registeredPlayers = mutableSetOf<PlayerDTO>()
@@ -106,7 +106,7 @@ class RegistrationService(
         val playerCompetitions = mutableListOf<CompetitionAndCategoriesDTO>()
         val player = playerService.getPlayer(playerId)
         val competitionPlayingCategories = competitionCategoryRepository.getByPlayerId(playerId)
-        val uniqueCompetitionIds = competitionPlayingCategories.map { it.competitionId }.distinct().toList()
+        val uniqueCompetitionIds = competitionPlayingCategories.map { it.competitionId }.distinct()
 
         for (id in uniqueCompetitionIds) {
             // Get playing categories for each competitions and add player data to dto
@@ -115,7 +115,7 @@ class RegistrationService(
             playerCompetitions.add(
                 CompetitionAndCategoriesDTO(
                     competition = competition,
-                    categories = categories.map { Category(it.categoryId, it.categoryName) }
+                    categories = categories.map { CompetitionCategoryDTO(it.categoryId, it.categoryName) }
                 )
             )
         }
@@ -148,7 +148,7 @@ data class PlayerCompetitionDTO(
 
 data class CompetitionAndCategoriesDTO(
     val competition: CompetitionDTO,
-    val categories: List<Category>
+    val categories: List<CompetitionCategoryDTO>
 )
 
 data class RegisteredPlayersDTO(
@@ -163,11 +163,11 @@ data class CompetitionRegistrationsDTO(
 )
 
 data class CategoryRegistrations(
-    val category: Category,
+    val category: CompetitionCategoryDTO,
     val registeredPlayers: List<PlayerDTO>
 )
 
-data class Category(
+data class CompetitionCategoryDTO(
     val competitionCategoryId: Int,
     val categoryName: String
 )

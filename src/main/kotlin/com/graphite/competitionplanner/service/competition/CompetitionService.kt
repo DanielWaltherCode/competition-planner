@@ -36,7 +36,7 @@ class CompetitionService(
         val competitionCategories = competitionCategoryRepository.getCategoriesInCompetition(competitionId)
         return CompetitionAndCategoriesDTO(
             getById(competitionId),
-            competitionCategories.map { Category(it.categoryId, it.categoryName) })
+            competitionCategories.map { CompetitionCategoryDTO(it.categoryId, it.categoryName) })
     }
 
 

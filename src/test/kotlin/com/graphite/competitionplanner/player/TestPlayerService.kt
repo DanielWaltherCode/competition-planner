@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.player
 
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
+import com.graphite.competitionplanner.api.PlayerSpec
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.service.PlayerDTO
 import com.graphite.competitionplanner.util.Util
@@ -11,17 +12,18 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 
 @SpringBootTest
-class TestPlayers(@Autowired val playerRepository: PlayerRepository,
-                  @Autowired val util: Util) {
+class TestPlayerService(@Autowired val playerRepository: PlayerRepository,
+                        @Autowired val util: Util) {
 
     @Test
     fun testAddPlayer() {
         val clubId = util.getClubIdOrDefault("Lugi")
         val originalSize = playerRepository.getPlayersByClub(clubId).size
-        val player = playerRepository.addPlayer(PlayerDTO(
-                null, "Anders", "Hansson",
+        val player = playerRepository.addPlayer(
+            PlayerSpec("Anders", "Hansson",
                 ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
-        ))
+        )
+        )
         Assertions.assertNotNull(player.id)
         Assertions.assertEquals(originalSize + 1, playerRepository.getPlayersByClub(clubId).size)
     }
@@ -31,18 +33,20 @@ class TestPlayers(@Autowired val playerRepository: PlayerRepository,
         // Add three players with similar names
         val clubId = util.getClubIdOrDefault("Lugi")
 
-        playerRepository.addPlayer(PlayerDTO(
-                null, "Aanders", "Hansson",
+        playerRepository.addPlayer(PlayerSpec(
+                "Aanders", "Hansson",
                 ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
         ))
-        playerRepository.addPlayer(PlayerDTO(
-                null, "Hasse", "Andersson",
+        playerRepository.addPlayer(PlayerSpec(
+                "Hasse", "Andersson",
                 ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
         ))
-        playerRepository.addPlayer(PlayerDTO(
-                null, "Aaa", "Haf",
+        playerRepository.addPlayer(
+            PlayerSpec(
+                "Aaa", "Haf",
                 ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
-        ))
+        )
+        )
         val playersWithTwoAs = playerRepository.findPlayersByPartOfName("aa")
         Assertions.assertEquals(2, playersWithTwoAs?.size)
 

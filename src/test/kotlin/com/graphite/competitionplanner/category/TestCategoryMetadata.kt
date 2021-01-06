@@ -28,7 +28,6 @@ class TestCategoryMetadata(
 
     @BeforeEach
     fun setUpCompetitionCategory() {
-
         competitionCategoryId = testUtil.addCompetitionCategory("Flickor 8")
         categoryMetadataDTO = categoryService.getCategoryMetadata(competitionCategoryId)
     }
