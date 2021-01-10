@@ -8,10 +8,13 @@ import com.graphite.competitionplanner.repositories.competition.CompetitionCateg
 import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
 import com.graphite.competitionplanner.repositories.competition.CategoryRepository
 import com.graphite.competitionplanner.service.*
+import com.graphite.competitionplanner.service.competition.Match
+import com.graphite.competitionplanner.service.competition.MatchType
 import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 
@@ -42,6 +45,7 @@ val matchRepository: MatchRepository) {
         categorySetup()
         competitionCategorySetup()
         registerPlayersSingles()
+        registerMatch()
     }
 
     fun setUpClub() {
@@ -189,6 +193,25 @@ val matchRepository: MatchRepository) {
         registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, lugiPlayers[1].id ?: 0, competitionCategories[0].id))
         registrationService.registerPlayerSingles( RegistrationSinglesDTO(null, umePlayers[0].id ?: 0, competitionCategories[1].id))
         registrationService.registerPlayerSingles( RegistrationSinglesDTO(null, otherPlayers[0].id ?: 0, competitionCategories[1].id))
+    }
+
+    fun registerMatch() {
+        val competitionCategories  = competitionCategoryRepository.getCompetitionCategories()
+        val competitionCategoryId = competitionCategories[0].id
+        val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
+
+       matchRepository.addMatch(
+           Match(
+               startTime = LocalDateTime.now(),
+               endTime = LocalDateTime.now().plusHours(1),
+               competitionCategoryId = competitionCategoryId,
+               firstRegistrationId = registrationIds[0],
+               secondRegistrationId = registrationIds[1],
+               matchType = MatchType.POOL,
+               matchOrderNumber = 1,
+               groupOrRound = "A"
+           )
+       )
     }
 
     // Must be in correct order depending on foreign keys

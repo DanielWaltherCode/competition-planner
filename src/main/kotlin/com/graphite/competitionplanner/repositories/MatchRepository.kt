@@ -53,7 +53,21 @@ class MatchRepository(val dslContext: DSLContext) {
         matchRecord.groupOrRound = match.groupOrRound
         matchRecord.store()
         return matchRecord.id
+    }
 
+    fun updateMatch(matchId: Int, match: Match): MatchRecord {
+        val matchRecord = dslContext.newRecord(MATCH)
+        matchRecord.id = matchId
+        matchRecord.startTime = match.startTime
+        matchRecord.endTime = match.endTime
+        matchRecord.competitionCategoryId = match.competitionCategoryId
+        matchRecord.matchType = match.matchType.name
+        matchRecord.firstRegistrationId = match.firstRegistrationId
+        matchRecord.secondRegistrationId = match.secondRegistrationId
+        matchRecord.matchOrderNumber = match.matchOrderNumber
+        matchRecord.groupOrRound = match.groupOrRound
+        matchRecord.update()
+        return matchRecord
     }
 
     fun deleteMatchesForCategory(competitionCategoryId: Int) {

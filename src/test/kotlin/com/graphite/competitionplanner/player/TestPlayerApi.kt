@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.player
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.api.PlayerApi
 import com.graphite.competitionplanner.api.PlayerSpec
@@ -14,27 +15,34 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.annotation.IfProfileValue
 import java.time.LocalDate
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@EnabledIfSystemProperty(named = "run.integration.test", matches = "true")
 class TestPlayerApi(
+    @LocalServerPort val port: Int,
+    @Autowired val testRestTemplate: TestRestTemplate,
+    @Autowired val playerService: PlayerService,
+    @Autowired val playerRepository: PlayerRepository,
     @Autowired val playerApi: PlayerApi,
     @Autowired val util: Util
 ) {
 
     lateinit var addedPlayer: PlayerDTO
     val clubId = util.getClubIdOrDefault("Lugi")
+    val mapper = ObjectMapper()
+    val baseAddress = "http://localhost:$port/player"
 
     @BeforeEach
     fun addTestPlayer() {
-        addedPlayer = playerApi.addPlayer(
-            PlayerSpec(
-                "Laban", "Nilsson",
-                ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
-            )
-        )
+        val playerString = mapper.writeValueAsString(PlayerSpec(
+            "Laban", "Nilsson",
+            ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
+        ))
+        addedPlayer = testRestTemplate.postForObject(baseAddress, playerString,  PlayerDTO::class.java)
     }
 
     @Test
@@ -82,7 +90,7 @@ class TestPlayerApi(
 
     @AfterEach
     fun cleanUp() {
-        playerApi.deletePlayer(addedPlayer.id)
+        testRestTemplate.delete(baseAddress + "/${addedPlayer.id}")
     }
 
 
