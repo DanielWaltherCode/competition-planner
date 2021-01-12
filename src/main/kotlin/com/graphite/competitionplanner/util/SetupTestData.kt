@@ -216,6 +216,7 @@ val matchRepository: MatchRepository) {
 
     // Must be in correct order depending on foreign keys
     private fun clearTables() {
+        matchRepository.clearTable()
         registrationRepository.clearPlayingIn()
         registrationRepository.clearPlayerRegistration()
         registrationRepository.clearRegistration()
@@ -224,7 +225,6 @@ val matchRepository: MatchRepository) {
         playerRepository.clearTable()
         categoryRepository.clearTable()
         clubRepository.clearClubTable()
-        matchRepository.clearTable()
     }
 
 
