@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.api.PlayerApi
 import com.graphite.competitionplanner.api.PlayerSpec
+import com.graphite.competitionplanner.classes.TestPlayerDTO
 import com.graphite.competitionplanner.repositories.PlayerRepository
-import com.graphite.competitionplanner.service.PlayerDTO
 import com.graphite.competitionplanner.service.PlayerService
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.AfterEach
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.test.annotation.IfProfileValue
 import java.time.LocalDate
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -31,18 +30,18 @@ class TestPlayerApi(
     @Autowired val util: Util
 ) {
 
-    lateinit var addedPlayer: PlayerDTO
+    lateinit var addedPlayer: TestPlayerDTO
     val clubId = util.getClubIdOrDefault("Lugi")
     val mapper = ObjectMapper()
     val baseAddress = "http://localhost:$port/player"
 
     @BeforeEach
     fun addTestPlayer() {
-        val playerString = mapper.writeValueAsString(PlayerSpec(
+        val playerString = PlayerSpec(
             "Laban", "Nilsson",
             ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
-        ))
-        addedPlayer = testRestTemplate.postForObject(baseAddress, playerString,  PlayerDTO::class.java)
+        )
+        addedPlayer = testRestTemplate.postForObject(baseAddress, playerString,  TestPlayerDTO::class.java)
     }
 
     @Test
