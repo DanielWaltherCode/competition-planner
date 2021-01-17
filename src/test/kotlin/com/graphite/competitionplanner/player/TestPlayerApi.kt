@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.api.PlayerApi
 import com.graphite.competitionplanner.api.PlayerSpec
-import com.graphite.competitionplanner.classes.TestPlayerDTO
 import com.graphite.competitionplanner.repositories.PlayerRepository
+import com.graphite.competitionplanner.service.PlayerDTO
 import com.graphite.competitionplanner.service.PlayerService
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.AfterEach
@@ -30,7 +30,7 @@ class TestPlayerApi(
     @Autowired val util: Util
 ) {
 
-    lateinit var addedPlayer: TestPlayerDTO
+    lateinit var addedPlayer: PlayerDTO
     val clubId = util.getClubIdOrDefault("Lugi")
     val mapper = ObjectMapper()
     val baseAddress = "http://localhost:$port/player"
@@ -41,7 +41,7 @@ class TestPlayerApi(
             "Laban", "Nilsson",
             ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
         )
-        addedPlayer = testRestTemplate.postForObject(baseAddress, playerString,  TestPlayerDTO::class.java)
+        addedPlayer = testRestTemplate.postForObject(baseAddress, playerString,  PlayerDTO::class.java)
     }
 
     @Test
