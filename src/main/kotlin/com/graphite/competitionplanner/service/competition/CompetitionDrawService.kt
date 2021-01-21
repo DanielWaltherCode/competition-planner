@@ -1,12 +1,16 @@
 package com.graphite.competitionplanner.service.competition
 
+import com.graphite.competitionplanner.api.competition.DrawDTO
 import com.graphite.competitionplanner.repositories.DrawTypes
 import com.graphite.competitionplanner.repositories.MatchRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategory
 import com.graphite.competitionplanner.service.*
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
+import java.lang.IllegalStateException
 import java.time.LocalDateTime
 
 @Service
@@ -16,45 +20,33 @@ class CompetitionDrawService(
     val registrationRepository: RegistrationRepository,
     val matchRepository: MatchRepository,
     val matchService: MatchService,
-    val competitionCategoryService: CompetitionCategoryService
+    val competitionCategoryService: CompetitionCategoryService,
+    val competitionDrawUtil: CompetitionDrawUtil
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    fun getPoolDraw(competitionCategoryId: Int): PoolDrawDTO {
-        val competitionCategory = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
 
-        var matches = matchService.getMatchesInCategory(competitionCategoryId)
-        // Keep only pool matches
-        matches = matches.filter { it.matchType.toLowerCase().equals("pool") }
-        val distinctGroupNames = matches.map { it.groupOrRound }.distinct()
-
-        val groupMap = mutableMapOf<String, MutableList<List<PlayerDTO>>>()
-        for (group in distinctGroupNames) {
-            groupMap[group] = mutableListOf()
-            val distinctRegistrationsInGroup =
-                matchRepository.getDistinctRegistrationIdsInGroup(competitionCategoryId, group)
-            for (id in distinctRegistrationsInGroup) {
-                val players = registrationService.getPlayersFromRegistrationId(id)
-                groupMap[group]?.add(players)
-            }
-        }
-        return PoolDrawDTO(competitionCategory, groupMap)
-    }
-
-    fun createDraw(competitionCategoryId: Int): List<MatchDTO> {
+    fun createDraw(competitionCategoryId: Int): DrawDTO {
         // Check draw type and fetch players signed up in this category
         // its easier to work with registration ids since it could be doubles and then translate back to
         // players after the draw is made
 
         val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId);
-        val categoryMetadata = categoryService.getCategoryMetadata(competitionCategoryId)
+        val categoryMetadata: CategoryMetadataDTO
+        try {
+            categoryMetadata = categoryService.getCategoryMetadata(competitionCategoryId)
+        } catch (ex: IllegalStateException) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Category metadata not found for that id")
+        }
 
         if (categoryMetadata.drawType.name == DrawTypes.POOL_ONLY.name ||
             categoryMetadata.drawType.name == DrawTypes.POOL_AND_CUP.name
         ) {
             createPoolDraw(registrationIds, categoryMetadata, competitionCategoryId)
         }
-        return matchService.getMatchesInCategory(competitionCategoryId)
+
+        // Fetch the matches that have now been set up
+        return getDraw(competitionCategoryId)
     }
 
     fun createPoolDraw(
@@ -62,6 +54,11 @@ class CompetitionDrawService(
         categoryMetadata: CategoryMetadataDTO,
         competitionCategoryId: Int
     ) {
+        // If draw has already been made, first remove old matches
+        if (matchRepository.isPoolDrawn(competitionCategoryId)) {
+            matchRepository.deleteMatchesForCategory(competitionCategoryId)
+        }
+
         val playerGroups = mutableMapOf<Int, MutableList<PlayerDTO>>()
         val numberOfPlayers = registrationIds.size
 
@@ -96,22 +93,28 @@ class CompetitionDrawService(
 
         // Store matches in database
         for (groupNumber in groupMap.keys) {
-            val group = groupMap[groupNumber]
+            val registrationIdsInGroup = groupMap[groupNumber]
             // TODO: General algorithm for generic group size? Hard code for now
-            if (group?.size == 3) {
-                setUpGroupOfThree(group, groupNumber, competitionCategoryId)
+            if (registrationIdsInGroup?.size == 3) {
+                competitionDrawUtil.setUpGroupOfThree(
+                    registrationIdsInGroup,
+                    competitionDrawUtil.getPoolName(groupNumber),
+                    competitionCategoryId
+                )
 
-            } else if (group?.size == 4) {
-                setUpGroupOfFour(group, groupNumber, competitionCategoryId)
-            } else if (group?.size == 5) {
+            } else if (registrationIdsInGroup?.size == 4) {
+                competitionDrawUtil.setUpGroupOfFour(
+                    registrationIdsInGroup,
+                    competitionDrawUtil.getPoolName(groupNumber),
+                    competitionCategoryId
+                )
+            } else if (registrationIdsInGroup?.size == 5) {
                 // Match order == 2-3, 1-3, 1-2
             } else {
-                logger.warn("Group size was different from 3, 4, 5. It was ${group?.size}. Pool draw failed")
+                logger.warn("Group size was different from 3, 4, 5. It was ${registrationIdsInGroup?.size}. Pool draw failed")
             }
         }
 
-        // TODO: Decide how to handle doubles
-        // For now, replace registration ids with PlayerDTO
         for (key in groupMap.keys) {
             playerGroups[key] = mutableListOf()
             for (registrationId in groupMap[key]!!) {
@@ -124,166 +127,66 @@ class CompetitionDrawService(
         }
     }
 
-    fun setUpGroupOfThree(group: MutableList<Int>, groupNumber: Int, competitionCategoryId: Int) {
-        // Match order == 2-3, 1-3, 1-2
-        val player1 = group[0]
-        val player2 = group[1]
-        val player3 = group[2]
+    fun getDraw(competitionCategoryId: Int): DrawDTO {
+        val playoffMatches = matchService.getPlayoffMatchesInCategory(competitionCategoryId)
+        val roundsAndPlayers = mutableMapOf<String, List<MatchDTO>>()
 
-        matchRepository.addMatch(
-            Match(
-                startTime = null,
-                endTime = null,
-                competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
-                firstRegistrationId = player2,
-                secondRegistrationId = player3,
-                matchOrderNumber = 1,
-                groupOrRound = getPoolName(groupNumber)
-            )
-        )
-        matchRepository.addMatch(
-            Match(
-                startTime = null,
-                endTime = null,
-                competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
-                firstRegistrationId = player1,
-                secondRegistrationId = player3,
-                matchOrderNumber = 2,
-                groupOrRound = getPoolName(groupNumber)
-            )
-        )
-        matchRepository.addMatch(
-            Match(
-                startTime = null,
-                endTime = null,
-                competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
-                firstRegistrationId = player1,
-                secondRegistrationId = player2,
-                matchOrderNumber = 3,
-                groupOrRound = getPoolName(groupNumber)
-            )
+        val competitionCategory = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
+        return DrawDTO(
+            getPoolDraw(competitionCategoryId),
+            PlayoffDTO(competitionCategory, roundsAndPlayers)
         )
     }
 
-    fun setUpGroupOfFour(group: MutableList<Int>, groupNumber: Int, competitionCategoryId: Int) {
-        // Match order == 2-3, 1-4, 2-4, 1-3, 3-4, 1-2
-        val player1 = group[0]
-        val player2 = group[1]
-        val player3 = group[2]
-        val player4 = group[3]
+    fun getPoolDraw(competitionCategoryId: Int): GroupDrawDTO {
+        val competitionCategory = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
 
-        matchRepository.addMatch(
-            Match(
-                startTime = null,
-                endTime = null,
-                competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
-                firstRegistrationId = player2,
-                secondRegistrationId = player3,
-                matchOrderNumber = 1,
-                groupOrRound = getPoolName(groupNumber)
-            )
-        )
-        matchRepository.addMatch(
-            Match(
-                startTime = null,
-                endTime = null,
-                competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
-                firstRegistrationId = player1,
-                secondRegistrationId = player4,
-                matchOrderNumber = 2,
-                groupOrRound = getPoolName(groupNumber)
-            )
-        )
-        matchRepository.addMatch(
-            Match(
-                startTime = null,
-                endTime = null,
-                competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
-                firstRegistrationId = player2,
-                secondRegistrationId = player4,
-                matchOrderNumber = 3,
-                groupOrRound = getPoolName(groupNumber)
-            )
-        )
-        matchRepository.addMatch(
-            Match(
-                startTime = null,
-                endTime = null,
-                competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
-                firstRegistrationId = player1,
-                secondRegistrationId = player3,
-                matchOrderNumber = 4,
-                groupOrRound = getPoolName(groupNumber)
-            )
-        )
-        matchRepository.addMatch(
-            Match(
-                startTime = null,
-                endTime = null,
-                competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
-                firstRegistrationId = player3,
-                secondRegistrationId = player4,
-                matchOrderNumber = 5,
-                groupOrRound = getPoolName(groupNumber)
-            )
-        )
-        matchRepository.addMatch(
-            Match(
-                startTime = null,
-                endTime = null,
-                competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
-                firstRegistrationId = player1,
-                secondRegistrationId = player2,
-                matchOrderNumber = 6,
-                groupOrRound = getPoolName(groupNumber)
-            )
-        )
-    }
+        val groupMatches = matchService.getGroupMatchesInCategory(competitionCategoryId)
+        val groupsAndPlayers = mutableMapOf<String, List<MatchDTO>>()
 
-    fun poolNameMap(): MutableMap<Int, String> {
-        val poolNameMap: MutableMap<Int, String> = mutableMapOf()
-        poolNameMap[1] = "A"
-        poolNameMap[2] = "B"
-        poolNameMap[3] = "C"
-        poolNameMap[4] = "D"
-        poolNameMap[5] = "E"
-        poolNameMap[6] = "F"
-        poolNameMap[7] = "G"
-        poolNameMap[8] = "H"
-        poolNameMap[9] = "I"
-        poolNameMap[10] = "J"
-        poolNameMap[11] = "K"
-        poolNameMap[12] = "L"
-        poolNameMap[13] = "M"
-        poolNameMap[14] = "N"
-        poolNameMap[15] = "O"
-        poolNameMap[16] = "P"
-        poolNameMap[17] = "Q"
-        poolNameMap[18] = "R"
-        poolNameMap[19] = "S"
-        poolNameMap[20] = "T"
-        poolNameMap[21] = "U"
-        poolNameMap[22] = "V"
-        poolNameMap[23] = "W"
-        return poolNameMap
-    }
-
-    fun getPoolName(poolNumber: Int): String {
-        val map = poolNameMap()
-        val name = map[poolNumber]
-        if (name == null) {
-            return ""
+        if (groupMatches.isNotEmpty()) {
+            val distinctGroups = groupMatches.map { it.groupOrRound }.distinct()
+            for (group in distinctGroups) {
+                val matchesInGroup = mutableListOf<MatchDTO>()
+                for (match in groupMatches) {
+                    if (match.groupOrRound.equals(group)) {
+                        matchesInGroup.add(match)
+                    }
+                }
+                groupsAndPlayers.put(group, matchesInGroup)
+            }
         }
-        return name
+        return GroupDrawDTO(competitionCategory, groupsAndPlayers)
+    }
+
+
+    /**
+     * This method is only called to create the "empty" playoff draw before group stage is played
+     * So it can say that A1 will play againt E2 in the first match, D1-F2 in the second etc. After group
+     * stage actual players name will be entered.
+     */
+    fun setUpPlayoffForGroups(competitionCategoryId: Int): PlayoffPlan {
+        val categoryMetadata = categoryService.getCategoryMetadata(competitionCategoryId)
+        val matches = matchService.getGroupMatchesInCategory(competitionCategoryId)
+        if (matches.isEmpty()) {
+            logger.error("No group matches found before attempt to make playoff draw")
+        }
+
+        // Find out how many groups there are and how many matches there should be in first round
+        // Number of matches == the first 2^x that is larger than nr players proceeding to playoffs
+        val distinctGroups = matches.map { it.groupOrRound }.distinct()
+
+
+        if (categoryMetadata.nrPlayersToPlayoff == 1) {
+            return competitionDrawUtil.playoffForGroupsWhereOneProceeds(distinctGroups)
+        }
+        else if (categoryMetadata.nrPlayersToPlayoff == 2) {
+            return PlayoffPlan(listOf())
+        }
+        else {
+            logger.error("Unclear number of players continued from group: $categoryMetadata.nrPlayersToPlayoff")
+        }
+        return PlayoffPlan(listOf())
     }
 }
 
@@ -302,8 +205,13 @@ enum class MatchType {
     POOL, PLAYOFF
 }
 
-data class PoolDrawDTO(
+data class GroupDrawDTO(
     val competitionCategory: CompetitionCategory,
     // Todo: handle doubles in this draw
-    val pools: MutableMap<String, MutableList<List<PlayerDTO>>>
+    val groups: MutableMap<String, List<MatchDTO>>
+)
+
+data class PlayoffDTO(
+    val competitionCategory: CompetitionCategory,
+    val matches: MutableMap<String, List<MatchDTO>>
 )

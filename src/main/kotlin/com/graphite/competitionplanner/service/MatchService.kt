@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.service
 
 import com.graphite.competitionplanner.repositories.MatchRepository
 import com.graphite.competitionplanner.service.competition.Match
+import com.graphite.competitionplanner.service.competition.MatchType
 import com.graphite.competitionplanner.tables.records.MatchRecord
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -21,6 +22,16 @@ val registrationService: RegistrationService) {
 
     fun getMatchesInCategory(competitionCategoryId: Int): List<MatchDTO> {
         val matchRecords = matchRepository.getMatchesInCategory(competitionCategoryId)
+        return matchRecords.map { matchRecordToDTO(it) }
+    }
+
+    fun getGroupMatchesInCategory(competitionCategoryId: Int): List<MatchDTO> {
+        val matchRecords = matchRepository.getMatchesInCategoryForMatchType(competitionCategoryId, MatchType.POOL)
+        return matchRecords.map { matchRecordToDTO(it) }
+    }
+
+    fun getPlayoffMatchesInCategory(competitionCategoryId: Int): List<MatchDTO> {
+        val matchRecords = matchRepository.getMatchesInCategoryForMatchType(competitionCategoryId, MatchType.PLAYOFF)
         return matchRecords.map { matchRecordToDTO(it) }
     }
 

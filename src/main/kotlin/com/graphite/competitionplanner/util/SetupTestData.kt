@@ -8,6 +8,7 @@ import com.graphite.competitionplanner.repositories.competition.CompetitionCateg
 import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
 import com.graphite.competitionplanner.repositories.competition.CategoryRepository
 import com.graphite.competitionplanner.service.*
+import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
 import com.graphite.competitionplanner.service.competition.Match
 import com.graphite.competitionplanner.service.competition.MatchType
 import org.springframework.context.event.ContextRefreshedEvent
@@ -27,6 +28,7 @@ class EventListener(val playerRepository: PlayerRepository,
                     val competitionCategoryRepository: CompetitionCategoryRepository,
                     val registrationRepository: RegistrationRepository,
                     val competitionService: CompetitionService,
+                    val competitionCategoryService: CompetitionCategoryService,
                     val drawTypeRepository: DrawTypeRepository,
                     val util: Util,
                     val registrationService: RegistrationService,
@@ -165,21 +167,21 @@ val matchRepository: MatchRepository) {
         val lugiId = util.getClubIdOrDefault("Lugi")
         val lugiCompetitions = competitionService.getByClubId(lugiId)
         val lugiCompetitionId = lugiCompetitions[0].id ?: 0
-        competitionCategoryRepository.addCompetitionCategory(lugiCompetitionId, categoryRepository.getByName("Herrar 1").id)
-        competitionCategoryRepository.addCompetitionCategory(lugiCompetitionId, categoryRepository.getByName("Herrar 2").id)
-        competitionCategoryRepository.addCompetitionCategory(lugiCompetitionId, categoryRepository.getByName("Damer 1").id)
-        competitionCategoryRepository.addCompetitionCategory(lugiCompetitionId, categoryRepository.getByName("Damer 2").id)
-        competitionCategoryRepository.addCompetitionCategory(lugiCompetitionId, categoryRepository.getByName("Damjuniorer 17").id)
-        competitionCategoryRepository.addCompetitionCategory(lugiCompetitionId, categoryRepository.getByName("Damer 3").id)
+        competitionCategoryService.addCompetitionCategory(lugiCompetitionId, categoryRepository.getByName("Herrar 1").id)
+        competitionCategoryService.addCompetitionCategory(lugiCompetitionId, categoryRepository.getByName("Herrar 2").id)
+        competitionCategoryService.addCompetitionCategory(lugiCompetitionId, categoryRepository.getByName("Damer 1").id)
+        competitionCategoryService.addCompetitionCategory(lugiCompetitionId, categoryRepository.getByName("Damer 2").id)
+        competitionCategoryService.addCompetitionCategory(lugiCompetitionId, categoryRepository.getByName("Damjuniorer 17").id)
+        competitionCategoryService.addCompetitionCategory(lugiCompetitionId, categoryRepository.getByName("Damer 3").id)
 
         val umeaId = util.getClubIdOrDefault("Umeå IK")
         val umeaCompetitions = competitionService.getByClubId(umeaId)
         val umeaCompetitionId = umeaCompetitions[0].id ?: 0
-        competitionCategoryRepository.addCompetitionCategory(umeaCompetitionId, categoryRepository.getByName("Herrar 1").id)
-        competitionCategoryRepository.addCompetitionCategory(umeaCompetitionId, categoryRepository.getByName("Herrar 2").id)
-        competitionCategoryRepository.addCompetitionCategory(umeaCompetitionId, categoryRepository.getByName("Damer 1").id)
-        competitionCategoryRepository.addCompetitionCategory(umeaCompetitionId, categoryRepository.getByName("Damer 2").id)
-        competitionCategoryRepository.addCompetitionCategory(umeaCompetitionId, categoryRepository.getByName("Damer 3").id)
+        competitionCategoryService.addCompetitionCategory(umeaCompetitionId, categoryRepository.getByName("Herrar 1").id)
+        competitionCategoryService.addCompetitionCategory(umeaCompetitionId, categoryRepository.getByName("Herrar 2").id)
+        competitionCategoryService.addCompetitionCategory(umeaCompetitionId, categoryRepository.getByName("Damer 1").id)
+        competitionCategoryService.addCompetitionCategory(umeaCompetitionId, categoryRepository.getByName("Damer 2").id)
+        competitionCategoryService.addCompetitionCategory(umeaCompetitionId, categoryRepository.getByName("Damer 3").id)
     }
 
     fun registerPlayersSingles() {
@@ -188,11 +190,25 @@ val matchRepository: MatchRepository) {
         val umePlayers = playerService.getPlayersByClubId(util.getClubIdOrDefault("Umeå IK"))
         val otherPlayers = playerService.getPlayersByClubId(util.getClubIdOrDefault("Övriga"))
         val competitionCategories  = competitionCategoryRepository.getCompetitionCategories()
+
+        // Have "Herrar 1" in Lugi as main competition category to play around with
         registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, lugiPlayers[0].id ?: 0, competitionCategories[0].id))
         registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, lugiPlayers[0].id ?: 0, competitionCategories[1].id))
         registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, lugiPlayers[1].id ?: 0, competitionCategories[0].id))
         registrationService.registerPlayerSingles( RegistrationSinglesDTO(null, umePlayers[0].id ?: 0, competitionCategories[1].id))
         registrationService.registerPlayerSingles( RegistrationSinglesDTO(null, otherPlayers[0].id ?: 0, competitionCategories[1].id))
+        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, lugiPlayers[2].id ?: 0, competitionCategories[0].id))
+        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, lugiPlayers[3].id ?: 0, competitionCategories[0].id))
+        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, lugiPlayers[4].id ?: 0, competitionCategories[0].id))
+        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, lugiPlayers[5].id ?: 0, competitionCategories[0].id))
+        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, lugiPlayers[6].id ?: 0, competitionCategories[0].id))
+        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, lugiPlayers[7].id ?: 0, competitionCategories[0].id))
+        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, umePlayers[0].id ?: 0, competitionCategories[0].id))
+        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, umePlayers[1].id ?: 0, competitionCategories[0].id))
+        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, umePlayers[2].id ?: 0, competitionCategories[0].id))
+        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, umePlayers[3].id ?: 0, competitionCategories[0].id))
+        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, umePlayers[4].id ?: 0, competitionCategories[0].id))
+        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, umePlayers[5].id ?: 0, competitionCategories[0].id))
     }
 
     fun registerMatch() {

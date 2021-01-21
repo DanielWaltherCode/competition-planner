@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.repositories
 
 import com.graphite.competitionplanner.Tables.MATCH
 import com.graphite.competitionplanner.service.competition.Match
+import com.graphite.competitionplanner.service.competition.MatchType
 import com.graphite.competitionplanner.tables.records.MatchRecord
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
@@ -17,6 +18,14 @@ class MatchRepository(val dslContext: DSLContext) {
         return dslContext
             .select().from(MATCH)
             .where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+            .fetchInto(MATCH)
+    }
+
+    fun getMatchesInCategoryForMatchType(competitionCategoryId: Int, matchType: MatchType): List<MatchRecord> {
+        return dslContext
+            .select().from(MATCH)
+            .where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
+                .and(MATCH.MATCH_TYPE.equalIgnoreCase(matchType.name)))
             .fetchInto(MATCH)
     }
 
@@ -70,8 +79,16 @@ class MatchRepository(val dslContext: DSLContext) {
         return matchRecord
     }
 
+    fun isPoolDrawn(competitionCategoryId: Int): Boolean {
+        return dslContext.fetchExists(
+            dslContext.selectFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
+                .and(MATCH.MATCH_TYPE.equalIgnoreCase(MatchType.POOL.name)))
+        )
+    }
+
     fun deleteMatchesForCategory(competitionCategoryId: Int) {
-        dslContext.deleteFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
+        dslContext.deleteFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
+            .and(MATCH.HAS_FINISHED.eq(false))).execute()
     }
 
     fun clearTable() {

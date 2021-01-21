@@ -72,7 +72,8 @@ create table match
     first_registration_id           INTEGER REFERENCES registration (id),
     second_registration_id          INTEGER REFERENCES registration (id),
     match_order_number INTEGER NOT NULL,
-    group_or_round VARCHAR(30) /* Either which group or which round */
+    group_or_round VARCHAR(30), /* Either which group or which round */
+    has_finished boolean DEFAULT false
 );
 
 

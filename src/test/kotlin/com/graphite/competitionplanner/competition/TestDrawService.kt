@@ -9,6 +9,7 @@ import com.graphite.competitionplanner.service.competition.CompetitionCategorySe
 import com.graphite.competitionplanner.service.competition.CompetitionDrawService
 import com.graphite.competitionplanner.util.TestUtil
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -54,10 +55,17 @@ class TestDrawService(
         for (player in players) {
             registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, player.id, competitionCategoryId))
         }
-        competitionDrawService.createDraw(competitionCategoryId)
-        val poolDraw = competitionDrawService.getPoolDraw(competitionCategoryId)
-        println("Monkey")
-        // With 22 players there should be six groups, 4 in the first 4, 3 in the two last ones
+        val draw = competitionDrawService.createDraw(competitionCategoryId)
+        // With 22 players there should be six groups, 6 matches in the first 4, 3 in the two last ones
+        Assertions.assertNotNull(draw)
+        val groups = draw.groupDraw.groups
+        Assertions.assertEquals(6, groups.size)
+        Assertions.assertEquals(6, groups["A"]?.size)
+        Assertions.assertEquals(6, groups["B"]?.size)
+        Assertions.assertEquals(6, groups["C"]?.size)
+        Assertions.assertEquals(6, groups["D"]?.size)
+        Assertions.assertEquals(3, groups["E"]?.size)
+        Assertions.assertEquals(3, groups["F"]?.size)
     }
 
     @Test
@@ -72,6 +80,13 @@ class TestDrawService(
         val draw = competitionDrawService.createDraw(competitionCategoryId)
 
         // With 20 players there should be exactly 5 groups
+        val groups = draw.groupDraw.groups
+        Assertions.assertEquals(5, groups.size)
+        Assertions.assertEquals(6, groups["A"]?.size)
+        Assertions.assertEquals(6, groups["B"]?.size)
+        Assertions.assertEquals(6, groups["C"]?.size)
+        Assertions.assertEquals(6, groups["D"]?.size)
+        Assertions.assertEquals(6, groups["E"]?.size)
    }
 
     @Test
@@ -85,7 +100,51 @@ class TestDrawService(
         }
         val draw = competitionDrawService.createDraw(competitionCategoryId)
 
-        // With 9 players there should be 3 groups with three players in each
+        // With 9 players there should be 3 groups with 3 matches in each
+        val groups = draw.groupDraw.groups
+        Assertions.assertEquals(3, groups.size)
+        Assertions.assertEquals(3, groups["A"]?.size)
+        Assertions.assertEquals(3, groups["B"]?.size)
+        Assertions.assertEquals(3, groups["C"]?.size)
+    }
+
+    @Test
+    fun testGetFullDraw() {
+        val allPlayers = playerRepository.getAll()
+
+        val players = allPlayers.subList(0, 9)
+        for (player in players) {
+            registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, player.id, competitionCategoryId))
+        }
+        competitionDrawService.createDraw(competitionCategoryId)
+
+        val draw = competitionDrawService.getDraw(competitionCategoryId)
+        Assertions.assertNotNull(draw)
+        Assertions.assertNotNull(draw.groupDraw.competitionCategory)
+        Assertions.assertNotNull(draw.groupDraw.groups)
+        Assertions.assertTrue(draw.groupDraw.groups.isNotEmpty())
+    }
+
+    @Test
+    fun testGetGroupDraw() {
+        val allPlayers = playerRepository.getAll()
+
+        val players = allPlayers.subList(0, 9)
+        for (player in players) {
+            registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, player.id, competitionCategoryId))
+        }
+        competitionDrawService.createDraw(competitionCategoryId)
+
+        val draw = competitionDrawService.getPoolDraw(competitionCategoryId)
+        Assertions.assertNotNull(draw)
+        Assertions.assertNotNull(draw.competitionCategory)
+        Assertions.assertNotNull(draw.groups)
+        Assertions.assertTrue(draw.groups.isNotEmpty())
+    }
+
+    @Test
+    fun getPlayoffDraw() {
+
     }
 
 }
