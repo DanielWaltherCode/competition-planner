@@ -99,6 +99,13 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) {
         }.toList()
     }
 
+    fun getCategoryType(competitionCategoryId: Int) : CategoryRecord {
+        return dslContext.select().from(COMPETITION_CATEGORY)
+                .join(CATEGORY).on(CATEGORY.ID.eq(COMPETITION_CATEGORY.CATEGORY))
+                .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
+                .fetchOneInto(CATEGORY)
+    }
+
     fun getCategoriesAndPlayers(competitionId: Int): List<CategoriesAndPlayers> {
         val records: List<Record> =
             dslContext.select(COMPETITION_CATEGORY.ID, CATEGORY.CATEGORY_NAME, Tables.PLAYER.ID)

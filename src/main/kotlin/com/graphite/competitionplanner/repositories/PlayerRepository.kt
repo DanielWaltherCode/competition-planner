@@ -1,13 +1,13 @@
 package com.graphite.competitionplanner.repositories
 
 import com.graphite.competitionplanner.Tables.CLUB
+import com.graphite.competitionplanner.Tables.PLAYER_RANKING
 import com.graphite.competitionplanner.api.PlayerSpec
-import com.graphite.competitionplanner.service.PlayerDTO
 import com.graphite.competitionplanner.tables.Player.PLAYER
+import com.graphite.competitionplanner.tables.records.PlayerRankingRecord
 import com.graphite.competitionplanner.tables.records.PlayerRecord
 import org.jooq.DSLContext
 import org.jooq.Record
-import org.jooq.Result
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -50,6 +50,10 @@ class PlayerRepository(
 
     fun getPlayer(id: Int): Record? {
         return dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(PLAYER.ID.eq(id)).fetchOne()
+    }
+
+    fun getPlayerRanking(id: Int): PlayerRankingRecord? {
+        return dslContext.select().from(PLAYER_RANKING).where(PLAYER_RANKING.PLAYER_ID.eq(id)).fetchOneInto(PLAYER_RANKING)
     }
 
     fun findPlayersByPartOfName(partOfName: String): List<Record> {
