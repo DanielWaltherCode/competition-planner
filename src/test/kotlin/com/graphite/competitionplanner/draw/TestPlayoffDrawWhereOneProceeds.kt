@@ -1,20 +1,19 @@
 package com.graphite.competitionplanner.draw
 
-import com.graphite.competitionplanner.service.competition.CompetitionDrawUtil
+import com.graphite.competitionplanner.service.competition.DrawUtil
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TestDrawsWhereOneProceeds(@Autowired val competitionDrawUtil: CompetitionDrawUtil) {
+class TestPlayoffDrawWhereOneProceeds(@Autowired val drawUtil: DrawUtil) {
 
     @Test
-    fun testGroupOf3() {
+    fun test3Groups() {
         val groups = listOf("A", "B", "C")
 
-        val playoffPlan = competitionDrawUtil.playoffForGroupsWhereOneProceeds(groups)
-        val matchUps = playoffPlan.matchUps
+        val matchUps = drawUtil.playoffForGroupsWhereOneProceeds(groups)
         Assertions.assertEquals("A1", matchUps[0].player1)
         Assertions.assertEquals("BYE", matchUps[0].player2)
         Assertions.assertEquals("C1", matchUps[1].player1)
@@ -22,11 +21,10 @@ class TestDrawsWhereOneProceeds(@Autowired val competitionDrawUtil: CompetitionD
     }
 
     @Test
-    fun testGroupOf4() {
+    fun test4Groups() {
         val groups = listOf("A", "B", "C", "D")
 
-        val playoffPlan = competitionDrawUtil.playoffForGroupsWhereOneProceeds(groups)
-        val matchUps = playoffPlan.matchUps
+        val matchUps = drawUtil.playoffForGroupsWhereOneProceeds(groups)
         Assertions.assertEquals("A1", matchUps[0].player1)
         Assertions.assertEquals("D1", matchUps[0].player2)
         Assertions.assertEquals("C1", matchUps[1].player1)
@@ -34,11 +32,10 @@ class TestDrawsWhereOneProceeds(@Autowired val competitionDrawUtil: CompetitionD
     }
 
     @Test
-    fun testGroupOf5() {
+    fun test5Groups() {
         val groups = listOf("A", "B", "C", "D", "E")
 
-        val playoffPlan = competitionDrawUtil.playoffForGroupsWhereOneProceeds(groups)
-        val matchUps = playoffPlan.matchUps
+        val matchUps = drawUtil.playoffForGroupsWhereOneProceeds(groups)
         Assertions.assertEquals("A1", matchUps[0].player1)
         Assertions.assertEquals("BYE", matchUps[0].player2)
 
@@ -53,11 +50,10 @@ class TestDrawsWhereOneProceeds(@Autowired val competitionDrawUtil: CompetitionD
     }
 
     @Test
-    fun testGroupOf7() {
+    fun test7Groups() {
         val groups = listOf("A", "B", "C", "D", "E", "F", "G")
 
-        val playoffPlan = competitionDrawUtil.playoffForGroupsWhereOneProceeds(groups)
-        val matchUps = playoffPlan.matchUps
+        val matchUps = drawUtil.playoffForGroupsWhereOneProceeds(groups)
         Assertions.assertEquals("A1", matchUps[0].player1)
         Assertions.assertEquals("BYE", matchUps[0].player2)
 
@@ -72,11 +68,10 @@ class TestDrawsWhereOneProceeds(@Autowired val competitionDrawUtil: CompetitionD
     }
 
     @Test
-    fun testGroupOf8() {
+    fun test8Groups() {
         val groups = listOf("A", "B", "C", "D", "E", "F", "G", "H")
 
-        val playoffPlan = competitionDrawUtil.playoffForGroupsWhereOneProceeds(groups)
-        val matchUps = playoffPlan.matchUps
+        val matchUps = drawUtil.playoffForGroupsWhereOneProceeds(groups)
         Assertions.assertEquals("A1", matchUps[0].player1)
         Assertions.assertEquals("H1", matchUps[0].player2)
 
@@ -91,11 +86,10 @@ class TestDrawsWhereOneProceeds(@Autowired val competitionDrawUtil: CompetitionD
     }
 
     @Test
-    fun testGroupOf9() {
+    fun test9Groups() {
         val groups = listOf("A", "B", "C", "D", "E", "F", "G", "H", "I")
 
-        val playoffPlan = competitionDrawUtil.playoffForGroupsWhereOneProceeds(groups)
-        val matchUps = playoffPlan.matchUps
+        val matchUps = drawUtil.playoffForGroupsWhereOneProceeds(groups)
         Assertions.assertEquals("A1", matchUps[0].player1)
         Assertions.assertEquals("BYE", matchUps[0].player2)
 
@@ -122,11 +116,10 @@ class TestDrawsWhereOneProceeds(@Autowired val competitionDrawUtil: CompetitionD
     }
 
     @Test
-    fun testGroupOf13() {
+    fun test13Groups() {
         val groups = listOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M")
 
-        val playoffPlan = competitionDrawUtil.playoffForGroupsWhereOneProceeds(groups)
-        val matchUps = playoffPlan.matchUps
+        val matchUps = drawUtil.playoffForGroupsWhereOneProceeds(groups)
         Assertions.assertEquals("A1", matchUps[0].player1)
         Assertions.assertEquals("BYE", matchUps[0].player2)
 

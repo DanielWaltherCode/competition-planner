@@ -4,7 +4,7 @@ import com.graphite.competitionplanner.repositories.MatchRepository
 import org.springframework.stereotype.Service
 
 @Service
-class CompetitionDrawUtil(val matchRepository: MatchRepository) {
+class DrawUtil(val matchRepository: MatchRepository) {
     fun setUpGroupOfThree(registrationIds: MutableList<Int>, groupName: String, competitionCategoryId: Int) {
         // Match order == 2-3, 1-3, 1-2
         val player1 = registrationIds[0]
@@ -16,7 +16,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player2,
                 secondRegistrationId = player3,
                 matchOrderNumber = 1,
@@ -28,7 +28,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player1,
                 secondRegistrationId = player3,
                 matchOrderNumber = 2,
@@ -40,7 +40,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player1,
                 secondRegistrationId = player2,
                 matchOrderNumber = 3,
@@ -61,7 +61,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player2,
                 secondRegistrationId = player3,
                 matchOrderNumber = 1,
@@ -73,7 +73,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player1,
                 secondRegistrationId = player4,
                 matchOrderNumber = 2,
@@ -85,7 +85,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player2,
                 secondRegistrationId = player4,
                 matchOrderNumber = 3,
@@ -97,7 +97,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player1,
                 secondRegistrationId = player3,
                 matchOrderNumber = 4,
@@ -109,7 +109,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player3,
                 secondRegistrationId = player4,
                 matchOrderNumber = 5,
@@ -121,7 +121,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player1,
                 secondRegistrationId = player2,
                 matchOrderNumber = 6,
@@ -143,7 +143,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player2,
                 secondRegistrationId = player3,
                 matchOrderNumber = 1,
@@ -155,7 +155,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player4,
                 secondRegistrationId = player5,
                 matchOrderNumber = 2,
@@ -167,7 +167,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player1,
                 secondRegistrationId = player5,
                 matchOrderNumber = 3,
@@ -179,7 +179,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player3,
                 secondRegistrationId = player4,
                 matchOrderNumber = 4,
@@ -191,7 +191,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player1,
                 secondRegistrationId = player4,
                 matchOrderNumber = 5,
@@ -203,7 +203,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player2,
                 secondRegistrationId = player5,
                 matchOrderNumber = 6,
@@ -215,7 +215,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player1,
                 secondRegistrationId = player2,
                 matchOrderNumber = 7,
@@ -227,7 +227,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player3,
                 secondRegistrationId = player5,
                 matchOrderNumber = 8,
@@ -239,7 +239,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player1,
                 secondRegistrationId = player3,
                 matchOrderNumber = 9,
@@ -251,7 +251,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.POOL,
+                matchType = MatchType.GROUP,
                 firstRegistrationId = player2,
                 secondRegistrationId = player4,
                 matchOrderNumber = 10,
@@ -262,29 +262,29 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
 
     fun getPoolNameMap(): MutableMap<Int, String> {
         val poolNameMap: MutableMap<Int, String> = mutableMapOf()
-        poolNameMap[1] = "A"
-        poolNameMap[2] = "B"
-        poolNameMap[3] = "C"
-        poolNameMap[4] = "D"
-        poolNameMap[5] = "E"
-        poolNameMap[6] = "F"
-        poolNameMap[7] = "G"
-        poolNameMap[8] = "H"
-        poolNameMap[9] = "I"
-        poolNameMap[10] = "J"
-        poolNameMap[11] = "K"
-        poolNameMap[12] = "L"
-        poolNameMap[13] = "M"
-        poolNameMap[14] = "N"
-        poolNameMap[15] = "O"
-        poolNameMap[16] = "P"
-        poolNameMap[17] = "Q"
-        poolNameMap[18] = "R"
-        poolNameMap[19] = "S"
-        poolNameMap[20] = "T"
-        poolNameMap[21] = "U"
-        poolNameMap[22] = "V"
-        poolNameMap[23] = "W"
+        poolNameMap[0] = "A"
+        poolNameMap[1] = "B"
+        poolNameMap[2] = "C"
+        poolNameMap[3] = "D"
+        poolNameMap[4] = "E"
+        poolNameMap[5] = "F"
+        poolNameMap[6] = "G"
+        poolNameMap[7] = "H"
+        poolNameMap[8] = "I"
+        poolNameMap[9] = "J"
+        poolNameMap[10] = "K"
+        poolNameMap[11] = "L"
+        poolNameMap[12] = "M"
+        poolNameMap[13] = "N"
+        poolNameMap[14] = "O"
+        poolNameMap[15] = "P"
+        poolNameMap[16] = "Q"
+        poolNameMap[17] = "R"
+        poolNameMap[18] = "S"
+        poolNameMap[19] = "T"
+        poolNameMap[20] = "U"
+        poolNameMap[21] = "V"
+        poolNameMap[22] = "W"
         return poolNameMap
     }
 
@@ -297,7 +297,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
         return name
     }
 
-    fun playoffForGroupsWhereOneProceeds(groups: List<String> ): PlayoffPlan {
+    fun playoffForGroupsWhereOneProceeds(groups: List<String> ): List<MatchUp> {
         val playOrder = getPlayoffOrderWhereOneProceeds(groups.size)
         val playerPositions = playOrder.map { "BYE" }.toMutableList()
 
@@ -318,7 +318,7 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
                 matchUps.add(MatchUp(playerPositions[i], playerPositions[i + 1]))
             }
 
-        return PlayoffPlan(matchUps)
+        return matchUps
     }
 
     fun getPossiblePlayoffNumbers() = listOf(2, 4, 8, 16, 32, 64, 128, 256)
@@ -350,14 +350,26 @@ class CompetitionDrawUtil(val matchRepository: MatchRepository) {
             else -> return emptyList()
         }
     }
+
+    fun getRound(nrMatches: Int): Round {
+       return when(nrMatches) {
+           1 -> Round.FINAL
+           2 -> Round.SEMI_FINAL
+           4 -> Round.QUARTER_FINAL
+           8 -> Round.ROUND_OF_16
+           16 -> Round.ROUND_OF_32
+           32 -> Round.ROUND_OF_64
+               else -> Round.UNKNOWN
+       }
+    }
 }
 
-
-data class PlayoffPlan(
-    val matchUps: List<MatchUp>
-)
 
 data class MatchUp(
     val player1: String,
     val player2: String
 )
+
+enum class Round {
+    FINAL, SEMI_FINAL, QUARTER_FINAL, ROUND_OF_16, ROUND_OF_32, ROUND_OF_64, UNKNOWN
+}

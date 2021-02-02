@@ -14,14 +14,15 @@ import java.lang.IllegalStateException
 import java.time.LocalDateTime
 
 @Service
-class CompetitionDrawService(
+class DrawService(
     val categoryService: CategoryService,
     val registrationService: RegistrationService,
     val registrationRepository: RegistrationRepository,
     val matchRepository: MatchRepository,
     val matchService: MatchService,
     val competitionCategoryService: CompetitionCategoryService,
-    val competitionDrawUtil: CompetitionDrawUtil
+    val drawUtil: DrawUtil,
+    val drawUtilTwoProceed: DrawUtilTwoProceed
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -62,11 +63,12 @@ class CompetitionDrawService(
         val playerGroups = mutableMapOf<Int, MutableList<PlayerDTO>>()
         val numberOfPlayers = registrationIds.size
 
-        // If remainder is zero, number of registered players fits perfectly with
-        // group size. Otherwise add one more group
         val remainder = numberOfPlayers.rem(categoryMetadata.nrPlayersPerGroup)
         var nrGroups = numberOfPlayers / categoryMetadata.nrPlayersPerGroup
-        if (remainder != 0) {
+
+        // If remainder is zero, number of registered players fits perfectly with
+        // group size. Otherwise add one more group if it's groups of 4
+        if (remainder != 0 && categoryMetadata.nrPlayersPerGroup == 4) {
             nrGroups += 1
         }
 
@@ -75,43 +77,61 @@ class CompetitionDrawService(
         // Add lists to hold registration ids for each group
         var counter = 0
         while (counter < nrGroups) {
-            groupMap.put(counter + 1, mutableListOf())
+            groupMap.put(counter, mutableListOf())
             counter += 1
         }
 
-        // TODO: Add seeding
-        // Add one player to each group, then start over from the top
-        counter = 0
-        for (id in registrationIds) {
-            groupMap[counter + 1]?.add(id)
-            counter += 1
+        // TODO: Add seeded players first
 
-            if (counter == nrGroups) {
-                counter = 0
+
+        // Add one player to each group. If there are 4 players per group start from top, if 3 start from bottom
+        if (categoryMetadata.nrPlayersPerGroup == 3) {
+            counter = nrGroups - 1
+            for (id in registrationIds) {
+                groupMap[counter]?.add(id)
+                counter -= 1
+
+                if (counter == -1) {
+                    counter = nrGroups - 1
+                }
+            }
+        }
+        else if (categoryMetadata.nrPlayersPerGroup == 4) {
+            counter = 0
+            for (id in registrationIds) {
+                groupMap[counter]?.add(id)
+                counter += 1
+
+                if (counter == nrGroups) {
+                    counter = 0
+                }
             }
         }
 
         // Store matches in database
         for (groupNumber in groupMap.keys) {
             val registrationIdsInGroup = groupMap[groupNumber]
-            // TODO: General algorithm for generic group size? Hard code for now
-            if (registrationIdsInGroup?.size == 3) {
-                competitionDrawUtil.setUpGroupOfThree(
-                    registrationIdsInGroup,
-                    competitionDrawUtil.getPoolName(groupNumber),
-                    competitionCategoryId
-                )
+            if (registrationIdsInGroup == null) {
+                logger.error("Draw failed, no registration ids found for group")
+                throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Draw failed")
+            }
 
-            } else if (registrationIdsInGroup?.size == 4) {
-                competitionDrawUtil.setUpGroupOfFour(
+            if (registrationIdsInGroup.size == 3) {
+                drawUtil.setUpGroupOfThree(
                     registrationIdsInGroup,
-                    competitionDrawUtil.getPoolName(groupNumber),
+                    drawUtil.getPoolName(groupNumber),
                     competitionCategoryId
                 )
-            } else if (registrationIdsInGroup?.size == 5) {
+            } else if (registrationIdsInGroup.size == 4) {
+                drawUtil.setUpGroupOfFour(
+                    registrationIdsInGroup,
+                    drawUtil.getPoolName(groupNumber),
+                    competitionCategoryId
+                )
+            } else if (registrationIdsInGroup.size == 5) {
                 // Match order == 2-3, 1-3, 1-2
             } else {
-                logger.warn("Group size was different from 3, 4, 5. It was ${registrationIdsInGroup?.size}. Pool draw failed")
+                logger.warn("Group size was different from 3, 4, 5. It was ${registrationIdsInGroup.size}. Pool draw failed")
             }
         }
 
@@ -129,12 +149,11 @@ class CompetitionDrawService(
 
     fun getDraw(competitionCategoryId: Int): DrawDTO {
         val playoffMatches = matchService.getPlayoffMatchesInCategory(competitionCategoryId)
-        val roundsAndPlayers = mutableMapOf<String, List<MatchDTO>>()
 
         val competitionCategory = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
         return DrawDTO(
             getPoolDraw(competitionCategoryId),
-            PlayoffDTO(competitionCategory, roundsAndPlayers)
+            getPlayoffForGroups(competitionCategoryId)
         )
     }
 
@@ -165,28 +184,32 @@ class CompetitionDrawService(
      * So it can say that A1 will play againt E2 in the first match, D1-F2 in the second etc. After group
      * stage actual players name will be entered.
      */
-    fun setUpPlayoffForGroups(competitionCategoryId: Int): PlayoffPlan {
+    fun getPlayoffForGroups(competitionCategoryId: Int): PlayoffDTO {
         val categoryMetadata = categoryService.getCategoryMetadata(competitionCategoryId)
-        val matches = matchService.getGroupMatchesInCategory(competitionCategoryId)
-        if (matches.isEmpty()) {
+        val groupMatches = matchService.getGroupMatchesInCategory(competitionCategoryId)
+        if (groupMatches.isEmpty()) {
             logger.error("No group matches found before attempt to make playoff draw")
         }
 
         // Find out how many groups there are and how many matches there should be in first round
         // Number of matches == the first 2^x that is larger than nr players proceeding to playoffs
-        val distinctGroups = matches.map { it.groupOrRound }.distinct()
+        val distinctGroups = groupMatches.map { it.groupOrRound }.distinct()
 
-
+        val playoffMatches: List<MatchUp>
         if (categoryMetadata.nrPlayersToPlayoff == 1) {
-            return competitionDrawUtil.playoffForGroupsWhereOneProceeds(distinctGroups)
+            playoffMatches = drawUtil.playoffForGroupsWhereOneProceeds(distinctGroups)
         }
         else if (categoryMetadata.nrPlayersToPlayoff == 2) {
-            return PlayoffPlan(listOf())
+            playoffMatches = drawUtilTwoProceed.playoffDrawWhereTwoProceed(distinctGroups)
         }
         else {
             logger.error("Unclear number of players continued from group: $categoryMetadata.nrPlayersToPlayoff")
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Number of players going to playoff should be 1 or 2")
         }
-        return PlayoffPlan(listOf())
+        val round = drawUtil.getRound(playoffMatches.size)
+        val playoffRound = mutableListOf<PlayoffRound>()
+        playoffRound.add(PlayoffRound(round, playoffMatches))
+        return PlayoffDTO(competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId), playoffRound)
     }
 }
 
@@ -202,7 +225,7 @@ data class Match(
 )
 
 enum class MatchType {
-    POOL, PLAYOFF
+    GROUP, PLAYOFF
 }
 
 data class GroupDrawDTO(
@@ -213,5 +236,10 @@ data class GroupDrawDTO(
 
 data class PlayoffDTO(
     val competitionCategory: CompetitionCategory,
-    val matches: MutableMap<String, List<MatchDTO>>
+    val rounds: List<PlayoffRound>
+)
+
+data class PlayoffRound(
+    val round: Round,
+    val matches: List<MatchUp>
 )

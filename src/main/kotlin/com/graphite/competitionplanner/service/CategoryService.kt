@@ -33,12 +33,12 @@ val drawTypeRepository: DrawTypeRepository) {
     }
 
     fun updateCategoryMetadata(
-        categoryId: Int,
+        competitionCategoryId: Int,
         categoryMetadataId: Int,
         categoryMetadataSpec: CategoryMetadataSpec
     ): CategoryMetadataDTO {
         val updatedCategoryRecord = categoryMetadataRepository.updateCategoryMetadata(
-            categoryId,
+            competitionCategoryId,
             categoryMetadataId,
             categoryMetadataSpec
         )

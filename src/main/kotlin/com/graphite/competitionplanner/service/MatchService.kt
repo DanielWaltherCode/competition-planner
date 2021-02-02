@@ -26,7 +26,7 @@ val registrationService: RegistrationService) {
     }
 
     fun getGroupMatchesInCategory(competitionCategoryId: Int): List<MatchDTO> {
-        val matchRecords = matchRepository.getMatchesInCategoryForMatchType(competitionCategoryId, MatchType.POOL)
+        val matchRecords = matchRepository.getMatchesInCategoryForMatchType(competitionCategoryId, MatchType.GROUP)
         return matchRecords.map { matchRecordToDTO(it) }
     }
 

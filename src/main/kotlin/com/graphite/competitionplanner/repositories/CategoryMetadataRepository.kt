@@ -32,12 +32,12 @@ class CategoryMetadataRepository(val dslContext: DSLContext) {
         return storeCategoryMetadata(categoryId, categoryMetadataId, categoryMetadataSpec)
     }
 
-    private fun storeCategoryMetadata(categoryId: Int,
+    private fun storeCategoryMetadata(competitionCategoryId: Int,
                                       categoryMetadataId: Int?,
                                       categoryMetadataSpec: CategoryMetadataSpec): CompetitionCategoryMetadataRecord {
         var categoryRecord = dslContext.newRecord(COMPETITION_CATEGORY_METADATA)
 
-        categoryRecord.competitionCategoryId = categoryId
+        categoryRecord.competitionCategoryId = competitionCategoryId
         categoryRecord.cost = categoryMetadataSpec.cost
         categoryRecord.startTime = categoryMetadataSpec.startTime
         categoryRecord.drawTypeId = categoryMetadataSpec.drawTypeId
@@ -54,8 +54,8 @@ class CategoryMetadataRepository(val dslContext: DSLContext) {
                 categoryRecord.store()
             }
             catch (dke: DuplicateKeyException) {
-                val storedRecord = getByCategoryId(categoryId)
-                categoryRecord = updateCategoryMetadata(categoryId, storedRecord.id, categoryMetadataSpec)
+                val storedRecord = getByCategoryId(competitionCategoryId)
+                categoryRecord = updateCategoryMetadata(competitionCategoryId, storedRecord.id, categoryMetadataSpec)
             }
         }
         return categoryRecord

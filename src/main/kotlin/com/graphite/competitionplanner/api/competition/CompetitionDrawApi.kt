@@ -1,13 +1,13 @@
 package com.graphite.competitionplanner.api.competition
 
-import com.graphite.competitionplanner.service.competition.CompetitionDrawService
+import com.graphite.competitionplanner.service.competition.DrawService
 import com.graphite.competitionplanner.service.competition.GroupDrawDTO
 import com.graphite.competitionplanner.service.competition.PlayoffDTO
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/competition/{competitionId}/draw/{competitionCategoryId}")
-class CompetitionDrawApi(val drawService: CompetitionDrawService) {
+class CompetitionDrawApi(val drawService: DrawService) {
 
     @PutMapping
     fun makeDraw(@PathVariable competitionCategoryId: Int): DrawDTO {

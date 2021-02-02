@@ -223,7 +223,7 @@ val matchRepository: MatchRepository) {
                competitionCategoryId = competitionCategoryId,
                firstRegistrationId = registrationIds[0],
                secondRegistrationId = registrationIds[1],
-               matchType = MatchType.POOL,
+               matchType = MatchType.GROUP,
                matchOrderNumber = 1,
                groupOrRound = "A"
            )
