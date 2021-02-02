@@ -100,6 +100,14 @@ class RegistrationRepository(val dslContext: DSLContext) {
             .fetchInto(PLAYER)
     }
 
+    fun setSeed(registrationId: Int, competitionCategoryId: Int, seed: Int){
+        dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
+                .set(COMPETITION_CATEGORY_REGISTRATION.SEED, seed)
+                .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
+                        .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(registrationId)))
+                .execute()
+    }
+
     fun clearPlayingIn() = dslContext.deleteFrom(COMPETITION_CATEGORY_REGISTRATION).execute()
 }
 

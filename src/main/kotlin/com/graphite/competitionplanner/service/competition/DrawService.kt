@@ -3,8 +3,11 @@ package com.graphite.competitionplanner.service.competition
 import com.graphite.competitionplanner.api.competition.DrawDTO
 import com.graphite.competitionplanner.repositories.DrawTypes
 import com.graphite.competitionplanner.repositories.MatchRepository
+import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
+import com.graphite.competitionplanner.repositories.competition.CategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategory
+import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.service.*
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -22,7 +25,9 @@ class DrawService(
     val matchService: MatchService,
     val competitionCategoryService: CompetitionCategoryService,
     val drawUtil: DrawUtil,
-    val drawUtilTwoProceed: DrawUtilTwoProceed
+    val drawUtilTwoProceed: DrawUtilTwoProceed,
+    val playerRepository: PlayerRepository,
+    val competitionCategoryRepository: CompetitionCategoryRepository
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -44,10 +49,55 @@ class DrawService(
             categoryMetadata.drawType.name == DrawTypes.POOL_AND_CUP.name
         ) {
             createPoolDraw(registrationIds, categoryMetadata, competitionCategoryId)
+        } else {
+            createPlayOffs()
         }
 
         // Fetch the matches that have now been set up
         return getDraw(competitionCategoryId)
+    }
+
+    private fun createSeed(competitionCategoryId: Int) {
+        val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId);
+        val playerList = mutableMapOf<Int, List<PlayerDTO>>();
+        for(id in registrationIds){
+            playerList[id] = registrationService.getPlayersFromRegistrationId(id)
+        }
+
+        val categoryType = competitionCategoryRepository.getCategoryType(competitionCategoryId).categoryType
+
+        val rankings = mutableMapOf<Int, Int>()
+
+        for((registrationId, players) in playerList){
+
+            var sum = 0
+            for(player in players){
+                if(categoryType == "SINGLES"){
+                    sum += playerRepository.getPlayerRanking(player.id)?.rankSingle ?: 0
+                }else if(categoryType == "DOUBLES"){
+                    sum += playerRepository.getPlayerRanking(player.id)?.rankDouble ?: 0
+                }
+            }
+
+            rankings[registrationId] = sum
+        }
+
+        val sortedRankings = rankings.toList()
+                .sortedBy { (key, value) -> value }
+                .toMap()
+
+        var numberOfSeeds = 4
+        var seed = 0
+        for((registrationId, _) in sortedRankings){
+            registrationRepository.setSeed(registrationId, competitionCategoryId, seed)
+            seed += 1
+
+            if (seed >= numberOfSeeds) break
+        }
+    }
+
+    private fun createPlayOffs() {
+        TODO("Not yet implemented")
     }
 
     fun createPoolDraw(
