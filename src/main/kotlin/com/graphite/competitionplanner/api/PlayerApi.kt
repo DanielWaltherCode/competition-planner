@@ -1,19 +1,17 @@
 package com.graphite.competitionplanner.api
 
-import com.graphite.competitionplanner.repositories.PlayerRepository
-import com.graphite.competitionplanner.service.PlayerCompetitionDTO
-import com.graphite.competitionplanner.service.PlayerDTO
-import com.graphite.competitionplanner.service.PlayerService
-import com.graphite.competitionplanner.service.RegistrationService
+import com.graphite.competitionplanner.service.*
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 import javax.validation.Valid
+import org.springframework.http.HttpStatus
+
+import org.springframework.web.server.ResponseStatusException
 
 
 @RestController
 @RequestMapping("/player")
 class PlayerApi(
-        val playerRepository: PlayerRepository,
         val playerService: PlayerService) {
 
     @PostMapping
@@ -43,7 +41,11 @@ class PlayerApi(
 
     @DeleteMapping("/{playerId}")
     fun deletePlayer(@PathVariable playerId: Int): Boolean {
-        return playerRepository.deletePlayer(playerId)
+        try {
+            return playerService.deletePlayer(playerId)
+        } catch (exception: PlayerNotFoundException) {
+            throw ResponseStatusException(HttpStatus.NOT_FOUND, exception.message, exception)
+        }
     }
 
 }
