@@ -12,7 +12,10 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
 
@@ -83,17 +86,13 @@ class TestPlayerApi(
     @Test
     fun deletePlayer(){
         // Setup
-        val playerString = PlayerSpec(
-                "Kajan", "Larsen",
-                ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
-        )
-        var kajan = testRestTemplate.postForObject(baseAddress, playerString, PlayerDTO::class.java)
+        val request = HttpEntity.EMPTY
 
         //Act
-        var response = testRestTemplate.delete(baseAddress + "/${1000000}")
+        val response = testRestTemplate.exchange<Any>("/player/-1", HttpMethod.DELETE, request)
 
         //Assert
-        Assertions.assertEqual(response.StatusCode, HttpStatus.NOT_FOUND)
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
     }
 
     @AfterEach

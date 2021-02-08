@@ -63,17 +63,17 @@ class PlayerService(val playerRepository: PlayerRepository, val clubRepository: 
     }
 
     fun deletePlayer(playerId: Int): Boolean {
-        var playerGotDeleted = playerRepository.deletePlayer(playerId);
+        val playerGotDeleted = playerRepository.deletePlayer(playerId)
         if (playerGotDeleted) {
             return true
         }else{
-            throw PlayerNotFoundException("Player not found")
+            throw PlayerNotFoundException("Player not found", playerId)
         }
     }
 
 }
 
-class PlayerNotFoundException(message: String?) : Exception(message)
+class PlayerNotFoundException(message: String?, val playerId: Int) : Exception(message)
 
 
 data class PlayerDTO(

@@ -4,9 +4,6 @@ import com.graphite.competitionplanner.service.*
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 import javax.validation.Valid
-import org.springframework.http.HttpStatus
-
-import org.springframework.web.server.ResponseStatusException
 
 
 @RestController
@@ -41,11 +38,7 @@ class PlayerApi(
 
     @DeleteMapping("/{playerId}")
     fun deletePlayer(@PathVariable playerId: Int): Boolean {
-        try {
-            return playerService.deletePlayer(playerId)
-        } catch (exception: PlayerNotFoundException) {
-            throw ResponseStatusException(HttpStatus.NOT_FOUND, exception.message, exception)
-        }
+        return playerService.deletePlayer(playerId)
     }
 
 }
