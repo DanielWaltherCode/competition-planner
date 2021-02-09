@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 
 
 @ControllerAdvice
-class PlayerNotFoundAdvice {
+class ExceptionAdvisor {
 
     @ResponseBody
     @ExceptionHandler(PlayerNotFoundException::class)
