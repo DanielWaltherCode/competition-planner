@@ -329,6 +329,38 @@ class DrawUtil(val matchRepository: MatchRepository) {
         return matchUps
     }
 
+    fun createDirectToPlayoff(competitionCategoryId: Int, registrationIds: List<Int>): List<Match> {
+        val playOrder = getPlayoffOrderWhereOneProceeds(registrationIds.size)
+        val registrationPositions = playOrder.map { 0 }.toMutableList()    // Create list with player and opponent (or BYE if there is no opponent)
+        for (idOrder in registrationIds.indices) {
+            for (i in playOrder.indices) {
+                if (idOrder + 1 == playOrder[i]) {
+                    registrationPositions[i] = registrationIds[idOrder]
+                    continue
+                }
+            }
+        }
+        // Convert raw list to match up list
+        val round = getRound(playOrder.size / 2)
+        val matches = mutableListOf<Match>()
+        var matchOrderNumber = 1
+        for (i in registrationPositions.indices step 2) {
+            val match = Match(
+                startTime = null,
+                endTime = null,
+                competitionCategoryId = competitionCategoryId,
+                matchType = MatchType.PLAYOFF,
+                firstRegistrationId = registrationPositions[i],
+                secondRegistrationId = registrationPositions[i+1],
+                matchOrderNumber = matchOrderNumber,
+                groupOrRound = round.name
+            )
+            matches.add(match)
+            matchOrderNumber += 1
+        }
+        return matches
+    }
+
     fun getPossiblePlayoffNumbers() = listOf(2, 4, 8, 16, 32, 64, 128, 256)
 
     fun getNumberOfPlaysInFirstPlayoffRound(nrPlayersToPlayoff: Int): Int {

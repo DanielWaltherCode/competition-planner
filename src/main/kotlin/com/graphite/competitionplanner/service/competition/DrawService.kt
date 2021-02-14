@@ -105,19 +105,11 @@ class DrawService(
         registrationIds: List<Int>,
         competitionCategoryId: Int)
     {
-        val numberOfMatches = (drawUtil.getPlayoffOrderWhereOneProceeds(registrationIds.size).size / 2).toInt()
-        val round = drawUtil.getRound(numberOfMatches)
-        val match = Match(
-            startTime = null,
-            endTime = null,
-            competitionCategoryId = competitionCategoryId,
-            matchType = MatchType.PLAYOFF,
-            firstRegistrationId = registrationIds[0],
-            secondRegistrationId = registrationIds[1],
-            matchOrderNumber = 1,
-            groupOrRound = round.name
-        )
-        for (i in 1..numberOfMatches){
+        // Get seedings
+        val competitionSeedings = registrationRepository.getSeeds(competitionCategoryId)
+
+        val matches = drawUtil.createDirectToPlayoff(competitionCategoryId, registrationIds)
+        for (match in matches){
             matchRepository.addMatch(match)
         }
     }

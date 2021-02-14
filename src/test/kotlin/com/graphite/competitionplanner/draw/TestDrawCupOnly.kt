@@ -46,7 +46,7 @@ class TestDrawCupOnly(
             startTime = categoryMetadata.startTime,
             drawTypeId = 2, // CUP ONLY. How is it set in database though?
             nrPlayersPerGroup = categoryMetadata.nrPlayersPerGroup,
-            nrPlayersToPlayoff = 6,
+            nrPlayersToPlayoff = categoryMetadata.nrPlayersToPlayoff,
             poolDrawStrategyId = categoryMetadata.poolDrawStrategyId
         )
 
@@ -68,7 +68,12 @@ class TestDrawCupOnly(
 
     @ParameterizedTest
     @MethodSource("playersAndMatches")
-    fun thenTheCorrectNumberOfMatchesShouldBeRegistered(numberOfPlayers: Int, expectedNumberOfMatches: Int, expectedRound: Round) {
+    fun thenTheCorrectNumberOfMatchesShouldBeRegistered(
+        numberOfPlayers: Int,
+        expectedNumberOfMatches: Int,
+        expectedRound: Round
+    )
+    {
         // Setup
         val allPlayers = playerRepository.getAll()
 
