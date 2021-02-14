@@ -16,16 +16,14 @@ class CompetitionApi(
     ) {
 
     @PostMapping
-    fun addCompetition(@Valid @RequestBody competitionDTO: CompetitionDTO): CompetitionDTO {
-        return competitionService.addCompetition(competitionDTO)
+    fun addCompetition(@RequestBody competitionSpec: CompetitionSpec): CompetitionDTO {
+        return competitionService.addCompetition(competitionSpec)
     }
 
-    @PutMapping
-    fun updateCompetition(@Valid @RequestBody competitionDTO: CompetitionDTO): CompetitionDTO {
-        if (competitionDTO.id == null) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Competition id should not be null")
-        }
-        return competitionService.updateCompetition(competitionDTO)
+    @PutMapping("/{competitionId}")
+    fun updateCompetition(@PathVariable competitionId: Int,
+                          @RequestBody competitionSpec: CompetitionSpec): CompetitionDTO {
+        return competitionService.updateCompetition(competitionId, competitionSpec)
     }
 
     @GetMapping("/{competitionId}")
@@ -42,3 +40,10 @@ class CompetitionApi(
     }
 }
 
+data class CompetitionSpec(
+    val location: String,
+    val welcomeText: String,
+    val organizingClubId: Int,
+    val startDate: LocalDate,
+    val endDate: LocalDate
+)

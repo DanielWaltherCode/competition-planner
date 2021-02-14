@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.repositories.competition
 
-import com.graphite.competitionplanner.service.CompetitionDTO
+import com.graphite.competitionplanner.api.CompetitionSpec
 import com.graphite.competitionplanner.tables.Club
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.records.CompetitionRecord
@@ -12,13 +12,13 @@ import java.time.LocalDate
 @Repository
 class CompetitionRepository(val dslContext: DSLContext) {
 
-    fun addCompetition(competitionDTO: CompetitionDTO): CompetitionRecord {
+    fun addCompetition(competitionSpec: CompetitionSpec): CompetitionRecord {
         val competitionRecord = dslContext.newRecord(Competition.COMPETITION)
-        competitionRecord.location = competitionDTO.location
-        competitionRecord.welcomeText = competitionDTO.welcomeText
-        competitionRecord.organizingClub = competitionDTO.organizingClub.id
-        competitionRecord.startDate = competitionDTO.startDate
-        competitionRecord.endDate = competitionDTO.endDate
+        competitionRecord.location = competitionSpec.location
+        competitionRecord.welcomeText = competitionSpec.welcomeText
+        competitionRecord.organizingClub = competitionSpec.organizingClubId
+        competitionRecord.startDate = competitionSpec.startDate
+        competitionRecord.endDate = competitionSpec.endDate
         competitionRecord.store()
         return competitionRecord
     }
@@ -66,14 +66,14 @@ class CompetitionRepository(val dslContext: DSLContext) {
             .where(Club.CLUB.ID.eq(clubId)).fetch()
     }
 
-    fun updateCompetition(competitionDTO: CompetitionDTO): CompetitionRecord {
+    fun updateCompetition(competitionId: Int, competitionSpec: CompetitionSpec): CompetitionRecord {
         val competitionRecord = dslContext.newRecord(Competition.COMPETITION)
-        competitionRecord.id = competitionDTO.id
-        competitionRecord.location = competitionDTO.location
-        competitionRecord.welcomeText = competitionDTO.welcomeText
-        competitionRecord.organizingClub = competitionDTO.organizingClub.id
-        competitionRecord.startDate = competitionDTO.startDate
-        competitionRecord.endDate = competitionDTO.endDate
+        competitionRecord.id = competitionId
+        competitionRecord.location = competitionSpec.location
+        competitionRecord.welcomeText = competitionSpec.welcomeText
+        competitionRecord.organizingClub = competitionSpec.organizingClubId
+        competitionRecord.startDate = competitionSpec.startDate
+        competitionRecord.endDate = competitionSpec.endDate
         competitionRecord.update()
         return competitionRecord
     }

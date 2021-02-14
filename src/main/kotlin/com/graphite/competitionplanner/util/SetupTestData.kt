@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.util
 
 import com.graphite.competitionplanner.api.ClubDTO
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
+import com.graphite.competitionplanner.api.CompetitionSpec
 import com.graphite.competitionplanner.api.PlayerSpec
 import com.graphite.competitionplanner.repositories.*
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import kotlin.random.Random
 
 
 @Component
@@ -44,6 +46,7 @@ val matchRepository: MatchRepository) {
         setUpClub()
         competitionSetup()
         playerSetup()
+        addPlayerRankings()
         categorySetup()
         competitionCategorySetup()
         registerPlayersSingles()
@@ -138,27 +141,35 @@ val matchRepository: MatchRepository) {
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Landskrona"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
         playerRepository.addPlayer(PlayerSpec( firstName = "Simon", lastName = "Knutsson",
             club = ClubNoAddressDTO( util.getClubIdOrDefault("Umeå IK"), null), dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)))
+    }
 
+    fun addPlayerRankings() {
+        val allPlayers = playerRepository.getAll()
 
+        for (player in allPlayers) {
+            playerRepository.addPlayerRanking(player.id, Random.nextInt(0, 100), "SINGLES")
+        }
     }
 
     fun competitionSetup() {
-        competitionRepository.addCompetition(CompetitionDTO(null,
+        competitionRepository.addCompetition(
+            CompetitionSpec(
                 location = "Lund",
                 welcomeText = "Välkomna till Eurofinans",
-                organizingClub = ClubNoAddressDTO(util.getClubIdOrDefault("Lugi"), null),
+                organizingClubId = util.getClubIdOrDefault("Lugi"),
                 startDate = LocalDate.now(),
-                endDate = LocalDate.now().plusDays(10)))
-        competitionRepository.addCompetition(CompetitionDTO(null,
+                endDate = LocalDate.now().plusDays(10))
+        )
+        competitionRepository.addCompetition(CompetitionSpec(
                 location = "Umeå",
                 welcomeText = "Umeå, kallt, öde, men vi har badminton!",
-                organizingClub = ClubNoAddressDTO(util.getClubIdOrDefault("Umeå IK"), null),
+                organizingClubId = util.getClubIdOrDefault("Umeå IK"),
                 startDate = LocalDate.now(),
                 endDate = LocalDate.now().plusDays(10)))
-        competitionRepository.addCompetition(CompetitionDTO(null,
+        competitionRepository.addCompetition(CompetitionSpec(
                 location = "Svedala",
                 welcomeText = "Bonustävling!",
-                organizingClub = ClubNoAddressDTO(util.getClubIdOrDefault("Svedala"), null),
+                organizingClubId = util.getClubIdOrDefault("Svedala"),
                 startDate = LocalDate.now(),
                 endDate = LocalDate.now().plusMonths(10)))
     }
@@ -238,6 +249,7 @@ val matchRepository: MatchRepository) {
         registrationRepository.clearRegistration()
         competitionCategoryRepository.clearTable()
         competitionRepository.clearTable()
+        playerRepository.clearRankingTable()
         playerRepository.clearTable()
         categoryRepository.clearTable()
         clubRepository.clearClubTable()

@@ -1,0 +1,49 @@
+{
+  "header": {
+    "overview": "Översikt",
+    "classes": "Klasser",
+    "players": "Spelare",
+    "draws": "Lottningar",
+    "schedule": "Schema",
+    "results": "Resultat",
+    "billing": "Fakturor"
+  },
+  "landing": {
+    "heading": {
+      "part1": "Välkommen till Let's Compete!",
+      "part2": "Här kan du snabbt och smidigt sätta upp en tävling, göra scheman och lottningar, och rapportera resultat"
+    },
+    "middle": {
+      "organize": {
+        "title": "Planera",
+        "text": "Sätt upp och planera tävlingar"
+      },
+      "host": {
+        "title": "Organisera",
+        "text": "Gör lottningar och scheman"
+      },
+      "report": {
+        "title": "Visa resultat",
+        "text": "Rapportera och presentera resultat enkelt"
+      }
+    },
+    "bottom": {
+      "section1": "Let's Compete riktar in sig på flera olika steg i tävlingsorganiseringsprocessen. Man kan: ",
+      "bullit1": "Skapa nya tävlingar med klasser, lottningar och scheman",
+      "bullit2": "Administrera en tävling medan den pågår, rapportera resultat och hantera tider och banor",
+      "bullit3": "Se resultat, speltider och lottningar online. Allt i smidig realtidsuppdatering"
+    }
+  },
+  "overview": {
+    "title": "Tävlingsöversikt",
+    "name": "Namn",
+    "info": "Tävlingsinformation",
+    "startDate": "Startdatum",
+    "endDate": "Slutdatum",
+    "location": "Plats"
+  },
+  "general": {
+    "save": "Spara",
+    "saveChanges": "Spara ändringar"
+  }
+}

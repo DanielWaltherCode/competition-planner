@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.service
 
 import com.graphite.competitionplanner.Tables.COMPETITION
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
+import com.graphite.competitionplanner.api.CompetitionSpec
 import com.graphite.competitionplanner.repositories.ClubRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
@@ -17,8 +18,7 @@ import java.time.LocalDate
 @Service
 class CompetitionService(
     val competitionRepository: CompetitionRepository, val clubRepository: ClubRepository,
-    val competitionCategoryRepository: CompetitionCategoryRepository,
-    val registrationRepository: RegistrationRepository
+    val competitionCategoryRepository: CompetitionCategoryRepository
 ) {
 
     fun getCompetitions(weekStartDate: LocalDate?, weekEndDate: LocalDate?): List<CompetitionDTO> {
@@ -40,8 +40,8 @@ class CompetitionService(
     }
 
 
-    fun addCompetition(competitionDTO: CompetitionDTO): CompetitionDTO {
-        val competition = competitionRepository.addCompetition(competitionDTO)
+    fun addCompetition(competitionSpec: CompetitionSpec): CompetitionDTO {
+        val competition = competitionRepository.addCompetition(competitionSpec)
         val club = clubRepository.getById(competition.organizingClub) ?: throw ResponseStatusException(
             HttpStatus.NOT_FOUND,
             "No club with id ${competition.organizingClub} found"
@@ -49,8 +49,8 @@ class CompetitionService(
         return recordsToDto(competition, club)
     }
 
-    fun updateCompetition(competitionDTO: CompetitionDTO): CompetitionDTO {
-        val competition = competitionRepository.updateCompetition(competitionDTO)
+    fun updateCompetition(competitionId: Int, competitionSpec: CompetitionSpec): CompetitionDTO {
+        val competition = competitionRepository.updateCompetition(competitionId, competitionSpec)
         val club = clubRepository.getById(competition.organizingClub) ?: throw ResponseStatusException(
             HttpStatus.NOT_FOUND,
             "No club with id ${competition.organizingClub} found"
@@ -88,11 +88,13 @@ fun recordsToDto(competition: CompetitionRecord, club: ClubRecord): CompetitionD
 }
 
 data class CompetitionDTO(
-    val id: Int?,
+    val id: Int,
     val location: String,
     val welcomeText: String,
     val organizingClub: ClubNoAddressDTO,
     val startDate: LocalDate,
     val endDate: LocalDate
 )
+
+
 
