@@ -89,6 +89,7 @@ export default {
 
 .image-holder img {
   max-width: 90%;
+  max-height: 90%;
 }
 
 /* Middle */
@@ -138,6 +139,7 @@ export default {
 #bottom img {
   margin: 40px;
   max-width: 70%;
+  max-height: 80%;
 }
 
 #bottom-text {

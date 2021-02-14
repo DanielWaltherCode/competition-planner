@@ -5,7 +5,6 @@ import com.graphite.competitionplanner.repositories.DrawTypes
 import com.graphite.competitionplanner.repositories.MatchRepository
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
-import com.graphite.competitionplanner.repositories.competition.CategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategory
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.service.*
@@ -134,21 +133,22 @@ class DrawService(
             counter += 1
         }
 
-        // TODO: Add seeded players first
-        val competitionSeedings = registrationRepository.getSeeds(competitionCategoryId)
+        // Add seeded players to groups
+        val categorySeedings = registrationRepository.getSeeds(competitionCategoryId)
         val seededPlayers = mutableListOf<Int>()
         for (id in registrationIds) {
-            for (competitionSeed in competitionSeedings) {
+            for (competitionSeed in categorySeedings) {
                 if (competitionSeed.registrationId == id) {
-                    groupMap[competitionSeed.seed]?.add(id)
+                    groupMap[competitionSeed.seed-1]?.add(id)
                     seededPlayers.add(id)
                 }
             }
         }
         // Remove ids already added for seeding
         val remainingIds = registrationIds.filter { !seededPlayers.contains(it) }
-        // Add one player to each group. (If there are 4 players per group start from top, if 3 start from bottom)
-        counter = 0 + competitionSeedings.size
+        // Add one player to each group. Start after nr of seeds.
+        // If categoryseedings == nrGroups start from 0
+        counter = if (categorySeedings.size == nrGroups) 0 else categorySeedings.size
         for (id in remainingIds) {
             groupMap[counter]?.add(id)
             counter += 1

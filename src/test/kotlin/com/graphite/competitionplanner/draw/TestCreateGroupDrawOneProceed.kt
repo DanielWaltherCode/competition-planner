@@ -76,13 +76,13 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
         Assertions.assertNotNull(draw)
         val groups = draw.groupDraw.groups
         Assertions.assertEquals(7, groups.size)
-        Assertions.assertEquals(3, groups["A"]?.size)
+        Assertions.assertEquals(6, groups["A"]?.size)
         Assertions.assertEquals(3, groups["B"]?.size)
         Assertions.assertEquals(3, groups["C"]?.size)
         Assertions.assertEquals(3, groups["D"]?.size)
         Assertions.assertEquals(3, groups["E"]?.size)
         Assertions.assertEquals(3, groups["F"]?.size)
-        Assertions.assertEquals(6, groups["G"]?.size)
+        Assertions.assertEquals(3, groups["G"]?.size)
 
         val playoffMatches = draw.playOff.rounds[0].matches
         val playoffRound = draw.playOff.rounds[0].round
@@ -131,13 +131,13 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
         }
         val draw = drawService.createDraw(competitionCategoryId)
 
-        // With 14 players there should be 4 groups, 6 matches in two last ones
+        // With 14 players there should be 4 groups, 6 matches in first two
         val groups = draw.groupDraw.groups
         Assertions.assertEquals(4, groups.size)
-        Assertions.assertEquals(3, groups["A"]?.size)
-        Assertions.assertEquals(3, groups["B"]?.size)
-        Assertions.assertEquals(6, groups["C"]?.size)
-        Assertions.assertEquals(6, groups["D"]?.size)
+        Assertions.assertEquals(6, groups["A"]?.size)
+        Assertions.assertEquals(6, groups["B"]?.size)
+        Assertions.assertEquals(3, groups["C"]?.size)
+        Assertions.assertEquals(3, groups["D"]?.size)
 
         val playoffMatches = draw.playOff.rounds[0].matches
         val playoffRound = draw.playOff.rounds[0].round
