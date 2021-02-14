@@ -11,6 +11,11 @@ export default new Router({
             name: "landing",
             component: () => import("@/components/Landing"),
         },
+        {
+            path: "/overview",
+            name: "overview",
+            component: () => import("@/components/Overview"),
+        },
     ],
     scrollBehavior() {
         return {x: 0, y: 0}

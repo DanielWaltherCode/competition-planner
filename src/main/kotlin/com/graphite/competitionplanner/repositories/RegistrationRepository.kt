@@ -108,6 +108,15 @@ class RegistrationRepository(val dslContext: DSLContext) {
                 .execute()
     }
 
+    // Get seeds in competition category
+    fun getSeeds(competitionCategoryId: Int): List<CompetitionCategoryRegistrationRecord> {
+        return dslContext.select()
+            .from(COMPETITION_CATEGORY_REGISTRATION)
+            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId).and(
+                COMPETITION_CATEGORY_REGISTRATION.SEED.isNotNull))
+            .fetchInto(COMPETITION_CATEGORY_REGISTRATION)
+    }
+
     fun clearPlayingIn() = dslContext.deleteFrom(COMPETITION_CATEGORY_REGISTRATION).execute()
 }
 

@@ -45,6 +45,9 @@ class DrawService(
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Category metadata not found for that id")
         }
 
+        // First create seed
+        createSeed(competitionCategoryId, categoryMetadata)
+
         if (categoryMetadata.drawType.name == DrawTypes.POOL_ONLY.name ||
             categoryMetadata.drawType.name == DrawTypes.POOL_AND_CUP.name
         ) {
@@ -57,7 +60,7 @@ class DrawService(
         return getDraw(competitionCategoryId)
     }
 
-    private fun createSeed(competitionCategoryId: Int) {
+    private fun createSeed(competitionCategoryId: Int, categoryMetadata: CategoryMetadataDTO) {
         val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId);
         val playerList = mutableMapOf<Int, List<PlayerDTO>>();
         for(id in registrationIds){
@@ -83,16 +86,16 @@ class DrawService(
         }
 
         val sortedRankings = rankings.toList()
-                .sortedBy { (key, value) -> value }
+                .sortedBy { (key, value) -> -value }
                 .toMap()
 
-        var numberOfSeeds = 4
-        var seed = 0
+        val numberOfSeeds = drawUtil.getNumberOfSeeds(categoryMetadata.nrPlayersPerGroup, sortedRankings.size)
+        var seed = 1
         for((registrationId, _) in sortedRankings){
             registrationRepository.setSeed(registrationId, competitionCategoryId, seed)
             seed += 1
 
-            if (seed >= numberOfSeeds) break
+            if (seed > numberOfSeeds) break
         }
     }
 
@@ -132,29 +135,26 @@ class DrawService(
         }
 
         // TODO: Add seeded players first
-
-
-        // Add one player to each group. If there are 4 players per group start from top, if 3 start from bottom
-        if (categoryMetadata.nrPlayersPerGroup == 3) {
-            counter = nrGroups - 1
-            for (id in registrationIds) {
-                groupMap[counter]?.add(id)
-                counter -= 1
-
-                if (counter == -1) {
-                    counter = nrGroups - 1
+        val competitionSeedings = registrationRepository.getSeeds(competitionCategoryId)
+        val seededPlayers = mutableListOf<Int>()
+        for (id in registrationIds) {
+            for (competitionSeed in competitionSeedings) {
+                if (competitionSeed.registrationId == id) {
+                    groupMap[competitionSeed.seed]?.add(id)
+                    seededPlayers.add(id)
                 }
             }
         }
-        else if (categoryMetadata.nrPlayersPerGroup == 4) {
-            counter = 0
-            for (id in registrationIds) {
-                groupMap[counter]?.add(id)
-                counter += 1
+        // Remove ids already added for seeding
+        val remainingIds = registrationIds.filter { !seededPlayers.contains(it) }
+        // Add one player to each group. (If there are 4 players per group start from top, if 3 start from bottom)
+        counter = 0 + competitionSeedings.size
+        for (id in remainingIds) {
+            groupMap[counter]?.add(id)
+            counter += 1
 
-                if (counter == nrGroups) {
-                    counter = 0
-                }
+            if (counter == nrGroups) {
+                counter = 0
             }
         }
 

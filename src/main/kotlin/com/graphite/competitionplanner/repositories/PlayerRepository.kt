@@ -8,6 +8,7 @@ import com.graphite.competitionplanner.tables.records.PlayerRankingRecord
 import com.graphite.competitionplanner.tables.records.PlayerRecord
 import org.jooq.DSLContext
 import org.jooq.Record
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -15,6 +16,8 @@ class PlayerRepository(
         val dslContext: DSLContext,
         val clubRepository: ClubRepository
 ) {
+    private val logger = LoggerFactory.getLogger(javaClass)
+
 
     fun addPlayer(playerSpec: PlayerSpec): PlayerRecord {
         val playerRecord = dslContext.newRecord(PLAYER)
@@ -52,8 +55,36 @@ class PlayerRepository(
         return dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(PLAYER.ID.eq(id)).fetchOne()
     }
 
-    fun getPlayerRanking(id: Int): PlayerRankingRecord? {
-        return dslContext.select().from(PLAYER_RANKING).where(PLAYER_RANKING.PLAYER_ID.eq(id)).fetchOneInto(PLAYER_RANKING)
+    fun getPlayerRanking(playerId: Int): PlayerRankingRecord? {
+        return dslContext.select().from(PLAYER_RANKING).where(PLAYER_RANKING.PLAYER_ID.eq(playerId)).fetchOneInto(PLAYER_RANKING)
+    }
+
+    fun addPlayerRanking(playerId: Int, rankToAdd: Int, categoryType: String) {
+        val currentRecord = getPlayerRanking(playerId)
+
+        if (currentRecord != null) {
+            if (categoryType.toUpperCase() == "SINGLES") {
+                currentRecord.rankSingle += rankToAdd
+                currentRecord.update()
+            }
+            else if (categoryType.toUpperCase() == "DOUBLES") {
+                currentRecord.rankDouble += rankToAdd
+                currentRecord.update()
+            }
+        }
+        else {
+            logger.warn("No player found with id $playerId. Adding new ranking instead")
+            val record = dslContext.newRecord(PLAYER_RANKING)
+            record.playerId = playerId
+            if (categoryType.toUpperCase() == "SINGLES") {
+                record.rankSingle = rankToAdd
+                record.store()
+            }
+            else if (categoryType.toUpperCase() == "DOUBLES") {
+                record.rankDouble = rankToAdd
+                record.store()
+            }
+        }
     }
 
     fun findPlayersByPartOfName(partOfName: String): List<Record> {
@@ -67,5 +98,9 @@ class PlayerRepository(
 
     fun clearTable() {
         dslContext.deleteFrom(PLAYER).execute()
+    }
+
+    fun clearRankingTable() {
+        dslContext.deleteFrom(PLAYER_RANKING).execute()
     }
 }

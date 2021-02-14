@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.competition
 
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
+import com.graphite.competitionplanner.api.CompetitionSpec
 import com.graphite.competitionplanner.repositories.ClubRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
 import com.graphite.competitionplanner.service.CompetitionDTO
@@ -30,11 +31,10 @@ class TestCompetitionsService(
     fun testAddCompetition() {
         val originalSize: Int = competitionRepository.getAll().size
         val competition = competitionService.addCompetition(
-            CompetitionDTO(
-                null,
+            CompetitionSpec(
                 location = "Lund",
                 welcomeText = "Välkomna till Eurofinans",
-                organizingClub = ClubNoAddressDTO(util.getClubIdOrDefault("Lugi"), null),
+                organizingClubId = util.getClubIdOrDefault("Lugi"),
                 startDate = LocalDate.now(),
                 endDate = LocalDate.now().plusDays(10)
             )
@@ -49,11 +49,10 @@ class TestCompetitionsService(
         // No organizing club with id -1
         Assertions.assertThrows(org.springframework.dao.DataIntegrityViolationException::class.java) {
             competitionService.addCompetition(
-                CompetitionDTO(
-                    null,
+                CompetitionSpec(
                     location = "Lund",
                     welcomeText = "Välkomna till Eurofinans",
-                    organizingClub = ClubNoAddressDTO(-1, null),
+                    organizingClubId = -1,
                     startDate = LocalDate.now(),
                     endDate = LocalDate.now().plusDays(10)
                 )
@@ -65,11 +64,10 @@ class TestCompetitionsService(
     @Test
     fun deleteCompetition() {
         val competition = competitionService.addCompetition(
-            CompetitionDTO(
-                null,
+            CompetitionSpec(
                 location = "Lund",
                 welcomeText = "Välkomna till Eurofinans",
-                organizingClub = ClubNoAddressDTO(util.getClubIdOrDefault("Lugi"), null),
+                organizingClubId = util.getClubIdOrDefault("Lugi"),
                 startDate = LocalDate.now(),
                 endDate = LocalDate.now().plusDays(10)
             )
@@ -86,12 +84,12 @@ class TestCompetitionsService(
         val competition = competitions[0]
         val updatedText = "My new description text"
 
-        val competitionDTO = CompetitionDTO(
-            competition.id, competition.location, updatedText,
-            competition.organizingClub, competition.startDate, competition.endDate
+        val competitionSpec = CompetitionSpec(
+            competition.location, updatedText,
+            competition.organizingClub.id, competition.startDate, competition.endDate
         )
 
-        val updatedDTO = competitionService.updateCompetition(competitionDTO)
+        val updatedDTO = competitionService.updateCompetition(competition.id, competitionSpec)
         Assertions.assertEquals(updatedText, updatedDTO.welcomeText)
     }
 

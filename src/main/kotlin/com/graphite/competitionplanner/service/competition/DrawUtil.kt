@@ -288,6 +288,14 @@ class DrawUtil(val matchRepository: MatchRepository) {
         return poolNameMap
     }
 
+    fun getNumberOfSeeds(nrPlayersPerGroup: Int, numberOfRegisteredPlayers: Int): Int {
+        when(numberOfRegisteredPlayers) {
+            in 0..11 -> return 2
+            in 12..24 -> return 4
+            else -> return 8
+        }
+    }
+
     fun getPoolName(poolNumber: Int): String {
         val map = getPoolNameMap()
         val name = map[poolNumber]

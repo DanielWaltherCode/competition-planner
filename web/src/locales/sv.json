@@ -33,5 +33,17 @@
       "bullit2": "Administrera en tävling medan den pågår, rapportera resultat och hantera tider och banor",
       "bullit3": "Se resultat, speltider och lottningar online. Allt i smidig realtidsuppdatering"
     }
+  },
+  "overview": {
+    "title": "Tävlingsöversikt",
+    "name": "Namn",
+    "info": "Tävlingsinformation",
+    "startDate": "Startdatum",
+    "endDate": "Slutdatum",
+    "location": "Plats"
+  },
+  "general": {
+    "save": "Spara",
+    "saveChanges": "Spara ändringar"
   }
 }
