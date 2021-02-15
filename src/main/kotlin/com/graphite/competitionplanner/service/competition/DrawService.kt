@@ -8,12 +8,14 @@ import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategory
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.service.*
+import com.graphite.competitionplanner.tables.DrawType
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import java.lang.IllegalStateException
 import java.time.LocalDateTime
+import kotlin.math.log2
 
 @Service
 class DrawService(
@@ -52,7 +54,7 @@ class DrawService(
         ) {
             createPoolDraw(registrationIds, categoryMetadata, competitionCategoryId)
         } else {
-            createPlayOffs()
+            createPlayOffs(registrationIds, competitionCategoryId)
         }
 
         // Fetch the matches that have now been set up
@@ -98,8 +100,17 @@ class DrawService(
         }
     }
 
-    private fun createPlayOffs() {
-        TODO("Not yet implemented")
+    private fun createPlayOffs(
+        registrationIds: List<Int>,
+        competitionCategoryId: Int)
+    {
+        // Get seedings
+        val competitionSeedings = registrationRepository.getSeeds(competitionCategoryId)
+
+        val matches = drawUtil.createDirectToPlayoff(competitionCategoryId, registrationIds)
+        for (match in matches){
+            matchRepository.addMatch(match)
+        }
     }
 
     fun createPoolDraw(
@@ -198,12 +209,42 @@ class DrawService(
     }
 
     fun getDraw(competitionCategoryId: Int): DrawDTO {
-        val playoffMatches = matchService.getPlayoffMatchesInCategory(competitionCategoryId)
-
-        val competitionCategory = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
+        val metadata = categoryService.getCategoryMetadata(competitionCategoryId)
+        if (metadata.drawType.id == 2){ // 2 == CUP ONLY. How is it set in database though?
+            return getCupOnlyDraw(competitionCategoryId)
+        }
         return DrawDTO(
             getPoolDraw(competitionCategoryId),
             getPlayoffForGroups(competitionCategoryId)
+        )
+    }
+
+    fun getCupOnlyDraw(competitionCategoryId: Int): DrawDTO{
+        val competitionCategory = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
+        val groupsAndPlayers = mutableMapOf<String, List<MatchDTO>>()
+
+        val playoffRound = mutableListOf<PlayoffRound>()
+        val matches = matchService.getMatchesInCategory(competitionCategoryId)
+        val round = drawUtil.getRound(matches.size)
+        val matchUps = mutableListOf<MatchUp>()
+
+        for (match in matches){
+            matchUps.add(
+                MatchUp(
+                    player1 = match.firstPlayer[0].firstName,
+                    player2 = match.secondPlayer[0].firstName
+                )
+            )
+        }
+        playoffRound.add(PlayoffRound(round, matchUps))
+        return DrawDTO(
+            GroupDrawDTO(
+                competitionCategory,
+                groupsAndPlayers),
+            PlayoffDTO(
+                competitionCategory,
+                playoffRound
+            )
         )
     }
 
