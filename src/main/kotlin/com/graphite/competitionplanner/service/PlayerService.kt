@@ -29,9 +29,9 @@ class PlayerService(val playerRepository: PlayerRepository, val clubRepository: 
     }
 
     fun addPlayer(playerSpec: PlayerSpec): PlayerDTO {
+        val club = clubRepository.getById(playerSpec.club.id)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No club with id ${playerSpec.club.id} found")
         val player = playerRepository.addPlayer(playerSpec)
-        val club = clubRepository.getById(player.clubId)
-                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No club with id ${player.clubId} found")
         return recordsToDTO(player, club)
     }
 
