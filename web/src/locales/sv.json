@@ -40,10 +40,12 @@
     "info": "Tävlingsinformation",
     "startDate": "Startdatum",
     "endDate": "Slutdatum",
-    "location": "Plats"
+    "location": "Plats",
+    "competitionAdded": "Tävlingen är skapad. Du kan nu gå vidare till nästa steg."
   },
   "general": {
     "save": "Spara",
-    "saveChanges": "Spara ändringar"
+    "saveChanges": "Spara ändringar",
+    "next": "Nästa"
   }
 }

@@ -8,7 +8,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 Vue.config.productionTip = false
 
-Axios.default.baseURL = process.env.VUE_APP_BASE_URL
+Axios.defaults.baseURL = "http://www.localhost:9002"
+
+console.log("Starting application")
+console.log("Axios base url: " + Axios.defaults.baseURL)
+console.log("Process base url: " + process.env.VUE_APP_BASE_URL)
+
 
 new Vue({
   render: h => h(App),
