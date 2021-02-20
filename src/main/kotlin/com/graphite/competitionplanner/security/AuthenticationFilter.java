@@ -1,19 +1,28 @@
 package com.graphite.competitionplanner.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.graphite.competitionplanner.api.Login;
+import com.graphite.competitionplanner.SpringApplicationContext;
+import com.graphite.competitionplanner.service.UserService;
+import com.graphite.competitionplanner.util.UserLogin;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationFilter(AuthenticationManager authenticationManager) {
@@ -23,18 +32,32 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res) throws AuthenticationException {
         try {
-            Login loginCredentials = new ObjectMapper().readValue(req.getInputStream(), Login.class);
+            UserLogin loginCredentials = new ObjectMapper().readValue(req.getInputStream(), UserLogin.class);
 
-            return authenticationManager.authenticate(
-                    // Spring automatically connects to the database, validates the password, and returns the user object
-                    // This works because we implented the loadUserByUsername method in UserServiceImpl
-                    new UsernamePasswordAuthenticationToken(
-                            loginCredentials.getUserName(), loginCredentials.getPassword(), new ArrayList<>()
-                    )
+            // Spring automatically connects to the database, validates the password, and returns the user object
+            // This works because we implented the loadUserByUsername method in UserService
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    loginCredentials.getUsername(), loginCredentials.getPassword(), new ArrayList<>()
             );
+
+            return authenticationManager.authenticate(authenticationToken);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    @Override
+    protected void successfulAuthentication(HttpServletRequest req,
+                                            HttpServletResponse res,
+                                            FilterChain chain,
+                                            Authentication auth) throws IOException, ServletException {
+        String username = ((User) auth.getPrincipal()).getUsername();
+        String token = Jwts.builder()
+                .setSubject(username)
+                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS256, SecurityConstants.getTokenSecret())
+                .compact();
+
+        res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
+    }
 }

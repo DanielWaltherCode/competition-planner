@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.security;
 
+import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +23,34 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest req,
                                     HttpServletResponse res,
                                     FilterChain chain) throws IOException, ServletException {
+        String header = req.getHeader(SecurityConstants.HEADER_STRING);
 
+        if (header == null || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
+            chain.doFilter(req, res);
+            return;
+        }
+
+        UsernamePasswordAuthenticationToken authToken = getAuthentication(req);
+        SecurityContextHolder.getContext().setAuthentication(authToken);
         chain.doFilter(req, res);
+    }
+
+    private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest req) {
+        String token = req.getHeader(SecurityConstants.HEADER_STRING);
+
+        if (token != null) {
+            token = token.replace(SecurityConstants.TOKEN_PREFIX, "");
+
+            String user = Jwts.parser()
+                    .setSigningKey(SecurityConstants.getTokenSecret())
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+            if (user != null) {
+                return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+            }
+            return null;
+        }
+        return null;
     }
 }

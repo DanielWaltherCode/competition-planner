@@ -73,7 +73,6 @@ class PlayerRepository(
             }
         }
         else {
-            logger.warn("No player found with id $playerId. Adding new ranking instead")
             val record = dslContext.newRecord(PLAYER_RANKING)
             record.playerId = playerId
             if (categoryType.toUpperCase() == "SINGLES") {

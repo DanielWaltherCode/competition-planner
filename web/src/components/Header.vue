@@ -48,6 +48,9 @@
                 {{ $t("header.billing") }}
               </router-link>
             </li>
+            <li class="nav-item" v-if="isLoggedIn">
+              <button class="btn btn-secondary" @click="logout"> {{ $t("header.logout") }}</button>
+            </li>
           </ul>
         </div>
       </div>
@@ -57,13 +60,23 @@
 
 <script>
 
-
 export default {
   name: "Header",
   data() {
     return {}
   },
-  mounted() {
+  computed: {
+    isLoggedIn: function () {
+      return this.$store.getters.isLoggedIn
+    },
+  },
+  methods: {
+    logout() {
+      this.$store.commit("logout")
+      if (!this.$route.name.includes("landing")) {
+        this.$router.push('/landing')
+      }
+    }
   }
 }
 </script>
@@ -98,7 +111,6 @@ ul li {
     background-color: ghostwhite;
   }
 }
-
 
 
 #main:hover {

@@ -24,4 +24,6 @@ class UserRepository(val dslContext: DSLContext) {
             .where(USER_TABLE.USERNAME.eq(username))
             .fetchOneInto(USER_TABLE)
     }
+
+    fun clearTable() = dslContext.deleteFrom(USER_TABLE).execute()
 }
