@@ -3,21 +3,22 @@
   <div class="container">
     <div class="row">
       <div class="col-4">
-        <ul class="list-group">
-          <li class="list-group-item">Herrar 1</li>
-          <li class="list-group-item">Damer 1</li>
-          <li class="list-group-item">Flickor 12 GP</li>
-          <li class="list-group-item">Flickor 11</li>
-          <li class="list-group-item">Pojkar 13</li>
-        </ul>
+        <div class="list-group list-group-flush">
+          <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="list">Herrar 1</a>
+          <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="list">Damer 1</a>
+          <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="list">Flickor 12 GP</a>
+          <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="list">Flickor 11</a>
+          <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="list">Pojkar 13</a>
+        </div>
       </div>
       <div class="col-8">
         <div class="row">
-          <div class="col-6">
-            <button type="button" class="btn btn-primary">Klassöversikt</button>
-          </div>
-          <div class="col-6">
-            <button type="button" class="btn btn-primary">Matchregler</button>
+          <div class="col-4">
+            <input type="radio" class="btn-check" name="classAndGameRulesToggle" id="btnClasses" autocomplete="off" checked>
+            <label class="btn btn-outline-primary" for="btnClasses">Klasser</label>
+
+            <input type="radio" class="btn-check" name="classAndGameRulesToggle" id="btnGameRules" autocomplete="off">
+            <label class="btn btn-outline-primary" for="btnGameRules">Matchregler</label>
           </div>
         </div>
         <form>
@@ -52,14 +53,8 @@
             </div>
           </div>
         </form>
-        <div class="row">
-          <div class="col-4">
-            <button type="button" class="btn btn-primary">Ta bort klass</button>
-          </div>
-          <div class="col-4">
-            <button type="button" class="btn btn-primary">Ställ in klass</button>
-          </div>
-        </div>
+        <button type="button" class="btn btn-warning">Ställ in klass</button>
+        <button type="button" class="btn btn-danger">Ta bort klass</button>
       </div>
     </div>
   </div>
@@ -74,5 +69,29 @@ export default {
 </script>
 
 <style scoped>
+input {
+  padding: 10px;
+}
+label {
+  float: left;
+  margin-top: 30px;
+  margin-bottom: 5px;
+}
+form {
+  padding: 10px;
+}
 
+button {
+  float: right;
+  margin: 10px;
+}
+.btn-outline-primary {
+  margin-right: 10px;
+  border-color: white;
+}
+
+.list-group {
+  padding-top: 120px;
+  text-align: left;
+}
 </style>
