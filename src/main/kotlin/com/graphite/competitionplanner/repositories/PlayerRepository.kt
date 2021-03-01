@@ -102,4 +102,16 @@ class PlayerRepository(
     fun clearRankingTable() {
         dslContext.deleteFrom(PLAYER_RANKING).execute()
     }
+
+    fun addPlayerWithId(id: Int, playerSpec: PlayerSpec): PlayerRecord {
+        val playerRecord = dslContext.newRecord(PLAYER)
+        playerRecord.id = id
+        playerRecord.firstName = playerSpec.firstName
+        playerRecord.lastName = playerSpec.lastName
+        playerRecord.clubId = playerSpec.club.id
+        playerRecord.dateOfBirth = playerSpec.dateOfBirth
+        playerRecord.store()
+
+        return playerRecord
+    }
 }

@@ -48,6 +48,7 @@ class EventListener(
         competitionSetup()
         registerUsers()
         playerSetup()
+        setUpBYEPlayer()
         addPlayerRankings()
         categorySetup()
         competitionCategorySetup()
@@ -109,6 +110,34 @@ class EventListener(
         categoryRepository.addCategory("Damdubbel", "DOUBLES")
     }
 
+    fun setUpBYEPlayer() {
+        // Needs club, player, competition, competition category, registration
+        // Should be ID 0 in all of them
+        categoryRepository.addCategoryWithId(0, "BYE", "BYE")
+        competitionRepository.addCompetitionWithId(
+            0,
+            CompetitionSpec(
+                location = "BYE",
+                welcomeText = "BYE",
+                organizingClubId = 0,
+                startDate = LocalDate.now(),
+                endDate = LocalDate.now().plusYears(10)
+            )
+        )
+        competitionCategoryService.addCompetitionCategory(0, 0)
+        playerRepository.addPlayerWithId(
+            0,
+            PlayerSpec(
+                firstName = "BYE",
+                lastName = "",
+                club = ClubNoAddressDTO(util.getClubIdOrDefault("Övriga"), null),
+                dateOfBirth = LocalDate.now().minus(18, ChronoUnit.YEARS)
+            )
+        )
+        registrationRepository.addRegistrationWithId(0, LocalDate.now())
+        registrationRepository.registerPlayer(0, 0)
+    }
+
     fun playerSetup() {
         playerRepository.addPlayer(
             PlayerSpec(
@@ -118,6 +147,7 @@ class EventListener(
                 dateOfBirth = LocalDate.now().minus(18, ChronoUnit.YEARS)
             )
         )
+
         playerRepository.addPlayer(
             PlayerSpec(
                 firstName = "Nils",

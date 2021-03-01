@@ -160,13 +160,13 @@ class TestDrawCupOnlyMatchOrder(
     fun thenSecondBestAndSecondWorstPlayerShouldMeetInSecondMatch(){
         val matches = matchService.getMatchesInCategory(competitionCategory.competitionCategoryId)
 
-        val secondMatch = matches.filter { it.matchOrderNumber == 2 }[0]
+        val secondMatch = matches.filter { it.matchOrderNumber == 4 }[0]
         val secondBestPlayer = players[1]
         val secondWorstPlayer = players[6]
 
-        Assertions.assertEquals(secondBestPlayer.id, secondMatch.firstPlayer[0].id,
-            "Expected to find the second best ranked player in the second match")
-        Assertions.assertEquals(secondWorstPlayer.id, secondMatch.secondPlayer[0].id,
-            "Expected to find the second worst ranked player in the second match.")
+        Assertions.assertEquals(secondWorstPlayer.id, secondMatch.firstPlayer[0].id,
+            "Expected to find the second worst ranked player in the fourth match as top player")
+        Assertions.assertEquals(secondBestPlayer.id, secondMatch.secondPlayer[0].id,
+            "Expected to find the second best ranked player in the second match as bottom player.")
     }
 }

@@ -9,10 +9,13 @@ const UserService = {
         return Axios.post("/login", {username, password})
     },
     logout() {
-        return Axios.get(RESOURCE_NAME + "/logout", {withCredentials: true})
+        return Axios.get(RESOURCE_NAME + "/logout")
     },
     getUser() {
-        return Axios.get(RESOURCE_NAME)
+        return Axios.get(RESOURCE_NAME, {withCredentials: true})
+    },
+    refreshToken(token) {
+        return Axios.get("/request-token/" + token)
     }
 }
 

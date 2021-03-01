@@ -51,6 +51,7 @@
             <li class="nav-item" v-if="isLoggedIn">
               <button class="btn btn-secondary" @click="logout"> {{ $t("header.logout") }}</button>
             </li>
+            <button @click="refreshToken">Refresh token</button>
           </ul>
         </div>
       </div>
@@ -59,6 +60,8 @@
 </template>
 
 <script>
+
+import UserService from "@/common/api-services/user.service";
 
 export default {
   name: "Header",
@@ -76,6 +79,9 @@ export default {
       if (!this.$route.name.includes("landing")) {
         this.$router.push('/landing')
       }
+    },
+    refreshToken() {
+      UserService.refreshToken(this.$store.getters.refreshToken)
     }
   }
 }

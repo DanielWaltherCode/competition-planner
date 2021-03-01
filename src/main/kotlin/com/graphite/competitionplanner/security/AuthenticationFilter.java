@@ -2,10 +2,9 @@ package com.graphite.competitionplanner.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.graphite.competitionplanner.SpringApplicationContext;
+import com.graphite.competitionplanner.api.LoginDTO;
 import com.graphite.competitionplanner.service.UserService;
 import com.graphite.competitionplanner.util.UserLogin;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,8 +17,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -52,12 +51,20 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                             FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
         String username = ((User) auth.getPrincipal()).getUsername();
-        String token = Jwts.builder()
-                .setSubject(username)
-                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS256, SecurityConstants.getTokenSecret())
-                .compact();
+        String accessToken = SecurityHelper.generateAccessToken(username);
+        String refreshToken = SecurityHelper.generateRefreshToken(username);
 
-        res.addHeader(SecurityConstants.HEADER_STRING, SecurityConstants.TOKEN_PREFIX + token);
+        // Store refresh token with user
+        UserService userService = (UserService) SpringApplicationContext.getBean("userService");
+        userService.storeRefreshToken(refreshToken, username);
+
+        // Add access and refresh tokens to response body
+        PrintWriter out = res.getWriter();
+        res.setContentType("application/json");
+        res.setCharacterEncoding("UTF-8");
+        LoginDTO loginDTO = new LoginDTO(accessToken, refreshToken);
+        String jsonBody = new ObjectMapper().writeValueAsString(loginDTO);
+        out.print(jsonBody);
+        out.flush();
     }
 }

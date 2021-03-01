@@ -21,6 +21,11 @@ class CategoryRepository(val dslContext: DSLContext) {
             .values(category, type).execute()
     }
 
+    fun addCategoryWithId(id: Int, category: String, type: String) {
+        dslContext.insertInto(CATEGORY).columns(CATEGORY.ID, CATEGORY.CATEGORY_NAME, CATEGORY.CATEGORY_TYPE)
+            .values(id, category, type).execute()
+    }
+
     fun getByName(name: String): CategoryRecord {
         return dslContext.selectFrom(CATEGORY).where(CATEGORY.CATEGORY_NAME.eq(name)).fetchOne()
     }
@@ -136,21 +141,22 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) {
     // Should return competition information, disciplines
     fun getByPlayerId(playerId: Int): List<CompetitionAndCategories> {
         // Get combination of competitions and the categories the player plays in them
-        val records: List<Record> = dslContext.select(
+        val records = dslContext.select(
             COMPETITION_CATEGORY.COMPETITION_ID,
             COMPETITION_CATEGORY.ID,
             COMPETITION_CATEGORY.STATUS,
             CATEGORY.CATEGORY_NAME
         )
-            .from(Tables.PLAYER_REGISTRATION).join(COMPETITION_CATEGORY_REGISTRATION).on(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(Tables.PLAYER_REGISTRATION.ID))
+            .from(PLAYER_REGISTRATION)
+                .join(COMPETITION_CATEGORY_REGISTRATION).on(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
             .join(COMPETITION_CATEGORY)
-            .on(COMPETITION_CATEGORY.ID.eq(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID))
-            .join(Tables.PLAYER).on(Tables.PLAYER_REGISTRATION.PLAYER_ID.eq(Tables.PLAYER.ID))
+                .on(COMPETITION_CATEGORY.ID.eq(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID))
+            .join(PLAYER).on(PLAYER_REGISTRATION.PLAYER_ID.eq(PLAYER.ID))
             .join(CATEGORY).on(CATEGORY.ID.eq(COMPETITION_CATEGORY.CATEGORY))
-            .where(Tables.PLAYER.ID.eq(playerId))
+            .where(PLAYER_REGISTRATION.PLAYER_ID.eq(playerId))
             .fetch()
 
-        return records.stream().map {
+       return records.stream().map {
             CompetitionAndCategories(
                 it.getValue(COMPETITION_CATEGORY.COMPETITION_ID), it.getValue(
                     COMPETITION_CATEGORY.ID),

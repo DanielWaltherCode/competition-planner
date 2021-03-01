@@ -51,6 +51,7 @@ class TestDrawCupOnly(
         )
 
         categoryService.updateCategoryMetadata(competitionCategoryId, categoryMetadata.id, categoryMetadataSpec)
+        //registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, 0, competitionCategoryId))
     }
 
     @AfterEach

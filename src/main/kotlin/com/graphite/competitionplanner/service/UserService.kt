@@ -1,9 +1,11 @@
 package com.graphite.competitionplanner.service
 
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
+import com.graphite.competitionplanner.api.LoginDTO
 import com.graphite.competitionplanner.api.UserSpec
 import com.graphite.competitionplanner.repositories.ClubRepository
 import com.graphite.competitionplanner.repositories.UserRepository
+import com.graphite.competitionplanner.security.SecurityHelper
 import com.graphite.competitionplanner.tables.records.UserTableRecord
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.userdetails.User
@@ -38,6 +40,35 @@ class UserService(
         return recordToDTO(userRecord)
     }
 
+    // Will either update existing or add new one
+    fun storeRefreshToken(refreshToken: String, username: String) {
+        val user = getUserByUsername(username)
+        val existingRecord = userRepository.getRefreshTokenByUser(user.id)
+        if (existingRecord == null) {
+            userRepository.saveRefreshToken(refreshToken, user.id)
+        }
+        else {
+           userRepository.updateRefreshToken(existingRecord.id, refreshToken, existingRecord.userId)
+        }
+    }
+
+    fun getNewAccessToken(refreshToken: String): LoginDTO {
+        val tokenRecord = userRepository.getRefreshToken(refreshToken)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No such refresh token found")
+
+        if (SecurityHelper.validateToken(tokenRecord.refreshToken)) {
+            val user = userRepository.getUserById(tokenRecord.userId)
+                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No user matching the record found")
+            val accessToken = SecurityHelper.generateAccessToken(user.username)
+            val newRefreshToken = SecurityHelper.generateRefreshToken(user.username)
+            storeRefreshToken(refreshToken, user.username)
+            return LoginDTO(accessToken, newRefreshToken)
+        }
+        else {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Refresh token not valid")
+        }
+    }
+
     /*Override necessary method from UserDetailsService */
     override fun loadUserByUsername(username: String): UserDetails {
         val userRecord = userRepository.getUserByUsername(username)
@@ -55,7 +86,6 @@ class UserService(
         )
     }
 }
-
 
 
 data class UserWithEncryptedPassword(

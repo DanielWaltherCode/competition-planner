@@ -114,7 +114,7 @@ export default {
         UserService.login(this.username, this.password).then(res => {
           console.log("login successful", res)
           this.loginFailed = false
-          this.$store.commit("auth_success", res.headers)
+          this.$store.commit("auth_success", res.data)
           UserService.getUser().then(res => {
             this.$store.commit("set_user", res.data)
           })

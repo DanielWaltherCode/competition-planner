@@ -2,6 +2,8 @@ package com.graphite.competitionplanner.repositories
 
 import com.graphite.competitionplanner.Tables.USER_TABLE
 import com.graphite.competitionplanner.service.UserWithEncryptedPassword
+import com.graphite.competitionplanner.tables.RefreshToken.REFRESH_TOKEN
+import com.graphite.competitionplanner.tables.records.RefreshTokenRecord
 import com.graphite.competitionplanner.tables.records.UserTableRecord
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
@@ -25,5 +27,41 @@ class UserRepository(val dslContext: DSLContext) {
             .fetchOneInto(USER_TABLE)
     }
 
+    fun getUserById(userId: Int): UserTableRecord? {
+        return dslContext
+            .selectFrom(USER_TABLE)
+            .where(USER_TABLE.ID.eq(userId))
+            .fetchOneInto(USER_TABLE)
+    }
+
+    fun saveRefreshToken(refreshToken: String, userId: Int) {
+        val record = dslContext.newRecord(REFRESH_TOKEN)
+        record.refreshToken = refreshToken
+        record.userId = userId
+        record.store()
+    }
+
+    fun getRefreshToken(refreshToken: String): RefreshTokenRecord? {
+         return dslContext
+             .selectFrom(REFRESH_TOKEN)
+             .where(REFRESH_TOKEN.REFRESH_TOKEN_.eq(refreshToken))
+             .fetchOneInto(REFRESH_TOKEN)
+    }
+
     fun clearTable() = dslContext.deleteFrom(USER_TABLE).execute()
+
+    fun getRefreshTokenByUser(userId: Int): RefreshTokenRecord? {
+        return dslContext
+            .selectFrom(REFRESH_TOKEN)
+            .where(REFRESH_TOKEN.USER_ID.eq(userId))
+            .fetchOneInto(REFRESH_TOKEN)
+    }
+
+    fun updateRefreshToken(id: Int, refreshToken: String, userId: Int) {
+        val record = dslContext.newRecord(REFRESH_TOKEN)
+        record.id = id
+        record.refreshToken = refreshToken
+        record.userId = userId
+        record.update()
+    }
 }
