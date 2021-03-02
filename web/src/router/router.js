@@ -19,7 +19,7 @@ export default new Router({
         {
             path: "/classes",
             name: "classes",
-            component: () => import("@/components/Categories")
+            component: () => import("@/components/category/Categories")
         }
     ],
     scrollBehavior() {
