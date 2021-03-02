@@ -4,11 +4,11 @@
     <div class="row">
       <div class="col-4">
         <div class="list-group list-group-flush">
-          <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="list">Herrar 1</a>
+          <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="list">{{drawStrategy}}</a>
           <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="list">Damer 1</a>
           <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="list">Flickor 12 GP</a>
           <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="list">Flickor 11</a>
-          <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="list">Pojkar 13</a>
+          <a href="#" v-on:click="doSomething" class="list-group-item list-group-item-action" data-bs-toggle="list">Pojkar 13</a>
         </div>
       </div>
       <div class="col-8">
@@ -53,7 +53,7 @@
             </div>
           </div>
         </form>
-        <button type="button" class="btn btn-warning">Ställ in klass</button>
+        <button v-on:click="doSomething" type="button" class="btn btn-warning">Ställ in klass</button>
         <button type="button" class="btn btn-danger">Ta bort klass</button>
       </div>
     </div>
@@ -64,7 +64,22 @@
 
 <script>
 export default {
-  name: "Categories"
+  name: "Categories",
+  data: function(){
+    return {
+      cost: "",
+      start: "",
+      drawType: "",
+      numberOfPlayer: "",
+      numberOfPlayersThatAdvance: "",
+      drawStrategy: "PoolSnake"
+    }
+  },
+  methods: {
+    doSomething : function() {
+      console.log(this.name)
+    }
+  }
 }
 </script>
 
