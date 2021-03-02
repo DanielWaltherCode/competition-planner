@@ -6,12 +6,18 @@
     "draws": "Lottningar",
     "schedule": "Schema",
     "results": "Resultat",
-    "billing": "Fakturor"
+    "billing": "Fakturor",
+    "logout": "Logga ut"
   },
   "landing": {
     "heading": {
       "part1": "Välkommen till Let's Compete!",
-      "part2": "Här kan du snabbt och smidigt sätta upp en tävling, göra scheman och lottningar, och rapportera resultat"
+      "part2": "Här kan du snabbt och smidigt sätta upp en tävling, göra scheman och lottningar, och rapportera resultat",
+      "username": "Användarnam",
+      "password": "Lösenord",
+      "login": "Logga in",
+      "loginFailed": "Inloggningen misslyckades",
+      "greeting": "Välkommen {username}"
     },
     "middle": {
       "organize": {
@@ -40,10 +46,12 @@
     "info": "Tävlingsinformation",
     "startDate": "Startdatum",
     "endDate": "Slutdatum",
-    "location": "Plats"
+    "location": "Plats",
+    "competitionAdded": "Tävlingen är skapad. Du kan nu gå vidare till nästa steg."
   },
   "general": {
     "save": "Spara",
-    "saveChanges": "Spara ändringar"
+    "saveChanges": "Spara ändringar",
+    "next": "Nästa"
   }
 }
