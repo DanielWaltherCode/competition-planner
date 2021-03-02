@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.api
 
 import com.graphite.competitionplanner.repositories.ClubRepository
+import com.graphite.competitionplanner.service.ClubService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
@@ -10,7 +11,8 @@ import kotlin.streams.toList
 
 @RestController
 @RequestMapping("/club")
-class ClubApi(val clubRepository: ClubRepository) {
+class ClubApi(val clubRepository: ClubRepository,
+val clubService: ClubService) {
 
     @PostMapping
     fun addClub(@Valid @RequestBody clubDTO: ClubDTO): ClubDTO {
@@ -26,14 +28,12 @@ class ClubApi(val clubRepository: ClubRepository) {
 
     @GetMapping("/{clubName}")
     fun findByName(@PathVariable clubName: String): ClubDTO {
-        val club = clubRepository.findByName(clubName) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
-        return ClubDTO(club.id, club.name, club.address)
+        return clubService.findByName(clubName)
     }
 
     @GetMapping("/{clubId}")
     fun findById(@PathVariable clubId: Int): ClubDTO {
-        val club = clubRepository.getById(clubId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
-        return ClubDTO(club.id, club.name, club.address)
+        return clubService.findById(clubId)
     }
 
     @GetMapping

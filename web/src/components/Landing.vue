@@ -1,53 +1,78 @@
 <template>
   <div>
     <main>
-      <div id="top-container">
-        <div class="text-div">
-          <div>
-            <p class="emphasized"> {{ $t("landing.heading.part1") }}</p>
+      <div class="container">
+        <div class="row" id="top">
+          <div class="col-lg-4">
+            <div class="text-div">
+              <div>
+                <p class="emphasized"> {{ $t("landing.heading.part1") }}</p>
+              </div>
+              <div v-if="isLoggedIn">
+                <br>
+                <p>{{$t("landing.heading.greeting", {username: user})}}</p>
+                <br>
+              </div>
+              <div>
+                <p class="second"> {{ $t("landing.heading.part2") }}</p>
+              </div>
+              <div v-if="!isLoggedIn">
+                <div class="mb-3">
+                  <label for="username" class="form-label">{{ getString("landing.heading.username") }}</label>
+                  <input type="text" class="form-control" id="username" v-model="username" placeholder="">
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">{{ getString("landing.heading.password") }}</label>
+                  <input type="password" class="form-control" id="password" v-model="password" placeholder="">
+                </div>
+                <button class="btn btn-outline-info" @click="login">{{getString("landing.heading.login")}}</button>
+                <p v-if="loginFailed" class="text-danger">{{getString("landing.heading.loginFailed")}}</p>
+              </div>
+            </div>
           </div>
-          <div>
-            <p class="second"> {{ $t("landing.heading.part2") }}</p>
+          <div class="col-lg-8">
+            <div >
+              <img src="@/assets/tennis.svg" class="img-fluid" alt="Tennis player">
+            </div>
           </div>
-        </div>
-        <div class="image-holder">
-          <img src="@/assets/tennis.svg" alt="Tennis player">
         </div>
       </div>
-      <div id="middle">
-        <div class="card-container">
+      <div id="middle" class="container-fluid">
+        <div class="row">
+
+        <div class="card-container col-sm">
           <div class="card">
-            <img src="@/assets/organize_resume.svg" alt="Planning">
+            <img src="@/assets/organize_resume.svg" class="img-fluid" alt="Planning">
             <div class="card-body">
               <h3 class="card-title">{{ $t("landing.middle.organize.title") }}</h3>
               <p class="card-text">{{ $t("landing.middle.organize.text") }}</p>
             </div>
           </div>
         </div>
-        <div class="card-container">
+        <div class="card-container col-sm">
           <div class="card">
-            <img src="@/assets/schedule.svg" alt="Scheduling">
+            <img src="@/assets/schedule.svg" class="img-fluid"  alt="Scheduling">
             <div class="card-body">
               <h3 class="card-title">{{ $t("landing.middle.host.title") }}</h3>
               <p class="card-text">{{ $t("landing.middle.host.text") }}</p>
             </div>
           </div>
         </div>
-        <div class="card-container">
+        <div class="card-container col-sm">
           <div class="card">
-            <img src="@/assets/data_points.svg" alt="Results">
+            <img src="@/assets/data_points.svg" class="img-fluid"  alt="Results">
             <div class="card-body">
               <h3 class="card-title">{{ $t("landing.middle.report.title") }}</h3>
               <p class="card-text">{{ $t("landing.middle.report.text") }}</p>
             </div>
           </div>
         </div>
-      </div>
-      <div id="bottom">
-        <div class="image-holder">
-          <img src="@/assets/good_team.svg" alt="Tennis player">
         </div>
-        <div id="bottom-text">
+      <div id="bottom" class="row">
+        <div class="col-lg-7">
+          <img src="@/assets/good_team.svg" class="img-fluid" alt="Team work">
+        </div>
+        <div id="bottom-text" class="col-lg-5 text-lg-start">
           <p>{{ $t("landing.bottom.section1") }}</p>
           <ul>
             <li>{{ $t("landing.bottom.bullit1") }}</li>
@@ -56,28 +81,55 @@
           </ul>
         </div>
       </div>
+      </div>
     </main>
   </div>
 </template>
 
 <script>
+import UserService from "@/common/api-services/user.service";
+
 export default {
-  name: "Landing"
+  name: "Landing",
+  data() {
+    return {
+      username: "",
+      password: "",
+      loginFailed: false
+    }
+  },
+  computed : {
+    isLoggedIn : function(){ return this.$store.getters.isLoggedIn},
+    user: function(){ return this.$store.getters.user.username}
+  },
+  mounted() {
+  },
+  methods: {
+    getString(string) {
+      return this.$t(string)
+    },
+    login() {
+      this.username = "abraham"
+      this.password = "anders"
+        UserService.login(this.username, this.password).then(res => {
+          console.log("login successful", res)
+          this.loginFailed = false
+          this.$store.commit("auth_success", res.data)
+          UserService.getUser().then(res => {
+            this.$store.commit("set_user", res.data)
+          })
+
+        })
+      .catch(err => {
+        console.log("Login failed", err)
+        this.loginFailed = true
+      })
+    }
+  }
 }
 </script>
 
 <style scoped>
-
-#top-container {
-  height: 400px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-
-.text-div {
-  align-self: center;
-  margin-left: 20px;
-}
 
 .emphasized {
   font-size: 40px;
@@ -87,16 +139,9 @@ export default {
   font-size: 24px;
 }
 
-.image-holder img {
-  max-width: 90%;
-  max-height: 90%;
-}
-
 /* Middle */
 #middle {
   margin-top: 80px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .card-container {
@@ -106,9 +151,6 @@ export default {
 }
 
 
-.img-container {
-  height: 50%;
-}
 
 .card {
   min-height: 350px;
@@ -130,24 +172,7 @@ export default {
   max-width: 40%;
 }
 
-
 #bottom {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  margin-top: 30px;
 }
-
-#bottom img {
-  margin: 40px;
-  max-width: 70%;
-  max-height: 80%;
-}
-
-#bottom-text {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: left;
-}
-
-
 </style>

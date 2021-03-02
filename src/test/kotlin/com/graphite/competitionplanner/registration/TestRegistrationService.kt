@@ -38,7 +38,7 @@ class TestRegistrationService(@Autowired val competitionService: CompetitionServ
     fun addRegistration() {
         val umeId = util.getClubIdOrDefault("Umeå IK")
         val lugiPlayers = playerService.getPlayersByClubId(umeId)
-        val idToRegister = lugiPlayers[0].id ?: 0
+        val idToRegister = lugiPlayers[0].id
 
         val originalRegistrations = registrationService.getRegistrationByPlayerId(idToRegister)
         val numberOfRegistrations = originalRegistrations.competitionsAndCategories.size

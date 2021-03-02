@@ -23,7 +23,19 @@ class CompetitionRepository(val dslContext: DSLContext) {
         return competitionRecord
     }
 
-    // Returns a join of competition and club
+    fun addCompetitionWithId(competitionId: Int, competitionSpec: CompetitionSpec): CompetitionRecord {
+        val competitionRecord = dslContext.newRecord(Competition.COMPETITION)
+        competitionRecord.id = competitionId
+        competitionRecord.location = competitionSpec.location
+        competitionRecord.welcomeText = competitionSpec.welcomeText
+        competitionRecord.organizingClub = competitionSpec.organizingClubId
+        competitionRecord.startDate = competitionSpec.startDate
+        competitionRecord.endDate = competitionSpec.endDate
+        competitionRecord.store()
+        return competitionRecord
+    }
+
+        // Returns a join of competition and club
     fun getCompetitions(weekStartDate: LocalDate?, weekEndDate: LocalDate?): List<Record> {
         if (weekStartDate == null) {
             return dslContext

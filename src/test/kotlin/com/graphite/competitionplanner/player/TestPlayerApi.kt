@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.player
 
+import com.graphite.competitionplanner.AbstractApiTest
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.api.PlayerApi
 import com.graphite.competitionplanner.api.PlayerSpec
@@ -18,18 +19,21 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
+import java.util.*
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TestPlayerApi(
-        @LocalServerPort val port: Int,
-        @Autowired val testRestTemplate: TestRestTemplate,
-        @Autowired val playerApi: PlayerApi,
-        @Autowired val util: Util
-) {
+    @LocalServerPort port: Int,
+    @Autowired testRestTemplate: TestRestTemplate,
+    @Autowired val playerApi: PlayerApi,
+    @Autowired val util: Util
+) : AbstractApiTest (
+        port,
+    testRestTemplate
 
+) {
+    override val resource: String = "/player"
     lateinit var addedPlayer: PlayerDTO
     val clubId = util.getClubIdOrDefault("Lugi")
-    val baseAddress = "http://localhost:$port/player"
 
     @BeforeEach
     fun addTestPlayer() {
@@ -37,7 +41,8 @@ class TestPlayerApi(
                 "Laban", "Nilsson",
                 ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
         )
-        addedPlayer = testRestTemplate.postForObject(baseAddress, playerString, PlayerDTO::class.java)
+        addedPlayer = testRestTemplate.postForObject(getUrl(),
+            HttpEntity(playerString, getAuthenticationHeaders()), PlayerDTO::class.java)
     }
 
     @Test
@@ -86,7 +91,7 @@ class TestPlayerApi(
     @Test
     fun deletePlayer(){
         // Setup
-        val request = HttpEntity.EMPTY
+        val request = HttpEntity<String>(getAuthenticationHeaders())
 
         //Act
         val response = testRestTemplate.exchange<Any>("/player/-1", HttpMethod.DELETE, request)
@@ -97,7 +102,7 @@ class TestPlayerApi(
 
     @AfterEach
     fun cleanUp() {
-        testRestTemplate.delete(baseAddress + "/${addedPlayer.id}")
+        testRestTemplate.delete(getUrl() + "/${addedPlayer.id}", HttpEntity<String>(getAuthenticationHeaders()))
     }
 
 }

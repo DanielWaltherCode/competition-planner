@@ -73,7 +73,6 @@ class PlayerRepository(
             }
         }
         else {
-            logger.warn("No player found with id $playerId. Adding new ranking instead")
             val record = dslContext.newRecord(PLAYER_RANKING)
             record.playerId = playerId
             if (categoryType.toUpperCase() == "SINGLES") {
@@ -102,5 +101,17 @@ class PlayerRepository(
 
     fun clearRankingTable() {
         dslContext.deleteFrom(PLAYER_RANKING).execute()
+    }
+
+    fun addPlayerWithId(id: Int, playerSpec: PlayerSpec): PlayerRecord {
+        val playerRecord = dslContext.newRecord(PLAYER)
+        playerRecord.id = id
+        playerRecord.firstName = playerSpec.firstName
+        playerRecord.lastName = playerSpec.lastName
+        playerRecord.clubId = playerSpec.club.id
+        playerRecord.dateOfBirth = playerSpec.dateOfBirth
+        playerRecord.store()
+
+        return playerRecord
     }
 }

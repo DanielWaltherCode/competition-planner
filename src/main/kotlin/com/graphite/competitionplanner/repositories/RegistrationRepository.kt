@@ -25,6 +25,14 @@ class RegistrationRepository(val dslContext: DSLContext) {
         return registration
     }
 
+    fun addRegistrationWithId(id: Int, date: LocalDate): RegistrationRecord {
+        val registration: RegistrationRecord = dslContext.newRecord(REGISTRATION)
+        registration.id = id
+        registration.registrationDate = date
+        registration.store()
+        return registration
+    }
+
     fun deleteRegistration(registrationId: Int): Boolean {
         return dslContext.deleteFrom(REGISTRATION).where(REGISTRATION.ID.eq(registrationId)).execute() > 0
     }
