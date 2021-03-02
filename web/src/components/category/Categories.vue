@@ -3,13 +3,9 @@
   <div class="container">
     <div class="row">
       <div class="col-4">
-        <div class="list-group list-group-flush">
-          <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="list">Herrar 1</a>
-          <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="list">Damer 1</a>
-          <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="list">Flickor 12 GP</a>
-          <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="list">Flickor 11</a>
-          <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="list">Pojkar 13</a>
-        </div>
+        <category-list
+          v-bind:categories="categories"
+        />
       </div>
       <div class="col-8">
         <div class="row">
@@ -53,7 +49,7 @@
             </div>
           </div>
         </form>
-        <button type="button" class="btn btn-warning">Ställ in klass</button>
+        <button v-on:click="doSomething" type="button" class="btn btn-warning">Ställ in klass</button>
         <button type="button" class="btn btn-danger">Ta bort klass</button>
       </div>
     </div>
@@ -63,8 +59,41 @@
 </template>
 
 <script>
+import CategoryList from "@/components/category/CategoryList"
+
 export default {
-  name: "Categories"
+  name: "Categories",
+  components: {CategoryList},
+  data: function(){
+    return {
+      categories: []
+    }
+  },
+  created() {
+    this.categories = [
+      {
+        id: 1,
+        name: "Herrar-1"
+      },
+      {
+        id: 2,
+        name: "Damer-1"
+      },
+      {
+        id: 3,
+        name: "Flickor-14"
+      },
+      {
+        id: 4,
+        name: "Killar-14"
+      }
+    ]
+  },
+  methods: {
+    doSomething : function() {
+      console.log(this.name)
+    }
+  }
 }
 </script>
 
@@ -88,10 +117,5 @@ button {
 .btn-outline-primary {
   margin-right: 10px;
   border-color: white;
-}
-
-.list-group {
-  padding-top: 120px;
-  text-align: left;
 }
 </style>
