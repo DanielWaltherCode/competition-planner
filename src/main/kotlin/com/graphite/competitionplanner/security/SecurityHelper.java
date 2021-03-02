@@ -25,7 +25,7 @@ public class SecurityHelper {
     public static String generateAccessToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
-                .setExpiration(new Date(System.currentTimeMillis() + (SecurityConstants.ACCESS_TOKEN_EXPIRATION_TIME - 50000)))
+                .setExpiration(new Date(System.currentTimeMillis() + (SecurityConstants.ACCESS_TOKEN_EXPIRATION_TIME)))
                 .signWith(SignatureAlgorithm.HS256, SecurityConstants.getTokenSecret())
                 .compact();
     }
