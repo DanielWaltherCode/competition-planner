@@ -3,7 +3,6 @@ package com.graphite.competitionplanner.service
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.api.LoginDTO
 import com.graphite.competitionplanner.api.UserSpec
-import com.graphite.competitionplanner.repositories.ClubRepository
 import com.graphite.competitionplanner.repositories.UserRepository
 import com.graphite.competitionplanner.security.SecurityHelper
 import com.graphite.competitionplanner.tables.records.UserTableRecord
