@@ -2,7 +2,6 @@ package com.graphite.competitionplanner.security
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.AuthenticationException
-import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
@@ -36,7 +35,6 @@ class JWTAuthorizationFilter : OncePerRequestFilter() {
             entryPoint.commence(request, response, exception)
             return
         }
-        filterChain.doFilter(request, response)
     }
 
     private fun getAuthentication(req: HttpServletRequest): UsernamePasswordAuthenticationToken? {

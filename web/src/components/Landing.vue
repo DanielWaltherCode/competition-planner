@@ -2,6 +2,7 @@
   <div>
     <main>
       <div class="container">
+        <!-- Top section -->
         <div class="row" id="top">
           <div class="col-lg-4">
             <div class="text-div">
@@ -12,11 +13,23 @@
                 <br>
                 <p>{{$t("landing.heading.greeting", {username: user})}}</p>
                 <br>
+                <div>
+                  <div class="form-group ">
+                    <label for="competition-selection"> {{ getString("landing.heading.competitionChoice") }} </label>
+                    <select name="competition-selection" id="competition-selection" class="form-control"
+                            v-on:change="setCompetition" v-model="selectedCompetition">
+                      <option value="none"> {{ getString("landing.heading.noCompetitionSelected") }}</option>
+                      <option v-for="comp in competitions" v-bind:key="comp.id" :value="comp">
+                        {{comp.name}}
+                      </option>
+                    </select>
+                  </div>
+                </div>
               </div>
               <div>
-                <p class="second"> {{ $t("landing.heading.part2") }}</p>
               </div>
               <div v-if="!isLoggedIn">
+                <p class="second"> {{ $t("landing.heading.part2") }}</p>
                 <div class="mb-3">
                   <label for="username" class="form-label">{{ getString("landing.heading.username") }}</label>
                   <input type="text" class="form-control" id="username" v-model="username" placeholder="">
@@ -37,9 +50,9 @@
           </div>
         </div>
       </div>
+      <!-- Middle sections -->
       <div id="middle" class="container-fluid">
         <div class="row">
-
         <div class="card-container col-sm">
           <div class="card">
             <img src="@/assets/organize_resume.svg" class="img-fluid" alt="Planning">
@@ -88,6 +101,7 @@
 
 <script>
 import UserService from "@/common/api-services/user.service";
+import CompetitionService from "@/common/api-services/competition.service";
 
 export default {
   name: "Landing",
@@ -95,14 +109,41 @@ export default {
     return {
       username: "",
       password: "",
-      loginFailed: false
+      loginFailed: false,
+      selectedCompetition: "none",
+      competitions: []
     }
   },
   computed : {
     isLoggedIn : function(){ return this.$store.getters.isLoggedIn},
-    user: function(){ return this.$store.getters.user.username}
+    user: function(){ return this.$store.getters.user.username},
+    competition: function(){ return this.$store.getters.competition},
   },
   mounted() {
+    if (this.isLoggedIn) {
+      CompetitionService.getCompetitions().then(res => {
+        this.competitions = res.data
+      })
+    }
+    if (this.competition === null) {
+      this.selectedCompetition = "none"
+    }
+    else {
+      this.selectedCompetition = this.competition
+    }
+  },
+  created() {
+    if (this.isLoggedIn) {
+      CompetitionService.getCompetitions().then(res => {
+        this.competitions = res.data
+      })
+    }
+    if (this.competition === null) {
+      this.selectedCompetition = "none"
+    }
+    else {
+      this.selectedCompetition = this.competition
+    }
   },
   methods: {
     getString(string) {
@@ -118,12 +159,24 @@ export default {
           UserService.getUser().then(res => {
             this.$store.commit("set_user", res.data)
           })
-
+          // Fetch available competitions
+          // TODO: ensure only competitions for the logged in user are sent back
+        CompetitionService.getCompetitions().then(res => {
+            this.competitions = res.data
+          })
         })
       .catch(err => {
         console.log("Login failed", err)
         this.loginFailed = true
       })
+    },
+    setCompetition() {
+        if (this.selectedCompetition === "none") {
+          this.$store.commit("set_competition", null)
+        }
+        else {
+          this.$store.commit("set_competition", this.selectedCompetition)
+        }
     }
   }
 }

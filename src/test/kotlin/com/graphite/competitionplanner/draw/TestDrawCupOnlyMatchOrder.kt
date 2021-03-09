@@ -2,17 +2,22 @@ package com.graphite.competitionplanner.draw
 
 import com.graphite.competitionplanner.api.*
 import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
+import com.graphite.competitionplanner.api.competition.CompetitionApi
 import com.graphite.competitionplanner.api.competition.CompetitionCategoryApi
+import com.graphite.competitionplanner.api.competition.CompetitionSpec
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.service.*
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
+import com.graphite.competitionplanner.service.competition.CompetitionDTO
 import com.graphite.competitionplanner.service.competition.DrawService
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
-import java.time.LocalDateTime
 import kotlin.random.Random
 
 @SpringBootTest
@@ -120,6 +125,7 @@ class TestDrawCupOnlyMatchOrder(
         return competitionApi.addCompetition(
             CompetitionSpec(
                 "LocationA",
+                "Monkey cup",
                 "Welcome to competition A",
                 clubId.id!!,
                 LocalDate.now(),

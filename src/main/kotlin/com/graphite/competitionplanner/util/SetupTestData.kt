@@ -1,12 +1,14 @@
 package com.graphite.competitionplanner.util
 
 import com.graphite.competitionplanner.api.*
+import com.graphite.competitionplanner.api.competition.CompetitionSpec
 import com.graphite.competitionplanner.repositories.*
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
 import com.graphite.competitionplanner.repositories.competition.CategoryRepository
 import com.graphite.competitionplanner.service.*
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
+import com.graphite.competitionplanner.service.competition.CompetitionService
 import com.graphite.competitionplanner.service.competition.Match
 import com.graphite.competitionplanner.service.competition.MatchType
 import org.springframework.context.event.ContextRefreshedEvent
@@ -118,6 +120,7 @@ class EventListener(
             0,
             CompetitionSpec(
                 location = "BYE",
+                name = "BYE",
                 welcomeText = "BYE",
                 organizingClubId = 0,
                 startDate = LocalDate.now(),
@@ -330,6 +333,7 @@ class EventListener(
         competitionRepository.addCompetition(
             CompetitionSpec(
                 location = "Lund",
+                name = "Eurofinans 2021",
                 welcomeText = "Välkomna till Eurofinans",
                 organizingClubId = util.getClubIdOrDefault("Lugi"),
                 startDate = LocalDate.now(),
@@ -339,6 +343,7 @@ class EventListener(
         competitionRepository.addCompetition(
             CompetitionSpec(
                 location = "Umeå",
+                name = "Bollstadion Cup",
                 welcomeText = "Umeå, kallt, öde, men vi har badminton!",
                 organizingClubId = util.getClubIdOrDefault("Umeå IK"),
                 startDate = LocalDate.now(),
@@ -348,6 +353,7 @@ class EventListener(
         competitionRepository.addCompetition(
             CompetitionSpec(
                 location = "Svedala",
+                name = "Svedala Open",
                 welcomeText = "Bonustävling!",
                 organizingClubId = util.getClubIdOrDefault("Svedala"),
                 startDate = LocalDate.now(),

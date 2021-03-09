@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.repositories.competition
 
-import com.graphite.competitionplanner.api.CompetitionSpec
+import com.graphite.competitionplanner.api.competition.CompetitionSpec
 import com.graphite.competitionplanner.tables.Club
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.records.CompetitionRecord
@@ -15,6 +15,7 @@ class CompetitionRepository(val dslContext: DSLContext) {
     fun addCompetition(competitionSpec: CompetitionSpec): CompetitionRecord {
         val competitionRecord = dslContext.newRecord(Competition.COMPETITION)
         competitionRecord.location = competitionSpec.location
+        competitionRecord.name = competitionSpec.name
         competitionRecord.welcomeText = competitionSpec.welcomeText
         competitionRecord.organizingClub = competitionSpec.organizingClubId
         competitionRecord.startDate = competitionSpec.startDate
@@ -26,6 +27,7 @@ class CompetitionRepository(val dslContext: DSLContext) {
     fun addCompetitionWithId(competitionId: Int, competitionSpec: CompetitionSpec): CompetitionRecord {
         val competitionRecord = dslContext.newRecord(Competition.COMPETITION)
         competitionRecord.id = competitionId
+        competitionRecord.name = competitionSpec.name
         competitionRecord.location = competitionSpec.location
         competitionRecord.welcomeText = competitionSpec.welcomeText
         competitionRecord.organizingClub = competitionSpec.organizingClubId
@@ -81,6 +83,7 @@ class CompetitionRepository(val dslContext: DSLContext) {
     fun updateCompetition(competitionId: Int, competitionSpec: CompetitionSpec): CompetitionRecord {
         val competitionRecord = dslContext.newRecord(Competition.COMPETITION)
         competitionRecord.id = competitionId
+        competitionRecord.name = competitionSpec.name
         competitionRecord.location = competitionSpec.location
         competitionRecord.welcomeText = competitionSpec.welcomeText
         competitionRecord.organizingClub = competitionSpec.organizingClubId

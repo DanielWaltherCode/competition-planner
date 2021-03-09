@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.competition
 
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CategoryRepository
-import com.graphite.competitionplanner.service.CompetitionService
+import com.graphite.competitionplanner.service.competition.CompetitionService
 import com.graphite.competitionplanner.service.PlayerService
 import com.graphite.competitionplanner.service.RegistrationService
 import com.graphite.competitionplanner.service.RegistrationSinglesDTO

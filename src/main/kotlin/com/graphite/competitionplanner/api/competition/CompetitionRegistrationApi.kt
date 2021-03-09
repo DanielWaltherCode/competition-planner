@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.api.competition
 
 import com.graphite.competitionplanner.service.*
+import com.graphite.competitionplanner.service.competition.CompetitionService
 import io.swagger.annotations.ApiModelProperty
 import org.springframework.web.bind.annotation.*
 

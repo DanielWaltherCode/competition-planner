@@ -60,7 +60,7 @@ class UserService(
                 ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No user matching the record found")
             val accessToken = SecurityHelper.generateAccessToken(user.username)
             val newRefreshToken = SecurityHelper.generateRefreshToken(user.username)
-            storeRefreshToken(refreshToken, user.username)
+            storeRefreshToken(newRefreshToken, user.username)
             return LoginDTO(accessToken, newRefreshToken)
         }
         else {

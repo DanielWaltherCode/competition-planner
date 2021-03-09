@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.util
 import com.graphite.competitionplanner.repositories.ClubRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CategoryRepository
-import com.graphite.competitionplanner.service.CompetitionService
+import com.graphite.competitionplanner.service.competition.CompetitionService
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component

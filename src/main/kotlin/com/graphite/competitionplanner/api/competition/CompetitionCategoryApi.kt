@@ -1,12 +1,10 @@
 package com.graphite.competitionplanner.api.competition
 
-import com.graphite.competitionplanner.api.*
 import com.graphite.competitionplanner.repositories.DrawStrategyRepository
 import com.graphite.competitionplanner.repositories.DrawTypeRepository
-import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.service.*
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
-import org.springframework.beans.factory.annotation.Autowired
+import com.graphite.competitionplanner.service.competition.CompetitionService
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 

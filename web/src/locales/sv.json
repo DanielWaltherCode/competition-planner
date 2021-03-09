@@ -1,5 +1,6 @@
 {
   "header": {
+    "newCompetition": "Skapa ny tävling",
     "overview": "Översikt",
     "classes": "Klasser",
     "players": "Spelare",
@@ -17,7 +18,9 @@
       "password": "Lösenord",
       "login": "Logga in",
       "loginFailed": "Inloggningen misslyckades",
-      "greeting": "Välkommen {username}"
+      "greeting": "Välkommen {username}",
+      "competitionChoice": "Välj en tävling",
+      "noCompetitionSelected": "Ingen tävling vald"
     },
     "middle": {
       "organize": {
@@ -40,18 +43,27 @@
       "bullit3": "Se resultat, speltider och lottningar online. Allt i smidig realtidsuppdatering"
     }
   },
-  "overview": {
+  "newCompetition": {
     "title": "Tävlingsöversikt",
     "name": "Namn",
     "info": "Tävlingsinformation",
     "startDate": "Startdatum",
     "endDate": "Slutdatum",
     "location": "Plats",
-    "competitionAdded": "Tävlingen är skapad. Du kan nu gå vidare till nästa steg."
+    "competitionAdded": "Tävlingen är skapad. Du kan nu gå vidare till nästa steg.",
+    "competitionUpdated": "Tävlingen uppdaterades"
   },
   "general": {
     "save": "Spara",
     "saveChanges": "Spara ändringar",
     "next": "Nästa"
+  },
+  "player": {
+    "sidebar": {
+      "title": "Sortera efter",
+      "name": "Namn",
+      "club": "Klubb",
+      "categories": "Klasser"
+    }
   }
 }

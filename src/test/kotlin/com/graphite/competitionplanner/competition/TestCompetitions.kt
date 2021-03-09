@@ -1,11 +1,10 @@
 package com.graphite.competitionplanner.competition
 
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
-import com.graphite.competitionplanner.api.CompetitionSpec
+import com.graphite.competitionplanner.api.competition.CompetitionSpec
 import com.graphite.competitionplanner.repositories.ClubRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
-import com.graphite.competitionplanner.service.CompetitionDTO
-import com.graphite.competitionplanner.service.CompetitionService
+import com.graphite.competitionplanner.service.competition.CompetitionService
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -33,6 +32,7 @@ class TestCompetitionsService(
         val competition = competitionService.addCompetition(
             CompetitionSpec(
                 location = "Lund",
+                name = "Moneky cup",
                 welcomeText = "Välkomna till Eurofinans",
                 organizingClubId = util.getClubIdOrDefault("Lugi"),
                 startDate = LocalDate.now(),
@@ -51,6 +51,7 @@ class TestCompetitionsService(
             competitionService.addCompetition(
                 CompetitionSpec(
                     location = "Lund",
+                    name = "Monkey cup",
                     welcomeText = "Välkomna till Eurofinans",
                     organizingClubId = -1,
                     startDate = LocalDate.now(),
@@ -66,6 +67,7 @@ class TestCompetitionsService(
         val competition = competitionService.addCompetition(
             CompetitionSpec(
                 location = "Lund",
+                name = "Monkey cup",
                 welcomeText = "Välkomna till Eurofinans",
                 organizingClubId = util.getClubIdOrDefault("Lugi"),
                 startDate = LocalDate.now(),
@@ -85,7 +87,7 @@ class TestCompetitionsService(
         val updatedText = "My new description text"
 
         val competitionSpec = CompetitionSpec(
-            competition.location, updatedText,
+            competition.location, competition.name, updatedText,
             competition.organizingClub.id, competition.startDate, competition.endDate
         )
 

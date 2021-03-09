@@ -3,6 +3,8 @@ package com.graphite.competitionplanner.service
 import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CategoryRepository
+import com.graphite.competitionplanner.service.competition.CompetitionDTO
+import com.graphite.competitionplanner.service.competition.CompetitionService
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException

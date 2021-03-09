@@ -1,12 +1,15 @@
-package com.graphite.competitionplanner.service
+package com.graphite.competitionplanner.service.competition
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.Tables.COMPETITION
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
-import com.graphite.competitionplanner.api.CompetitionSpec
+import com.graphite.competitionplanner.api.competition.CompetitionSpec
 import com.graphite.competitionplanner.repositories.ClubRepository
-import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
+import com.graphite.competitionplanner.service.CompetitionAndCategoriesDTO
+import com.graphite.competitionplanner.service.CompetitionCategoryDTO
 import com.graphite.competitionplanner.tables.Club.CLUB
 import com.graphite.competitionplanner.tables.records.ClubRecord
 import com.graphite.competitionplanner.tables.records.CompetitionRecord
@@ -82,18 +85,22 @@ class CompetitionService(
 
 fun recordsToDto(competition: CompetitionRecord, club: ClubRecord): CompetitionDTO {
     return CompetitionDTO(
-        competition.id, competition.location, competition.welcomeText,
+        competition.id, competition.name, competition.location, competition.welcomeText,
         ClubNoAddressDTO(club.id, club.name), competition.startDate, competition.endDate
     )
 }
 
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CompetitionDTO(
     val id: Int,
+    val name: String,
     val location: String,
-    val welcomeText: String,
+    val welcomeText: String?,
     val organizingClub: ClubNoAddressDTO,
-    val startDate: LocalDate,
-    val endDate: LocalDate
+    @JsonFormat(pattern="yyyy-MM-dd")
+    val startDate: LocalDate?,
+    @JsonFormat(pattern="yyyy-MM-dd")
+    val endDate: LocalDate?
 )
 
 

@@ -18,7 +18,8 @@ create table competition
 (
     id              SERIAL PRIMARY KEY,
     location        VARCHAR(100) NOT NULL,
-    welcome_text    VARCHAR      NOT NULL,
+    name            VARCHAR NOT NULL,
+    welcome_text    VARCHAR,
     organizing_club INTEGER references club(id),
     start_date      DATE,
     end_date        DATE

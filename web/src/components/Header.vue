@@ -14,44 +14,49 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-              <router-link class="nav-link" to="/overview">
+              <!-- Note one exclamation point here for competition, all others have two -->
+              <router-link class="nav-link" to="/new-competition" v-if="isLoggedIn && !competition">
+                {{ $t("header.newCompetition") }}
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <router-link class="nav-link" to="/overview" v-if="isLoggedIn && !!competition">
                 {{ $t("header.overview") }}
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/classes">
+              <router-link class="nav-link" to="/classes" v-if="isLoggedIn && !!competition">
                 {{ $t("header.classes") }}
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/players">
+              <router-link class="nav-link" to="/players" v-if="isLoggedIn && !!competition">
                 {{ $t("header.players") }}
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/draw">
+              <router-link class="nav-link" to="/draw" v-if="isLoggedIn && !!competition">
                 {{ $t("header.draws") }}
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/schedule">
+              <router-link class="nav-link" to="/schedule" v-if="isLoggedIn && !!competition">
                 {{ $t("header.schedule") }}
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/results">
+              <router-link class="nav-link" to="/results" v-if="isLoggedIn && !!competition">
                 {{ $t("header.results") }}
               </router-link>
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/billing">
+              <router-link class="nav-link" to="/billing" v-if="isLoggedIn && !!competition">
                 {{ $t("header.billing") }}
               </router-link>
             </li>
             <li class="nav-item" v-if="isLoggedIn">
               <button class="btn btn-secondary" @click="logout"> {{ $t("header.logout") }}</button>
             </li>
-            <button @click="refreshToken">Refresh token</button>
           </ul>
         </div>
       </div>
@@ -61,17 +66,15 @@
 
 <script>
 
-import UserService from "@/common/api-services/user.service";
-
 export default {
   name: "Header",
   data() {
     return {}
   },
   computed: {
-    isLoggedIn: function () {
-      return this.$store.getters.isLoggedIn
-    },
+    isLoggedIn : function(){ return this.$store.getters.isLoggedIn},
+    user: function(){ return this.$store.getters.user.username},
+    competition: function(){ return this.$store.getters.competition},
   },
   methods: {
     logout() {
@@ -80,9 +83,6 @@ export default {
         this.$router.push('/landing')
       }
     },
-    refreshToken() {
-      UserService.refreshToken(this.$store.getters.refreshToken)
-    }
   }
 }
 </script>

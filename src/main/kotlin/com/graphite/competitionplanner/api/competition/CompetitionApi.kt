@@ -1,12 +1,11 @@
-package com.graphite.competitionplanner.api
+package com.graphite.competitionplanner.api.competition
 
-import com.graphite.competitionplanner.service.*
-import io.swagger.annotations.ApiModelProperty
-import org.springframework.http.HttpStatus
+import com.fasterxml.jackson.annotation.JsonAutoDetect
+import com.fasterxml.jackson.annotation.JsonFormat
+import com.graphite.competitionplanner.service.competition.CompetitionDTO
+import com.graphite.competitionplanner.service.competition.CompetitionService
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
-import javax.validation.Valid
 
 
 @RestController
@@ -22,7 +21,8 @@ class CompetitionApi(
 
     @PutMapping("/{competitionId}")
     fun updateCompetition(@PathVariable competitionId: Int,
-                          @RequestBody competitionSpec: CompetitionSpec): CompetitionDTO {
+                          @RequestBody competitionSpec: CompetitionSpec
+    ): CompetitionDTO {
         return competitionService.updateCompetition(competitionId, competitionSpec)
     }
 
@@ -40,10 +40,14 @@ class CompetitionApi(
     }
 }
 
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CompetitionSpec(
     val location: String,
-    val welcomeText: String,
+    val name: String,
+    val welcomeText: String?,
     val organizingClubId: Int,
-    val startDate: LocalDate,
-    val endDate: LocalDate
+    @JsonFormat(pattern="yyyy-MM-dd")
+    val startDate: LocalDate?,
+    @JsonFormat(pattern="yyyy-MM-dd")
+    val endDate: LocalDate?
 )

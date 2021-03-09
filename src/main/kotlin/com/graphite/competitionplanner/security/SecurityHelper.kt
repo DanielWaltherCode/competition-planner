@@ -31,7 +31,7 @@ object SecurityHelper {
     fun generateAccessToken(username: String?): String {
         return Jwts.builder()
             .setSubject(username)
-            .setExpiration(Date(System.currentTimeMillis() + SecurityConstants.ACCESS_TOKEN_EXPIRATION_TIME))
+            .setExpiration(Date(System.currentTimeMillis() + SecurityConstants.ACCESS_TOKEN_EXPIRATION_TIME * 1000))
             .signWith(SignatureAlgorithm.HS256, SecurityConstants.tokenSecret)
             .compact()
     }

@@ -9,7 +9,8 @@ export default new Vuex.Store({
         isLoggedIn: false,
         accessToken: null,
         refreshToken: null,
-        user : {}
+        user : {},
+        competition: null,
     },
     mutations: {
         auth_success(state, body){
@@ -22,19 +23,24 @@ export default new Vuex.Store({
             state.user = {}
             state.refreshToken = null
             state.accessToken = null
+            state.competition = null
         },
         set_user(state, user) {
             state.user = user
+        },
+        set_competition(state, competition) {
+            state.competition = competition
         }
     },
     actions: {
 
     },
     getters : {
-        isLoggedIn: state => !!state.isLoggedIn,
+        isLoggedIn: state => state.isLoggedIn,
         user: state => state.user,
         accessToken: state => state.accessToken,
-        refreshToken: state => state.refreshToken
+        refreshToken: state => state.refreshToken,
+        competition: state => state.competition
     },
     plugins: [createPersistedState()]
 })

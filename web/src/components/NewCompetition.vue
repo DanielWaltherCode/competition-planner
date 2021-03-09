@@ -1,27 +1,27 @@
 <template>
   <main class="container-fluid">
-    <h2>{{ getString("overview.title") }}</h2>
+    <h2>{{ getString("newCompetition.title") }}</h2>
     <div class="row">
         <div class="row justify-content-center">
           <div class="mb-3 col-md-7 d-block">
-            <label for="competition-name" class="form-label">{{ getString("overview.name") }}</label>
+            <label for="competition-location" class="form-label">{{ getString("newCompetition.name") }}</label>
+            <input type="text" class="form-control" id="competition-location" v-model="competitionLocation" placeholder="">
+          </div>
+          <div class="mb-3 col-md-7 d-block">
+            <label for="competition-name" class="form-label">{{ getString("newCompetition.name") }}</label>
             <input type="text" class="form-control" id="competition-name" v-model="competitionName" placeholder="">
           </div>
           <div class="mb-3 col-md-7 d-block">
-            <label for="info" class="form-label">{{ getString("overview.info") }}</label>
+            <label for="info" class="form-label">{{ getString("newCompetition.info") }}</label>
             <textarea class="form-control" id="info" v-model="info" placeholder="" />
           </div>
           <div class="mb-3 col-md-7">
-            <label for="start-date" class="form-label">{{ getString("overview.startDate") }}</label>
+            <label for="start-date" class="form-label">{{ getString("newCompetition.startDate") }}</label>
             <input type="date" class="form-control" id="start-date" v-model="startDate" placeholder="">
           </div>
           <div class="mb-3 col-md-7">
-            <label for="end-date" class="form-label">{{ getString("overview.endDate") }}</label>
+            <label for="end-date" class="form-label">{{ getString("newCompetition.endDate") }}</label>
             <input type="date" class="form-control" id="end-date" v-model="endDate" placeholder="">
-          </div>
-          <div class="mb-3 col-md-7">
-            <label for="location" class="form-label">{{ getString("overview.location") }}</label>
-            <input type="text" class="form-control" id="location" v-model="location" placeholder="">
           </div>
         </div>
     </div>
@@ -30,7 +30,7 @@
         <button class="btn btn-secondary" @click="save">{{ getString("general.saveChanges") }}</button>
       </div>
       <div v-if="competitionAdded">
-        <p> {{ getString("overview.competitionAdded") }}</p>
+        <p> {{ getString("newCompetition.competitionAdded") }}</p>
         <button class="btn btn-secondary">
           <i class="bi bi-arrow-right"></i>
           {{ getString("general.next") }}
@@ -48,13 +48,13 @@ export default {
   name: "Overview",
   data() {
     return {
-      "competitionName": "",
-      "info": "",
-      "startDate": "",
-      "endDate": "",
-      "location": "",
-      "competitionAdded": false,
-      "competition": ""
+      competitionName: "",
+      info: "",
+      startDate: "",
+      endDate: "",
+      competitionLocation: "",
+      competitionAdded: false,
+      competition: ""
     }
   },
   methods: {
@@ -63,7 +63,8 @@ export default {
     },
     save() {
       const objectToSave = {
-        "location": this.location,
+        "location": this.competitionLocation,
+        "name": this.competitionName,
         "welcomeText": this.info,
         "organizingClubId": 129,
         "startDate": this.startDate,
