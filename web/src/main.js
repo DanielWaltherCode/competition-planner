@@ -6,10 +6,22 @@ import {i18n} from "./i18n"
 import 'bootstrap'
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css"
+import "@/assets/css/style.css"
+import AOS from "aos";
+import "aos/dist/aos.css";
 import store from "@/store/store";
 import UserService from "@/common/api-services/user.service";
 
+
 Vue.config.productionTip = false
+
+App.AOS = new AOS.init({
+    disable: "phone",
+    duration: 1000,
+    easing: "ease-in-out",
+    once: true,
+    mirror: false
+});
 
 Axios.defaults.baseURL = "http://www.localhost:9002"
 

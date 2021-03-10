@@ -1,6 +1,5 @@
 {
   "header": {
-    "newCompetition": "Skapa ny tävling",
     "overview": "Översikt",
     "classes": "Klasser",
     "players": "Spelare",
@@ -8,7 +7,12 @@
     "schedule": "Schema",
     "results": "Resultat",
     "billing": "Fakturor",
-    "logout": "Logga ut"
+    "logout": "Logga ut",
+    "handle": {
+      "title": "Hantera",
+      "newCompetition": "Skapa ny tävling",
+      "administerCompetition": "Hantera befintlig tävling"
+    }
   },
   "landing": {
     "heading": {
@@ -19,10 +23,13 @@
       "login": "Logga in",
       "loginFailed": "Inloggningen misslyckades",
       "greeting": "Välkommen {username}",
-      "competitionChoice": "Välj en tävling",
-      "noCompetitionSelected": "Ingen tävling vald"
+      "competitionChoice": "Välj en befintlig tävling att administrera",
+      "noCompetitionSelected": "Ingen tävling vald",
+      "newCompetition": "Eller sätt upp en ny tävling"
     },
     "middle": {
+      "title": "Vad vi erbjuder",
+      "subtitle": "Viktig funktionalitet",
       "organize": {
         "title": "Planera",
         "text": "Sätt upp och planera tävlingar"

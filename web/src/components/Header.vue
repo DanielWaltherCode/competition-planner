@@ -1,66 +1,90 @@
 <template>
-  <header>
+  <header id="header" class="header">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
-        <div id="banner">
-          <router-link id="main" to="landing" :key="$route.fullPath" class="navbar-brand">
-            Let's Compete!
-          </router-link>
-        </div>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-              <!-- Note one exclamation point here for competition, all others have two -->
-              <router-link class="nav-link" to="/new-competition" v-if="isLoggedIn && !competition">
-                {{ $t("header.newCompetition") }}
-              </router-link>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+          <div class="d-flex align-items-center">
+          <router-link to="landing" :key="$route.fullPath" class="navbar-brand">
+            <h2>LET'S COMPETE</h2>
+          </router-link>
+          </div>
+          <div>
+
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <router-link class="nav-link" to="/overview" v-if="isLoggedIn && !!competition"
+                   :class="$router.currentRoute.path === '/overview' ? 'active' : ''">
+                  {{ $t("header.overview") }}
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link" to="/classes" v-if="isLoggedIn && !!competition"
+                             :class="$router.currentRoute.path === '/classes' ? 'active' : ''">
+                  {{ $t("header.classes") }}
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link" to="/players" v-if="isLoggedIn && !!competition"
+                             :class="$router.currentRoute.path === '/players' ? 'active' : ''">
+                  {{ $t("header.players") }}
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link" to="/draw" v-if="isLoggedIn && !!competition"
+                             :class="$router.currentRoute.path === '/draw' ? 'active' : ''">
+                  {{ $t("header.draws") }}
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link" to="/schedule" v-if="isLoggedIn && !!competition"
+                             :class="$router.currentRoute.path === '/schedule' ? 'active' : ''">
+                  {{ $t("header.schedule") }}
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link" to="/results" v-if="isLoggedIn && !!competition"
+                             :class="$router.currentRoute.path === '/results' ? 'active' : ''">
+                  {{ $t("header.results") }}
+                </router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link" to="/billing" v-if="isLoggedIn && !!competition"
+                             :class="$router.currentRoute.path === '/billing' ? 'active' : ''">
+                  {{ $t("header.billing") }}
+                </router-link>
+              </li>
+            <li class="nav-item dropdown" v-if="isLoggedIn">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{$t("header.handle.title")}}
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li class="nav-item">
+                  <!-- Note one exclamation point here for competition, all others have two -->
+                  <router-link class="nav-link" to="/new-competition"
+                     :class="$router.currentRoute.path === '/new-competition' ? 'active' : ''" >
+                    {{ $t("header.handle.newCompetition") }}
+                  </router-link>
+                </li>
+                <li class="nav-item">
+                  <!-- Note one exclamation point here for competition, all others have two -->
+                  <router-link class="nav-link" to="/choose-competition"
+                     :class="$router.currentRoute.path === '/choose-competition' ? 'active' : ''">
+                    {{ $t("header.handle.administerCompetition") }}
+                  </router-link>
+                </li>
+              </ul>
             </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/overview" v-if="isLoggedIn && !!competition">
-                {{ $t("header.overview") }}
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/classes" v-if="isLoggedIn && !!competition">
-                {{ $t("header.classes") }}
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/players" v-if="isLoggedIn && !!competition">
-                {{ $t("header.players") }}
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/draw" v-if="isLoggedIn && !!competition">
-                {{ $t("header.draws") }}
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/schedule" v-if="isLoggedIn && !!competition">
-                {{ $t("header.schedule") }}
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/results" v-if="isLoggedIn && !!competition">
-                {{ $t("header.results") }}
-              </router-link>
-            </li>
-            <li class="nav-item">
-              <router-link class="nav-link" to="/billing" v-if="isLoggedIn && !!competition">
-                {{ $t("header.billing") }}
-              </router-link>
-            </li>
-            <li class="nav-item" v-if="isLoggedIn">
-              <button class="btn btn-secondary" @click="logout"> {{ $t("header.logout") }}</button>
-            </li>
+              <li class="nav-item" v-if="isLoggedIn">
+                <button class="btn btn-outline-primary" @click="logout"> {{ $t("header.logout") }}</button>
+              </li>
           </ul>
+          </div>
         </div>
       </div>
-    </nav>
+      </nav>
   </header>
 </template>
 
@@ -72,9 +96,15 @@ export default {
     return {}
   },
   computed: {
-    isLoggedIn : function(){ return this.$store.getters.isLoggedIn},
-    user: function(){ return this.$store.getters.user.username},
-    competition: function(){ return this.$store.getters.competition},
+    isLoggedIn: function () {
+      return this.$store.getters.isLoggedIn
+    },
+    user: function () {
+      return this.$store.getters.user.username
+    },
+    competition: function () {
+      return this.$store.getters.competition
+    },
   },
   methods: {
     logout() {
@@ -88,50 +118,21 @@ export default {
 </script>
 
 <style scoped>
-header, nav {
-  width: 100%;
-}
 
 header {
-  border-bottom: whitesmoke 2px solid;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
-
 
 .navbar {
-  background: white !important;
-  min-height: 80px;
-}
-
-.navbar-nav {
-  justify-content: center;
-}
-
-ul li {
-  margin-right: 25px;
-}
-
-@media screen and (max-width: 699px) {
-  ul li:hover {
-    margin-right: 25px;
-    background-color: ghostwhite;
-  }
-}
-
-
-#main:hover {
-  text-decoration: underline;
-}
-
-#main {
-  color: var(--emphasis-color);
-  font-size: 24px;
-  font-weight: 700;
-  margin-left: 20px;
+  background-color: white !important;
 }
 
 .navbar-collapse {
-  justify-content: center;
+  justify-content: space-between;
+}
+
+#navbar button {
+  margin-left: 10px;
 }
 
 </style>

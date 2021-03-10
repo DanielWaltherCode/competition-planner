@@ -90,14 +90,14 @@ export default {
 <style scoped>
 
 main {
-  background: linear-gradient(to right bottom, white 50%, var(--background2) 50%);
   height: 100vh;
+  background: url("../assets/hero-bg.png") top center no-repeat;
+  background-size: cover;
 }
 
 .form-label {
   width: 100%;
   text-align: left;
-  margin-left: 10px;
 }
 
 </style>

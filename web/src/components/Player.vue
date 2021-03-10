@@ -24,7 +24,7 @@
             <p> {{ grouping }} </p>
           </div>
           <div v-for="player in players" :key="player.id" class="players">
-            <p>{{ player.lastName + ", " + player.firstName }}</p>
+            <p class="player-name">{{ player.lastName + ", " + player.firstName }}</p>
           </div>
         </div>
       </div>
@@ -84,6 +84,7 @@ export default {
 
 #sidebar {
   min-height: 100vh;
+  z-index: 0;
   box-shadow: 3px 3px 2px 1px #efefef;
 }
 
@@ -98,15 +99,23 @@ export default {
 }
 
 #sidebar li:hover {
+  opacity: 0.8;
+}
+
+#sidebar li:hover {
   cursor: pointer;
 }
 .players {
   margin-top: 10px;
+  display: flex;
 }
 
-.players p {
+.player-name {
   font-size: 80%;
+  color: var(--emphasis-color);
 }
+
+
 
 .active {
   background-color: var(--emphasis-color) !important;

@@ -27,7 +27,7 @@
     </div>
     <div id="bottom">
       <div>
-        <button class="btn btn-secondary" @click="save">{{ getString("general.saveChanges") }}</button>
+        <button class="btn btn-outline-primary" @click="save">{{ getString("general.saveChanges") }}</button>
       </div>
       <div v-if="competitionUpdated">
         <p> {{ getString("newCompetition.competitionUpdated") }}</p>
@@ -85,14 +85,14 @@ export default {
 <style scoped>
 
 main {
-  background: linear-gradient(to right bottom, white 50%, var(--background2) 50%);
   height: 100vh;
+  background: url("../assets/hero-bg.png") top center no-repeat;
+  background-size: cover;
 }
 
 .form-label {
   width: 100%;
   text-align: left;
-  margin-left: 10px;
 }
 
 </style>
