@@ -55,9 +55,14 @@ class WebSecurity(
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
         configuration.allowCredentials = true
-        configuration.allowedOrigins = Arrays.asList("http://localhost:8080", "http://167.71.65.197")
-        configuration.allowedMethods = Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")
-        configuration.allowedHeaders = Arrays.asList(
+        configuration.allowedOrigins = listOf("http://localhost:8080",
+            "http://167.71.65.197",
+            "http://competition.travexperten.nu",
+            "https://competition.travexperten.nu",
+            "http://www.competition.travexperten.nu",
+            "https://www.competition.travexperten.nu")
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        configuration.allowedHeaders = listOf(
             "X-Requested-With",
             "Origin",
             "Content-Type",

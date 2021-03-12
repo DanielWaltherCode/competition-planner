@@ -26,17 +26,34 @@ export default {
   font-weight: 400;
   text-align: center;
   color: black;
-  font-size: 1.2em;
+  font-size: 1em;
+}
+
+h1, h2, h3 {
+  color: #012970;
 }
 
 /* Global variables */
 :root {
   --emphasis-color: #1190cb;
+  --main-blue: #4154f1;
   --background2: #edf4fc;
 }
 
 .emphasized {
   color: var(--emphasis-color)
+}
+
+.btn-primary {
+  background-color: var(--emphasis-color) !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--emphasis-color) !important;
+}
+
+.btn-outline-primary {
+  border: 1px solid var(--emphasis-color) !important;
 }
 
 </style>

@@ -1,35 +1,16 @@
 <template>
   <div>
     <main>
-      <div class="container">
-        <!-- Top section -->
-        <div class="row" id="top">
-          <div class="col-lg-4">
-            <div class="text-div">
-              <div>
-                <p class="emphasized"> {{ $t("landing.heading.part1") }}</p>
-              </div>
-              <div v-if="isLoggedIn">
-                <br>
-                <p>{{$t("landing.heading.greeting", {username: user})}}</p>
-                <br>
-                <div>
-                  <div class="form-group ">
-                    <label for="competition-selection"> {{ getString("landing.heading.competitionChoice") }} </label>
-                    <select name="competition-selection" id="competition-selection" class="form-control"
-                            v-on:change="setCompetition" v-model="selectedCompetition">
-                      <option value="none"> {{ getString("landing.heading.noCompetitionSelected") }}</option>
-                      <option v-for="comp in competitions" v-bind:key="comp.id" :value="comp">
-                        {{comp.name}}
-                      </option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div>
-              </div>
+      <!-- ======= Top section (called "hero" for some reason) ======= -->
+      <section id="hero" class="hero d-flex align-items-center">
+
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6 d-flex flex-column justify-content-center">
+              <h1 data-aos="fade-up">{{ $t("landing.heading.part1") }}</h1>
               <div v-if="!isLoggedIn">
-                <p class="second"> {{ $t("landing.heading.part2") }}</p>
+                <h2 data-aos="fade-up" data-aos-delay="400">{{ $t("landing.heading.part2") }}</h2>
+                <br/>
                 <div class="mb-3">
                   <label for="username" class="form-label">{{ getString("landing.heading.username") }}</label>
                   <input type="text" class="form-control" id="username" v-model="username" placeholder="">
@@ -38,63 +19,141 @@
                   <label for="password" class="form-label">{{ getString("landing.heading.password") }}</label>
                   <input type="password" class="form-control" id="password" v-model="password" placeholder="">
                 </div>
-                <button class="btn btn-outline-info" @click="login">{{getString("landing.heading.login")}}</button>
-                <p v-if="loginFailed" class="text-danger">{{getString("landing.heading.loginFailed")}}</p>
+                <button
+                    class="btn-get-started d-inline-flex align-items-center justify-content-center align-self-center"
+                    @click="login">
+                  <span>{{ getString("landing.heading.login") }} </span>
+                  <i class="bi bi-arrow-right"></i>
+                </button>
+                <p v-if="loginFailed" class="text-danger">{{ getString("landing.heading.loginFailed") }}</p>
+              </div>
+              <div v-if="isLoggedIn">
+                <!-- If logged in, either choose an existing competition or set up a new -->
+                <br>
+                <div>
+                  <div class="form-group ">
+                    <label for="competition-selection"> {{ getString("landing.heading.competitionChoice") }} </label>
+                    <select name="competition-selection" id="competition-selection" class="form-control"
+                            v-on:change="setCompetition" v-model="selectedCompetition">
+                      <option value="none"> {{ getString("landing.heading.noCompetitionSelected") }}</option>
+                      <option v-for="comp in competitions" v-bind:key="comp.id" :value="comp">
+                        {{ comp.name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <br>
+                  <p class="new-competition">{{getString("landing.heading.newCompetition")}}</p>
+                  <button
+                      class="btn-get-started d-inline-flex align-items-center justify-content-center align-self-center"
+                      @click="$router.push('/new-competition')">
+                    <span>{{ getString("header.handle.newCompetition") }} </span>
+                    <i class="bi bi-arrow-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6 hero-img" data-aos="zoom-out" data-aos-delay="200">
+              <img src="@/assets/tennis.svg" class="img-fluid" alt="">
+            </div>
+          </div>
+          <div class="row">
+
+
+          </div>
+        </div>
+
+      </section><!-- End Hero -->
+      <section id="values" class="values">
+
+        <div class="container" data-aos="fade-up">
+
+          <header class="section-header">
+            <h2>{{$t("landing.middle.title")}}</h2>
+            <p>{{$t("landing.middle.subtitle")}}</p>
+          </header>
+
+          <div class="row">
+
+            <div class="col-lg-4">
+              <div class="box" data-aos="fade-up" data-aos-delay="200">
+                <img src="@/assets/organize_resume.svg" class="img-fluid" alt="">
+                <h3>{{ $t("landing.middle.organize.title") }}</h3>
+                <p>{{ $t("landing.middle.organize.text") }}</p>
+              </div>
+            </div>
+
+            <div class="col-lg-4 mt-4 mt-lg-0">
+              <div class="box" data-aos="fade-up" data-aos-delay="400">
+                <img src="@/assets/schedule.svg" class="img-fluid" alt="">
+                <h3>{{ $t("landing.middle.host.title") }}</h3>
+                <p>{{ $t("landing.middle.host.text") }}</p>
+              </div>
+            </div>
+
+            <div class="col-lg-4 mt-4 mt-lg-0">
+              <div class="box" data-aos="fade-up" data-aos-delay="600">
+                <img src="@/assets/data_points.svg" class="img-fluid" alt="">
+                <h3>{{ $t("landing.middle.report.title") }}</h3>
+                <p>{{ $t("landing.middle.report.text") }}</p>
               </div>
             </div>
           </div>
-          <div class="col-lg-8">
-            <div >
-              <img src="@/assets/tennis.svg" class="img-fluid" alt="Tennis player">
+        </div>
+
+      </section>
+      <section id="features" class="features">
+
+        <div class="container" data-aos="fade-up">
+
+          <header class="section-header">
+            <h2>Features</h2>
+            <p>{{ $t("landing.bottom.section1") }}</p>
+          </header>
+
+          <div class="row">
+
+            <div class="col-lg-6">
+              <img src="@/assets/features.png" class="img-fluid" alt="">
+            </div>
+
+            <div class="col-lg-6 mt-5 mt-lg-0 d-flex">
+              <div class="row align-self-center gy-4">
+
+                <div class="col-md-6" data-aos="zoom-out" data-aos-delay="200">
+                  <div class="feature-box d-flex align-items-center">
+                    <i class="bi bi-check"></i>
+                    <h3>{{ $t("landing.bottom.bullit1") }}</h3>
+                  </div>
+                </div>
+
+                <div class="col-md-6" data-aos="zoom-out" data-aos-delay="300">
+                  <div class="feature-box d-flex align-items-center">
+                    <i class="bi bi-check"></i>
+                    <h3>{{ $t("landing.bottom.bullit2") }}</h3>
+                  </div>
+                </div>
+
+                <div class="col-md-6" data-aos="zoom-out" data-aos-delay="400">
+                  <div class="feature-box d-flex align-items-center">
+                    <i class="bi bi-check"></i>
+                    <h3>{{ $t("landing.bottom.bullit3") }}</h3>
+                  </div>
+                </div>
+
+                <div class="col-md-6" data-aos="zoom-out" data-aos-delay="500">
+                  <div class="feature-box d-flex align-items-center">
+                    <i class="bi bi-check"></i>
+                    <h3>{{ $t("landing.bottom.bullit1") }}</h3>
+                  </div>
+                </div>
+
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <!-- Middle sections -->
-      <div id="middle" class="container-fluid">
-        <div class="row">
-        <div class="card-container col-sm">
-          <div class="card">
-            <img src="@/assets/organize_resume.svg" class="img-fluid" alt="Planning">
-            <div class="card-body">
-              <h3 class="card-title">{{ $t("landing.middle.organize.title") }}</h3>
-              <p class="card-text">{{ $t("landing.middle.organize.text") }}</p>
-            </div>
-          </div>
-        </div>
-        <div class="card-container col-sm">
-          <div class="card">
-            <img src="@/assets/schedule.svg" class="img-fluid"  alt="Scheduling">
-            <div class="card-body">
-              <h3 class="card-title">{{ $t("landing.middle.host.title") }}</h3>
-              <p class="card-text">{{ $t("landing.middle.host.text") }}</p>
-            </div>
-          </div>
-        </div>
-        <div class="card-container col-sm">
-          <div class="card">
-            <img src="@/assets/data_points.svg" class="img-fluid"  alt="Results">
-            <div class="card-body">
-              <h3 class="card-title">{{ $t("landing.middle.report.title") }}</h3>
-              <p class="card-text">{{ $t("landing.middle.report.text") }}</p>
-            </div>
-          </div>
-        </div>
-        </div>
-      <div id="bottom" class="row">
-        <div class="col-lg-7">
-          <img src="@/assets/good_team.svg" class="img-fluid" alt="Team work">
-        </div>
-        <div id="bottom-text" class="col-lg-5 text-lg-start">
-          <p>{{ $t("landing.bottom.section1") }}</p>
-          <ul>
-            <li>{{ $t("landing.bottom.bullit1") }}</li>
-            <li>{{ $t("landing.bottom.bullit2") }}</li>
-            <li>{{ $t("landing.bottom.bullit3") }}</li>
-          </ul>
-        </div>
-      </div>
-      </div>
+      </section>
     </main>
   </div>
 </template>
@@ -114,10 +173,16 @@ export default {
       competitions: []
     }
   },
-  computed : {
-    isLoggedIn : function(){ return this.$store.getters.isLoggedIn},
-    user: function(){ return this.$store.getters.user.username},
-    competition: function(){ return this.$store.getters.competition},
+  computed: {
+    isLoggedIn: function () {
+      return this.$store.getters.isLoggedIn
+    },
+    user: function () {
+      return this.$store.getters.user.username
+    },
+    competition: function () {
+      return this.$store.getters.competition
+    },
   },
   mounted() {
     if (this.isLoggedIn) {
@@ -127,8 +192,7 @@ export default {
     }
     if (this.competition === null) {
       this.selectedCompetition = "none"
-    }
-    else {
+    } else {
       this.selectedCompetition = this.competition
     }
   },
@@ -140,8 +204,7 @@ export default {
     }
     if (this.competition === null) {
       this.selectedCompetition = "none"
-    }
-    else {
+    } else {
       this.selectedCompetition = this.competition
     }
   },
@@ -152,31 +215,30 @@ export default {
     login() {
       this.username = "abraham"
       this.password = "anders"
-        UserService.login(this.username, this.password).then(res => {
-          console.log("login successful", res)
-          this.loginFailed = false
-          this.$store.commit("auth_success", res.data)
-          UserService.getUser().then(res => {
-            this.$store.commit("set_user", res.data)
-          })
-          // Fetch available competitions
-          // TODO: ensure only competitions for the logged in user are sent back
-        CompetitionService.getCompetitions().then(res => {
-            this.competitions = res.data
-          })
+      UserService.login(this.username, this.password).then(res => {
+        console.log("login successful", res)
+        this.loginFailed = false
+        this.$store.commit("auth_success", res.data)
+        UserService.getUser().then(res => {
+          this.$store.commit("set_user", res.data)
         })
-      .catch(err => {
-        console.log("Login failed", err)
-        this.loginFailed = true
+        // Fetch available competitions
+        // TODO: ensure only competitions for the logged in user are sent back
+        CompetitionService.getCompetitions().then(res => {
+          this.competitions = res.data
+        })
       })
+          .catch(err => {
+            console.log("Login failed", err)
+            this.loginFailed = true
+          })
     },
     setCompetition() {
-        if (this.selectedCompetition === "none") {
-          this.$store.commit("set_competition", null)
-        }
-        else {
-          this.$store.commit("set_competition", this.selectedCompetition)
-        }
+      if (this.selectedCompetition === "none") {
+        this.$store.commit("set_competition", null)
+      } else {
+        this.$store.commit("set_competition", this.selectedCompetition)
+      }
     }
   }
 }
@@ -184,36 +246,9 @@ export default {
 
 <style scoped>
 
-.emphasized {
-  font-size: 40px;
-}
-
-.second {
-  font-size: 24px;
-}
-
-/* Middle */
-#middle {
-  margin-top: 80px;
-}
-
-.card-container {
-  background-color: var(--background2);
-  font-size: 24px;
-  padding: 50px;
-}
-
-
-
-.card {
-  min-height: 350px;
-  background: white !important;
-}
-
-.card-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.new-competition {
+  margin-top: 20px;
+  margin-bottom: 0;
 }
 
 .card h3 {
