@@ -12,7 +12,6 @@ import "aos/dist/aos.css";
 import store from "@/store/store";
 import UserService from "@/common/api-services/user.service";
 
-
 Vue.config.productionTip = false
 
 App.AOS = new AOS.init({
@@ -23,7 +22,7 @@ App.AOS = new AOS.init({
     mirror: false
 });
 
-Axios.defaults.baseURL = "http://www.localhost:9002"
+Axios.defaults.baseURL = process.env.VUE_APP_BASE_URL
 
 // Add a request interceptor
 Axios.interceptors.request.use(
@@ -67,10 +66,6 @@ Axios.interceptors.response.use((response) => {
             })
         }
     })
-
-console.log("Starting application")
-console.log("Axios base url: " + Axios.defaults.baseURL)
-console.log("Process base url: " + process.env.VUE_APP_BASE_URL)
 
 
 new Vue({

@@ -12,14 +12,22 @@
           <li class="list-group-item" @click="makeChoice('club')" :class="choice === 'club' ? 'active' : ''">
             {{ $t("player.sidebar.club") }}
           </li>
-          <li class="list-group-item" @click="makeChoice('categories')" :class="choice === 'categories' ? 'active' : ''">
+          <li class="list-group-item" @click="makeChoice('categories')"
+              :class="choice === 'categories' ? 'active' : ''">
             {{ $t("player.sidebar.categories") }}
           </li>
         </ul>
         <div></div>
       </div>
       <div id="main" class="col-md-8">
-        <div v-for="(players, grouping) in registeredPlayers.groupingsAndPlayers" :key="grouping">
+        <div class="row">
+          <div class="col-md-4">
+            <label for="playerSearch" class="form-label"> {{ $t("player.search") }}</label>
+            <input type="text" class="form-control" v-model="searchString" id="playerSearch">
+            <br>
+          </div>
+        </div>
+        <div v-for="(players, grouping) in filterPlayers" :key="grouping">
           <div class="heading">
             <p> {{ grouping }} </p>
           </div>
@@ -40,11 +48,36 @@ export default {
   data() {
     return {
       choice: "name",
-      registeredPlayers: []
+      searchString: "",
+      registeredPlayersAndGroups: {}
+    }
+  },
+  computed: {
+    filterPlayers() {
+      let filteredPlayersAndGroups = {}
+      if (this.searchString !== "") {
+        for (const grouping in this.registeredPlayersAndGroups.groupingsAndPlayers) {
+          const filteredPlayers = []
+          this.registeredPlayersAndGroups.groupingsAndPlayers[grouping].forEach(player => {
+            console.log(player)
+            if (player.firstName.toLowerCase().includes(this.searchString.toLowerCase())) {
+              filteredPlayers.push(player)
+            } else if (player.lastName.toLowerCase().includes(this.searchString.toLowerCase())) {
+              filteredPlayers.push(player)
+            }
+          })
+          if (filteredPlayers.length > 0) {
+            filteredPlayersAndGroups[grouping] = filteredPlayers
+          }
+        }
+      } else {
+        filteredPlayersAndGroups = this.registeredPlayersAndGroups.groupingsAndPlayers
+      }
+      return filteredPlayersAndGroups
     }
   },
   mounted() {
-   this.fetchPlayers()
+    this.fetchPlayers()
   },
   methods: {
     makeChoice(choice) {
@@ -53,7 +86,7 @@ export default {
     },
     fetchPlayers() {
       PlayerService.getRegisteredPlayersInCompetition(this.choice).then(res => {
-        this.registeredPlayers = res.data
+        this.registeredPlayersAndGroups = res.data
       })
     }
   }
@@ -99,12 +132,13 @@ export default {
 }
 
 #sidebar li:hover {
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 #sidebar li:hover {
   cursor: pointer;
 }
+
 .players {
   margin-top: 10px;
   display: flex;
@@ -114,7 +148,6 @@ export default {
   font-size: 80%;
   color: var(--emphasis-color);
 }
-
 
 
 .active {

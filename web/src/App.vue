@@ -26,7 +26,7 @@ export default {
   font-weight: 400;
   text-align: center;
   color: black;
-  font-size: 1.2em;
+  font-size: 1em;
 }
 
 h1, h2, h3 {
