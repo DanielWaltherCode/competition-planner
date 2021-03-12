@@ -3,7 +3,6 @@ package com.graphite.competitionplanner.category
 import com.graphite.competitionplanner.api.competition.CategoryGameRulesSpec
 import com.graphite.competitionplanner.service.CategoryGameRulesDTO
 import com.graphite.competitionplanner.service.CategoryService
-import com.graphite.competitionplanner.service.competition.CompetitionService
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
 import com.graphite.competitionplanner.util.TestUtil
 import org.junit.jupiter.api.AfterEach

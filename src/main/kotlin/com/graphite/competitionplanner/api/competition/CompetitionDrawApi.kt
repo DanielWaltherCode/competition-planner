@@ -27,6 +27,10 @@ class CompetitionDrawApi(val drawService: DrawService) {
     fun getPlayoffDraw(@PathVariable competitionCategoryId: Int) {
     }
 
+    @GetMapping("/is-draw-made")
+    fun isDrawMade(@PathVariable competitionCategoryId: Int): Boolean {
+        return drawService.isDrawMade(competitionCategoryId)
+    }
 
 }
 
