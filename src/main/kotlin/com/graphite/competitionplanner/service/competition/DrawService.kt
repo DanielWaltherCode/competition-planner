@@ -119,7 +119,7 @@ class DrawService(
         competitionCategoryId: Int
     ) {
         // If draw has already been made, first remove old matches
-        if (matchRepository.isPoolDrawn(competitionCategoryId)) {
+        if (matchRepository.isCategoryDrawn(competitionCategoryId)) {
             matchRepository.deleteMatchesForCategory(competitionCategoryId)
         }
 
@@ -301,6 +301,10 @@ class DrawService(
         val playoffRound = mutableListOf<PlayoffRound>()
         playoffRound.add(PlayoffRound(round, playoffMatches))
         return PlayoffDTO(competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId), playoffRound)
+    }
+
+    fun isDrawMade(competitionCategoryId: Int): Boolean {
+        return matchRepository.isCategoryDrawn(competitionCategoryId)
     }
 }
 
