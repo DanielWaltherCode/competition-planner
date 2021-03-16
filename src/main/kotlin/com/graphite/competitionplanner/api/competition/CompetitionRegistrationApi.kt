@@ -24,8 +24,8 @@ class CompetitionRegistrationApi(
     }
 
     @GetMapping("/{competitionCategoryId}")
-    fun getPlayersInCategory(@PathVariable competitionCategoryId: Int) {
-
+    fun getPlayersInCategory(@PathVariable competitionCategoryId: Int): List<List<PlayerDTO>> {
+        return registrationService.getPlayersInCompetitionCategory(competitionCategoryId)
     }
 
     @PostMapping("/singles")

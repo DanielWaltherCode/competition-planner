@@ -10,7 +10,7 @@ import "@/assets/css/style.css"
 import AOS from "aos";
 import "aos/dist/aos.css";
 import store from "@/store/store";
-import UserService from "@/common/api-services/user.service";
+// import UserService from "@/common/api-services/user.service";
 
 Vue.config.productionTip = false
 
@@ -41,7 +41,7 @@ Axios.interceptors.request.use(
     });
 
 // Response interceptor
-Axios.interceptors.response.use((response) => {
+/*Axios.interceptors.response.use((response) => {
         return response
     },
     function (error) {
@@ -65,7 +65,7 @@ Axios.interceptors.response.use((response) => {
                 return Axios(originalRequest);
             })
         }
-    })
+    })*/
 
 
 new Vue({

@@ -42,7 +42,7 @@ class RegistrationService(
 
     fun getPlayersFromRegistrationId(registrationId: Int): List<PlayerDTO> {
         val playerRecords = registrationRepository.getPlayersFromRegistrationId(registrationId)
-        return playerRecords.stream().map { playerService.getPlayer(it.id) }.toList()
+        return playerRecords.map { playerService.getPlayer(it.id) }
     }
 
     fun getRegisteredPlayers(competitionId: Int, searchType: String): RegisteredPlayersDTO {
@@ -122,6 +122,11 @@ class RegistrationService(
             )
         }
         return PlayerCompetitionDTO(player = player, competitionsAndCategories = playerCompetitions)
+    }
+
+    fun getPlayersInCompetitionCategory(competitionCategoryId: Int): List<List<PlayerDTO>> {
+        val registrationIds = competitionCategoryRepository.getRegistrationsInCategory(competitionCategoryId)
+        return registrationIds.map{getPlayersFromRegistrationId(it)}
     }
 
     fun getSeed(): Int {

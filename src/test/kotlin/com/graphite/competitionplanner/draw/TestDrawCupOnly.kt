@@ -4,6 +4,7 @@ import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
 import com.graphite.competitionplanner.api.competition.DrawDTO
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
+import com.graphite.competitionplanner.repositories.competition.CompetitionDrawRepository
 import com.graphite.competitionplanner.service.CategoryService
 import com.graphite.competitionplanner.service.MatchService
 import com.graphite.competitionplanner.service.RegistrationService
@@ -28,6 +29,7 @@ class TestDrawCupOnly(
     @Autowired val matchService: MatchService,
     @Autowired val competitionCategoryService: CompetitionCategoryService,
     @Autowired val registrationRepository: RegistrationRepository,
+    @Autowired val competitionDrawRepository: CompetitionDrawRepository,
     @Autowired val drawService: DrawService,
     @Autowired val categoryService: CategoryService
 ) {
@@ -58,6 +60,9 @@ class TestDrawCupOnly(
     fun removeMatchesAndRegistrations() {
         // Remove matches
         matchService.deleteMatchesInCategory(competitionCategoryId)
+
+        // Remove pool draw
+        competitionDrawRepository.deleteGroupsInCategory(competitionCategoryId)
 
         // Remove registrations and delete category
         val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)

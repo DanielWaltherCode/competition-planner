@@ -5,17 +5,16 @@ import com.graphite.competitionplanner.repositories.DrawTypes
 import com.graphite.competitionplanner.repositories.MatchRepository
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
-import com.graphite.competitionplanner.repositories.competition.CompetitionCategory
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
+import com.graphite.competitionplanner.repositories.competition.CompetitionDrawRepository
 import com.graphite.competitionplanner.service.*
-import com.graphite.competitionplanner.tables.DrawType
+import com.graphite.competitionplanner.tables.records.PoolDrawRecord
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import java.lang.IllegalStateException
 import java.time.LocalDateTime
-import kotlin.math.log2
 
 @Service
 class DrawService(
@@ -25,6 +24,7 @@ class DrawService(
     val matchRepository: MatchRepository,
     val matchService: MatchService,
     val competitionCategoryService: CompetitionCategoryService,
+    val competitionDrawRepository: CompetitionDrawRepository,
     val drawUtil: DrawUtil,
     val drawUtilTwoProceed: DrawUtilTwoProceed,
     val playerRepository: PlayerRepository,
@@ -64,7 +64,7 @@ class DrawService(
     private fun createSeed(competitionCategoryId: Int, categoryMetadata: CategoryMetadataDTO) {
         val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId);
         val playerList = mutableMapOf<Int, List<PlayerDTO>>();
-        for(id in registrationIds){
+        for (id in registrationIds) {
             playerList[id] = registrationService.getPlayersFromRegistrationId(id)
         }
 
@@ -72,13 +72,13 @@ class DrawService(
 
         val rankings = mutableMapOf<Int, Int>()
 
-        for((registrationId, players) in playerList){
+        for ((registrationId, players) in playerList) {
 
             var sum = 0
-            for(player in players){
-                if(categoryType == "SINGLES"){
+            for (player in players) {
+                if (categoryType == "SINGLES") {
                     sum += playerRepository.getPlayerRanking(player.id)?.rankSingle ?: 0
-                }else if(categoryType == "DOUBLES"){
+                } else if (categoryType == "DOUBLES") {
                     sum += playerRepository.getPlayerRanking(player.id)?.rankDouble ?: 0
                 }
             }
@@ -87,12 +87,12 @@ class DrawService(
         }
 
         val sortedRankings = rankings.toList()
-                .sortedBy { (key, value) -> -value }
-                .toMap()
+            .sortedBy { (key, value) -> -value }
+            .toMap()
 
         val numberOfSeeds = drawUtil.getNumberOfSeeds(categoryMetadata.nrPlayersPerGroup, sortedRankings.size)
         var seed = 1
-        for((registrationId, _) in sortedRankings){
+        for ((registrationId, _) in sortedRankings) {
             registrationRepository.setSeed(registrationId, competitionCategoryId, seed)
             seed += 1
 
@@ -102,13 +102,13 @@ class DrawService(
 
     private fun createPlayOffs(
         registrationIds: List<Int>,
-        competitionCategoryId: Int)
-    {
+        competitionCategoryId: Int
+    ) {
         // Get seedings
         val competitionSeedings = registrationRepository.getSeeds(competitionCategoryId)
 
         val matches = drawUtil.createDirectToPlayoff(competitionCategoryId, registrationIds)
-        for (match in matches){
+        for (match in matches) {
             matchRepository.addMatch(match)
         }
     }
@@ -150,7 +150,7 @@ class DrawService(
         for (id in registrationIds) {
             for (competitionSeed in categorySeedings) {
                 if (competitionSeed.registrationId == id) {
-                    groupMap[competitionSeed.seed-1]?.add(id)
+                    groupMap[competitionSeed.seed - 1]?.add(id)
                     seededPlayers.add(id)
                 }
             }
@@ -210,7 +210,7 @@ class DrawService(
 
     fun getDraw(competitionCategoryId: Int): DrawDTO {
         val metadata = categoryService.getCategoryMetadata(competitionCategoryId)
-        if (metadata.drawType.id == 2){ // 2 == CUP ONLY. How is it set in database though?
+        if (metadata.drawType.id == 2) { // 2 == CUP ONLY. How is it set in database though?
             return getCupOnlyDraw(competitionCategoryId)
         }
         return DrawDTO(
@@ -219,16 +219,16 @@ class DrawService(
         )
     }
 
-    fun getCupOnlyDraw(competitionCategoryId: Int): DrawDTO{
+    fun getCupOnlyDraw(competitionCategoryId: Int): DrawDTO {
         val competitionCategory = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
-        val groupsAndPlayers = mutableMapOf<String, List<MatchDTO>>()
+        val groups = mutableListOf<SingleGroupDTO>()
 
         val playoffRound = mutableListOf<PlayoffRound>()
         val matches = matchService.getMatchesInCategory(competitionCategoryId)
         val round = drawUtil.getRound(matches.size)
         val matchUps = mutableListOf<MatchUp>()
 
-        for (match in matches){
+        for (match in matches) {
             matchUps.add(
                 MatchUp(
                     player1 = match.firstPlayer[0].firstName,
@@ -237,22 +237,12 @@ class DrawService(
             )
         }
         playoffRound.add(PlayoffRound(round, matchUps))
-        return DrawDTO(
-            GroupDrawDTO(
-                competitionCategory,
-                groupsAndPlayers),
-            PlayoffDTO(
-                competitionCategory,
-                playoffRound
-            )
-        )
+        return DrawDTO(GroupDrawDTO(groups), PlayoffDTO(playoffRound))
     }
 
     fun getPoolDraw(competitionCategoryId: Int): GroupDrawDTO {
-        val competitionCategory = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
-
         val groupMatches = matchService.getGroupMatchesInCategory(competitionCategoryId)
-        val groupsAndPlayers = mutableMapOf<String, List<MatchDTO>>()
+        val groups = mutableListOf<SingleGroupDTO>()
 
         if (groupMatches.isNotEmpty()) {
             val distinctGroups = groupMatches.map { it.groupOrRound }.distinct()
@@ -263,10 +253,12 @@ class DrawService(
                         matchesInGroup.add(match)
                     }
                 }
-                groupsAndPlayers.put(group, matchesInGroup)
+                val nrPlayers = drawUtil.getNrPlayersInGroup(matchesInGroup.size)
+                val poolDraw = getPoolDraw(competitionCategoryId, group)
+                groups.add(SingleGroupDTO(group, poolDraw, matchesInGroup, nrPlayers))
             }
         }
-        return GroupDrawDTO(competitionCategory, groupsAndPlayers)
+        return GroupDrawDTO(groups)
     }
 
 
@@ -289,22 +281,32 @@ class DrawService(
         val playoffMatches: List<MatchUp>
         if (categoryMetadata.nrPlayersToPlayoff == 1) {
             playoffMatches = drawUtil.playoffForGroupsWhereOneProceeds(distinctGroups)
-        }
-        else if (categoryMetadata.nrPlayersToPlayoff == 2) {
+        } else if (categoryMetadata.nrPlayersToPlayoff == 2) {
             playoffMatches = drawUtilTwoProceed.playoffDrawWhereTwoProceed(distinctGroups)
-        }
-        else {
+        } else {
             logger.error("Unclear number of players continued from group: $categoryMetadata.nrPlayersToPlayoff")
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Number of players going to playoff should be 1 or 2")
         }
         val round = drawUtil.getRound(playoffMatches.size)
         val playoffRound = mutableListOf<PlayoffRound>()
         playoffRound.add(PlayoffRound(round, playoffMatches))
-        return PlayoffDTO(competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId), playoffRound)
+        return PlayoffDTO(playoffRound)
+    }
+
+    fun getPoolDraw(competitionCategoryId: Int, groupName: String): List<PoolDrawDTO> {
+        val poolDrawRecords = competitionDrawRepository.getPoolDraw(competitionCategoryId, groupName)
+        return poolDrawRecords.map { poolDrawRecordToDTO(it) }
     }
 
     fun isDrawMade(competitionCategoryId: Int): Boolean {
         return matchRepository.isCategoryDrawn(competitionCategoryId)
+    }
+
+    fun poolDrawRecordToDTO(poolDrawRecord: PoolDrawRecord): PoolDrawDTO {
+        return PoolDrawDTO(
+            registrationService.getPlayersFromRegistrationId(poolDrawRecord.registrationId),
+            poolDrawRecord.playerNumber
+        )
     }
 }
 
@@ -324,13 +326,24 @@ enum class MatchType {
 }
 
 data class GroupDrawDTO(
-    val competitionCategory: CompetitionCategory,
-    // Todo: handle doubles in this draw
-    val groups: MutableMap<String, List<MatchDTO>>
+    val groups: List<SingleGroupDTO>
+)
+
+data class SingleGroupDTO(
+    val groupName: String,
+    val poolDraw: List<PoolDrawDTO>,
+    val matches: List<MatchDTO>,
+    val nrPlayers: Int
+)
+
+// Contains player position in given group. Has no link to matches/results, is only used to display players
+// in correct order when the group is presented
+data class PoolDrawDTO(
+    val playerDTOs: List<PlayerDTO>,
+    val playerNumber: Int
 )
 
 data class PlayoffDTO(
-    val competitionCategory: CompetitionCategory,
     val rounds: List<PlayoffRound>
 )
 

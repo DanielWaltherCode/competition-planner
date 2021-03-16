@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.repositories.competition
 
+import com.graphite.competitionplanner.Tables.COMPETITION
 import com.graphite.competitionplanner.api.competition.CompetitionSpec
 import com.graphite.competitionplanner.tables.Club
 import com.graphite.competitionplanner.tables.Competition
@@ -78,6 +79,13 @@ class CompetitionRepository(val dslContext: DSLContext) {
             Competition.COMPETITION.ORGANIZING_CLUB.eq(
                 Club.CLUB.ID))
             .where(Club.CLUB.ID.eq(clubId)).fetch()
+    }
+
+    fun getByLocation(location: String): List<CompetitionRecord> {
+        return dslContext.select()
+            .from(COMPETITION)
+            .where(COMPETITION.LOCATION.eq(location))
+            .fetchInto(COMPETITION)
     }
 
     fun updateCompetition(competitionId: Int, competitionSpec: CompetitionSpec): CompetitionRecord {

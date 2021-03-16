@@ -44,7 +44,7 @@ class TestDrawCupOnlyMatchOrder(
     fun setUp(){
         club = createClub()
         competition = setupCompetitionFor(club)
-        competitionCategory = addCompetitionCategoryTo(competition, "Herrar 1")
+        competitionCategory = addCompetitionCategoryTo(competition, "Flickor 12")
         setModeToCupOnlyFor(competitionCategory)
 
         for (i in 1..8) {

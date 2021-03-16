@@ -1,10 +1,11 @@
 package com.graphite.competitionplanner.service.competition
 
 import com.graphite.competitionplanner.repositories.MatchRepository
+import com.graphite.competitionplanner.repositories.competition.CompetitionDrawRepository
 import org.springframework.stereotype.Service
 
 @Service
-class DrawUtil(val matchRepository: MatchRepository) {
+class DrawUtil(val matchRepository: MatchRepository, val competitionDrawRepository: CompetitionDrawRepository) {
     fun setUpGroupOfThree(registrationIds: MutableList<Int>, groupName: String, competitionCategoryId: Int) {
         // Match order == 2-3, 1-3, 1-2
         val player1 = registrationIds[0]
@@ -47,6 +48,10 @@ class DrawUtil(val matchRepository: MatchRepository) {
                 groupOrRound = groupName
             )
         )
+
+        competitionDrawRepository.addPoolDraw(PoolDrawHelper(player1, competitionCategoryId, groupName, 1))
+        competitionDrawRepository.addPoolDraw(PoolDrawHelper(player2, competitionCategoryId, groupName, 2))
+        competitionDrawRepository.addPoolDraw(PoolDrawHelper(player3, competitionCategoryId, groupName, 3))
     }
 
     fun setUpGroupOfFour(registrationIds: MutableList<Int>, groupName: String, competitionCategoryId: Int) {
@@ -128,6 +133,11 @@ class DrawUtil(val matchRepository: MatchRepository) {
                 groupOrRound = groupName
             )
         )
+
+        competitionDrawRepository.addPoolDraw(PoolDrawHelper(player1, competitionCategoryId, groupName, 1))
+        competitionDrawRepository.addPoolDraw(PoolDrawHelper(player2, competitionCategoryId, groupName, 2))
+        competitionDrawRepository.addPoolDraw(PoolDrawHelper(player3, competitionCategoryId, groupName, 3))
+        competitionDrawRepository.addPoolDraw(PoolDrawHelper(player4, competitionCategoryId, groupName, 4))
     }
 
     fun setUpGroupOfFive(registrationIds: MutableList<Int>, groupName: String, competitionCategoryId: Int) {
@@ -258,6 +268,21 @@ class DrawUtil(val matchRepository: MatchRepository) {
                 groupOrRound = groupName
             )
         )
+
+        competitionDrawRepository.addPoolDraw(PoolDrawHelper(player1, competitionCategoryId, groupName, 1))
+        competitionDrawRepository.addPoolDraw(PoolDrawHelper(player2, competitionCategoryId, groupName, 2))
+        competitionDrawRepository.addPoolDraw(PoolDrawHelper(player3, competitionCategoryId, groupName, 3))
+        competitionDrawRepository.addPoolDraw(PoolDrawHelper(player4, competitionCategoryId, groupName, 4))
+        competitionDrawRepository.addPoolDraw(PoolDrawHelper(player5, competitionCategoryId, groupName, 5))
+    }
+
+    fun getNrPlayersInGroup(nrGroupMatches: Int): Int {
+        return when(nrGroupMatches) {
+            3 -> 3
+            6 -> 4
+            10 -> 5
+            else -> 0
+        }
     }
 
     fun getPoolNameMap(): MutableMap<Int, String> {
@@ -408,6 +433,13 @@ class DrawUtil(val matchRepository: MatchRepository) {
 data class MatchUp(
     val player1: String,
     val player2: String
+)
+
+data class PoolDrawHelper(
+    val registrationId: Int,
+    val competitionCategoryId: Int,
+    val groupName: String,
+    val playerNumber: Int
 )
 
 enum class Round {

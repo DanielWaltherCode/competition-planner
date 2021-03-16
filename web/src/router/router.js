@@ -8,7 +8,7 @@ export default new Router({
         routes: [
             {
                 path: "/",
-                name: "landing",
+                name: "home",
                 component: () => import("@/components/Landing"),
             },
             {
@@ -35,6 +35,11 @@ export default new Router({
                 path: "/players",
                 name: "players",
                 component: () => import("@/components/Player")
+            },
+            {
+                path: "/draw",
+                name: "draw",
+                component: () => import("@/components/draw/Draw"),
             }
         ],
         scrollBehavior() {

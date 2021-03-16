@@ -17,7 +17,6 @@
             {{ $t("player.sidebar.categories") }}
           </li>
         </ul>
-        <div></div>
       </div>
       <div id="main" class="col-md-8">
         <div class="row">
@@ -59,7 +58,6 @@ export default {
         for (const grouping in this.registeredPlayersAndGroups.groupingsAndPlayers) {
           const filteredPlayers = []
           this.registeredPlayersAndGroups.groupingsAndPlayers[grouping].forEach(player => {
-            console.log(player)
             if (player.firstName.toLowerCase().includes(this.searchString.toLowerCase())) {
               filteredPlayers.push(player)
             } else if (player.lastName.toLowerCase().includes(this.searchString.toLowerCase())) {

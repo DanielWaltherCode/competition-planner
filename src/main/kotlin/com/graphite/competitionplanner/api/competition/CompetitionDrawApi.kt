@@ -6,7 +6,7 @@ import com.graphite.competitionplanner.service.competition.PlayoffDTO
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/competition/{competitionId}/draw/{competitionCategoryId}")
+@RequestMapping("competition/{competitionId}/draw/{competitionCategoryId}")
 class CompetitionDrawApi(val drawService: DrawService) {
 
     @PutMapping
