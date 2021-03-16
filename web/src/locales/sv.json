@@ -83,12 +83,17 @@
       "notDrawnNoPlayers": "Klassen har inte lottats än och det finns än så länge inga anmälda spelare",
       "notDrawnBody": "För att lotta nu med lottningsreglerna som har satts upp under klassinformation kan du klicka på knappen nedan.",
       "drawNow": "Lotta nu",
-      "registeredPlayers": "Anmälda spelare"
+      "registeredPlayers": "Anmälda spelare",
+      "group": "Pool"
     },
     "pool": {
       "club": "Klubb",
       "groups": "Pool-lottning",
-      "playoff": "Slutspelslottning"
+      "playoff": "Slutspelslottning",
+      "matches": "Matcher",
+      "time": "Tid",
+      "result": "Resultat",
+      "noTime": "Tid ej satt"
     }
   }
 }

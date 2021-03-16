@@ -7,13 +7,14 @@
         </div>
         <ul class="list-group list-group-flush">
           <li v-for="category in competitionCategories" class="list-group-item" :key="category.competitionCategoryId"
-              @click="makeChoice(category)" :class="category.categoryName === chosenCategory.categoryName ? 'active' : ''">
+              @click="makeChoice(category)"
+              :class="category.categoryName === chosenCategory.categoryName ? 'active' : ''">
             {{ category.categoryName }}
           </li>
         </ul>
       </div>
       <div id="main" class="col-md-9" v-if="chosenCategory !== null">
-        <h2 id="main-title">{{chosenCategory.categoryName}}</h2>
+        <h1 id="main-title">{{ chosenCategory.categoryName }}</h1>
         <div v-if="!isChosenCategoryDrawn ">
           <div class="main-upper" v-if="registeredPlayersLists.length > 0">
             <p> {{ $t("draw.main.notDrawnTitle") }}</p>
@@ -22,24 +23,50 @@
             <button class="btn btn-primary" @click="createDraw">{{ $t("draw.main.drawNow") }}</button>
           </div>
           <div v-if="registeredPlayersLists.length === 0">
-            <p>{{$t("draw.main.notDrawnNoPlayers")}}</p>
+            <p>{{ $t("draw.main.notDrawnNoPlayers") }}</p>
           </div>
           <!-- List of registered players -->
           <div id="registered-players" v-if="registeredPlayersLists.length > 0">
             <h3>{{ $t("draw.main.registeredPlayers") }}</h3>
             <div v-for="(playerList, index) in registeredPlayersLists" :key="index">
               <div v-for="player in playerList" :key="player.id">
-                  {{player.firstName + " " + player.lastName + " (" + player.club.name + ")"}}
+                {{ player.firstName + " " + player.lastName + " (" + player.club.name + ")" }}
               </div>
             </div>
           </div>
         </div>
         <div v-if="isChosenCategoryDrawn && draw !== null">
           <div id="group-section">
-            <h3>{{$t("draw.pool.groups")}}</h3>
-          </div>
-          <div v-for="group in draw.groupDraw.groups" :key="group.groupName">
-            <PoolDraw :group="group" />
+            <h2>{{ $t("draw.pool.groups") }}</h2>
+            <br>
+            <div v-for="group in draw.groupDraw.groups" :key="group.groupName">
+              <h3>{{ $t("draw.main.group") }} {{ group.groupName }}</h3>
+              <PoolDraw :group="group"/>
+              <div id="matches" class="row justify-content-center">
+                <h5 class="text-center">{{$t("draw.pool.matches")}}</h5>
+                <div class="col-lg-8">
+                <table class="table table-striped table-sm">
+                  <thead class="thead-dark">
+                  <tr>
+                  <th>{{ $t("draw.pool.time") }}</th>
+                    <th></th>
+                    <th></th>
+                    <th>{{ $t("draw.pool.result") }}</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr class="group-matches" v-for="match in group.matches" :key="match.id">
+                    <td>{{getTime(match)}}</td>
+                    <td>{{getPlayerOne(match)}}</td>
+                    <td>{{getPlayerTwo(match)}}</td>
+                    <td></td>
+                  </tr>
+                  </tbody>
+                </table>
+                </div>
+              </div>
+              <br>
+            </div>
           </div>
         </div>
       </div>
@@ -111,6 +138,33 @@ export default {
           .then(res => {
             this.registeredPlayersLists = res.data
           })
+    },
+    getPlayerOne(match) {
+      let playerOne = ""
+      if(match.firstPlayer.length === 1) {
+        playerOne = match.firstPlayer[0].firstName + " " + match.firstPlayer[0].lastName
+      }
+      else if (match.firstPlayer.length === 1) {
+        playerOne = match.firstPlayer[0].firstName + " " + match.firstPlayer[0].lastName + "/" +
+            match.firstPlayer[1].firstName + " " + match.firstPlayer[1].lastName
+      }
+      return playerOne
+    },
+    getPlayerTwo(match) {
+      let playerTwo = ""
+      if(match.secondPlayer.length === 1) {
+        playerTwo = match.secondPlayer[0].firstName + " " + match.secondPlayer[0].lastName
+      }
+      else if (match.firstPlayer.length === 1) {
+        playerTwo = match.secondPlayer[0].firstName + " " + match.secondPlayer[0].lastName + "/" +
+            match.secondPlayer[1].firstName + " " + match.secondPlayer[1].lastName
+      }
+      return playerTwo
+    },
+    getTime(match) {
+      if (match.startTime === null) {
+        return this.$t("draw.pool.noTime")
+      }
     }
   }
 }
@@ -130,6 +184,10 @@ export default {
   box-shadow: 3px 3px 2px 1px #efefef;
 }
 
+.active {
+  background: var(--emphasis-color) !important;
+}
+
 @media only screen and (max-width: 768px) {
   #sidebar {
     min-height: fit-content;
@@ -147,6 +205,7 @@ export default {
 #sidebar li:hover {
   cursor: pointer;
 }
+
 /**
 * Main
  */
@@ -171,5 +230,9 @@ export default {
 
 #registered-players {
   margin-top: 40px;
+}
+
+#matches {
+  margin-left: 20px;
 }
 </style>
