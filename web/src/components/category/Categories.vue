@@ -4,6 +4,7 @@
     <div class="row">
       <div class="col-4">
         <category-list
+          v-on:selectedClass="fillFormWithClass"
           v-bind:categories="categories"
         />
       </div>
@@ -17,38 +18,8 @@
             <label class="btn btn-outline-primary" for="btnGameRules">Matchregler</label>
           </div>
         </div>
-        <form>
-          <div class="row">
-            <div class="col">
-              <label for="inputCost">Kostnad</label>
-              <input type="text" class="form-control" placeholder="Summa" id="inputCost">
-            </div>
-            <div class="col">
-              <label for="inputStartDatetime">Starttid</label>
-              <input type="text" class="form-control" placeholder="Starttid och datum" id="inputStartDatetime">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <label for="inputDrawtype">Lottningstyp</label>
-              <input type="text" class="form-control" placeholder="Pool med cupspel" id="inputDrawtype">
-            </div>
-            <div class="col">
-              <label for="inputNumberOfPlayersPerPool">Antal spelare per pool</label>
-              <input type="text" class="form-control" placeholder="4" id="inputNumberOfPlayersPerPool">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <label for="inputPlayersThatAdvance">Lottningstyp</label>
-              <input type="text" class="form-control" placeholder="2" id="inputPlayersThatAdvance">
-            </div>
-            <div class="col">
-              <label for="inputDrawStrategy">Lottningstrategi</label>
-              <input type="text" class="form-control" placeholder="Snakelottning" id="inputDrawStrategy">
-            </div>
-          </div>
-        </form>
+        <CategoryGeneralSettings v-bind:category="activeCategory"></CategoryGeneralSettings>
+        <button type="button" class="btn btn-primary">Primary ghe asd</button>
         <button v-on:click="doSomething" type="button" class="btn btn-warning">Ställ in klass</button>
         <button type="button" class="btn btn-danger">Ta bort klass</button>
       </div>
@@ -60,12 +31,17 @@
 
 <script>
 import CategoryList from "@/components/category/CategoryList"
+import CategoryGeneralSettings from "@/components/category/CategoryGeneralSettings";
 
 export default {
   name: "Categories",
-  components: {CategoryList},
+  components: {
+    CategoryList,
+    CategoryGeneralSettings
+  },
   data: function(){
     return {
+      activeCategory: Object,
       categories: []
     }
   },
@@ -73,25 +49,56 @@ export default {
     this.categories = [
       {
         id: 1,
-        name: "Herrar-1"
+        name: "Herrar-1",
+        cost: 110,
+        startTime: "10AM 2022-10-18",
+        drawType: "POOL",
+        drawStrategy: "Snakelottning",
+        playersPerPool: 4,
+        playersThatAdvancePerGroup: 2,
       },
       {
         id: 2,
-        name: "Damer-1"
+        name: "Damer-1",
+        cost: 100,
+        startTime: "11AM 2022-10-18",
+        drawType: "POOL",
+        drawStrategy: "Snakelottning",
+        playersPerPool: 4,
+        playersThatAdvancePerGroup: 2,
       },
       {
         id: 3,
-        name: "Flickor-14"
+        name: "Flickor-14",
+        cost: 85,
+        startTime: "12AM 2022-10-18",
+        drawType: "CUP",
+        drawStrategy: "Random",
+        playersPerPool: 8,
+        playersThatAdvancePerGroup: 1,
       },
       {
         id: 4,
-        name: "Killar-14"
+        name: "Killar-14",
+        cost: 75,
+        startTime: "13AM 2022-10-18",
+        drawType: "CUP",
+        drawStrategy: "Random",
+        playersPerPool: 8,
+        playersThatAdvancePerGroup: 1,
       }
     ]
+    this.activeCategory = this.categories[0]
   },
   methods: {
     doSomething : function() {
       console.log(this.name)
+    },
+    fillFormWithClass : function(classId){
+      this.activeCategory = this.categories.find((item) => {
+        return (item.id === classId)
+      })
+      console.log("Selected class " + classId + ". Updating form")
     }
   }
 }
