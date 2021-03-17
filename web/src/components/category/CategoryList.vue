@@ -1,7 +1,7 @@
 <template>
     <div class="list-group list-group-flush">
       <a :key="category.id" v-for="category in categories"
-         @click="something(category)"
+         @click="$emit('selectedClass', category.id)"
          href="#" class="list-group-item list-group-item-action"
          data-bs-toggle="listSomething">{{category.name}}</a>
     </div>
@@ -12,11 +12,6 @@ export default {
   name: "CategoryList",
   props: {
     categories: Array,
-  },
-  methods: {
-    something : function(category) {
-      console.log(category.name)
-    }
   }
 }
 </script>
