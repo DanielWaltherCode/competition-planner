@@ -56,4 +56,48 @@ h1, h2, h3 {
   border: 1px solid var(--emphasis-color) !important;
 }
 
+/* Sidebar styling */
+#sidebar-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0 30px 0;
+  color: white;
+}
+
+#sidebar {
+  min-height: 100vh;
+  z-index: 0;
+  background: #404040;
+  margin-top: -18px;
+  box-shadow: 3px 3px 2px 1px #efefef;
+}
+
+.active {
+  background: white !important;
+  color: black !important;
+}
+
+@media only screen and (max-width: 768px) {
+  #sidebar {
+    min-height: fit-content;
+  }
+}
+
+#sidebar li {
+  background-color: inherit;
+  color: white;
+}
+
+#sidebar-header:hover {
+  cursor: pointer;
+}
+
+#sidebar li:hover {
+  opacity: 0.7;
+}
+
+#sidebar li:hover {
+  cursor: pointer;
+}
 </style>

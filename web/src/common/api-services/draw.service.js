@@ -13,6 +13,9 @@ const DrawService = {
     },
     getDraw(competitionId, categoryId) {
         return Axios.get(`/competition/${competitionId}/draw/${categoryId}`, {withCredentials: true})
+    },
+    deleteDraw(competitionId, categoryId) {
+        return Axios.delete(`/competition/${competitionId}/draw/${categoryId}`, {withCredentials: true})
     }
 }
 

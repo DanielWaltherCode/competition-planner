@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <div class="row">
+    <div class="row gx-5">
       <div id="sidebar" class="col-md-3">
         <div id="sidebar-header">
           <h4> {{ $t("draw.sidebar.title") }}</h4>
@@ -15,6 +15,8 @@
       </div>
       <div id="main" class="col-md-9" v-if="chosenCategory !== null">
         <h1 id="main-title">{{ chosenCategory.categoryName }}</h1>
+
+        <!-- If class is not drawn yet -->
         <div v-if="!isChosenCategoryDrawn ">
           <div class="main-upper" v-if="registeredPlayersLists.length > 0">
             <p> {{ $t("draw.main.notDrawnTitle") }}</p>
@@ -25,7 +27,7 @@
           <div v-if="registeredPlayersLists.length === 0">
             <p>{{ $t("draw.main.notDrawnNoPlayers") }}</p>
           </div>
-          <!-- List of registered players -->
+          <!-- List of registered players if there are any -->
           <div id="registered-players" v-if="registeredPlayersLists.length > 0">
             <h3>{{ $t("draw.main.registeredPlayers") }}</h3>
             <div v-for="(playerList, index) in registeredPlayersLists" :key="index">
@@ -35,11 +37,22 @@
             </div>
           </div>
         </div>
+
+        <!-- If class is drawn -->
         <div v-if="isChosenCategoryDrawn && draw !== null">
+          <div>
+            <p>{{$t("draw.main.drawMade")}}</p>
+          </div>
           <div id="group-section">
-            <h2>{{ $t("draw.pool.groups") }}</h2>
+            <div id="main-header">
+              <h2>{{ $t("draw.pool.groups") }}</h2>
+              <div>
+                <button type="button" class="btn btn-outline-danger me-3" @click="deleteDraw">{{ $t("draw.main.deleteDraw") }}</button>
+                <button type="button" class="btn btn-outline-primary" @click="createDraw">{{ $t("draw.main.redraw") }}</button>
+              </div>
+            </div>
             <br>
-            <div v-for="group in draw.groupDraw.groups" :key="group.groupName">
+            <div v-for="group in draw.groupDraw.groups" :key="group.groupName" class="group">
               <h3>{{ $t("draw.main.group") }} {{ group.groupName }}</h3>
               <PoolDraw :group="group"/>
               <div id="matches" class="row justify-content-center">
@@ -128,6 +141,12 @@ export default {
         this.isChosenCategoryDrawn = true
       })
     },
+    deleteDraw() {
+      DrawService.deleteDraw(this.competition.id, this.chosenCategory.competitionCategoryId).then( ()=> {
+        this.isChosenCategoryDrawn = false
+        this.getRegisteredPlayers()
+      })
+    },
     getDraw(categoryId) {
       DrawService.getDraw(this.competition.id, categoryId).then(res => {
         this.draw = res.data
@@ -171,46 +190,12 @@ export default {
 </script>
 
 <style scoped>
-#sidebar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 40px;
-}
 
-#sidebar {
-  min-height: 100vh;
-  z-index: 0;
-  box-shadow: 3px 3px 2px 1px #efefef;
-}
-
-.active {
-  background: var(--emphasis-color) !important;
-}
-
-@media only screen and (max-width: 768px) {
-  #sidebar {
-    min-height: fit-content;
-  }
-}
-
-#sidebar-header:hover {
-  cursor: pointer;
-}
-
-#sidebar li:hover {
-  opacity: 0.7;
-}
-
-#sidebar li:hover {
-  cursor: pointer;
-}
 
 /**
 * Main
  */
 #main {
-  margin: 10px 0;
   text-align: left;
 }
 
@@ -224,6 +209,11 @@ export default {
   box-shadow: 0 2px #efefef;
 }
 
+#main-header {
+  display: flex;
+  justify-content: space-between;
+}
+
 .heading p {
   margin-bottom: 0;
 }
@@ -234,5 +224,10 @@ export default {
 
 #matches {
   margin-left: 20px;
+}
+
+.group {
+  box-shadow: 0 3px #efefef;
+  margin-bottom: 20px;
 }
 </style>

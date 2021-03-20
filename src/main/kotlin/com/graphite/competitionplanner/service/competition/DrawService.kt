@@ -46,7 +46,12 @@ class DrawService(
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Category metadata not found for that id")
         }
 
-        // First create seed
+        // Check if draw has alredy been made. If so remove and create again.
+        if(isDrawMade(competitionCategoryId)) {
+            deleteDraw(competitionCategoryId)
+        }
+
+        // Create draw
         createSeed(competitionCategoryId, categoryMetadata)
 
         if (categoryMetadata.drawType.name == DrawTypes.POOL_ONLY.name ||
@@ -156,9 +161,10 @@ class DrawService(
             }
         }
         // Remove ids already added for seeding
-        val remainingIds = registrationIds.filter { !seededPlayers.contains(it) }
+        val remainingIds = registrationIds.filter { !seededPlayers.contains(it) }.toMutableList()
         // Add one player to each group. Start after nr of seeds.
         // If categoryseedings == nrGroups start from 0
+        remainingIds.shuffle()
         counter = if (categorySeedings.size == nrGroups) 0 else categorySeedings.size
         for (id in remainingIds) {
             groupMap[counter]?.add(id)
@@ -206,6 +212,11 @@ class DrawService(
                 playerGroups[key]?.add(players[0])
             }
         }
+    }
+
+    fun deleteDraw(competitionCategoryId: Int) {
+        matchRepository.deleteMatchesForCategory(competitionCategoryId)
+        competitionDrawRepository.deleteGroupsInCategory(competitionCategoryId)
     }
 
     fun getDraw(competitionCategoryId: Int): DrawDTO {

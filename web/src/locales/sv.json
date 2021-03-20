@@ -84,7 +84,10 @@
       "notDrawnBody": "För att lotta nu med lottningsreglerna som har satts upp under klassinformation kan du klicka på knappen nedan.",
       "drawNow": "Lotta nu",
       "registeredPlayers": "Anmälda spelare",
-      "group": "Pool"
+      "group": "Pool",
+      "drawMade": "Klassen har lottats",
+      "deleteDraw": "Ta bort lottning",
+      "redraw": "Lotta om"
     },
     "pool": {
       "club": "Klubb",
