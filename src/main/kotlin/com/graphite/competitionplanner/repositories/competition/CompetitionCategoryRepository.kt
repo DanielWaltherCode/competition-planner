@@ -137,6 +137,14 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) {
         }.toList()
 
     }
+    // Returns registrations ids for the players registered in a given competition category
+    fun getRegistrationsInCategory(categoryId: Int): List<Int> {
+        return dslContext
+            .select(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID)
+            .from(COMPETITION_CATEGORY_REGISTRATION)
+            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(categoryId))
+            .fetchInto(Int::class.java)
+    }
 
     // Should return competition information, disciplines
     fun getByPlayerId(playerId: Int): List<CompetitionAndCategories> {

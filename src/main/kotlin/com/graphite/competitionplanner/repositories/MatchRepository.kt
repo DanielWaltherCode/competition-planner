@@ -81,8 +81,7 @@ class MatchRepository(val dslContext: DSLContext) {
 
     fun isCategoryDrawn(competitionCategoryId: Int): Boolean {
         return dslContext.fetchExists(
-            dslContext.selectFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
-                .and(MATCH.MATCH_TYPE.equalIgnoreCase(MatchType.GROUP.name)))
+            dslContext.selectFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
         )
     }
 

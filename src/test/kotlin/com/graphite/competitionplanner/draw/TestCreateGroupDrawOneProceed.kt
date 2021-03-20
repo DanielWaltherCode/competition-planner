@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.draw
 import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
+import com.graphite.competitionplanner.repositories.competition.CompetitionDrawRepository
 import com.graphite.competitionplanner.service.CategoryService
 import com.graphite.competitionplanner.service.MatchService
 import com.graphite.competitionplanner.service.RegistrationService
@@ -25,6 +26,7 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
                                     @Autowired val registrationService: RegistrationService,
                                     @Autowired val matchService: MatchService,
                                     @Autowired val playerRepository: PlayerRepository,
+                                    @Autowired val competitionDrawRepository: CompetitionDrawRepository,
                                     @Autowired val drawService: DrawService,
                                     @Autowired val categoryService: CategoryService,
                                     @Autowired val competitionCategoryService: CompetitionCategoryService
@@ -54,6 +56,9 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
         // Remove matches
         matchService.deleteMatchesInCategory(competitionCategoryId)
 
+        // Remove pool draw
+        competitionDrawRepository.deleteGroupsInCategory(competitionCategoryId)
+
         // Remove registrations and delete category
         val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
         for (id in registrationIds) {
@@ -76,13 +81,21 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
         Assertions.assertNotNull(draw)
         val groups = draw.groupDraw.groups
         Assertions.assertEquals(7, groups.size)
-        Assertions.assertEquals(6, groups["A"]?.size)
-        Assertions.assertEquals(3, groups["B"]?.size)
-        Assertions.assertEquals(3, groups["C"]?.size)
-        Assertions.assertEquals(3, groups["D"]?.size)
-        Assertions.assertEquals(3, groups["E"]?.size)
-        Assertions.assertEquals(3, groups["F"]?.size)
-        Assertions.assertEquals(3, groups["G"]?.size)
+        Assertions.assertEquals(6, groups[0].matches.size)
+        Assertions.assertEquals("A", groups[0].groupName)
+        Assertions.assertEquals(3, groups[1].matches.size)
+        Assertions.assertEquals("B", groups[1].groupName)
+        Assertions.assertEquals(3, groups[2].matches.size)
+        Assertions.assertEquals("C", groups[2].groupName)
+        Assertions.assertEquals(3, groups[3].matches.size)
+        Assertions.assertEquals("D", groups[3].groupName)
+        Assertions.assertEquals(3, groups[4].matches.size)
+        Assertions.assertEquals("E", groups[4].groupName)
+        Assertions.assertEquals(3, groups[5].matches.size)
+        Assertions.assertEquals("F", groups[5].groupName)
+        Assertions.assertEquals(3, groups[6].matches.size)
+        Assertions.assertEquals("G", groups[6].groupName)
+
 
         val playoffMatches = draw.playOff.rounds[0].matches
         val playoffRound = draw.playOff.rounds[0].round
@@ -105,13 +118,20 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
         // With 21 players there should be exactly 7 groups
         val groups = draw.groupDraw.groups
         Assertions.assertEquals(7, groups.size)
-        Assertions.assertEquals(3, groups["A"]?.size)
-        Assertions.assertEquals(3, groups["B"]?.size)
-        Assertions.assertEquals(3, groups["C"]?.size)
-        Assertions.assertEquals(3, groups["D"]?.size)
-        Assertions.assertEquals(3, groups["E"]?.size)
-        Assertions.assertEquals(3, groups["F"]?.size)
-        Assertions.assertEquals(3, groups["G"]?.size)
+        Assertions.assertEquals(3, groups[0].matches.size)
+        Assertions.assertEquals("A", groups[0].groupName)
+        Assertions.assertEquals(3, groups[1].matches.size)
+        Assertions.assertEquals("B", groups[1].groupName)
+        Assertions.assertEquals(3, groups[2].matches.size)
+        Assertions.assertEquals("C", groups[2].groupName)
+        Assertions.assertEquals(3, groups[3].matches.size)
+        Assertions.assertEquals("D", groups[3].groupName)
+        Assertions.assertEquals(3, groups[4].matches.size)
+        Assertions.assertEquals("E", groups[4].groupName)
+        Assertions.assertEquals(3, groups[5].matches.size)
+        Assertions.assertEquals("F", groups[5].groupName)
+        Assertions.assertEquals(3, groups[6].matches.size)
+        Assertions.assertEquals("G", groups[6].groupName)
 
         val playoffMatches = draw.playOff.rounds[0].matches
         val playoffRound = draw.playOff.rounds[0].round
@@ -134,10 +154,14 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
         // With 14 players there should be 4 groups, 6 matches in first two
         val groups = draw.groupDraw.groups
         Assertions.assertEquals(4, groups.size)
-        Assertions.assertEquals(6, groups["A"]?.size)
-        Assertions.assertEquals(6, groups["B"]?.size)
-        Assertions.assertEquals(3, groups["C"]?.size)
-        Assertions.assertEquals(3, groups["D"]?.size)
+        Assertions.assertEquals(6, groups[0].matches.size)
+        Assertions.assertEquals("A", groups[0].groupName)
+        Assertions.assertEquals(6, groups[1].matches.size)
+        Assertions.assertEquals("B", groups[1].groupName)
+        Assertions.assertEquals(3, groups[2].matches.size)
+        Assertions.assertEquals("C", groups[2].groupName)
+        Assertions.assertEquals(3, groups[3].matches.size)
+        Assertions.assertEquals("D", groups[3].groupName)
 
         val playoffMatches = draw.playOff.rounds[0].matches
         val playoffRound = draw.playOff.rounds[0].round

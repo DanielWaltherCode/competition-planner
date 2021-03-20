@@ -123,6 +123,10 @@ header {
   margin-bottom: 20px;
 }
 
+nav {
+  box-shadow: 0 3px #efefef;
+}
+
 .navbar {
   background-color: white !important;
 }

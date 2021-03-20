@@ -73,5 +73,30 @@
       "categories": "Klasser"
     },
     "search": "Sök på spelare"
+  },
+  "draw": {
+    "sidebar": {
+      "title": "Klasser"
+    },
+    "main":  {
+      "notDrawnTitle": "Klassen har inte lottats än.",
+      "notDrawnNoPlayers": "Klassen har inte lottats än och det finns än så länge inga anmälda spelare",
+      "notDrawnBody": "För att lotta nu med lottningsreglerna som har satts upp under klassinformation kan du klicka på knappen nedan.",
+      "drawNow": "Lotta nu",
+      "registeredPlayers": "Anmälda spelare",
+      "group": "Pool",
+      "drawMade": "Klassen har lottats",
+      "deleteDraw": "Ta bort lottning",
+      "redraw": "Lotta om"
+    },
+    "pool": {
+      "club": "Klubb",
+      "groups": "Pool-lottning",
+      "playoff": "Slutspelslottning",
+      "matches": "Matcher",
+      "time": "Tid",
+      "result": "Resultat",
+      "noTime": "Tid ej satt"
+    }
   }
 }

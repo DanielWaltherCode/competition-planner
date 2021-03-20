@@ -6,6 +6,7 @@ import com.graphite.competitionplanner.repositories.*
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
 import com.graphite.competitionplanner.repositories.competition.CategoryRepository
+import com.graphite.competitionplanner.repositories.competition.CompetitionDrawRepository
 import com.graphite.competitionplanner.service.*
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
 import com.graphite.competitionplanner.service.competition.CompetitionService
@@ -31,6 +32,7 @@ class EventListener(
     val registrationRepository: RegistrationRepository,
     val competitionService: CompetitionService,
     val competitionCategoryService: CompetitionCategoryService,
+    val competitionDrawRepository: CompetitionDrawRepository,
     val drawTypeRepository: DrawTypeRepository,
     val userRepository: UserRepository,
     val util: Util,
@@ -403,133 +405,135 @@ class EventListener(
         val lugiPlayers = playerService.getPlayersByClubId(lugiId)
         val umePlayers = playerService.getPlayersByClubId(util.getClubIdOrDefault("Umeå IK"))
         val otherPlayers = playerService.getPlayersByClubId(util.getClubIdOrDefault("Övriga"))
-        val competitionCategories = competitionCategoryRepository.getCompetitionCategories()
+        val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
+        val competitionCategories = competitionService.getCategoriesInCompetition(lugiCompetitionId).categories
 
         // Have "Herrar 1" in Lugi as main competition category to play around with
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null,
                 lugiPlayers[0].id ?: 0,
-                competitionCategories[0].id
+                competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null,
                 lugiPlayers[0].id ?: 0,
-                competitionCategories[1].id
+                competitionCategories[1].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null,
                 lugiPlayers[1].id ?: 0,
-                competitionCategories[0].id
+                competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null,
                 umePlayers[0].id ?: 0,
-                competitionCategories[1].id
+                competitionCategories[1].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null,
                 otherPlayers[0].id ?: 0,
-                competitionCategories[1].id
+                competitionCategories[1].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null,
                 lugiPlayers[2].id ?: 0,
-                competitionCategories[0].id
+                competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null,
                 lugiPlayers[3].id ?: 0,
-                competitionCategories[0].id
+                competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null,
                 lugiPlayers[4].id ?: 0,
-                competitionCategories[0].id
+                competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null,
                 lugiPlayers[5].id ?: 0,
-                competitionCategories[0].id
+                competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null,
                 lugiPlayers[6].id ?: 0,
-                competitionCategories[0].id
+                competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null,
                 lugiPlayers[7].id ?: 0,
-                competitionCategories[0].id
+                competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null,
                 umePlayers[0].id ?: 0,
-                competitionCategories[0].id
+                competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null,
                 umePlayers[1].id ?: 0,
-                competitionCategories[0].id
+                competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null,
                 umePlayers[2].id ?: 0,
-                competitionCategories[0].id
+                competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null,
                 umePlayers[3].id ?: 0,
-                competitionCategories[0].id
+                competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null,
                 umePlayers[4].id ?: 0,
-                competitionCategories[0].id
+                competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null,
                 umePlayers[5].id ?: 0,
-                competitionCategories[0].id
+                competitionCategories[0].competitionCategoryId
             )
         )
     }
 
     fun registerMatch() {
-        val competitionCategories = competitionCategoryRepository.getCompetitionCategories()
-        val competitionCategoryId = competitionCategories[0].id
+        /* val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
+        val competitionCategories = competitionService.getCategoriesInCompetition(lugiCompetitionId).categories
+        val competitionCategoryId = competitionCategories[0].competitionCategoryId
         val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
 
         matchRepository.addMatch(
@@ -543,12 +547,13 @@ class EventListener(
                 matchOrderNumber = 1,
                 groupOrRound = "A"
             )
-        )
+        )*/
     }
 
     // Must be in correct order depending on foreign keys
     private fun clearTables() {
         matchRepository.clearTable()
+        competitionDrawRepository.clearTable()
         userRepository.clearTable()
         registrationRepository.clearPlayingIn()
         registrationRepository.clearPlayerRegistration()
