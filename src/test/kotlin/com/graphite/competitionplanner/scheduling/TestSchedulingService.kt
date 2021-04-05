@@ -1,51 +1,81 @@
 package com.graphite.competitionplanner.scheduling
 
+import com.graphite.competitionplanner.api.ClubNoAddressDTO
+import com.graphite.competitionplanner.service.MatchDTO
+import com.graphite.competitionplanner.service.PlayerDTO
 import com.graphite.competitionplanner.service.SchedulingService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.function.Executable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.util.Assert
 import java.lang.IllegalArgumentException
+import java.time.LocalDate
 
 @SpringBootTest
 class TestSchedulingService (@Autowired val schedulingService: SchedulingService){
+
 
     /**
      * A pool of 4 players always have 2 independent matches that can be played simultaneously
      * A pool of 3 players only has one independent match that can be played at any time
      */
+    private final val p1 = PlayerDTO(1, "Jan", "Olsson", ClubNoAddressDTO(1, "Luleå"), LocalDate.now())
+    private final val p2 = PlayerDTO(2, "Gill", "Fiskarsson", ClubNoAddressDTO(1, "Luleå"), LocalDate.now())
+    private final val p3 = PlayerDTO(3, "Sven", "Svensson", ClubNoAddressDTO(1, "Luleå"), LocalDate.now())
+    private final val p4 = PlayerDTO(4, "Sture", "Sundberg", ClubNoAddressDTO(1, "Luleå"), LocalDate.now())
+
     val pool1 = listOf(
-            SchedulingService.TempMatch(listOf(1, 2)),
-            SchedulingService.TempMatch(listOf(1, 3)),
-            SchedulingService.TempMatch(listOf(1, 4)),
-            SchedulingService.TempMatch(listOf(2, 3)),
-            SchedulingService.TempMatch(listOf(2, 4)),
-            SchedulingService.TempMatch(listOf(3, 4))
+            MatchDTO(1, null, null, 1, "whatever",
+                    listOf(p1), listOf(p2), 0, "GROUP"),
+            MatchDTO(2, null, null, 1, "whatever",
+                    listOf(p1), listOf(p3), 0, "GROUP"),
+            MatchDTO(3, null, null, 1, "whatever",
+                    listOf(p1), listOf(p4), 0, "GROUP"),
+            MatchDTO(4, null, null, 1, "whatever",
+                    listOf(p2), listOf(p3), 0, "GROUP"),
+            MatchDTO(5, null, null, 1, "whatever",
+                    listOf(p2), listOf(p4), 0, "GROUP"),
+            MatchDTO(6, null, null, 1, "whatever",
+                    listOf(p3), listOf(p4), 0, "GROUP")
     )
+    private final val p5 = PlayerDTO(5, "Elin", "Malsson", ClubNoAddressDTO(1, "Luleå"), LocalDate.now())
+    private final val p6 = PlayerDTO(6, "Ewa", "Svensson", ClubNoAddressDTO(1, "Luleå"), LocalDate.now())
+    private final val p7 = PlayerDTO(7, "Katarina", "Dalhborg", ClubNoAddressDTO(1, "Luleå"), LocalDate.now())
+    private final val p8 = PlayerDTO(8, "Lena", "Sinè", ClubNoAddressDTO(1, "Luleå"), LocalDate.now())
 
     val pool2 = listOf(
-            SchedulingService.TempMatch(listOf(5, 6)),
-            SchedulingService.TempMatch(listOf(5, 7)),
-            SchedulingService.TempMatch(listOf(5, 8)),
-            SchedulingService.TempMatch(listOf(6, 7)),
-            SchedulingService.TempMatch(listOf(6, 8)),
-            SchedulingService.TempMatch(listOf(7, 8))
+            MatchDTO(7, null, null, 1, "whatever",
+                    listOf(p5), listOf(p6), 0, "GROUP"),
+            MatchDTO(8, null, null, 1, "whatever",
+                    listOf(p5), listOf(p7), 0, "GROUP"),
+            MatchDTO(9, null, null, 1, "whatever",
+                    listOf(p5), listOf(p8), 0, "GROUP"),
+            MatchDTO(10, null, null, 1, "whatever",
+                    listOf(p6), listOf(p7), 0, "GROUP"),
+            MatchDTO(11, null, null, 1, "whatever",
+                    listOf(p6), listOf(p8), 0, "GROUP"),
+            MatchDTO(12, null, null, 1, "whatever",
+                    listOf(p7), listOf(p8), 0, "GROUP")
     )
+
+    private final val p9 = PlayerDTO(9, "Patrik", "Larsson", ClubNoAddressDTO(1, "Luleå"), LocalDate.now())
+    private final val p10 = PlayerDTO(10, "Enok", "Karlsson", ClubNoAddressDTO(1, "Luleå"), LocalDate.now())
+    private final val p11 = PlayerDTO(11, "Tintin", "Snäll", ClubNoAddressDTO(1, "Luleå"), LocalDate.now())
 
     val pool3 = listOf(
-            SchedulingService.TempMatch(listOf(9, 10)),
-            SchedulingService.TempMatch(listOf(9, 11)),
-            SchedulingService.TempMatch(listOf(10, 11))
+            MatchDTO(13, null, null, 1, "whatever",
+                    listOf(p9), listOf(p10), 0, "GROUP"),
+            MatchDTO(14, null, null, 1, "whatever",
+                    listOf(p9), listOf(p11), 0, "GROUP"),
+            MatchDTO(15, null, null, 1, "whatever",
+                    listOf(p10), listOf(p11), 0, "GROUP")
     )
-
 
     @Test
     fun oneTableForAllMatches(){
 
         val matches = pool1 + pool2
-        val schedule = schedulingService.createSchedule(matches, 1)
+        val schedule = schedulingService.create(matches, 1)
 
         Assertions.assertEquals(matches.size, schedule.timeslots.size)
     }
@@ -60,7 +90,7 @@ class TestSchedulingService (@Autowired val schedulingService: SchedulingService
          *    (3-4)    (2-4)     (3-4)
          */
         val matches = pool1
-        val schedule = schedulingService.createSchedule(matches, 2)
+        val schedule = schedulingService.create(matches, 2)
 
         Assertions.assertEquals(3, schedule.timeslots.size)
     }
@@ -75,7 +105,7 @@ class TestSchedulingService (@Autowired val schedulingService: SchedulingService
          *    (empty)  (empty)   (empty)
          */
         val matches = pool1
-        val schedule = schedulingService.createSchedule(matches, 3)
+        val schedule = schedulingService.create(matches, 3)
 
         Assertions.assertEquals(3, schedule.timeslots.size)
     }
@@ -90,7 +120,7 @@ class TestSchedulingService (@Autowired val schedulingService: SchedulingService
          */
 
         val matches = pool1 + pool2
-        val schedule = schedulingService.createSchedule(matches, 2)
+        val schedule = schedulingService.create(matches, 2)
 
         Assertions.assertEquals(matches.size / 2, schedule.timeslots.size)
     }
@@ -109,7 +139,7 @@ class TestSchedulingService (@Autowired val schedulingService: SchedulingService
          *   (5-6)     (2-4)    (1-4)    (6-7)
          */
         val matches = pool1 + pool2
-        val schedule = schedulingService.createSchedule(matches, 3)
+        val schedule = schedulingService.create(matches, 3)
 
         Assertions.assertEquals(4, schedule.timeslots.size)
     }
@@ -129,7 +159,7 @@ class TestSchedulingService (@Autowired val schedulingService: SchedulingService
          */
 
         val matches = pool1 + pool2
-        val schedule = schedulingService.createSchedule(matches, 4)
+        val schedule = schedulingService.create(matches, 4)
 
         Assertions.assertEquals(3, schedule.timeslots.size)
     }
@@ -149,29 +179,45 @@ class TestSchedulingService (@Autowired val schedulingService: SchedulingService
          */
 
         val matches = pool1 + pool3
-        val schedule = schedulingService.createSchedule(matches, 4)
+        val schedule = schedulingService.create(matches, 4)
 
         Assertions.assertEquals(3, schedule.timeslots.size)
+    }
+
+    @Test
+    fun shouldNotScheduleAPlayerTwiceInSameTimeslot() {
+        val matches = pool1
+        val schedule = schedulingService.create(matches, 4)
+
+        for (timeslot in schedule.timeslots) {
+            Assertions.assertEquals(timeslot.playerIds.size, timeslot.playerIds.distinct().size)
+        }
     }
 
     @Test
     fun shouldThrowIllegalArgumentExceptionWhenNumberOfTablesIsZero(){
         val matches = pool1 + pool3
 
-        Assertions.assertThrows(IllegalArgumentException::class.java) { schedulingService.createSchedule(matches, 0) }
+        Assertions.assertThrows(IllegalArgumentException::class.java) { schedulingService.create(matches, 0) }
     }
 
     @Test
     fun shouldThrowIllegalArgumentExceptionWhenThereIsAnInvalidMatch(){
         val matches = listOf(
-                SchedulingService.TempMatch(listOf(1, 2)),
-                SchedulingService.TempMatch(listOf(1, 3)),
-                SchedulingService.TempMatch(listOf(1, 4)),
-                SchedulingService.TempMatch(listOf(2, 2)), // Illegal
-                SchedulingService.TempMatch(listOf(2, 4)),
-                SchedulingService.TempMatch(listOf(3, 4))
+                MatchDTO(7, null, null, 1, "whatever",
+                        listOf(p5), listOf(p6), 0, "GROUP"),
+                MatchDTO(8, null, null, 1, "whatever",
+                        listOf(p5), listOf(p7), 0, "GROUP"),
+                MatchDTO(9, null, null, 1, "whatever",
+                        listOf(p5), listOf(p5), 0, "GROUP"), // Illegal
+                MatchDTO(10, null, null, 1, "whatever",
+                        listOf(p6), listOf(p7), 0, "GROUP"),
+                MatchDTO(11, null, null, 1, "whatever",
+                        listOf(p6), listOf(p8), 0, "GROUP"),
+                MatchDTO(12, null, null, 1, "whatever",
+                        listOf(p7), listOf(p8), 0, "GROUP")
         )
 
-        Assertions.assertThrows(IllegalArgumentException::class.java) { schedulingService.createSchedule(matches, 1) }
+        Assertions.assertThrows(IllegalArgumentException::class.java) { schedulingService.create(matches, 1) }
     }
 }

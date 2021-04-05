@@ -15,7 +15,31 @@ class SchedulingService {
      * all time. This leads to the schedule being divided into equally sized timeslots where the maximum number of
      * matches that can be played simultaneously is equal to the number of tables.
      */
-    fun createSchedule(tempMatches: List<TempMatch>, numberOfTables: Int) : Schedule {
+    fun create(matches: List<MatchDTO>, numberOfTables: Int): Schedule {
+        val matchesToBeScheduled = matches.map { match -> Match(match.id, extractPlayerIds(match)) }
+        return createSchedule(matchesToBeScheduled, numberOfTables)
+    }
+
+    data class Schedule (
+            val timeslots: List<Timeslot>
+    )
+
+    data class Match (
+            val id: Int,
+            val playerIds: List<Int>
+    )
+
+    data class Timeslot (
+            val timeslot: Int,
+            var playerIds: List<Int>,
+            var matches: List<Match>
+    )
+
+    private fun extractPlayerIds(match: MatchDTO) : List<Int> {
+        return match.firstPlayer.map { player -> player.id } + match.secondPlayer.map { player -> player.id }
+    }
+
+    private fun createSchedule(tempMatches: List<Match>, numberOfTables: Int) : Schedule {
 
         if (numberOfTables < 1){
             throw IllegalArgumentException("numberOfTables has to be greater or equal to 1")
@@ -34,8 +58,8 @@ class SchedulingService {
         var remainingMatches = tempMatches
 
         while (remainingMatches.isNotEmpty()) {
-            val playerPriorities = createPlayerPriorityList(remainingMatches)
-            val matchPriorities = createMatchPriorityList(remainingMatches, playerPriorities)
+            val playerPriorities = calculatePlayerPriorityBasedOn(remainingMatches)
+            val matchPriorities = calculateMatchPriorityBasedOn(remainingMatches, playerPriorities)
             val highestPriority = matchPriorities.maxBy { match -> match.priority }
             schedule = scheduleMatch(schedule, highestPriority!!.match, numberOfTables)
             remainingMatches = remainingMatches.filterNot { it == highestPriority.match }
@@ -44,20 +68,26 @@ class SchedulingService {
         return schedule
     }
 
-    data class PlayerPriority(
+    /**
+     * Helper data class to keep track of a player's priority
+     */
+    private data class PlayerPriority(
             val playerId: Int,
             val priority: Int
     )
 
-    data class MatchPriority(
-            val match: TempMatch,
+    /**
+     * Helper data class to keep track of a match's priority
+     */
+    private data class MatchPriority(
+            val match: Match,
             val priority: Int
     )
 
     /**
-     * A player
+     * A player with more matches left to play will get a higher priority
      */
-    private fun createPlayerPriorityList(matches: List<TempMatch>) : List<PlayerPriority> {
+    private fun calculatePlayerPriorityBasedOn(matches: List<Match>) : List<PlayerPriority> {
 
         val playerPriorities = matches.flatMap { match -> match.playerIds.map { PlayerPriority(it, 0) } }
         var distinctPlayerPriorities = playerPriorities.distinctBy { it.playerId }
@@ -70,20 +100,20 @@ class SchedulingService {
     }
 
     /**
-     * Return a list of matches with their assigned priorites
+     * Return a list of matches with their assigned priorities
      */
-    private fun createMatchPriorityList(matches: List<TempMatch>, playerPriorities: List<PlayerPriority>) : List<MatchPriority> {
+    private fun calculateMatchPriorityBasedOn(matches: List<Match>, playerPriorities: List<PlayerPriority>) : List<MatchPriority> {
         return matches.map { match -> MatchPriority(match, assignPriorityToMatch(match, playerPriorities))}
     }
 
     /**
      * The priority of the match is given by the sum of the players' priorities
      */
-    private fun assignPriorityToMatch(match: TempMatch, playerPriorities: List<PlayerPriority>) : Int {
+    private fun assignPriorityToMatch(match: Match, playerPriorities: List<PlayerPriority>) : Int {
        return playerPriorities.filter { match.playerIds.contains(it.playerId) }.sumBy { it.priority }
     }
 
-    private fun scheduleMatch(schedule: Schedule, match: TempMatch, numberOfTables: Int): Schedule {
+    private fun scheduleMatch(schedule: Schedule, match: Match, numberOfTables: Int): Schedule {
         val timeslots = placeMatchInFirstAvailableTimeslot(schedule.timeslots, match, numberOfTables)
         return Schedule(timeslots)
     }
@@ -94,7 +124,7 @@ class SchedulingService {
      * - there is a table available
      * - and any of the players in the match is not scheduled in that timeslot already.
      */
-    private fun placeMatchInFirstAvailableTimeslot(timeslots: List<Timeslot>, match: TempMatch, numberOfTables: Int) : List<Timeslot> {
+    private fun placeMatchInFirstAvailableTimeslot(timeslots: List<Timeslot>, match: Match, numberOfTables: Int) : List<Timeslot> {
         if(timeslots.isEmpty())
             return listOf(Timeslot(0, match.playerIds, listOf(match)))
         else {
@@ -112,23 +142,9 @@ class SchedulingService {
     }
 
     /**
-     * Returns True if and only if none of the newPlayerIds are already scheduled in the timeslot
+     * Returns True if and only if none of the newPlayerIds are already scheduled in the given timeslot
      */
     private fun registrationNotInTimeslot (timeslot: Timeslot, newPlayerIds: List<Int>): Boolean{
         return timeslot.playerIds.none { i: Int -> newPlayerIds.contains(i) }
     }
-
-    data class TempMatch (
-            val playerIds: List<Int>
-    )
-
-    data class Schedule (
-            val timeslots: List<Timeslot>
-    )
-
-    data class Timeslot (
-            val timeslot: Int,
-            var playerIds: List<Int>,
-            var matches: List<TempMatch>
-    )
 }
