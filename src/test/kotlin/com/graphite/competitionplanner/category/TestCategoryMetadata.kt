@@ -48,7 +48,6 @@ class TestCategoryMetadata(
         val playersPerGroup = 5
         val categoryWithNewValues = CategoryMetadataSpec(
             15.55f,
-            LocalDateTime.now(),
             3,
             playersPerGroup,
             2,

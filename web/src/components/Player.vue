@@ -1,8 +1,10 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <div id="sidebar" class="col-md-3">
-        <div id="sidebar-header">
+
+      <!-- Sidebar -->
+      <div class="sidebar col-md-3">
+        <div class="sidebar-header">
           <h4> {{ $t("player.sidebar.title") }}</h4>
         </div>
         <ul class="list-group list-group-flush">
@@ -18,6 +20,8 @@
           </li>
         </ul>
       </div>
+
+      <!-- Main content -->
       <div id="main" class="col-md-8">
         <div class="row">
           <div class="col-md-4">
@@ -106,37 +110,6 @@ export default {
   margin-bottom: 0;
 }
 
-#sidebar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 40px;
-}
-
-#sidebar {
-  min-height: 100vh;
-  z-index: 0;
-  box-shadow: 3px 3px 2px 1px #efefef;
-}
-
-@media only screen and (max-width: 768px) {
-  #sidebar {
-    min-height: fit-content;
-  }
-}
-
-#sidebar-header:hover {
-  cursor: pointer;
-}
-
-#sidebar li:hover {
-  opacity: 0.7;
-}
-
-#sidebar li:hover {
-  cursor: pointer;
-}
-
 .players {
   margin-top: 10px;
   display: flex;
@@ -149,6 +122,5 @@ export default {
 
 
 .active {
-  background-color: var(--emphasis-color) !important;
 }
 </style>

@@ -57,7 +57,7 @@ h1, h2, h3 {
 }
 
 /* Sidebar styling */
-#sidebar-header {
+.sidebar-header {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -65,7 +65,7 @@ h1, h2, h3 {
   color: white;
 }
 
-#sidebar {
+.sidebar {
   min-height: 100vh;
   z-index: 0;
   background: #404040;
@@ -73,31 +73,30 @@ h1, h2, h3 {
   box-shadow: 3px 3px 2px 1px #efefef;
 }
 
-.active {
-  background: white !important;
-  color: black !important;
+.sidebar .active {
+  background-color: var(--emphasis-color) !important;
 }
 
 @media only screen and (max-width: 768px) {
-  #sidebar {
+  .sidebar {
     min-height: fit-content;
   }
 }
 
-#sidebar li {
+.sidebar li {
   background-color: inherit;
   color: white;
 }
 
-#sidebar-header:hover {
+.sidebar-header:hover {
   cursor: pointer;
 }
 
-#sidebar li:hover {
+.sidebar li:hover {
   opacity: 0.7;
 }
 
-#sidebar li:hover {
+.sidebar li:hover {
   cursor: pointer;
 }
 </style>

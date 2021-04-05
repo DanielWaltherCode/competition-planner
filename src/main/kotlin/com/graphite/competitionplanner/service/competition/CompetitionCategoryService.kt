@@ -57,7 +57,6 @@ class CompetitionCategoryService(
             competitionCategoryId,
             CategoryMetadataSpec(
                 cost = 150f,
-                startTime = LocalDateTime.now().plusDays(20),
                 drawTypeId = 3,
                 nrPlayersPerGroup = 4,
                 nrPlayersToPlayoff = 2,

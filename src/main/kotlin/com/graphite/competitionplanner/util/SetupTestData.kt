@@ -531,23 +531,7 @@ class EventListener(
     }
 
     fun registerMatch() {
-        /* val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
-        val competitionCategories = competitionService.getCategoriesInCompetition(lugiCompetitionId).categories
-        val competitionCategoryId = competitionCategories[0].competitionCategoryId
-        val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
 
-        matchRepository.addMatch(
-            Match(
-                startTime = LocalDateTime.now(),
-                endTime = LocalDateTime.now().plusHours(1),
-                competitionCategoryId = competitionCategoryId,
-                firstRegistrationId = registrationIds[0],
-                secondRegistrationId = registrationIds[1],
-                matchType = MatchType.GROUP,
-                matchOrderNumber = 1,
-                groupOrRound = "A"
-            )
-        )*/
     }
 
     // Must be in correct order depending on foreign keys

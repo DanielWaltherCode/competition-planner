@@ -40,6 +40,11 @@ export default new Router({
                 path: "/draw",
                 name: "draw",
                 component: () => import("@/components/draw/Draw"),
+            },
+            {
+                path: "/schedule",
+                name: "schedule",
+                component: () => import("@/components/Schedule"),
             }
         ],
         scrollBehavior() {

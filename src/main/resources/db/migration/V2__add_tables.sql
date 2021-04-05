@@ -12,7 +12,6 @@ create table competition_category_metadata (
                                                id SERIAL PRIMARY KEY,
                                                competition_category_id INTEGER references competition_category(id) ON DELETE CASCADE NOT NULL UNIQUE,
                                                cost REAL,
-                                               start_time TIMESTAMP,
                                                draw_type_id INTEGER references draw_type(id),
                                                nr_players_per_group INTEGER,
                                                nr_players_to_playoff INTEGER,

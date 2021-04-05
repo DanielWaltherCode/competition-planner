@@ -10,6 +10,7 @@ import com.graphite.competitionplanner.repositories.competition.CompetitionCateg
 import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
 import com.graphite.competitionplanner.service.CompetitionAndCategoriesDTO
 import com.graphite.competitionplanner.service.CompetitionCategoryDTO
+import com.graphite.competitionplanner.service.ScheduleService
 import com.graphite.competitionplanner.tables.Club.CLUB
 import com.graphite.competitionplanner.tables.records.ClubRecord
 import com.graphite.competitionplanner.tables.records.CompetitionRecord
@@ -21,7 +22,8 @@ import java.time.LocalDate
 @Service
 class CompetitionService(
     val competitionRepository: CompetitionRepository, val clubRepository: ClubRepository,
-    val competitionCategoryRepository: CompetitionCategoryRepository
+    val competitionCategoryRepository: CompetitionCategoryRepository,
+    val scheduleService: ScheduleService
 ) {
 
     fun getCompetitions(weekStartDate: LocalDate?, weekEndDate: LocalDate?): List<CompetitionDTO> {
@@ -45,6 +47,9 @@ class CompetitionService(
 
     fun addCompetition(competitionSpec: CompetitionSpec): CompetitionDTO {
         val competition = competitionRepository.addCompetition(competitionSpec)
+        // Add default competition schedule metadata
+        scheduleService.addDefaultScheduleMetadata(competition.id)
+        scheduleService.addDailyStartAndEndForWholeCompetition(competition.id)
         val club = clubRepository.getById(competition.organizingClub) ?: throw ResponseStatusException(
             HttpStatus.NOT_FOUND,
             "No club with id ${competition.organizingClub} found"

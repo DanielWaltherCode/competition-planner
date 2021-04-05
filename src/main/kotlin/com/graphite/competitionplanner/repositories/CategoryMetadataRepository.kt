@@ -39,7 +39,6 @@ class CategoryMetadataRepository(val dslContext: DSLContext) {
 
         categoryRecord.competitionCategoryId = competitionCategoryId
         categoryRecord.cost = categoryMetadataSpec.cost
-        categoryRecord.startTime = categoryMetadataSpec.startTime
         categoryRecord.drawTypeId = categoryMetadataSpec.drawTypeId
         categoryRecord.nrPlayersPerGroup = categoryMetadataSpec.nrPlayersPerGroup
         categoryRecord.nrPlayersToPlayoff = categoryMetadataSpec.nrPlayersToPlayoff

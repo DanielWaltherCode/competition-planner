@@ -117,7 +117,6 @@ data class CategoryGameRulesApi(val categoryService: CategoryService) {
 
 data class CategoryMetadataSpec(
     val cost: Float,
-    val startTime: LocalDateTime,
     val drawTypeId: Int?,
     val nrPlayersPerGroup: Int,
     val nrPlayersToPlayoff: Int,

@@ -1,8 +1,10 @@
 <template>
   <div class="container-fluid">
     <div class="row gx-5">
-      <div id="sidebar" class="col-md-3">
-        <div id="sidebar-header">
+
+      <!-- Sidebar -->
+      <div class="sidebar col-md-3">
+        <div class="sidebar-header">
           <h4> {{ $t("draw.sidebar.title") }}</h4>
         </div>
         <ul class="list-group list-group-flush">
@@ -13,6 +15,8 @@
           </li>
         </ul>
       </div>
+
+      <!-- Main content -->
       <div id="main" class="col-md-9" v-if="chosenCategory !== null">
         <h1 id="main-title">{{ chosenCategory.categoryName }}</h1>
 

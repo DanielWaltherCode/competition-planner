@@ -4,15 +4,8 @@ import com.graphite.competitionplanner.service.UserDTO
 import com.graphite.competitionplanner.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.User
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
-import javax.servlet.http.HttpServletRequest
-
-import org.springframework.web.bind.annotation.RequestMethod
-
-import org.springframework.web.bind.annotation.RequestMapping
-import java.lang.Exception
 
 
 @RestController

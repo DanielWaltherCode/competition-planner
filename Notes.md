@@ -1,21 +1,18 @@
 # Tävlingsplaneraren
 
 ## Att göra kortsiktigt
-1. Fundera på hur man returnerar spelarnummer i poolen och matchordning
+1. Ge möjlighet att lägga till och ta bort spelare i en klass från webben. Kanske under klasser.
+2. Spelarlänkar i en tävling. Man borde kunna klicka på en anmäld spelare och se allt det är anmälda i 
+   i tävlingen, samlade resultat, etc.
 
 ## Att göra långsiktigt
 1. Sätt upp defaulttävling man kan hämta ut när man skapar nytt
 2. lägg in data genom sql istället?
 
 
-## Frågor
-
-1. Okej att returnera spelare som lista alltid?
-2. Hur hämta ut lottning? Först allt, sedan aktivt välja bara grupp eller vara slutspel?
-
 
 ## Scope och !Scope
-Sätta upp (1) och hålla (2) tävlingar inom bordtennis
+Sätta upp (1) och hålla (2) tävlingar inom bordtennis 
 1. Ange tävlingsinfo, start och slutdatum
 2. Göra tävlingen tillgänglig online så att andra klubbar kan anmäla sina spelare (inga email, och mycket mindre ansvar för tävlingsledare)
 3. Förifyllda klasser där klubbarna lägger in sina spelare. Tävlingsform (pool eller cup) anges
