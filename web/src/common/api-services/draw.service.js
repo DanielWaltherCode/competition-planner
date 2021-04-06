@@ -5,6 +5,7 @@ const DrawService = {
     isClassDrawn(competitionId, categoryId) {
         return Axios.get(`/competition/${competitionId}/draw/${categoryId}/is-draw-made`, {withCredentials: true})
     },
+    // TODO: Move to category service
     getCompetitionCategories(competitionId) {
         return Axios.get(`/competition/${competitionId}/category`, {withCredentials: true})
     },

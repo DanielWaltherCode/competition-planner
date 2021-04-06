@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.graphite.competitionplanner.api.LoginDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
@@ -9,7 +10,6 @@ import org.springframework.test.annotation.IfProfileValue
 import org.springframework.test.context.TestPropertySource
 import org.springframework.http.HttpEntity
 
-import com.graphite.competitionplanner.api.LoginDTO
 import com.graphite.competitionplanner.util.UserLogin
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus

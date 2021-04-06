@@ -70,7 +70,6 @@ class TestDrawCupOnlyMatchOrder(
         val categoryMetadata = categoryService.getCategoryMetadata(competitionCategory.competitionCategoryId)
         val categoryMetadataSpec = CategoryMetadataSpec(
             cost = categoryMetadata.cost,
-            startTime = categoryMetadata.startTime,
             drawTypeId = 2, // CUP ONLY. How is it set in database though?
             nrPlayersPerGroup = categoryMetadata.nrPlayersPerGroup,
             nrPlayersToPlayoff = categoryMetadata.nrPlayersToPlayoff,

@@ -41,7 +41,6 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
         val categoryMetadata = categoryService.getCategoryMetadata(competitionCategoryId)
         val categoryMetadataSpec = CategoryMetadataSpec(
             cost = categoryMetadata.cost,
-            startTime = categoryMetadata.startTime,
             drawTypeId = categoryMetadata.drawType.id,
             nrPlayersPerGroup = 3,
             nrPlayersToPlayoff = 1,

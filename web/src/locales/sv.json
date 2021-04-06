@@ -98,5 +98,19 @@
       "result": "Resultat",
       "noTime": "Tid ej satt"
     }
+  },
+  "schedule": {
+    "sidebar": {
+      "overview": "Översikt",
+      "advanced": "Avancerat"
+    },
+    "main": {
+      "heading": "Schema och tidssättning",
+      "competitionDays": "Tävlingsdagar",
+      "category": "Klass",
+      "startTime": "Ungefärlig starttid",
+      "addCategory": "Lägg till ny klass den här dagen",
+      "dropdownPlaceholder": "Välj en klass"
+    }
   }
 }
