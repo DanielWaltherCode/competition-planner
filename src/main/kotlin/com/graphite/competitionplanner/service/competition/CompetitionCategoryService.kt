@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.service.competition
 
+import com.graphite.competitionplanner.api.CategoryStartTimeSpec
 import com.graphite.competitionplanner.api.competition.CategoryGameRulesSpec
 import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
 import com.graphite.competitionplanner.repositories.ClubRepository
@@ -8,6 +9,8 @@ import com.graphite.competitionplanner.repositories.competition.CompetitionCateg
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.service.CategoryService
 import com.graphite.competitionplanner.service.CompetitionCategoryDTO
+import com.graphite.competitionplanner.service.ScheduleService
+import org.springframework.context.annotation.Lazy
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
@@ -17,6 +20,7 @@ import java.time.LocalDateTime
 class CompetitionCategoryService(
     val clubRepository: ClubRepository,
     val competitionCategoryRepository: CompetitionCategoryRepository,
+    @Lazy val scheduleService: ScheduleService,
     val categoryService: CategoryService,
     val registrationRepository: RegistrationRepository
 ) {
@@ -75,6 +79,10 @@ class CompetitionCategoryService(
             winMarginTieBreak = null
         )
         )
+
+        // Add to category start time table
+        // All fields are null but it's easier to display on website if categories are already in this table
+        scheduleService.addCategoryStartTime(competitionCategoryId, CategoryStartTimeSpec(null, null, null))
         return competitionCategoryId
     }
 

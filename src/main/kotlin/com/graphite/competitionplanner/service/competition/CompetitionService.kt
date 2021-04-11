@@ -17,6 +17,7 @@ import com.graphite.competitionplanner.tables.records.CompetitionRecord
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
+import java.time.Duration
 import java.time.LocalDate
 
 @Service
@@ -85,6 +86,21 @@ class CompetitionService(
         return competitionDTOs
     }
 
+    fun getDaysOfCompetition(competitionId: Int): List<LocalDate> {
+        val competition = getById(competitionId)
+        var dates = mutableListOf<LocalDate>()
+
+        if (competition.startDate != null && competition.endDate != null) {
+            var currentDate = competition.startDate
+
+            while (currentDate!! <= competition.endDate) {
+                dates.add(LocalDate.from(currentDate))
+                currentDate = currentDate.plusDays(1)
+            }
+        }
+        return dates
+    }
+
 }
 
 
@@ -102,9 +118,9 @@ data class CompetitionDTO(
     val location: String,
     val welcomeText: String?,
     val organizingClub: ClubNoAddressDTO,
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     val startDate: LocalDate?,
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     val endDate: LocalDate?
 )
 

@@ -23,7 +23,9 @@ create table schedule_available_tables(
  */
 create table schedule_category(
     id SERIAL PRIMARY KEY,
-    start_time TIMESTAMP,
+    playing_day DATE,
+    start_interval VARCHAR,
+    exact_start_time TIME,
     competiton_category_id INTEGER references competition_category(id) ON DELETE CASCADE NOT NULL UNIQUE
 );
 

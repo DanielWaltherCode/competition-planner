@@ -17,8 +17,8 @@ export default {
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap');
 
 #app {
   font-family: 'Open Sans', sans-serif;;
@@ -38,31 +38,41 @@ export default {
 }
 
 h1, h2, h3 {
-  color: #012970;
+  color: var(--main-color);
 }
 
 /* Global variables */
 :root {
-  --emphasis-color: #1190cb;
-  --main-blue: #4154f1;
-  --background2: #edf4fc;
+  --main-color: #012970;
+  --yellow: #FFB657;
+  --background: #F6EBFF;
+  --sidebar-color: #F1F5FD
 }
 
+
 .emphasized {
-  color: var(--emphasis-color)
+  color: var(--main-color)
 }
 
 .btn-primary {
-  background-color: var(--emphasis-color) !important;
+  background-color: var(--main-color) !important;
+}
+
+.btn-check:active+.btn-outline-primary, .btn-check:checked+.btn-outline-primary, .btn-outline-primary.active, .btn-outline-primary.dropdown-toggle.show, .btn-outline-primary:active{
+  background-color: var(--main-color) !important;
+  color: white !important;
 }
 
 .btn-outline-primary:hover {
-  background-color: var(--emphasis-color) !important;
+  color: white !important;
+  background-color: var(--main-color) !important;
 }
 
 .btn-outline-primary {
-  border: 1px solid var(--emphasis-color) !important;
+  color: var(--main-color) !important;
+  border: 1px solid var(--main-color) !important;
 }
+
 
 /* Sidebar styling */
 .sidebar-header {
@@ -70,19 +80,21 @@ h1, h2, h3 {
   justify-content: center;
   align-items: center;
   margin: 10px 0 30px 0;
-  color: white;
+  color: var(--main-color);
+  font-weight: bold;
 }
 
 .sidebar {
   min-height: 100vh;
   z-index: 0;
-  background: #404040;
+  background: var(--sidebar-color);
   margin-top: -18px;
   box-shadow: 3px 3px 2px 1px #efefef;
 }
 
 .sidebar .active {
-  background-color: var(--emphasis-color) !important;
+  background-color: var(--main-color) !important;
+  border-color: 1px var(--main-color) !important;
 }
 
 @media only screen and (max-width: 768px) {
@@ -93,7 +105,7 @@ h1, h2, h3 {
 
 .sidebar li {
   background-color: inherit;
-  color: white;
+  color: black;
 }
 
 .sidebar-header:hover {

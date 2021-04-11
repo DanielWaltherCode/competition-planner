@@ -1,10 +1,12 @@
 package com.graphite.competitionplanner.api
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.repositories.ScheduleRepository
 import com.graphite.competitionplanner.service.*
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @RestController()
 @RequestMapping("/schedule/{competitionId}/metadata")
@@ -102,8 +104,14 @@ class CategoryStartTimeApi(val scheduleService: ScheduleService, val scheduleRep
     @GetMapping("/{day}")
     fun getCategoryStartTimesByDay(
         @PathVariable competitionId: Int,
-        @PathVariable day: LocalDate) {
-        return getCategoryStartTimesByDay(competitionId, day)
+        @PathVariable day: LocalDate
+    ): List<CategoryStartTimeDTO> {
+        return scheduleService.getCategoryStartTimesByDay(competitionId, day)
+    }
+
+    @GetMapping
+    fun getCategoryStartTimesInCompetition(@PathVariable competitionId: Int): CategoryStartTimesWithOptionsDTO {
+        return scheduleService.getCategoryStartTimesForCompetition(competitionId)
     }
 
     @DeleteMapping("/{categoryStartTimeId}")
@@ -172,11 +180,18 @@ data class AvailableTablesSpec(
 )
 
 data class CategoryStartTimeSpec(
-    val startTime: LocalDateTime
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    val playingDay: LocalDate?,
+    val startInterval: StartInterval?,
+    @JsonFormat(pattern = "HH:mm")
+    val exactStartTime: LocalTime?
 )
 
 data class DailyStartAndEndSpec(
+    @JsonFormat(pattern = "yyyy-MM-dd")
     val day: LocalDate,
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     val startTime: LocalDateTime,
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
     val endTime: LocalDateTime
 )

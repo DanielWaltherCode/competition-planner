@@ -10,7 +10,11 @@ import "@/assets/css/style.css"
 import AOS from "aos";
 import "aos/dist/aos.css";
 import store from "@/store/store";
+import 'vue2-timepicker/dist/VueTimepicker.css'
 // import UserService from "@/common/api-services/user.service";
+
+
+
 
 Vue.config.productionTip = false
 

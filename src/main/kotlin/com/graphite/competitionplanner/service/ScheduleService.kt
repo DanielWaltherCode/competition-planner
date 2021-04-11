@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.service
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.api.*
 import com.graphite.competitionplanner.repositories.ScheduleRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategory
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
 @Service
@@ -108,7 +110,7 @@ class ScheduleService(
         categoryStartTimeSpec: CategoryStartTimeSpec
     ): CategoryStartTimeDTO {
         val scheduleCategoryRecord =
-            scheduleRepository.addCategoryStartTime(competitionCategoryId, categoryStartTimeSpec.startTime)
+            scheduleRepository.addCategoryStartTime(competitionCategoryId, categoryStartTimeSpec)
         return scheduleCategoryRecordToDTO(scheduleCategoryRecord)
     }
 
@@ -118,8 +120,15 @@ class ScheduleService(
         categoryStartTimeSpec: CategoryStartTimeSpec
     ): CategoryStartTimeDTO {
         val scheduleCategoryRecord =
-            scheduleRepository.updateCategoryStartTime(categoryStartTimeId, competitionCategoryId, categoryStartTimeSpec.startTime)
+            scheduleRepository.updateCategoryStartTime(categoryStartTimeId, competitionCategoryId, categoryStartTimeSpec)
         return scheduleCategoryRecordToDTO(scheduleCategoryRecord)
+    }
+
+    fun getCategoryStartTimesForCompetition(competitionId: Int): CategoryStartTimesWithOptionsDTO {
+        val records = scheduleRepository.getAllCategoryStartTimesInCompetition(competitionId)
+        val startTimeDTOList = records.map { scheduleCategoryRecordToDTO(it) }
+        val options = getStartTimeFormOptions(competitionId)
+        return CategoryStartTimesWithOptionsDTO(startTimeDTOList, options)
     }
 
     fun getCategoryStartTimesByDay(competitionId: Int, day: LocalDate): List<CategoryStartTimeDTO> {
@@ -127,8 +136,11 @@ class ScheduleService(
         val startTimeRecords = mutableListOf<ScheduleCategoryRecord>()
         for (category in categoriesInCompetition.categories) {
             try {
-                val startTimeRecord = scheduleRepository.getCategoryStartTime(category.competitionCategoryId)
-                if (startTimeRecord.startTime.toLocalDate().equals(day)) {
+                val startTimeRecord = scheduleRepository.getCategoryStartTimeForCategory(category.competitionCategoryId)
+                if (startTimeRecord.playingDay == null) {
+                    continue
+                }
+                if (startTimeRecord.playingDay.equals(day)) {
                     startTimeRecords.add(startTimeRecord)
                 }
             }
@@ -196,6 +208,13 @@ class ScheduleService(
         return records.map { dailyStartEndRecordToDTO(it) }
     }
 
+    private fun getStartTimeFormOptions(competitionId: Int): StartTimeFormOptions {
+        return StartTimeFormOptions(
+            competitionService.getDaysOfCompetition(competitionId),
+            StartInterval.values().asList()
+        )
+    }
+
     // Converters
     private fun metadataRecordToDTO(metadataRecord: ScheduleMetadataRecord): ScheduleMetadataDTO {
         return ScheduleMetadataDTO(
@@ -217,10 +236,17 @@ class ScheduleService(
     }
 
     private fun scheduleCategoryRecordToDTO(scheduleCategoryRecord: ScheduleCategoryRecord): CategoryStartTimeDTO {
+        val startInterval: StartInterval = if (scheduleCategoryRecord.startInterval == null) {
+            StartInterval.NOT_SELECTED
+        } else {
+            StartInterval.valueOf(scheduleCategoryRecord.startInterval)
+        }
         return CategoryStartTimeDTO(
             scheduleCategoryRecord.id,
             competitionCategoryService.getByCompetitionCategoryId(scheduleCategoryRecord.competitonCategoryId),
-            scheduleCategoryRecord.startTime
+            scheduleCategoryRecord.playingDay,
+            startInterval,
+            scheduleCategoryRecord.exactStartTime
         )
     }
 
@@ -253,12 +279,34 @@ data class AvailableTablesDTO(
 data class CategoryStartTimeDTO(
     val id: Int,
     val categoryDTO: CompetitionCategory,
-    val startTime: LocalDateTime
+    @JsonFormat(pattern="yyyy-MM-dd")
+    val playingDay: LocalDate?,
+    val startInterval: StartInterval,
+    @JsonFormat(pattern="HH:mm")
+    val exactStartTime: LocalTime?
+)
+
+data class CategoryStartTimesWithOptionsDTO(
+    val categoryStartTimeList: List<CategoryStartTimeDTO>,
+    val startTimeFormOptions: StartTimeFormOptions
 )
 
 data class DailyStartAndEndDTO(
     val id: Int,
+    @JsonFormat(pattern="yyyy-MM-dd")
     val day: LocalDate,
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     val startTime: LocalDateTime,
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     val endTime: LocalDateTime
 )
+
+data class StartTimeFormOptions(
+    @JsonFormat(pattern="yyyy-MM-dd")
+    val availableDays: List<LocalDate>,
+    val startIntervals: List<StartInterval>
+)
+
+enum class StartInterval {
+    NOT_SELECTED, EARLY_MORNING, LATE_MORNING, EARLY_AFTERNOON, LATE_AFTERNOON, EVENING
+}

@@ -51,8 +51,8 @@
             <div id="main-header">
               <h2>{{ $t("draw.pool.groups") }}</h2>
               <div>
-                <button type="button" class="btn btn-outline-danger me-3" @click="deleteDraw">{{ $t("draw.main.deleteDraw") }}</button>
-                <button type="button" class="btn btn-outline-primary" @click="createDraw">{{ $t("draw.main.redraw") }}</button>
+                <button type="button" class="btn btn-danger me-3" @click="deleteDraw">{{ $t("draw.main.deleteDraw") }}</button>
+                <button type="button" class="btn btn-warning" @click="createDraw">{{ $t("draw.main.redraw") }}</button>
               </div>
             </div>
             <br>
@@ -201,6 +201,7 @@ export default {
  */
 #main {
   text-align: left;
+  margin-top: 20px;
 }
 
 #main-title {

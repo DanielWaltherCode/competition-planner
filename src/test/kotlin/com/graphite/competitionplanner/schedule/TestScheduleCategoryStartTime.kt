@@ -6,7 +6,9 @@ import com.graphite.competitionplanner.repositories.ScheduleRepository
 import com.graphite.competitionplanner.repositories.competition.CategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
+import com.graphite.competitionplanner.service.CategoryStartTimesWithOptionsDTO
 import com.graphite.competitionplanner.service.ScheduleService
+import com.graphite.competitionplanner.service.StartInterval
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
 import com.graphite.competitionplanner.service.competition.CompetitionService
 import com.graphite.competitionplanner.util.Util
@@ -33,6 +35,7 @@ class TestScheduleCategoryStartTime(
     var competitionId = 0
     var competitionCategory1 = 0
     var competitionCategory2 = 0
+    lateinit var categoryStartTimes: CategoryStartTimesWithOptionsDTO
 
     @BeforeEach
     fun addCompetition() {
@@ -56,6 +59,9 @@ class TestScheduleCategoryStartTime(
             competitionId,
             categoryRepository.getByName("Herrar 2").id
         )
+
+        // Competition start times are set up automatically now so fetch the two ones just added
+        categoryStartTimes = scheduleService.getCategoryStartTimesForCompetition(competitionId)
     }
 
     @AfterEach
@@ -65,17 +71,6 @@ class TestScheduleCategoryStartTime(
         competitionRepository.deleteCompetition(competitionId)
     }
 
-    @Test
-    fun addCategoryStartTime() {
-        val startTime = LocalDate.now().atTime(9, 30)
-        val addedStartTime = scheduleService.addCategoryStartTime(competitionCategory1, CategoryStartTimeSpec(
-            startTime
-        ))
-        Assertions.assertNotNull(addedStartTime)
-        Assertions.assertNotNull(addedStartTime.id)
-        Assertions.assertNotNull(addedStartTime.categoryDTO)
-        Assertions.assertNotNull(addedStartTime.startTime)
-    }
 
     @Test
     fun getCategoryStartTimes() {
@@ -83,9 +78,11 @@ class TestScheduleCategoryStartTime(
         val startTimesToday = scheduleService.getCategoryStartTimesByDay(competitionId, LocalDate.now())
         Assertions.assertTrue(startTimesToday.isEmpty())
 
-        // Add a category
-        scheduleService.addCategoryStartTime(competitionCategory1, CategoryStartTimeSpec(
-            LocalDate.now().atTime(9, 30)
+        val startTimeOne = categoryStartTimes.categoryStartTimeList[0]
+
+        // Update one category to take place today
+        scheduleService.updateCategoryStartTime(startTimeOne.id, competitionCategory1, CategoryStartTimeSpec(
+            LocalDate.now(), null, null
         ))
 
         val updatedStartTimesToday = scheduleService.getCategoryStartTimesByDay(competitionId, LocalDate.now())
@@ -94,21 +91,43 @@ class TestScheduleCategoryStartTime(
     }
 
     @Test
-    fun deleteCategoryStartTime() {
-        // Add two categories
-        scheduleService.addCategoryStartTime(competitionCategory1, CategoryStartTimeSpec(
-            LocalDate.now().atTime(9, 30)
+    fun getCategoryStartTimesInCompetition() {
+        val startTimeOne = categoryStartTimes.categoryStartTimeList[0]
+        val startTimeTwo = categoryStartTimes.categoryStartTimeList[1]
+
+        // Add categories
+        scheduleService.updateCategoryStartTime(startTimeOne.id, competitionCategory1, CategoryStartTimeSpec(
+            LocalDate.now(), StartInterval.EARLY_MORNING, null
         ))
-        scheduleService.addCategoryStartTime(competitionCategory2, CategoryStartTimeSpec(
-            LocalDate.now().atTime(10, 30)
+        scheduleService.updateCategoryStartTime(startTimeTwo.id, competitionCategory2, CategoryStartTimeSpec(
+            LocalDate.now().plusDays(1),null, null
         ))
 
-        val updatedStartTimesToday = scheduleService.getCategoryStartTimesByDay(competitionId, LocalDate.now())
-        Assertions.assertEquals(2, updatedStartTimesToday.size)
+        val categoryStartTimes = scheduleService.getCategoryStartTimesForCompetition(competitionId)
+        Assertions.assertEquals(2, categoryStartTimes.categoryStartTimeList.size)
+
+        val startTime1 = categoryStartTimes.categoryStartTimeList[0]
+        val startTime2 = categoryStartTimes.categoryStartTimeList[1]
+
+        Assertions.assertEquals(LocalDate.now(), startTime1.playingDay)
+        Assertions.assertEquals(StartInterval.EARLY_MORNING, startTime1.startInterval)
+        Assertions.assertEquals(null, startTime1.exactStartTime)
+
+        Assertions.assertEquals(LocalDate.now().plusDays(1), startTime2.playingDay)
+        Assertions.assertEquals(StartInterval.NOT_SELECTED, startTime2.startInterval)
+        Assertions.assertEquals(null, startTime2.exactStartTime)
+    }
+
+    @Test
+    fun deleteCategoryStartTime() {
+
+        val updatedStartTimesToday = scheduleService.getCategoryStartTimesForCompetition(competitionId)
+        Assertions.assertEquals(2, updatedStartTimesToday.categoryStartTimeList.size)
 
         // Delete one and test again
-        scheduleRepository.deleteCategoryStartTime(updatedStartTimesToday[0].id)
-        val startTimesTodayAfterDelete = scheduleService.getCategoryStartTimesByDay(competitionId, LocalDate.now())
-        Assertions.assertEquals(1, startTimesTodayAfterDelete.size)
+        val startTime1 = categoryStartTimes.categoryStartTimeList[0]
+        scheduleRepository.deleteCategoryStartTime(startTime1.id)
+        val startTimesTodayAfterDelete = scheduleService.getCategoryStartTimesForCompetition(competitionId)
+        Assertions.assertEquals(1, startTimesTodayAfterDelete.categoryStartTimeList.size)
     }
 }

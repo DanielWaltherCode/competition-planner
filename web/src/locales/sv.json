@@ -106,11 +106,23 @@
     },
     "main": {
       "heading": "Schema och tidssättning",
-      "competitionDays": "Tävlingsdagar",
+      "categoryStartTimes": "Starttider för klasser",
       "category": "Klass",
-      "startTime": "Ungefärlig starttid",
+      "day": "Speldag",
+      "notSelected": "Ej satt",
+      "timeSpan": "Välj ett tidsintervall",
+      "startTime": "Välj exakt starttid",
+      "helpMe": "Välj något åt mig",
       "addCategory": "Lägg till ny klass den här dagen",
-      "dropdownPlaceholder": "Välj en klass"
+      "dropdownPlaceholder": "Välj en klass",
+      "intervals": {
+        "NOT_SELECTED": "Välj något åt mig",
+        "EARLY_MORNING": "Tidig förmiddag",
+        "LATE_MORNING": "Sen förmiddag",
+        "EARLY_AFTERNOON": "Tidig eftermiddag",
+        "LATE_AFTERNOON": "Sen eftermiddag",
+        "EVENING": "Kväll"
+      }
     }
   }
 }
