@@ -11,17 +11,15 @@
       <div class="col-8">
         <div class="row">
           <div class="col-4">
-            <input type="radio" class="btn-check" name="classAndGameRulesToggle" id="btnClasses" autocomplete="off" checked>
-            <label class="btn btn-outline-primary" for="btnClasses">Klasser</label>
+            <input v-model="shownTab" value="GENERAL_RULES" type="radio" class="btn-check" name="classAndGameRulesToggle" id="btnClasses" autocomplete="off" checked>
+            <label class="btn btn-outline-primary" for="btnClasses">Översikt</label>
 
-            <input type="radio" class="btn-check" name="classAndGameRulesToggle" id="btnGameRules" autocomplete="off">
+            <input v-model="shownTab" value="GAME_RULES" type="radio" class="btn-check" name="classAndGameRulesToggle" id="btnGameRules" autocomplete="off">
             <label class="btn btn-outline-primary" for="btnGameRules">Matchregler</label>
           </div>
         </div>
-        <CategoryGeneralSettings v-bind:category="activeCategory"></CategoryGeneralSettings>
-        <button type="button" class="btn btn-primary">Primary ghe asd</button>
-        <button v-on:click="doSomething" type="button" class="btn btn-warning">Ställ in klass</button>
-        <button type="button" class="btn btn-danger">Ta bort klass</button>
+        <CategoryGeneralSettings v-if="shownTab === 'GENERAL_RULES'" v-bind:category="activeCategory"></CategoryGeneralSettings>
+        <CategoryGameSettings v-if="shownTab === 'GAME_RULES'" v-bind:category="activeCategory"></CategoryGameSettings>
       </div>
     </div>
   </div>
@@ -31,21 +29,25 @@
 
 <script>
 import CategoryList from "@/components/category/CategoryList"
-import CategoryGeneralSettings from "@/components/category/CategoryGeneralSettings";
+import CategoryGeneralSettings from "@/components/category/CategoryGeneralSettings"
+import CategoryGameSettings from "@/components/category/CategoryGameSettings";
 
 export default {
   name: "Categories",
   components: {
+    CategoryGameSettings,
     CategoryList,
     CategoryGeneralSettings
   },
   data: function(){
     return {
+      shownTab: "",
       activeCategory: Object,
       categories: []
     }
   },
   created() {
+    this.shownTab = "GENERAL_RULES"
     this.categories = [
       {
         id: 1,
@@ -56,6 +58,22 @@ export default {
         drawStrategy: "Snakelottning",
         playersPerPool: 4,
         playersThatAdvancePerGroup: 2,
+        defaultGameSettings: {
+          numberOfSets: 5,
+          playingUntil: 7,
+          winMargin: 1,
+        },
+        endGameSettings: {
+          enabled: false,
+          numberOfSets: 3,
+          playingUntil: 11,
+          winMargin: 1
+        },
+        tiebreakSettings: {
+          enabled: false,
+          playingUntil: 3,
+          winMargin: 2
+        }
       },
       {
         id: 2,
@@ -66,6 +84,22 @@ export default {
         drawStrategy: "Snakelottning",
         playersPerPool: 4,
         playersThatAdvancePerGroup: 2,
+        defaultGameSettings: {
+          numberOfSets: 5,
+          playingUntil: 7,
+          winMargin: 1,
+        },
+        endGameSettings: {
+          enabled: true,
+          numberOfSets: 3,
+          playingUntil: 11,
+          winMargin: 1
+        },
+        tiebreakSettings: {
+          enabled: false,
+          playingUntil: 3,
+          winMargin: 2
+        }
       },
       {
         id: 3,
@@ -76,6 +110,22 @@ export default {
         drawStrategy: "Random",
         playersPerPool: 8,
         playersThatAdvancePerGroup: 1,
+        defaultGameSettings: {
+          numberOfSets: 5,
+          playingUntil: 7,
+          winMargin: 1,
+        },
+        endGameSettings: {
+          enabled: true,
+          numberOfSets: 3,
+          playingUntil: 11,
+          winMargin: 1
+        },
+        tiebreakSettings: {
+          enabled: false,
+          playingUntil: 3,
+          winMargin: 2
+        }
       },
       {
         id: 4,
@@ -86,14 +136,27 @@ export default {
         drawStrategy: "Random",
         playersPerPool: 8,
         playersThatAdvancePerGroup: 1,
+        defaultGameSettings: {
+          numberOfSets: 5,
+          playingUntil: 7,
+          winMargin: 1,
+        },
+        endGameSettings: {
+          enabled: true,
+          numberOfSets: 3,
+          playingUntil: 11,
+          winMargin: 1
+        },
+        tiebreakSettings: {
+          enabled: false,
+          playingUntil: 3,
+          winMargin: 2
+        }
       }
     ]
     this.activeCategory = this.categories[0]
   },
   methods: {
-    doSomething : function() {
-      console.log(this.name)
-    },
     fillFormWithClass : function(classId){
       this.activeCategory = this.categories.find((item) => {
         return (item.id === classId)

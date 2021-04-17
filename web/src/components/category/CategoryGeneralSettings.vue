@@ -7,21 +7,28 @@
         <input v-model="category.cost" type="text" class="form-control" placeholder="Summa" id="inputCost">
       </div>
       <div class="col">
-        <label for="inputStartDatetime">Starttid</label>
-        <input v-model="category.startTime" type="text" class="form-control" placeholder="Starttid och datum" id="inputStartDatetime">
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <label for="inputDrawtype">Lottningstyp</label>
-        <input v-model="category.drawType" type="text" class="form-control" placeholder="Pool med cupspel" id="inputDrawtype">
-      </div>
-      <div class="col">
         <label for="inputNumberOfPlayersPerPool">Antal spelare per pool</label>
         <input v-model="category.playersPerPool" type="text" class="form-control" placeholder="4" id="inputNumberOfPlayersPerPool">
       </div>
     </div>
     <div class="row">
+      <div class="col">
+      <h5>Lottningstyp</h5>
+      <div class="form-check form-check-inline">
+        <input v-model="category.drawType" value="POOL" class="form-check-input" type="radio" name="inlineRadioOptions" id="inputDrawTypePool">
+        <label class="form-check-label" for="inputDrawTypePool">Pool</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input v-model="category.drawType" value="POOLANDCUP" class="form-check-input" type="radio" name="inlineRadioOptions" id="inputDrawTypePoolAndCup">
+        <label class="form-check-label" for="inputDrawTypePoolAndCup">Pool + Cupspel</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input v-model="category.drawType" value="CUP" class="form-check-input" type="radio" name="inlineRadioOptions" id="inputDrawTypeCup">
+        <label class="form-check-label" for="inputDrawTypeCup">Cupspel</label>
+      </div>
+      </div>
+    </div>
+    <div v-if="category.drawType === 'CUP' || category.drawType === 'POOLANDCUP'" class="row">
       <div class="col">
         <label for="inputPlayersThatAdvance">Antal spelare some går vidare</label>
         <input v-model="category.playersThatAdvancePerGroup" type="text" class="form-control" placeholder="2" id="inputPlayersThatAdvance">
