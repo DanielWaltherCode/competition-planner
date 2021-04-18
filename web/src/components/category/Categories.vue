@@ -1,25 +1,34 @@
 <template>
 <div id="category-main">
   <div class="container">
-    <div class="row">
+    <div class="row justify-content-start">
       <div class="col-4">
         <category-list
           v-on:selectedClass="fillFormWithClass"
           v-bind:categories="categories"
         />
       </div>
-      <div class="col-8">
-        <div class="row">
-          <div class="col-4">
-            <input v-model="shownTab" value="GENERAL_RULES" type="radio" class="btn-check" name="classAndGameRulesToggle" id="btnClasses" autocomplete="off" checked>
-            <label class="btn btn-outline-primary" for="btnClasses">Översikt</label>
-
-            <input v-model="shownTab" value="GAME_RULES" type="radio" class="btn-check" name="classAndGameRulesToggle" id="btnGameRules" autocomplete="off">
-            <label class="btn btn-outline-primary" for="btnGameRules">Matchregler</label>
+      <div class="col">
+        <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab"
+                    data-bs-target="#overview" type="button" role="tab" aria-controls="overview"
+                    aria-selected="true">Översikt</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="matchrules-tab" data-bs-toggle="tab"
+                    data-bs-target="#matchrules" type="button" role="tab" aria-controls="matchrules"
+                    aria-selected="false">Matchregler</button>
+          </li>
+        </ul>
+        <form class="text-start row">
+          <div class="tab-content" id="myTabContent">
+            <CategoryGeneralSettings class="tab-pane show active" id="overview" role="tabpanel" aria-labelledby="overview-tab"
+                v-bind:category="activeCategory"></CategoryGeneralSettings>
+            <CategoryGameSettings class="tab-pane" id="matchrules" role="tabpanel" aria-labelledby="matchrules-tab"
+                v-bind:category="activeCategory"></CategoryGameSettings>
           </div>
-        </div>
-        <CategoryGeneralSettings v-if="shownTab === 'GENERAL_RULES'" v-bind:category="activeCategory"></CategoryGeneralSettings>
-        <CategoryGameSettings v-if="shownTab === 'GAME_RULES'" v-bind:category="activeCategory"></CategoryGameSettings>
+        </form>
       </div>
     </div>
   </div>
@@ -168,24 +177,4 @@ export default {
 </script>
 
 <style scoped>
-input {
-  padding: 10px;
-}
-label {
-  float: left;
-  margin-top: 30px;
-  margin-bottom: 5px;
-}
-form {
-  padding: 10px;
-}
-
-button {
-  float: right;
-  margin: 10px;
-}
-.btn-outline-primary {
-  margin-right: 10px;
-  border-color: white;
-}
 </style>

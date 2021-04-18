@@ -1,59 +1,53 @@
 <template>
 <div>
-  <form>
-    <div class="row">
-      <div class="col">
-        <label for="inputNumberOfSets">Antal set</label>
-        <input v-model="category.defaultGameSettings.numberOfSets" type="text" class="form-control" placeholder="5" id="inputNumberOfSets">
-      </div>
-      <div class="col">
-        <label for="inputPlayingUntil">Man spelar till</label>
-        <input v-model="category.defaultGameSettings.playingUntil" type="text" class="form-control" placeholder="4" id="inputPlayingUntil">
-      </div>
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="h5 form-label" for="inputNumberOfSets">Antal set</label>
+      <input v-model="category.defaultGameSettings.numberOfSets" type="text" class="form-control" placeholder="5" id="inputNumberOfSets">
     </div>
-    <div class="row">
-      <div class="col">
-        <label for="inputWinMargin">Vinstmarginal</label>
-        <input v-model="category.defaultGameSettings.winMargin" type="text" class="form-control" placeholder="2" id="inputWinMargin">
-      </div>
+    <div class="col-md-6 mb-3">
+      <label class="h5 form-label" for="inputPlayingUntil">Man spelar till</label>
+      <input v-model="category.defaultGameSettings.playingUntil" type="text" class="form-control" placeholder="4" id="inputPlayingUntil">
     </div>
-    <div class="row">
-      <div class="form-check">
-        <input v-model="category.endGameSettings.enabled" class="form-check-input" type="checkbox" value="" id="inputEndGameSettingsEnabled">
-        <label class="form-check-label" for="inputEndGameSettingsEnabled">Annan matchlängd i slutspel</label>
-      </div>
+  </div>
+  <div class="row">
+    <div class="col mb-5">
+      <label class="h5 form-label" for="inputWinMargin">Vinstmarginal</label>
+      <input v-model="category.defaultGameSettings.winMargin" type="text" class="form-control" placeholder="2" id="inputWinMargin">
     </div>
-    <div v-if="category.endGameSettings.enabled === true" class="row">
-      <div class="col">
-        <label for="inputEndGameNumberOfSets">Antal set</label>
-        <input v-model="category.endGameSettings.numberOfSets" type="text" class="form-control" placeholder="4" id="inputEndGameNumberOfSets">
-      </div>
-      <div class="col">
-        <label for="inputEndGamePlayingUntil">Man spelar till</label>
-        <input v-model="category.endGameSettings.playingUntil" type="text" class="form-control" placeholder="4" id="inputEndGamePlayingUntil">
-      </div>
-      <div class="col">
-        <label for="inputEndGameWinMargin">Vinstmarginal</label>
-        <input v-model="category.endGameSettings.winMargin" type="text" class="form-control" placeholder="4" id="inputEndGameWinMargin">
-      </div>
+  </div>
+  <div class="form-check">
+    <input v-model="category.endGameSettings.enabled" class="form-check-input" type="checkbox" value="" id="inputEndGameSettingsEnabled">
+    <label class="h4 form-check-label" for="inputEndGameSettingsEnabled">Annan matchlängd i slutspel</label>
+  </div>
+  <div v-if="category.endGameSettings.enabled === true" class="row">
+    <div class="col-sm-12 col-md-6 mb-3">
+      <label class="h5 form-label" for="inputEndGameNumberOfSets">Antal set</label>
+      <input v-model="category.endGameSettings.numberOfSets" type="text" class="form-control" placeholder="4" id="inputEndGameNumberOfSets">
     </div>
-    <div class="row">
-      <div class="form-check">
-        <input v-model="category.tiebreakSettings.enabled" class="form-check-input" type="checkbox" value="" id="inputTiebreakSettingsEnabled">
-        <label class="form-check-label" for="inputTiebreakSettingsEnabled">Tiebreak</label>
-      </div>
+    <div class="col-sm-12 col-md-6 mb-3">
+      <label class="h5 form-label" for="inputEndGamePlayingUntil">Man spelar till</label>
+      <input v-model="category.endGameSettings.playingUntil" type="text" class="form-control" placeholder="4" id="inputEndGamePlayingUntil">
     </div>
-    <div v-if="category.tiebreakSettings.enabled === true" class="row">
-      <div class="col">
-        <label for="inputTiebreakPlayingUntil">Man spelar till</label>
-        <input v-model="category.tiebreakSettings.playingUntil" type="text" class="form-control" placeholder="4" id="inputTiebreakPlayingUntil">
-      </div>
-      <div class="col">
-        <label for="inputTiebreakWinMargin">Vinstmarginal</label>
-        <input v-model="category.tiebreakSettings.winMargin" type="text" class="form-control" placeholder="4" id="inputTiebreakWinMargin">
-      </div>
+    <div class="col-sm-12 mb-5">
+      <label class="h5 form-label" for="inputEndGameWinMargin">Vinstmarginal</label>
+      <input v-model="category.endGameSettings.winMargin" type="text" class="form-control" placeholder="4" id="inputEndGameWinMargin">
     </div>
-  </form>
+  </div>
+  <div class="form-check">
+    <input v-model="category.tiebreakSettings.enabled" class="form-check-input" type="checkbox" value="" id="inputTiebreakSettingsEnabled">
+    <label class="h4 form-check-label" for="inputTiebreakSettingsEnabled">Tiebreak</label>
+  </div>
+  <div v-if="category.tiebreakSettings.enabled === true" class="row">
+    <div class="col-sm-12 col-md-6">
+      <label class="h5 form-label" for="inputTiebreakPlayingUntil">Man spelar till</label>
+      <input v-model="category.tiebreakSettings.playingUntil" type="text" class="form-control" placeholder="4" id="inputTiebreakPlayingUntil">
+    </div>
+    <div class="col-sm-12 col-md-6">
+      <label class="h5 form-label" for="inputTiebreakWinMargin">Vinstmarginal</label>
+      <input v-model="category.tiebreakSettings.winMargin" type="text" class="form-control" placeholder="4" id="inputTiebreakWinMargin">
+    </div>
+  </div>
 </div>
 </template>
 
@@ -72,5 +66,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

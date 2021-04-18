@@ -17,8 +17,4 @@ export default {
 </script>
 
 <style scoped>
-.list-group {
-  padding-top: 120px;
-  text-align: left;
-}
 </style>
