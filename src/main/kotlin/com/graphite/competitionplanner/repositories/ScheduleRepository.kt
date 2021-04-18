@@ -1,10 +1,7 @@
 package com.graphite.competitionplanner.repositories
 
 import com.graphite.competitionplanner.Tables.*
-import com.graphite.competitionplanner.api.AvailableTablesSpec
-import com.graphite.competitionplanner.api.CategoryStartTimeSpec
-import com.graphite.competitionplanner.api.DailyStartAndEndSpec
-import com.graphite.competitionplanner.api.ScheduleMetadataSpec
+import com.graphite.competitionplanner.api.*
 import com.graphite.competitionplanner.tables.records.*
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
@@ -33,6 +30,13 @@ class ScheduleRepository(private val dslContext: DSLContext) {
         return dslContext.selectFrom(SCHEDULE_METADATA)
             .where(SCHEDULE_METADATA.COMPETITION_ID.eq(competitionId))
             .fetchOneInto(SCHEDULE_METADATA)
+    }
+
+    fun updateMinutesPerMatch(competitionId: Int, minutesPerMatchSpec: MinutesPerMatchSpec) {
+        dslContext.update(SCHEDULE_METADATA)
+            .set(SCHEDULE_METADATA.MINUTES_PER_MATCH, minutesPerMatchSpec.minutesPerMatch)
+            .where(SCHEDULE_METADATA.COMPETITION_ID.eq(competitionId))
+            .execute()
     }
 
     fun deleteScheduleMetadata(competitionId: Int) {
@@ -84,6 +88,17 @@ class ScheduleRepository(private val dslContext: DSLContext) {
         record.competitionId = competitionId
         record.update()
         return record
+    }
+
+    fun updateTablesAvailableForWholeDay(
+        competitionId: Int,
+        availableTablesFullDaySpec: AvailableTablesFullDaySpec
+    ) {
+        dslContext.update(SCHEDULE_AVAILABLE_TABLES)
+            .set(SCHEDULE_AVAILABLE_TABLES.NR_TABLES, availableTablesFullDaySpec.nrTables)
+            .where(SCHEDULE_AVAILABLE_TABLES.DAY.eq(availableTablesFullDaySpec.day)
+                .and(SCHEDULE_AVAILABLE_TABLES.COMPETITION_ID.eq(competitionId)))
+            .execute()
     }
 
     fun getTablesAvailable(competitionId: Int): List<ScheduleAvailableTablesRecord> {
@@ -213,4 +228,6 @@ class ScheduleRepository(private val dslContext: DSLContext) {
             .where(SCHEDULE_DAILY_TIMES.COMPETITION_ID.eq(competitionId))
             .fetchInto(SCHEDULE_DAILY_TIMES)
     }
+
+
 }

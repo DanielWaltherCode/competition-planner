@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
+import java.time.LocalTime
 
 @SpringBootTest
 class TestScheduleDailyTimes(
@@ -49,7 +50,7 @@ class TestScheduleDailyTimes(
         // This should be registered already when competition is added
         val dailyStartEnd = scheduleService.getDailyStartAndEndForWholeCompetition(competitionId)
         Assertions.assertNotNull(dailyStartEnd)
-        Assertions.assertTrue(dailyStartEnd.isNotEmpty())
+        Assertions.assertTrue(dailyStartEnd.dailyStartEndList.isNotEmpty())
     }
 
     @Test
@@ -66,8 +67,8 @@ class TestScheduleDailyTimes(
     fun updateDailyStartAndEnd() {
         // Update start and end times for first day of competition
         val dailyStartEnd = scheduleService.getDailyStartAndEnd(competitionId, LocalDate.now())
-        val newStartTime = LocalDate.now().atTime(10, 0)
-        val newEndTime = LocalDate.now().atTime(19, 0)
+        val newStartTime = LocalTime.of(10, 0)
+        val newEndTime = LocalTime.of(19, 0)
 
         val updateSpec = DailyStartAndEndSpec(
             LocalDate.now(),

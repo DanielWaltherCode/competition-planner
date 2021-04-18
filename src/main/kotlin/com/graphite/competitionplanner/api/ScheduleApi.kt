@@ -20,14 +20,22 @@ class ScheduleMetadataApi(val scheduleService: ScheduleService) {
         return scheduleService.addScheduleMetadata(competitionId, metadataSpec)
     }
 
-
-    @PostMapping("/start-time/{competitionCategoryId}")
-    fun registerCategoryStarttime(
-        @PathVariable competitionCategoryId: Int,
-        @RequestBody categoryStartTimeSpec: CategoryStartTimeSpec
-    ): CategoryStartTimeDTO {
-        return scheduleService.addCategoryStartTime(competitionCategoryId, categoryStartTimeSpec)
+    @PutMapping("/minutes")
+    fun updateMinutesPerMatch(
+        @PathVariable competitionId: Int,
+        @RequestBody minutesPerMatchSpec: MinutesPerMatchSpec
+    ) {
+        scheduleService.updateMinutesPerMatch(competitionId, minutesPerMatchSpec)
     }
+
+
+    @GetMapping
+    fun getScheduleMetadata(
+        @PathVariable competitionId: Int
+    ): ScheduleMetadataDTO {
+        return scheduleService.getScheduleMetadata(competitionId)
+    }
+
 }
 
 @RestController
@@ -43,6 +51,13 @@ class AvailableTablesApi(
         @PathVariable day: LocalDate
     ): List<AvailableTablesDTO> {
         return scheduleService.getTablesAvailableByDay(competitionId, day)
+    }
+
+    @GetMapping("/main-table")
+    fun getTablesAvailableByDay(
+        @PathVariable competitionId: Int
+    ): List<AvailableTablesDayDTO> {
+        return scheduleService.getTablesAvailableForMainTable(competitionId)
     }
 
     @PostMapping
@@ -75,6 +90,14 @@ class AvailableTablesApi(
         @RequestBody availableTablesFullDaySpec: AvailableTablesFullDaySpec
     ): List<AvailableTablesDTO> {
         return scheduleService.registerTablesAvailableFullDay(competitionId, availableTablesFullDaySpec)
+    }
+
+    @PutMapping("/full-day")
+    fun updateTablesAvailableFullDay(
+        @PathVariable competitionId: Int,
+        @RequestBody availableTablesFullDaySpec: AvailableTablesFullDaySpec
+    ): List<AvailableTablesDTO> {
+        return scheduleService.updateTablesAvailableFullDay(competitionId, availableTablesFullDaySpec)
     }
 }
 
@@ -154,10 +177,14 @@ class DailyStartEndApi(val scheduleService: ScheduleService, val scheduleReposit
     @GetMapping()
     fun getDailyStartEndForCompetition(
         @PathVariable competitionId: Int
-    ): List<DailyStartAndEndDTO> {
+    ): DailyStartAndEndWithOptionsDTO {
         return scheduleService.getDailyStartAndEndForWholeCompetition(competitionId)
     }
 }
+
+data class MinutesPerMatchSpec(
+    val minutesPerMatch: Int
+)
 
 data class ScheduleMetadataSpec(
     val minutesPerMatch: Int,
@@ -167,6 +194,10 @@ data class ScheduleMetadataSpec(
 )
 
 // Set all time slots for time to same number of tables
+data class AvailableTablesWholeCompetitionSpec(
+    val nrTables: Int
+)
+
 data class AvailableTablesFullDaySpec(
     val nrTables: Int,
     val day: LocalDate
@@ -176,7 +207,7 @@ data class AvailableTablesFullDaySpec(
 data class AvailableTablesSpec(
     val nrTables: Int,
     val day: LocalDate,
-    val hour: LocalDateTime
+    val hour: LocalTime
 )
 
 data class CategoryStartTimeSpec(
@@ -190,8 +221,8 @@ data class CategoryStartTimeSpec(
 data class DailyStartAndEndSpec(
     @JsonFormat(pattern = "yyyy-MM-dd")
     val day: LocalDate,
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    val startTime: LocalDateTime,
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    val endTime: LocalDateTime
+    @JsonFormat(pattern = "HH:mm")
+    val startTime: LocalTime,
+    @JsonFormat(pattern = "HH:mm")
+    val endTime: LocalTime
 )

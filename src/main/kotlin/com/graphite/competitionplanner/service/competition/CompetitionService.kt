@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.service.competition
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.Tables.COMPETITION
+import com.graphite.competitionplanner.api.AvailableTablesWholeCompetitionSpec
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.api.competition.CompetitionSpec
 import com.graphite.competitionplanner.repositories.ClubRepository
@@ -55,6 +56,7 @@ class CompetitionService(
             HttpStatus.NOT_FOUND,
             "No club with id ${competition.organizingClub} found"
         )
+        scheduleService.registerTablesAvailableForWholeCompetition(competition.id, AvailableTablesWholeCompetitionSpec(0))
         return recordsToDto(competition, club)
     }
 

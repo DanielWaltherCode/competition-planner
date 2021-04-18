@@ -12,7 +12,7 @@ const CategoryStartTimeService = {
             {withCredentials: true})
     },
     getCategoryStartTimesInCompetition(competitionId, categoryId) {
-        return Axios.get(`/schedule/${competitionId}/category-start-time/${categoryId}}`,
+        return Axios.get(`/schedule/${competitionId}/category-start-time/${categoryId}`,
             {withCredentials: true})
     },
     deleteCategoryStartTime(categoryStartTimeId, competitionId, categoryId) {

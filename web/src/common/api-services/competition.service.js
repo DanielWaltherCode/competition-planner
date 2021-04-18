@@ -17,6 +17,9 @@ const CompetitionService = {
     },
     getCompetitions() {
         return Axios.get(RESOURCE_NAME, {withCredentials: true})
+    },
+    getDaysInCompetition(competitionId) {
+        return Axios.get(`${RESOURCE_NAME}/${competitionId}/days`, {withCredentials: true})
     }
 }
 

@@ -332,34 +332,34 @@ class EventListener(
     }
 
     fun competitionSetup() {
-        competitionRepository.addCompetition(
+        competitionService.addCompetition(
             CompetitionSpec(
                 location = "Lund",
                 name = "Eurofinans 2021",
                 welcomeText = "Välkomna till Eurofinans",
                 organizingClubId = util.getClubIdOrDefault("Lugi"),
                 startDate = LocalDate.now(),
-                endDate = LocalDate.now().plusDays(10)
+                endDate = LocalDate.now().plusDays(3)
             )
         )
-        competitionRepository.addCompetition(
+        competitionService.addCompetition(
             CompetitionSpec(
                 location = "Umeå",
                 name = "Bollstadion Cup",
                 welcomeText = "Umeå, kallt, öde, men vi har badminton!",
                 organizingClubId = util.getClubIdOrDefault("Umeå IK"),
                 startDate = LocalDate.now(),
-                endDate = LocalDate.now().plusDays(10)
+                endDate = LocalDate.now().plusDays(2)
             )
         )
-        competitionRepository.addCompetition(
+        competitionService.addCompetition(
             CompetitionSpec(
                 location = "Svedala",
                 name = "Svedala Open",
                 welcomeText = "Bonustävling!",
                 organizingClubId = util.getClubIdOrDefault("Svedala"),
-                startDate = LocalDate.now(),
-                endDate = LocalDate.now().plusMonths(10)
+                startDate = LocalDate.now().plusMonths(1),
+                endDate = LocalDate.now().plusMonths(1).plusDays(3)
             )
         )
     }

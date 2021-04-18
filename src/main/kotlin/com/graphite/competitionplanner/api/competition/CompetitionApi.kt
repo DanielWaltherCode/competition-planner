@@ -38,6 +38,11 @@ class CompetitionApi(
     ): List<CompetitionDTO> {
         return competitionService.getCompetitions(weekStartDate, weekEndDate)
     }
+
+    @GetMapping("/{competitionId}/days")
+    fun getDaysInCompetition(@PathVariable competitionId: Int): List<LocalDate> {
+        return competitionService.getDaysOfCompetition(competitionId)
+    }
 }
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
