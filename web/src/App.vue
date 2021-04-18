@@ -18,6 +18,7 @@ export default {
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
 #app {
   font-family: 'Open Sans', sans-serif;;
@@ -27,6 +28,13 @@ export default {
   text-align: center;
   color: black;
   font-size: 1em;
+}
+
+.display-1 {
+  font-family: 'Bebas Neue', cursive;
+  letter-spacing: 10px;
+  color: #074EE8;
+  background-color: #E0EAFF;
 }
 
 h1, h2, h3 {

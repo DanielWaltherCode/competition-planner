@@ -1,39 +1,37 @@
 <template>
-<div id="category-main">
-  <div class="container">
-    <div class="row justify-content-start">
-      <div class="col-4">
-        <category-list
-          v-on:selectedClass="fillFormWithClass"
-          v-bind:categories="categories"
-        />
-      </div>
-      <div class="col">
-        <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
-          <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab"
-                    data-bs-target="#overview" type="button" role="tab" aria-controls="overview"
-                    aria-selected="true">Översikt</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="matchrules-tab" data-bs-toggle="tab"
-                    data-bs-target="#matchrules" type="button" role="tab" aria-controls="matchrules"
-                    aria-selected="false">Matchregler</button>
-          </li>
-        </ul>
-        <form class="text-start row">
-          <div class="tab-content" id="myTabContent">
-            <CategoryGeneralSettings class="tab-pane show active" id="overview" role="tabpanel" aria-labelledby="overview-tab"
-                v-bind:category="activeCategory"></CategoryGeneralSettings>
-            <CategoryGameSettings class="tab-pane" id="matchrules" role="tabpanel" aria-labelledby="matchrules-tab"
-                v-bind:category="activeCategory"></CategoryGameSettings>
-          </div>
-        </form>
-      </div>
+<main class="container-fluid">
+  <h1 class="display-1 text-start ps-3 ps-md-5 mb-sm-3 mb-md-5">KLASSER</h1>
+  <div class="row justify-content-start">
+    <div class="col-4">
+      <category-list
+        v-on:selectedClass="fillFormWithClass"
+        v-bind:categories="categories"
+      />
+    </div>
+    <div class="col">
+      <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="overview-tab" data-bs-toggle="tab"
+                  data-bs-target="#overview" type="button" role="tab" aria-controls="overview"
+                  aria-selected="true">Översikt</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="matchrules-tab" data-bs-toggle="tab"
+                  data-bs-target="#matchrules" type="button" role="tab" aria-controls="matchrules"
+                  aria-selected="false">Matchregler</button>
+        </li>
+      </ul>
+      <form class="text-start row">
+        <div class="tab-content" id="myTabContent">
+          <CategoryGeneralSettings class="tab-pane show active" id="overview" role="tabpanel" aria-labelledby="overview-tab"
+              v-bind:category="activeCategory"></CategoryGeneralSettings>
+          <CategoryGameSettings class="tab-pane" id="matchrules" role="tabpanel" aria-labelledby="matchrules-tab"
+              v-bind:category="activeCategory"></CategoryGameSettings>
+        </div>
+      </form>
     </div>
   </div>
-
-</div>
+</main>
 </template>
 
 <script>
@@ -177,4 +175,9 @@ export default {
 </script>
 
 <style scoped>
+main {
+  height: 100vh;
+  background: url("../../assets/hero-bg.png") top center no-repeat;
+  background-size: cover;
+}
 </style>
