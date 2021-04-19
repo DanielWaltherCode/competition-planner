@@ -44,19 +44,12 @@ class TestScheduleAvailableTables(
             15,
             LocalDate.now()
         )
-        registeredTables = scheduleService.registerTablesAvailableFullDay(competitionId, spec)
+        registeredTables = scheduleService.updateTablesAvailableFullDay(competitionId, spec)
     }
 
     @AfterEach
     fun deleteCompetition() {
         competitionRepository.deleteCompetition(competitionId)
-    }
-
-    @Test
-    fun addTablesAvailableForFullDay() {
-        Assertions.assertNotNull(registeredTables)
-        Assertions.assertTrue(registeredTables.isNotEmpty())
-        Assertions.assertEquals(registeredTables[0].nrTables, 15)
     }
 
     @Test

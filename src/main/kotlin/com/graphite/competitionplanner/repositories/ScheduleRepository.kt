@@ -1,9 +1,7 @@
 package com.graphite.competitionplanner.repositories
 
 import com.graphite.competitionplanner.Tables.*
-import com.graphite.competitionplanner.api.AvailableTablesSpec
-import com.graphite.competitionplanner.api.DailyStartAndEndSpec
-import com.graphite.competitionplanner.api.ScheduleMetadataSpec
+import com.graphite.competitionplanner.api.*
 import com.graphite.competitionplanner.tables.records.*
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
@@ -32,6 +30,13 @@ class ScheduleRepository(private val dslContext: DSLContext) {
         return dslContext.selectFrom(SCHEDULE_METADATA)
             .where(SCHEDULE_METADATA.COMPETITION_ID.eq(competitionId))
             .fetchOneInto(SCHEDULE_METADATA)
+    }
+
+    fun updateMinutesPerMatch(competitionId: Int, minutesPerMatchSpec: MinutesPerMatchSpec) {
+        dslContext.update(SCHEDULE_METADATA)
+            .set(SCHEDULE_METADATA.MINUTES_PER_MATCH, minutesPerMatchSpec.minutesPerMatch)
+            .where(SCHEDULE_METADATA.COMPETITION_ID.eq(competitionId))
+            .execute()
     }
 
     fun deleteScheduleMetadata(competitionId: Int) {
@@ -85,6 +90,17 @@ class ScheduleRepository(private val dslContext: DSLContext) {
         return record
     }
 
+    fun updateTablesAvailableForWholeDay(
+        competitionId: Int,
+        availableTablesFullDaySpec: AvailableTablesFullDaySpec
+    ) {
+        dslContext.update(SCHEDULE_AVAILABLE_TABLES)
+            .set(SCHEDULE_AVAILABLE_TABLES.NR_TABLES, availableTablesFullDaySpec.nrTables)
+            .where(SCHEDULE_AVAILABLE_TABLES.DAY.eq(availableTablesFullDaySpec.day)
+                .and(SCHEDULE_AVAILABLE_TABLES.COMPETITION_ID.eq(competitionId)))
+            .execute()
+    }
+
     fun getTablesAvailable(competitionId: Int): List<ScheduleAvailableTablesRecord> {
         return dslContext.selectFrom(SCHEDULE_AVAILABLE_TABLES)
             .where(SCHEDULE_AVAILABLE_TABLES.COMPETITION_ID.eq(competitionId))
@@ -104,28 +120,57 @@ class ScheduleRepository(private val dslContext: DSLContext) {
     }
 
     // Category start time methods -- sets day and time for when category is held
-    fun addCategoryStartTime(competitionCategoryId: Int, startTime: LocalDateTime): ScheduleCategoryRecord {
+    fun addCategoryStartTime(competitionCategoryId: Int, categoryStartTimeSpec: CategoryStartTimeSpec): ScheduleCategoryRecord {
         val record = dslContext.newRecord(SCHEDULE_CATEGORY)
-        record.startTime = startTime
+        val startInterval = if (categoryStartTimeSpec.startInterval == null) {
+            null
+        }
+        else {
+            categoryStartTimeSpec.startInterval.name
+        }
+        record.playingDay = categoryStartTimeSpec.playingDay
+        record.startInterval = startInterval // Enum to string
+        record.exactStartTime = categoryStartTimeSpec.exactStartTime
         record.competitonCategoryId = competitionCategoryId
         record.store()
-        return record;
+        return record
     }
 
-    fun getCategoryStartTime(competitionCategoryId: Int): ScheduleCategoryRecord {
+    fun getCategoryStartTimeForCategory(competitionCategoryId: Int): ScheduleCategoryRecord {
         return dslContext.selectFrom(SCHEDULE_CATEGORY)
             .where(SCHEDULE_CATEGORY.COMPETITON_CATEGORY_ID.eq(competitionCategoryId))
             .fetchSingleInto(SCHEDULE_CATEGORY)
     }
 
+    fun getAllCategoryStartTimesInCompetition(competitionId: Int): List<ScheduleCategoryRecord> {
+        return dslContext
+            .select(SCHEDULE_CATEGORY.ID, SCHEDULE_CATEGORY.PLAYING_DAY, SCHEDULE_CATEGORY.START_INTERVAL,
+        SCHEDULE_CATEGORY.EXACT_START_TIME, SCHEDULE_CATEGORY.COMPETITON_CATEGORY_ID)
+            .from(COMPETITION)
+            .join(COMPETITION_CATEGORY).on(COMPETITION_CATEGORY.COMPETITION_ID.eq(COMPETITION.ID))
+            .join(SCHEDULE_CATEGORY).on(SCHEDULE_CATEGORY.COMPETITON_CATEGORY_ID.eq(COMPETITION_CATEGORY.ID))
+            .where(COMPETITION.ID.eq(competitionId))
+            .fetchInto(SCHEDULE_CATEGORY)
+    }
+
     fun updateCategoryStartTime(
         scheduleStartTimeId: Int,
         competitionCategoryId: Int,
-        startTime: LocalDateTime
+        categoryStartTimeSpec: CategoryStartTimeSpec
     ): ScheduleCategoryRecord {
         val record = dslContext.newRecord(SCHEDULE_CATEGORY)
+
+        val startInterval = if (categoryStartTimeSpec.startInterval == null) {
+            null
+        }
+        else {
+            categoryStartTimeSpec.startInterval.name
+        }
+
         record.id = scheduleStartTimeId
-        record.startTime = startTime
+        record.playingDay = categoryStartTimeSpec.playingDay
+        record.startInterval = startInterval // Enum to string
+        record.exactStartTime = categoryStartTimeSpec.exactStartTime
         record.competitonCategoryId = competitionCategoryId
         record.update()
         return record;
@@ -183,4 +228,6 @@ class ScheduleRepository(private val dslContext: DSLContext) {
             .where(SCHEDULE_DAILY_TIMES.COMPETITION_ID.eq(competitionId))
             .fetchInto(SCHEDULE_DAILY_TIMES)
     }
+
+
 }

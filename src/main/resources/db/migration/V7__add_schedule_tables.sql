@@ -12,7 +12,7 @@ create table schedule_available_tables(
     id SERIAL PRIMARY KEY,
     nr_tables INTEGER not null,
     day DATE,
-    hour TIMESTAMP,
+    hour TIME,
     competition_id INTEGER references competition(id) ON DELETE CASCADE NOT NULL,
     UNIQUE(competition_id, day, hour)
 );
@@ -23,15 +23,17 @@ create table schedule_available_tables(
  */
 create table schedule_category(
     id SERIAL PRIMARY KEY,
-    start_time TIMESTAMP,
+    playing_day DATE,
+    start_interval VARCHAR,
+    exact_start_time TIME,
     competiton_category_id INTEGER references competition_category(id) ON DELETE CASCADE NOT NULL UNIQUE
 );
 
 create table schedule_daily_times(
     id SERIAL PRIMARY KEY,
     day DATE NOT NULL,
-    start_time timestamp NOT NULL,
-    end_time timestamp NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
     competition_id INTEGER references competition(id) ON DELETE CASCADE NOT NULL,
     UNIQUE(day, competition_id)
 )

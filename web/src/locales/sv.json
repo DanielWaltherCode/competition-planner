@@ -106,11 +106,40 @@
     },
     "main": {
       "heading": "Schema och tidssättning",
-      "competitionDays": "Tävlingsdagar",
+      "helperText": "Om inga tidsönskemål för en klass har gjorts när schemat läggs kommer algoritmen att välja en tid automatiskt. Det går bra att välja exempelvis speldag för en klass och sen låta algoritmen sätta tiden mer noggrant. Man inte välja exakt starttid utan att först ha valt speldag och tidsintervall",
+      "categoryStartTimes": "Starttider för klasser",
       "category": "Klass",
-      "startTime": "Ungefärlig starttid",
+      "day": "Speldag",
+      "notSelected": "Välj något åt mig",
+      "timeSpan": "Välj ett tidsintervall",
+      "startTime": "Välj exakt starttid",
+      "helpMe": "Välj något åt mig",
       "addCategory": "Lägg till ny klass den här dagen",
-      "dropdownPlaceholder": "Välj en klass"
+      "dropdownPlaceholder": "Välj en klass",
+      "intervals": {
+        "NOT_SELECTED": "Välj något åt mig",
+        "EARLY_MORNING": "Tidig förmiddag",
+        "LATE_MORNING": "Sen förmiddag",
+        "EARLY_AFTERNOON": "Tidig eftermiddag",
+        "LATE_AFTERNOON": "Sen eftermiddag",
+        "EVENING": "Kväll"
+      }
+    },
+    "generalInfo": {
+      "heading": "Viktiga övergripande inställningar",
+      "startEnd": "Hallens öppettider och antal bord",
+      "startEndHelper": "Här kan du ange när tävlingen börjar och slutar varje dag. Är det för få eller för många tävlingsdagar här kan du ändra det ",
+      "startEndHelperHere": "här",
+      "nrTables": "Antal bord",
+      "matchTime": "Speltid per match (i minuter)",
+      "startTime": "Starttid",
+      "endTime": "Sluttid",
+      "availableTablesHeading": "Antal bord tävlingen spelas på",
+      "availableTablesHelper": "Här sätts antalet tillgängliga bord för tävlingen som helhet. Om det varierar per dag eller timme kan detta ställas in ",
+      "availableTablesHelperHere": "här",
+      "averageMatchTimeHeading": "Genomsnittlig matchtid",
+      "averageMatchTimeHelper": "Ställ in tiden varje enskild match ska tilldelas i schemat",
+      "minutes": "minuter"
     }
   }
 }

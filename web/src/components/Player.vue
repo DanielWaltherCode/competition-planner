@@ -117,7 +117,7 @@ export default {
 
 .player-name {
   font-size: 80%;
-  color: var(--emphasis-color);
+  color: var(--main-color);
 }
 
 
