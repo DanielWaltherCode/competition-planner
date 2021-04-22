@@ -5,7 +5,10 @@
     <div class="col-4">
       <category-list
         v-on:selectedClass="fillFormWithClass"
+        v-on:createdClass="createClass"
         v-bind:categories="categories"
+        v-bind:activeCategory="activeCategory"
+        v-bind:categoryNames="categoryNames"
       />
     </div>
     <div class="col">
@@ -50,7 +53,8 @@ export default {
     return {
       shownTab: "",
       activeCategory: Object,
-      categories: []
+      categories: [],
+      categoryNames: []
     }
   },
   created() {
@@ -162,13 +166,75 @@ export default {
       }
     ]
     this.activeCategory = this.categories[0]
+    this.categoryNames = [
+        "Herrar 1",
+        "Herrar 2",
+        "Herrar 3",
+        "Herrar 4",
+        "Herrar 5",
+        "Herrar 6",
+        "Damer 1",
+        "Damer 2",
+        "Damer 3",
+        "Damer 4",
+        "Damjuniorer 17",
+        "Flickor 14",
+        "Flickor 13",
+        "Flickor 12",
+        "Flickor 11",
+        "Flickor 10",
+        "Flickor 9",
+        "Flickor 8",
+        "Herrjuniorer 17",
+        "Pojkar 15",
+        "Pojkar 14",
+        "Pojkar 13",
+        "Pojkar 12",
+        "Pojkar 11",
+        "Pojkar 10",
+        "Pojkar 9",
+        "Pojkar 8",
+        "Herrdubbel",
+        "Damdubbel"
+    ]
   },
   methods: {
     fillFormWithClass : function(classId){
       this.activeCategory = this.categories.find((item) => {
         return (item.id === classId)
       })
-      console.log("Selected class " + classId + ". Updating form")
+    },
+    createClass : function(classId) {
+      this.activeCategory = this.defaultClass(classId)
+      this.categories.push(this.activeCategory)
+    },
+    defaultClass : function(classId){
+      return {
+        id: this.categories.length + 1,
+        name: classId,
+        cost: 110,
+        startTime: "10AM 2022-10-18",
+        drawType: "POOL",
+        drawStrategy: "Snakelottning",
+        playersPerPool: 4,
+        playersThatAdvancePerGroup: 2,
+        defaultGameSettings: {
+          numberOfSets: 5,
+          playingUntil: 7,
+          winMargin: 1,
+        },
+        endGameSettings: {
+          enabled: false,
+          numberOfSets: 3,
+          playingUntil: 11,
+          winMargin: 1
+        },
+        tiebreakSettings: {
+          enabled: false,
+          playingUntil: 3,
+          winMargin: 2
+        }
+      }
     }
   }
 }
