@@ -53,7 +53,7 @@ class TestScheduleMetadata(
         Assertions.assertNotNull(scheduleMetadataDTO.minutesPerMatch)
         Assertions.assertNotNull(scheduleMetadataDTO.pauseBetweenGroupMatches)
         Assertions.assertNotNull(scheduleMetadataDTO.pauseBetweenPlayoffMatches)
-        Assertions.assertNotNull(scheduleMetadataDTO.pauseHoursAfterGroupStage)
+        Assertions.assertNotNull(scheduleMetadataDTO.pauseAfterGroupStage)
     }
 
     @Test
@@ -63,14 +63,14 @@ class TestScheduleMetadata(
 
         val specToAddd = ScheduleMetadataSpec(
             originalMetadataDTO.minutesPerMatch,
-            originalMetadataDTO.pauseHoursAfterGroupStage,
+            originalMetadataDTO.pauseAfterGroupStage,
             newPauseInGroup,
             originalMetadataDTO.pauseBetweenPlayoffMatches
         )
 
         val updatedDTO = scheduleService.updateScheduleMetadata(originalMetadataDTO.id, competitionId, specToAddd)
         Assertions.assertEquals(updatedDTO.minutesPerMatch, originalMetadataDTO.minutesPerMatch)
-        Assertions.assertEquals(updatedDTO.pauseHoursAfterGroupStage, originalMetadataDTO.pauseHoursAfterGroupStage)
+        Assertions.assertEquals(updatedDTO.pauseAfterGroupStage, originalMetadataDTO.pauseAfterGroupStage)
         Assertions.assertEquals(updatedDTO.pauseBetweenGroupMatches, newPauseInGroup)
         Assertions.assertEquals(updatedDTO.pauseBetweenPlayoffMatches, originalMetadataDTO.pauseBetweenPlayoffMatches)
     }

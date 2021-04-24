@@ -90,7 +90,7 @@ class CompetitionService(
 
     fun getDaysOfCompetition(competitionId: Int): List<LocalDate> {
         val competition = getById(competitionId)
-        var dates = mutableListOf<LocalDate>()
+        val dates = mutableListOf<LocalDate>()
 
         if (competition.startDate != null && competition.endDate != null) {
             var currentDate = competition.startDate
@@ -126,5 +126,8 @@ data class CompetitionDTO(
     val endDate: LocalDate?
 )
 
-
+data class CompetitionDays(
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    val competitionDays: List<LocalDate>
+)
 

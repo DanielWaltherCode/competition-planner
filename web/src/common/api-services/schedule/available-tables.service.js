@@ -11,9 +11,13 @@ const AvailableTablesService = {
             availableTablesSpec,
             {withCredentials: true})
     },
-    updateDailyStartEnd(dailyStartEndId, competitionId, dailyStartEndSpec) {
-        return Axios.put(`/schedule/${competitionId}/available-tables/${dailyStartEndId}`,
-            dailyStartEndSpec,
+    updateAvailableTable(availableTablesId, competitionId, availableTablesSpec) {
+        return Axios.put(`/schedule/${competitionId}/available-tables/${availableTablesId}`,
+            availableTablesSpec,
+            {withCredentials: true})
+    },
+    getAvailableTablesForDay(competitionId, day) {
+        return Axios.get(`/schedule/${competitionId}/available-tables/${day}`,
             {withCredentials: true})
     },
     getAvailableTablesForCompetition(competitionId) {

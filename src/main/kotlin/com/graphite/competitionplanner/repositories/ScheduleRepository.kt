@@ -6,7 +6,6 @@ import com.graphite.competitionplanner.tables.records.*
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @Repository
 class ScheduleRepository(private val dslContext: DSLContext) {
@@ -18,7 +17,7 @@ class ScheduleRepository(private val dslContext: DSLContext) {
     ): ScheduleMetadataRecord {
         val record = dslContext.newRecord(SCHEDULE_METADATA)
         record.minutesPerMatch = scheduleMetadataSpec.minutesPerMatch
-        record.pauseHoursAfterGroupStage = scheduleMetadataSpec.pauseHoursAfterGroupStage
+        record.pauseAfterGroupStage = scheduleMetadataSpec.pauseAfterGroupStage
         record.pauseBetweenGroupMatches = scheduleMetadataSpec.pauseBetweenGroupMatches
         record.pauseBetweenPlayoffMatches = scheduleMetadataSpec.pauseBetweenPlayoffMatches
         record.competitionId = competitionId;
@@ -53,7 +52,7 @@ class ScheduleRepository(private val dslContext: DSLContext) {
         val record = dslContext.newRecord(SCHEDULE_METADATA)
         record.id = scheduleMetadataId
         record.minutesPerMatch = scheduleMetadataSpec.minutesPerMatch
-        record.pauseHoursAfterGroupStage = scheduleMetadataSpec.pauseHoursAfterGroupStage
+        record.pauseAfterGroupStage = scheduleMetadataSpec.pauseAfterGroupStage
         record.pauseBetweenGroupMatches = scheduleMetadataSpec.pauseBetweenGroupMatches
         record.pauseBetweenPlayoffMatches = scheduleMetadataSpec.pauseBetweenPlayoffMatches
         record.competitionId = competitionId;
@@ -104,12 +103,14 @@ class ScheduleRepository(private val dslContext: DSLContext) {
     fun getTablesAvailable(competitionId: Int): List<ScheduleAvailableTablesRecord> {
         return dslContext.selectFrom(SCHEDULE_AVAILABLE_TABLES)
             .where(SCHEDULE_AVAILABLE_TABLES.COMPETITION_ID.eq(competitionId))
+            .orderBy(SCHEDULE_AVAILABLE_TABLES.DAY, SCHEDULE_AVAILABLE_TABLES.HOUR)
             .fetchInto(SCHEDULE_AVAILABLE_TABLES)
     }
 
     fun getTablesAvailableByDay(competitionId: Int, day: LocalDate): List<ScheduleAvailableTablesRecord> {
         return dslContext.selectFrom(SCHEDULE_AVAILABLE_TABLES)
             .where(SCHEDULE_AVAILABLE_TABLES.COMPETITION_ID.eq(competitionId).and(SCHEDULE_AVAILABLE_TABLES.DAY.eq(day)))
+            .orderBy(SCHEDULE_AVAILABLE_TABLES.HOUR)
             .fetchInto(SCHEDULE_AVAILABLE_TABLES)
     }
 
@@ -142,6 +143,7 @@ class ScheduleRepository(private val dslContext: DSLContext) {
             .fetchSingleInto(SCHEDULE_CATEGORY)
     }
 
+    // Currently sorted on day but should be sorted on parts of day and time as well
     fun getAllCategoryStartTimesInCompetition(competitionId: Int): List<ScheduleCategoryRecord> {
         return dslContext
             .select(SCHEDULE_CATEGORY.ID, SCHEDULE_CATEGORY.PLAYING_DAY, SCHEDULE_CATEGORY.START_INTERVAL,
@@ -150,6 +152,7 @@ class ScheduleRepository(private val dslContext: DSLContext) {
             .join(COMPETITION_CATEGORY).on(COMPETITION_CATEGORY.COMPETITION_ID.eq(COMPETITION.ID))
             .join(SCHEDULE_CATEGORY).on(SCHEDULE_CATEGORY.COMPETITON_CATEGORY_ID.eq(COMPETITION_CATEGORY.ID))
             .where(COMPETITION.ID.eq(competitionId))
+            .orderBy(SCHEDULE_CATEGORY.PLAYING_DAY)
             .fetchInto(SCHEDULE_CATEGORY)
     }
 
@@ -228,6 +231,4 @@ class ScheduleRepository(private val dslContext: DSLContext) {
             .where(SCHEDULE_DAILY_TIMES.COMPETITION_ID.eq(competitionId))
             .fetchInto(SCHEDULE_DAILY_TIMES)
     }
-
-
 }

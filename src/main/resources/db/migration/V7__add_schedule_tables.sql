@@ -1,7 +1,7 @@
 create table schedule_metadata(
     id SERIAL PRIMARY KEY,
     minutes_per_match INTEGER NOT NULL,
-    pause_hours_after_group_stage INTEGER default 0,
+    pause_after_group_stage INTEGER default 0,
     pause_between_group_matches INTEGER default 0,
     pause_between_playoff_matches INTEGER default 25, /* Matchens speltid + den här pausen == nästa omgångs tid */
     competition_id INTEGER references competition(id) ON DELETE CASCADE NOT NULL UNIQUE

@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.api.competition
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.service.competition.CompetitionDTO
+import com.graphite.competitionplanner.service.competition.CompetitionDays
 import com.graphite.competitionplanner.service.competition.CompetitionService
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
@@ -40,8 +41,9 @@ class CompetitionApi(
     }
 
     @GetMapping("/{competitionId}/days")
-    fun getDaysInCompetition(@PathVariable competitionId: Int): List<LocalDate> {
-        return competitionService.getDaysOfCompetition(competitionId)
+    fun getDaysInCompetition(@PathVariable competitionId: Int): CompetitionDays {
+        val dates = competitionService.getDaysOfCompetition(competitionId)
+        return CompetitionDays(dates)
     }
 }
 

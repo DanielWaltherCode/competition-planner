@@ -7,13 +7,10 @@
         <div class="sidebar col-md-3">
           <br>
           <ul class="list-group list-group-flush">
-            <li class="list-group-item"
-                :class="sidebarChoice === 'overview' ? 'active' : ''"
-                @click="sidebarChoice = 'overview'"> {{ $t("schedule.sidebar.overview") }}
+            <li class="list-group-item active"> {{ $t("schedule.sidebar.overview") }}
             </li>
             <li class="list-group-item"
-                :class="sidebarChoice === 'advanced' ? 'active' : ''"
-                @click="sidebarChoice = 'advanced'"> {{ $t("schedule.sidebar.advanced") }}
+                @click="reRoute"> {{ $t("schedule.sidebar.advanced") }}
             </li>
           </ul>
         </div>
@@ -21,101 +18,104 @@
         <!-- Main content -->
         <div id="main" class="col-md-9">
           <h1> {{ $t("schedule.main.heading") }}</h1>
-          <div v-if="sidebarChoice === 'overview'">
-            <div id="categories" class="row">
-              <h2>{{ $t("schedule.main.categoryStartTimes") }}</h2>
-              <p> {{$t("schedule.main.helperText")}}</p>
-              <div id="table-container" class="col-sm-12 m-auto">
-                <table class="table table-bordered">
-                  <thead>
-                  <tr>
-                    <th scope="col">{{ $t("schedule.main.category") }}</th>
-                    <th scope="col">{{ $t("schedule.main.day") }}</th>
-                    <th scope="col">{{ $t("schedule.main.timeSpan") }}</th>
-                    <th scope="col">{{ $t("schedule.main.startTime") }}</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr v-for="category in categoryStartTimeDTO.categoryStartTimeList" :key="category.id">
-                    <td>{{ category.categoryDTO.categoryName }}</td>
-                    <!-- Select date -->
-                    <td>
-                      <select id="date-selection" class="form-control"
-                              v-on:change="setStartTime(category)" v-model="category.playingDay">
-                        <option value="null"> {{ $t("schedule.main.notSelected") }}</option>
-                        <option v-for="(day, counter) in categoryStartTimeDTO.startTimeFormOptions.availableDays"
-                                v-bind:key="counter" :value="getPlayingDate(day)">
-                          {{ getPlayingDate(day) }}
-                        </option>
-                      </select>
-                    </td>
-                    <!-- Select interval during day -->
-                    <td>
-                      <select id="interval-selection" class="form-control"
-                              v-on:change="setStartTime(category)" v-model="category.startInterval">
-                        <option v-for="(interval, counter) in categoryStartTimeDTO.startTimeFormOptions.startIntervals"
-                                v-bind:key="counter" :value="interval" :disabled="category.playingDay === null || category.playingDay === 'null'">
-                          {{ getInterval(interval) }}
-                        </option>
-                      </select>
-                    </td>
-                    <!-- Select exact start time -->
-                    <td>
-                      <vue-timepicker v-model="category.exactStartTime"
-                                      v-on:change="setStartTime(category)" :disabled="category.startInterval === 'NOT_SELECTED'"></vue-timepicker>
-                    </td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
+          <div id="categories" class="row">
+            <h2>{{ $t("schedule.main.categoryStartTimes") }}</h2>
+            <p> {{ $t("schedule.main.helperText") }}</p>
+            <div id="table-container" class="col-sm-12 m-auto">
+              <table class="table table-bordered">
+                <thead>
+                <tr>
+                  <th scope="col">{{ $t("schedule.main.category") }}</th>
+                  <th scope="col">{{ $t("schedule.main.day") }}</th>
+                  <th scope="col">{{ $t("schedule.main.timeSpan") }}</th>
+                  <th scope="col">{{ $t("schedule.main.startTime") }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="category in categoryStartTimeDTO.categoryStartTimeList" :key="category.id">
+                  <td>{{ category.categoryDTO.categoryName }}</td>
+                  <!-- Select date -->
+                  <td>
+                    <select id="date-selection" class="form-control"
+                            v-on:change="setStartTime(category)" v-model="category.playingDay">
+                      <option value="null"> {{ $t("schedule.main.notSelected") }}</option>
+                      <option v-for="(day, counter) in categoryStartTimeDTO.startTimeFormOptions.availableDays"
+                              v-bind:key="counter" :value="getPlayingDate(day)">
+                        {{ getPlayingDate(day) }}
+                      </option>
+                    </select>
+                  </td>
+                  <!-- Select interval during day -->
+                  <td>
+                    <select id="interval-selection" class="form-control"
+                            v-on:change="setStartTime(category)" v-model="category.startInterval">
+                      <option v-for="(interval, counter) in categoryStartTimeDTO.startTimeFormOptions.startIntervals"
+                              v-bind:key="counter" :value="interval"
+                              :disabled="category.playingDay === null || category.playingDay === 'null'">
+                        {{ getInterval(interval) }}
+                      </option>
+                    </select>
+                  </td>
+                  <!-- Select exact start time -->
+                  <td>
+                    <vue-timepicker v-model="category.exactStartTime"
+                                    v-on:change="setStartTime(category)"
+                                    :disabled="category.startInterval === 'NOT_SELECTED'"></vue-timepicker>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
             </div>
             <!-- General information about competition -->
             <div id="general-info" class="row">
-              <br>
-              <!-- Daily start end -->
-              <h2>{{ $t("schedule.generalInfo.heading") }}</h2>
               <div>
-                <div>
-                <h4>{{ $t("schedule.generalInfo.startEnd") }}</h4>
-                <p>{{ $t("schedule.generalInfo.startEndHelper") }}
-                  <span> <router-link to="/overview">{{ $t("schedule.generalInfo.startEndHelperHere") }}</router-link> </span>
-                </p>
-                </div>
-                <div class="table-container col-sm-7 m-auto">
-                  <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                      <th scope="col"> {{ $t("schedule.main.day") }}</th>
-                      <th scope="col"> {{ $t("schedule.generalInfo.startTime") }}</th>
-                      <th scope="col"> {{ $t("schedule.generalInfo.endTime") }}</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="(day, counter) in dailyStartEndDTO.dailyStartEndList" :key="counter">
-                      <td>
-                        {{ day.day }}
-                      </td>
-                      <td>
-                        <vue-timepicker v-model="day.startTime"
-                                        v-on:change="setDailyStartEnd(day)"></vue-timepicker>
-                      </td>
-                      <td>
-                        <vue-timepicker v-model="day.endTime"
-                                        v-on:change="setDailyStartEnd(day)"></vue-timepicker>
-                      </td>
-                      <td>
-
-                      </td>
-                    </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <!-- Available tables -->
-                <div class="other-settings col-sm-7 m-auto">
+                <h2>{{ $t("schedule.generalInfo.heading") }}</h2>
+                <!-- Daily start end -->
+                <div class="col-sm-8 m-auto">
                   <div>
-                    <h5> {{$t("schedule.generalInfo.availableTablesHeading")}}</h5>
+                    <h4>{{ $t("schedule.generalInfo.startEnd") }}</h4>
+                    <p>{{ $t("schedule.generalInfo.startEndHelper") }}
+                      <span> <router-link to="/overview">{{
+                          $t("schedule.generalInfo.startEndHelperHere")
+                        }}</router-link> </span>
+                    </p>
+                  </div>
+                  <div class="table-container">
+                    <table class="table table-bordered">
+                      <thead>
+                      <tr>
+                        <th scope="col"> {{ $t("schedule.main.day") }}</th>
+                        <th scope="col"> {{ $t("schedule.generalInfo.startTime") }}</th>
+                        <th scope="col"> {{ $t("schedule.generalInfo.endTime") }}</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr v-for="(day, counter) in dailyStartEndDTO.dailyStartEndList" :key="counter">
+                        <td>
+                          {{ day.day }}
+                        </td>
+                        <td>
+                          <vue-timepicker v-model="day.startTime"
+                                          v-on:change="setDailyStartEnd(day)"></vue-timepicker>
+                        </td>
+                        <td>
+                          <vue-timepicker v-model="day.endTime"
+                                          v-on:change="setDailyStartEnd(day)"></vue-timepicker>
+                        </td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Available tables -->
+                <div class="other-settings col-sm-8 m-auto">
+                  <div>
+                    <h5> {{ $t("schedule.generalInfo.availableTablesHeading") }}</h5>
                     <p>{{ $t("schedule.generalInfo.availableTablesHelper") }}
-                      <span> <router-link to="/schedule-advanced">{{ $t("schedule.generalInfo.availableTablesHelperHere") }}</router-link> </span>
+                      <span> <router-link to="/schedule-advanced">{{
+                          $t("schedule.generalInfo.availableTablesHelperHere")
+                        }}</router-link> </span>
                     </p>
                     <table class="table table-bordered">
                       <thead>
@@ -143,12 +143,12 @@
                   </div>
                   <!-- Average time per match -->
                   <div>
-                    <h5>{{$t("schedule.generalInfo.averageMatchTimeHeading")}}</h5>
-                    <p>{{$t("schedule.generalInfo.averageMatchTimeHelper")}}</p>
+                    <h5>{{ $t("schedule.generalInfo.averageMatchTimeHeading") }}</h5>
+                    <p>{{ $t("schedule.generalInfo.averageMatchTimeHelper") }}</p>
                     <select id="match-length-selection" class="form-control" v-model="scheduleMetadata.minutesPerMatch"
                             v-on:change="updateMinutesPerMatch">
                       <option v-for="i in minutesPerMatchOptions" :key="i" :value="i">
-                        {{ i + " " + $t("schedule.generalInfo.minutes")}}
+                        {{ i + " " + $t("schedule.generalInfo.minutes") }}
                       </option>
                     </select>
                     <br>
@@ -185,7 +185,7 @@ export default {
       dailyStartEndDTO: {},
       availableTables: null,
       scheduleMetadata: {},
-      minutesPerMatchOptions:  [15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
+      minutesPerMatchOptions: [15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
     }
   },
   computed: {
@@ -203,6 +203,9 @@ export default {
     this.getScheduleMetadata()
   },
   methods: {
+    reRoute() {
+      this.$router.push("schedule-advanced")
+    },
     getPlayingDate(date) {
       if (date === null) {
         return this.$t("schedule.main.notSelected")
@@ -252,10 +255,10 @@ export default {
     setDailyStartEnd(dailyStartEndObject) {
       const startTime = this.getTime(dailyStartEndObject.startTime)
       const endTime = this.getTime(dailyStartEndObject.endTime)
-        const objectToSave = {
-          day: dailyStartEndObject.day,
-          startTime: startTime,
-          endTime: endTime
+      const objectToSave = {
+        day: dailyStartEndObject.day,
+        startTime: startTime,
+        endTime: endTime
       }
       DailyStartEndService.updateDailyStartEnd(dailyStartEndObject.id, this.competition.id, objectToSave)
     },
@@ -297,19 +300,22 @@ export default {
   margin-top: 20px;
 }
 
-#main h1 {
-  text-align: left;
+#main h2, p {
   margin-bottom: 30px;
 }
 
-#main h4 p {
-  margin-bottom: 30px;
+#categories h4, p {
+  text-align: left;
+}
+
+h5 {
+  text-align: left;
 }
 
 /* General info section */
 #general-info {
   margin-top: 40px;
-  background-color: var(--sidebar-color);
+  background-color: var(--grey-color);
 }
 
 #general-info a {

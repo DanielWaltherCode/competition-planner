@@ -36,6 +36,14 @@ class ScheduleMetadataApi(val scheduleService: ScheduleService) {
         return scheduleService.getScheduleMetadata(competitionId)
     }
 
+    @PutMapping("/{scheduleMetadataId}")
+    fun updateScheduleMetadata(
+        @PathVariable competitionId: Int,
+        @PathVariable scheduleMetadataId: Int,
+        @RequestBody scheduleMetadataSpec: ScheduleMetadataSpec
+    ): ScheduleMetadataDTO {
+        return scheduleService.updateScheduleMetadata(scheduleMetadataId, competitionId, scheduleMetadataSpec)
+    }
 }
 
 @RestController
@@ -188,7 +196,7 @@ data class MinutesPerMatchSpec(
 
 data class ScheduleMetadataSpec(
     val minutesPerMatch: Int,
-    val pauseHoursAfterGroupStage: Int,
+    val pauseAfterGroupStage: Int,
     val pauseBetweenGroupMatches: Int,
     val pauseBetweenPlayoffMatches: Int
 )

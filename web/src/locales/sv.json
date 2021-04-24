@@ -139,7 +139,21 @@
       "availableTablesHelperHere": "här",
       "averageMatchTimeHeading": "Genomsnittlig matchtid",
       "averageMatchTimeHelper": "Ställ in tiden varje enskild match ska tilldelas i schemat",
-      "minutes": "minuter"
+      "minutes": " minuter"
+    },
+    "advanced": {
+      "heading": "Avancerade schemainställningar",
+      "pauseHeading": "Pauser i en klass",
+      "pauseHelper": "Här kan du säkerställa att matcher inom en klass inte spelas för tätt inpå varandra.",
+      "pauseGroup": "Paus mellan gruppmatcher",
+      "pausePlayoff": "Paus mellan slutspelsmatcher",
+      "pauseBetweenGroupAndPlayoff": "Paus mellan gruppspelet och slutspelet",
+      "availableTables": {
+        "heading": "Tillgängliga bord per dag och timme",
+        "daySelection": "Välj en dag",
+        "hour": "Timme",
+        "nrTables": "Antal bord"
+      }
     }
   }
 }

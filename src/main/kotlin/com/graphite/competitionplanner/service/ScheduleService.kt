@@ -2,7 +2,6 @@ package com.graphite.competitionplanner.service
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.api.*
-import com.graphite.competitionplanner.api.competition.CompetitionSpec
 import com.graphite.competitionplanner.repositories.ScheduleRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategory
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
@@ -15,7 +14,6 @@ import org.jooq.exception.NoDataFoundException
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
@@ -49,9 +47,9 @@ class ScheduleService(
     fun addDefaultScheduleMetadata(competitionId: Int) {
         val metadataSpec = ScheduleMetadataSpec(
             minutesPerMatch = 25,
-            pauseHoursAfterGroupStage = 0,
+            pauseAfterGroupStage = 0,
             pauseBetweenGroupMatches = 0,
-            pauseBetweenPlayoffMatches = 30
+            pauseBetweenPlayoffMatches = 25
         )
         scheduleRepository.addScheduleMetadata(competitionId, metadataSpec)
     }
@@ -295,7 +293,7 @@ class ScheduleService(
         return ScheduleMetadataDTO(
             metadataRecord.id,
             metadataRecord.minutesPerMatch,
-            metadataRecord.pauseHoursAfterGroupStage,
+            metadataRecord.pauseAfterGroupStage,
             metadataRecord.pauseBetweenGroupMatches,
             metadataRecord.pauseBetweenPlayoffMatches
         )
@@ -340,7 +338,7 @@ class ScheduleService(
 data class ScheduleMetadataDTO(
     val id: Int,
     val minutesPerMatch: Int,
-    val pauseHoursAfterGroupStage: Int,
+    val pauseAfterGroupStage: Int,
     val pauseBetweenGroupMatches: Int,
     val pauseBetweenPlayoffMatches: Int
 )
@@ -348,7 +346,9 @@ data class ScheduleMetadataDTO(
 data class AvailableTablesDTO(
     val id: Int,
     val nrTables: Int,
+    @JsonFormat(pattern = "yyyy-MM-dd")
     val day: LocalDate,
+    @JsonFormat(pattern = "HH:mm")
     val hour: LocalTime
 )
 
