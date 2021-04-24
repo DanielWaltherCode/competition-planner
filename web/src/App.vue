@@ -30,13 +30,6 @@ export default {
   font-size: 1em;
 }
 
-.display-1 {
-  font-family: 'Bebas Neue', cursive;
-  letter-spacing: 10px;
-  color: #074EE8;
-  background-color: #E0EAFF;
-}
-
 h1, h2, h3 {
   color: var(--main-color);
 }
@@ -46,7 +39,17 @@ h1, h2, h3 {
   --main-color: #012970;
   --yellow: #FFB657;
   --background: #F6EBFF;
-  --sidebar-color: #F1F5FD
+  --sidebar-color: #F1F5FD;
+
+  --clr-primary-50: hsl(221, 94%, 92%);;
+  --clr-primary-100: hsl(221, 94%, 87%);
+  --clr-primary-200: hsl(221, 94%, 77%);
+  --clr-primary-300: hsl(221, 94%, 67%);
+  --clr-primary-400: hsl(221, 94%, 57%);
+  --clr-primary-500: hsl(221, 94%, 47%); /* This is Primary in Figma*/
+  --clr-primary-600: hsl(221, 94%, 37%);
+  --clr-primary-700: hsl(221, 94%, 27%);
+  --clr-primary-800: hsl(221, 94%, 17%);
 }
 
 
