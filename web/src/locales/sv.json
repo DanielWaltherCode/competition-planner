@@ -8,6 +8,7 @@
     "results": "Resultat",
     "billing": "Fakturor",
     "logout": "Logga ut",
+    "chosenCompetition": "Du hanterar ",
     "handle": {
       "title": "Hantera",
       "newCompetition": "Skapa ny tävling",
@@ -18,6 +19,7 @@
     "heading": {
       "part1": "Välkommen till Let's Compete!",
       "part2": "Här kan du snabbt och smidigt sätta upp en tävling, göra scheman och lottningar, och rapportera resultat",
+      "loggedInHelper": "Välj en tävling att administrera. Eller skapa en ny.",
       "username": "Användarnam",
       "password": "Lösenord",
       "login": "Logga in",
@@ -134,12 +136,28 @@
       "matchTime": "Speltid per match (i minuter)",
       "startTime": "Starttid",
       "endTime": "Sluttid",
+      "cannotChangeTables": "Bordsinställningarna för den här dagen har ändrats under 'Avancerat'. För att uppdatera, gå till den fliken.",
       "availableTablesHeading": "Antal bord tävlingen spelas på",
-      "availableTablesHelper": "Här sätts antalet tillgängliga bord för tävlingen som helhet. Om det varierar per dag eller timme kan detta ställas in ",
+      "availableTablesHelper": "Här sätts antalet tillgängliga bord för varje speldag som helhet. Om det varierar per timme kan detta ställas in ",
       "availableTablesHelperHere": "här",
+      "availableTablesNotSet": "Ej valt, behöver väljas",
       "averageMatchTimeHeading": "Genomsnittlig matchtid",
       "averageMatchTimeHelper": "Ställ in tiden varje enskild match ska tilldelas i schemat",
-      "minutes": "minuter"
+      "minutes": " minuter"
+    },
+    "advanced": {
+      "heading": "Avancerade schemainställningar",
+      "pauseHeading": "Pauser i en klass",
+      "pauseHelper": "Här kan du säkerställa att matcher inom en klass inte spelas för tätt inpå varandra.",
+      "pauseGroup": "Paus mellan gruppmatcher",
+      "pausePlayoff": "Paus mellan slutspelsmatcher",
+      "pauseBetweenGroupAndPlayoff": "Paus mellan gruppspelet och slutspelet",
+      "availableTables": {
+        "heading": "Tillgängliga bord per dag och timme",
+        "daySelection": "Välj en dag",
+        "hour": "Timme",
+        "nrTables": "Antal bord"
+      }
     }
   }
 }

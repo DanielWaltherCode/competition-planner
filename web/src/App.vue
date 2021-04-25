@@ -32,6 +32,9 @@ export default {
 
 h1, h2, h3 {
   color: var(--main-color);
+  margin-top: 20px !important;
+  margin-bottom: 20px !important;
+  text-align: center;
 }
 
 /* Global variables */
@@ -40,6 +43,7 @@ h1, h2, h3 {
   --yellow: #FFB657;
   --background: #F6EBFF;
   --sidebar-color: #F1F5FD;
+  --grey-color: #F8F8F8;
 
   --clr-primary-50: hsl(221, 94%, 92%);;
   --clr-primary-100: hsl(221, 94%, 87%);

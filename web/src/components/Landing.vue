@@ -7,10 +7,12 @@
         <div class="container">
           <div class="row">
             <div class="col-lg-6 d-flex flex-column justify-content-center">
-              <h1 data-aos="fade-up">{{ $t("landing.heading.part1") }}</h1>
+              <h1 v-if="!isLoggedIn" data-aos="fade-up" >{{ $t("landing.heading.part1") }}</h1>
+              <h2 v-if="isLoggedIn"> {{ getString("landing.heading.loggedInHelper") }}</h2>
               <div v-if="!isLoggedIn">
-                <h2 data-aos="fade-up" data-aos-delay="400">{{ $t("landing.heading.part2") }}</h2>
+                <p data-aos="fade-up" data-aos-delay="400">{{ $t("landing.heading.part2") }}</p>
                 <br/>
+                <h2 class="mt-2 fw-bolder"> {{getString("landing.heading.login")}}</h2>
                 <div class="mb-3">
                   <label for="username" class="form-label">{{ getString("landing.heading.username") }}</label>
                   <input type="text" class="form-control" id="username" v-model="username" placeholder="">

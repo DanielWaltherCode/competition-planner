@@ -10,6 +10,11 @@ const ScheduleMetadataService = {
         return Axios.get(`/schedule/${competitionId}/metadata`,
             {withCredentials: true})
     },
+    updateScheduleMetadata(competitionId, scheduleMetadataId, scheduleMetadataSpec) {
+        return Axios.put(`/schedule/${competitionId}/metadata/${scheduleMetadataId}`,
+            scheduleMetadataSpec,
+            {withCredentials: true})
+    }
 }
 
 export default ScheduleMetadataService

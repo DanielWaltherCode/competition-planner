@@ -36,6 +36,14 @@ class ScheduleMetadataApi(val scheduleService: ScheduleService) {
         return scheduleService.getScheduleMetadata(competitionId)
     }
 
+    @PutMapping("/{scheduleMetadataId}")
+    fun updateScheduleMetadata(
+        @PathVariable competitionId: Int,
+        @PathVariable scheduleMetadataId: Int,
+        @RequestBody scheduleMetadataSpec: ScheduleMetadataSpec
+    ): ScheduleMetadataDTO {
+        return scheduleService.updateScheduleMetadata(scheduleMetadataId, competitionId, scheduleMetadataSpec)
+    }
 }
 
 @RestController
@@ -53,8 +61,13 @@ class AvailableTablesApi(
         return scheduleService.getTablesAvailableByDay(competitionId, day)
     }
 
+    /**
+     * Used in selection table on website. Should return either one number of available tables
+     * per day, if it's the same for all hourly time slots, or return -1 if the nr of tables differs.
+     * Then the number can no longer be changed in the simple table.
+     */
     @GetMapping("/main-table")
-    fun getTablesAvailableByDay(
+    fun getTablesAvailableForMainTable(
         @PathVariable competitionId: Int
     ): List<AvailableTablesDayDTO> {
         return scheduleService.getTablesAvailableForMainTable(competitionId)
@@ -188,7 +201,7 @@ data class MinutesPerMatchSpec(
 
 data class ScheduleMetadataSpec(
     val minutesPerMatch: Int,
-    val pauseHoursAfterGroupStage: Int,
+    val pauseAfterGroupStage: Int,
     val pauseBetweenGroupMatches: Int,
     val pauseBetweenPlayoffMatches: Int
 )
