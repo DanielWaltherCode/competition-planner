@@ -61,8 +61,13 @@ class AvailableTablesApi(
         return scheduleService.getTablesAvailableByDay(competitionId, day)
     }
 
+    /**
+     * Used in selection table on website. Should return either one number of available tables
+     * per day, if it's the same for all hourly time slots, or return -1 if the nr of tables differs.
+     * Then the number can no longer be changed in the simple table.
+     */
     @GetMapping("/main-table")
-    fun getTablesAvailableByDay(
+    fun getTablesAvailableForMainTable(
         @PathVariable competitionId: Int
     ): List<AvailableTablesDayDTO> {
         return scheduleService.getTablesAvailableForMainTable(competitionId)

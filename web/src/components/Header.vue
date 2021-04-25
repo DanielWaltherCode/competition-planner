@@ -11,6 +11,9 @@
             <h2 id="brand">LET'S COMPETE</h2>
           </router-link>
           </div>
+          <div v-if="!!competition" class="text-white">
+            <p class="mb-0"> {{$t("header.chosenCompetition")}} <span class="fw-bolder"> {{competition.name}}</span></p>
+          </div>
           <div>
 
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">

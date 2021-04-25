@@ -130,8 +130,10 @@
                           {{ tableDay.day }}
                         </td>
                         <td>
-                          <select id="table-selection" class="form-control" v-model="tableDay.nrTables"
+                          <p v-if="tableDay.nrTables === -1">{{ $t("schedule.generalInfo.cannotChangeTables") }}</p>
+                          <select v-if="tableDay.nrTables !== -1" id="table-selection" class="form-control" v-model="tableDay.nrTables"
                                   v-on:change="setAvailableTables(tableDay.day)">
+                            <option value="0"> {{$t("schedule.generalInfo.availableTablesNotSet")}}</option>
                             <option v-for="i in 100" :key="i" :value="i">
                               {{ i }}
                             </option>

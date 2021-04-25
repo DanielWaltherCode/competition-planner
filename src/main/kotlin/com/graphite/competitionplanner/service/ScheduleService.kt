@@ -99,10 +99,13 @@ class ScheduleService(
         val competitionDays = competitionService.getDaysOfCompetition(competitionId)
         val availableTablesDayList = mutableListOf<AvailableTablesDayDTO>()
         for (day in competitionDays) {
-            val availableTables = getTablesAvailableByDay(competitionId, day)
-            if (availableTables.size == availableTables.toSet().size) {
-                // All elements are the same
-                availableTablesDayList.add(AvailableTablesDayDTO(availableTables[0].nrTables, day))
+            val availableTablesDTOs = getTablesAvailableByDay(competitionId, day)
+            val nrTablesList = availableTablesDTOs.map { it.nrTables }
+            val nrTablesSet = nrTablesList.toSet()
+
+            // All elements are the same
+            if (nrTablesSet.size == 1) {
+                availableTablesDayList.add(AvailableTablesDayDTO(nrTablesList[0], day))
             }
             else {
                 availableTablesDayList.add(AvailableTablesDayDTO(-1, day))
