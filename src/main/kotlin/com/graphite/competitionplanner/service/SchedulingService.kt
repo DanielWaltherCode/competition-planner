@@ -32,6 +32,15 @@ class SchedulingService {
         return Schedule(first.timeslots + (relabeledTimeslots))
     }
 
+    /**
+     * Given a schedule and a new number of tables, this function will return a new schedule containing the original
+     * schedule's matches, but scheduled over the new number of tables.
+     */
+    fun modify(schedule : Schedule, numberOfTables : Int) : Schedule {
+        val matches = schedule.timeslots.flatMap { it.matches }
+        return createSchedule(matches, numberOfTables, Schedule(listOf()))
+    }
+
     data class Schedule (
             val timeslots: List<Timeslot>
     )

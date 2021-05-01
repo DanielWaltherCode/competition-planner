@@ -270,4 +270,35 @@ class TestSchedulingService (@Autowired val schedulingService: SchedulingService
         Assertions.assertEquals(matchesFromFirstSchedule, matchesFromFirstPart)
         Assertions.assertEquals(matchesFromSecondSchedule, matchesFromSecondPart)
     }
+
+    @Test
+    fun whenModifyingNumberOfTablesThenOriginalMatchesShouldRemain(){
+        val original = schedulingService.create(pool2, 4)
+
+        val modified = schedulingService.modify(original, 1)
+
+        val matchesInOriginalSchedule = original.timeslots.flatMap { it.matches }
+        val matchesInModifiedSchedule = modified.timeslots.flatMap { it.matches }
+
+        Assertions.assertEquals(matchesInOriginalSchedule, matchesInModifiedSchedule)
+    }
+
+    @Test
+    fun modifyingAndCreatingAreEqual() {
+        val matches = pool1 + pool2
+        val schedule = schedulingService.create(matches, 3)
+
+        val scheduleToBeModified = schedulingService.create(matches, 4)
+        val modified = schedulingService.modify(scheduleToBeModified, 3)
+
+        Assertions.assertEquals(schedule, modified)
+    }
+
+    @Test
+    fun whenModifyingScheduleToZeroTablesItShouldThrowIllegalArgumentException(){
+        val matches = pool1 + pool3
+        val schedule = schedulingService.create(matches, 3)
+
+        Assertions.assertThrows(IllegalArgumentException::class.java) { schedulingService.modify(schedule, 0) }
+    }
 }
