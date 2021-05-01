@@ -17,7 +17,19 @@ class SchedulingService {
      */
     fun create(matches: List<MatchDTO>, numberOfTables: Int): Schedule {
         val matchesToBeScheduled = matches.map { match -> Match(match.id, extractPlayerIds(match)) }
-        return createSchedule(matchesToBeScheduled, numberOfTables)
+        return createSchedule(matchesToBeScheduled, numberOfTables, Schedule(listOf()))
+    }
+
+    /**
+     * Given two schedules, this function will return a new schedule where all the matches in the first schedule is
+     * played before any of the matches in the second schedule. The second schedule will in effect have the IDs of
+     * its timeslots relabeled starting with the ID that is one above the last timeslot in the first schedule.
+     */
+    fun concat(first: Schedule, second: Schedule) : Schedule {
+        val numberOfTimeslotsInFirst = first.timeslots.size
+        val relabeledTimeslots = second.timeslots.map {
+            Timeslot(it.id + numberOfTimeslotsInFirst, it.playerIds, it.matches ) }
+        return Schedule(first.timeslots + (relabeledTimeslots))
     }
 
     data class Schedule (
@@ -30,16 +42,16 @@ class SchedulingService {
     )
 
     data class Timeslot (
-            val timeslot: Int,
-            var playerIds: List<Int>,
-            var matches: List<Match>
+        val id: Int,
+        var playerIds: List<Int>,
+        var matches: List<Match>
     )
 
     private fun extractPlayerIds(match: MatchDTO) : List<Int> {
         return match.firstPlayer.map { player -> player.id } + match.secondPlayer.map { player -> player.id }
     }
 
-    private fun createSchedule(tempMatches: List<Match>, numberOfTables: Int) : Schedule {
+    private fun createSchedule(tempMatches: List<Match>, numberOfTables: Int, scheduleTest: Schedule) : Schedule {
 
         if (numberOfTables < 1){
             throw IllegalArgumentException("numberOfTables has to be greater or equal to 1")
@@ -54,8 +66,9 @@ class SchedulingService {
             throw IllegalArgumentException("There exists at least one match where a player is on both teams")
         }
 
-        var schedule = Schedule(listOf())
         var remainingMatches = tempMatches
+
+        var schedule = scheduleTest.copy()
 
         while (remainingMatches.isNotEmpty()) {
             val playerPriorities = calculatePlayerPriorityBasedOn(remainingMatches)
@@ -114,7 +127,7 @@ class SchedulingService {
     }
 
     private fun scheduleMatch(schedule: Schedule, match: Match, numberOfTables: Int): Schedule {
-        val timeslots = placeMatchInFirstAvailableTimeslot(schedule.timeslots, match, numberOfTables)
+        val timeslots = placeMatchInFirstAvailableTimeslot(schedule.timeslots, match, numberOfTables, schedule.timeslots.size)
         return Schedule(timeslots)
     }
 
@@ -124,19 +137,16 @@ class SchedulingService {
      * - there is a table available
      * - and any of the players in the match is not scheduled in that timeslot already.
      */
-    private fun placeMatchInFirstAvailableTimeslot(timeslots: List<Timeslot>, match: Match, numberOfTables: Int) : List<Timeslot> {
-        if(timeslots.isEmpty())
-            return listOf(Timeslot(0, match.playerIds, listOf(match)))
+    private fun placeMatchInFirstAvailableTimeslot(timeslots: List<Timeslot>, match: Match, numberOfTables: Int, nextTimeSlotId: Int) : List<Timeslot> {
+        return if(timeslots.isEmpty())
+            listOf(Timeslot(nextTimeSlotId, match.playerIds, listOf(match)))
         else {
-            if (numberOfTables ==  timeslots.last().matches.size){
-                return listOf(timeslots.last()) + placeMatchInFirstAvailableTimeslot(timeslots.dropLast(1), match, numberOfTables)
-            }
-            if (registrationNotInTimeslot(timeslots.last(), match.playerIds)) {
-                timeslots.last().playerIds += match.playerIds
-                timeslots.last().matches += match
-                return timeslots
-            } else {
-                return listOf(timeslots.last()) + placeMatchInFirstAvailableTimeslot(timeslots.dropLast(1), match, numberOfTables)
+            if (numberOfTables == timeslots.first().matches.size || registrationsInTimeslot(timeslots.first(), match.playerIds)){
+                listOf(timeslots.first()) + placeMatchInFirstAvailableTimeslot(timeslots.drop(1), match, numberOfTables, nextTimeSlotId)
+            }else {
+                timeslots.first().playerIds += match.playerIds
+                timeslots.first().matches += match
+                timeslots
             }
         }
     }
@@ -144,7 +154,7 @@ class SchedulingService {
     /**
      * Returns True if and only if none of the newPlayerIds are already scheduled in the given timeslot
      */
-    private fun registrationNotInTimeslot (timeslot: Timeslot, newPlayerIds: List<Int>): Boolean{
-        return timeslot.playerIds.none { i: Int -> newPlayerIds.contains(i) }
+    private fun registrationsInTimeslot (timeslot: Timeslot, newPlayerIds: List<Int>): Boolean{
+        return !timeslot.playerIds.none { i: Int -> newPlayerIds.contains(i) }
     }
 }
