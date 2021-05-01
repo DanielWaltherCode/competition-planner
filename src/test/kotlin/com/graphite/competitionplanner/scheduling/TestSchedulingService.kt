@@ -220,4 +220,54 @@ class TestSchedulingService (@Autowired val schedulingService: SchedulingService
 
         Assertions.assertThrows(IllegalArgumentException::class.java) { schedulingService.create(matches, 1) }
     }
+
+    @Test
+    fun whenConcatenatingTwoSchedulesTheTotalNumberOfTimeslotsEqualTheSumOfTimeslotsForEachSchedule(){
+        val first = schedulingService.create(pool1, 4)
+        val second = schedulingService.create(pool2, 4)
+
+        val expectedNumberOfTimeSlots = first.timeslots.size + second.timeslots.size
+
+        val result = schedulingService.concat(first, second)
+
+        Assertions.assertEquals(expectedNumberOfTimeSlots, result.timeslots.size)
+    }
+
+    @Test
+    fun whenConcatenatingTwoSchedulesThereShouldNotBeAnyGapsInTheRangeOfTimeslotIds(){
+        /**
+         * This test check two things at once:
+         * - Order is correct i.e. ranging from 0, 1, ...
+         * - Timeslot IDs start at 0
+         */
+
+        val first = schedulingService.create(pool1, 4)
+        val second = schedulingService.create(pool3, 3)
+
+        val result = schedulingService.concat(first, second)
+
+        val thereAreNoGaps = result.timeslots.mapIndexed{ index, value -> index == value.id }.all { it }
+
+        Assertions.assertTrue(thereAreNoGaps)
+    }
+
+    @Test
+    fun whenConcatenatingTwoSchedulesAllMatchesFromSecondScheduleIsPlayedAfterTheFirst(){
+        val first = schedulingService.create(pool2, 4)
+        val second = schedulingService.create(pool3, 4)
+
+        val result = schedulingService.concat(first, second)
+
+        // Split the concatenated schedule into two parts, and extract matches.
+        // Note: This is indirectly the assertion. If we concatenated correctly -> This split works
+        val matchesFromFirstPart = result.timeslots.filterIndexed{ index, _ -> index < first.timeslots.size}.flatMap { it.matches }
+        val matchesFromSecondPart = result.timeslots.filterIndexed{ index, _ -> index >= first.timeslots.size}.flatMap { it.matches }
+
+        // Extract matches from both original schedules
+        val matchesFromFirstSchedule = first.timeslots.flatMap { it.matches }
+        val matchesFromSecondSchedule = second.timeslots.flatMap { it.matches }
+
+        Assertions.assertEquals(matchesFromFirstSchedule, matchesFromFirstPart)
+        Assertions.assertEquals(matchesFromSecondSchedule, matchesFromSecondPart)
+    }
 }
