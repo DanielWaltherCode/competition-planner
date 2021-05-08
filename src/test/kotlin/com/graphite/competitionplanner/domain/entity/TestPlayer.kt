@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.domain.entity
 
+import com.graphite.competitionplanner.domain.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -7,9 +8,10 @@ import java.lang.IllegalArgumentException
 import java.time.LocalDate
 
 @SpringBootTest
-class TestPlayer {
+class TestPlayer() {
 
-    val club = Club(0, "Lule IK", "Sjögatan")
+    private final val dataGenerator = DataGenerator()
+    val club = dataGenerator.newClub()
 
     @Test
     fun firstNameCannotBeEmpty() {
