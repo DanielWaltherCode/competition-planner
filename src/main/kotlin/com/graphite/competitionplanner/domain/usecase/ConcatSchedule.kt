@@ -6,7 +6,7 @@ import com.graphite.competitionplanner.domain.entity.Timeslot
 import org.springframework.stereotype.Component
 
 @Component
-class ConcatSchedule(val createSchedule: CreateSchedule) {
+class ConcatSchedule {
 
     /**
      * Given two schedules, this function will return a new schedule where all the matches in the first schedule is
@@ -25,6 +25,6 @@ class ConcatSchedule(val createSchedule: CreateSchedule) {
         val relabeledTimeslots = second.timeslots.map {
             Timeslot(it.orderNumber + numberOfTimeslotsInFirst, it.matches)
         }
-        return Schedule(0, second.numberOfTables, first.timeslots + (relabeledTimeslots))
+        return Schedule(0, second.numberOfTables, first.timeslots + (relabeledTimeslots), first.metadata)
     }
 }

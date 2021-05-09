@@ -14,31 +14,11 @@ class TestMatch {
     private final val p1 = dataGenerator.newPlayer()
     private final val p2 = dataGenerator.newPlayer()
 
-//    @Test
-//    TODO: Consider having two different data classes depending on whether a match has been sceduled or not
-//    fun startTimeCannotBeAfterEndTime() {
-//        Assertions.assertThrows(IllegalArgumentException::class.java) {
-//            Match(
-//                0,
-//                LocalDateTime.now(),
-//                LocalDateTime.now().minusMinutes(10),
-//                CompetitionCategory(0),
-//                MatchType("POOL"),
-//                listOf(p1),
-//                listOf(p2),
-//                0,
-//                "Group A"
-//            )
-//        }
-//    }
-
     @Test
     fun playerCannotBelongToBothTeamsInSameMatch() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             Match(
                 0,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(10),
                 CompetitionCategory(0),
                 MatchType("POOL"),
                 listOf(p2),

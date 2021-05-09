@@ -2,8 +2,10 @@ package com.graphite.competitionplanner.domain.usecase
 
 import com.graphite.competitionplanner.domain.dto.MatchDTO
 import com.graphite.competitionplanner.domain.dto.ScheduleDTO
+import com.graphite.competitionplanner.domain.dto.ScheduleMetaDataDTO
 import com.graphite.competitionplanner.domain.entity.Match
 import com.graphite.competitionplanner.domain.entity.Schedule
+import com.graphite.competitionplanner.domain.entity.ScheduleMetaData
 import com.graphite.competitionplanner.domain.entity.Timeslot
 import org.springframework.stereotype.Component
 
@@ -19,16 +21,16 @@ class CreateSchedule {
      * all time. This leads to the schedule being divided into equally sized timeslots where the maximum number of
      * matches that can be played simultaneously is equal to the number of tables.
      */
-    fun execute(matches: List<MatchDTO>, numberOfTables: Int): ScheduleDTO {
+    fun execute(matches: List<MatchDTO>, scheduleMetaDataDTO: ScheduleMetaDataDTO): ScheduleDTO {
         val matchesToBeScheduled = matches.map { dto -> Match(dto) }
-        return ScheduleDTO(execute(matchesToBeScheduled, numberOfTables))
+        return ScheduleDTO(execute(matchesToBeScheduled, ScheduleMetaData(scheduleMetaDataDTO)))
     }
 
-    internal fun execute(matches: List<Match>, numberOfTables: Int): Schedule {
-        return createSchedule(matches, numberOfTables, Schedule(0, numberOfTables, listOf()))
+    internal fun execute(matches: List<Match>, metadata: ScheduleMetaData): Schedule {
+        return createSchedule(matches, Schedule(0, metadata.numberOfTables, listOf(), metadata))
     }
 
-    private fun createSchedule(tempMatches: List<Match>, numberOfTables: Int, scheduleTest: Schedule): Schedule {
+    private fun createSchedule(tempMatches: List<Match>, scheduleTest: Schedule): Schedule {
 
         var remainingMatches = tempMatches
 
@@ -38,7 +40,7 @@ class CreateSchedule {
             val playerPriorities = calculatePlayerPriorityBasedOn(remainingMatches)
             val matchPriorities = calculateMatchPriorityBasedOn(remainingMatches, playerPriorities)
             val highestPriority = matchPriorities.maxBy { match -> match.priority }
-            schedule = scheduleMatch(schedule, highestPriority!!.match, numberOfTables)
+            schedule = scheduleMatch(schedule, highestPriority!!.match, schedule.numberOfTables)
             remainingMatches = remainingMatches.filterNot { it == highestPriority.match }
         }
 
@@ -100,7 +102,7 @@ class CreateSchedule {
     private fun scheduleMatch(schedule: Schedule, match: Match, numberOfTables: Int): Schedule {
         val timeslots =
             placeMatchInFirstAvailableTimeslot(schedule.timeslots, match, numberOfTables, schedule.timeslots.size)
-        return Schedule(0, schedule.numberOfTables, timeslots)
+        return Schedule(0, schedule.numberOfTables, timeslots, schedule.metadata)
     }
 
     /**

@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.domain.usecase
 import com.graphite.competitionplanner.domain.dto.ClubDTO
 import com.graphite.competitionplanner.domain.dto.MatchDTO
 import com.graphite.competitionplanner.domain.dto.PlayerDTO
+import com.graphite.competitionplanner.domain.dto.ScheduleMetaDataDTO
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -106,9 +107,10 @@ class TestModifyingSchedule(
 
     @Test
     fun whenModifyingNumberOfTablesThenOriginalMatchesShouldRemain() {
-        val original = createSchedule.execute(pool2, 4)
+        val original = createSchedule.execute(pool2, ScheduleMetaDataDTO(15, 4))
 
-        val modified = modifySchedule.execute(original, 1)
+        val newMetaData = ScheduleMetaDataDTO(10, 1)
+        val modified = modifySchedule.execute(original, newMetaData)
 
         val matchesInOriginalSchedule = original.timeslots.flatMap { it.matches }
         val matchesInModifiedSchedule = modified.timeslots.flatMap { it.matches }
@@ -119,10 +121,12 @@ class TestModifyingSchedule(
     @Test
     fun modifyingAndCreatingAreEqual() {
         val matches = pool1 + pool2
-        val schedule = createSchedule.execute(matches, 3)
+        val schedule = createSchedule.execute(matches, ScheduleMetaDataDTO(15, 3))
 
-        val scheduleToBeModified = createSchedule.execute(matches, 4)
-        val modified = modifySchedule.execute(scheduleToBeModified, 3)
+        val scheduleToBeModified = createSchedule.execute(matches, ScheduleMetaDataDTO(15, 4))
+
+        val newMetaData = ScheduleMetaDataDTO(15, 3)
+        val modified = modifySchedule.execute(scheduleToBeModified, newMetaData)
 
         Assertions.assertEquals(schedule, modified)
     }
@@ -130,9 +134,10 @@ class TestModifyingSchedule(
     @Test
     fun whenModifyingScheduleToZeroTablesItShouldThrowIllegalArgumentException() {
         val matches = pool1 + pool3
-        val schedule = createSchedule.execute(matches, 3)
+        val schedule = createSchedule.execute(matches, ScheduleMetaDataDTO(15, 3))
+        val newMetaData = ScheduleMetaDataDTO(10, 0)
 
-        Assertions.assertThrows(IllegalArgumentException::class.java) { modifySchedule.execute(schedule, 0) }
+        Assertions.assertThrows(IllegalArgumentException::class.java) { modifySchedule.execute(schedule, newMetaData) }
     }
 
 }

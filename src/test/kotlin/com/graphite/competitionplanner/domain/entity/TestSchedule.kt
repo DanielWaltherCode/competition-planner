@@ -10,6 +10,13 @@ class TestSchedule {
 
     @Test
     fun cannotHaveLessThanOneTable() {
-        Assertions.assertThrows(IllegalArgumentException::class.java) { Schedule(0, 0, emptyList()) }
+        Assertions.assertThrows(IllegalArgumentException::class.java) {
+            Schedule(
+                0,
+                0,
+                emptyList(),
+                ScheduleMetaData(15, 10)
+            )
+        }
     }
 }

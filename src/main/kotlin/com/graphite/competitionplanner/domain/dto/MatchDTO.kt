@@ -14,8 +14,21 @@ data class MatchDTO(
     val matchOrderNumber: Int,
     val groupOrRound: String
 ) {
-    internal constructor(match: Match) : this(match.id, match.startTime, match.endTime, match.competitionCategory.id,
-        match.type.value, match.firstPlayer.map { PlayerDTO(it) }, match.secondPlayer.map { PlayerDTO(it) },
-        match.orderNumber, match.groupOrRound
+//    init {
+//        require(startTime?.isBefore(endTime) ?: true)
+//    } TODO How does this work?
+
+    internal constructor(match: Match) : this(match, null, null)
+
+    internal constructor(match: Match, startTime: LocalDateTime?, endTime: LocalDateTime?) : this(
+        match.id,
+        startTime,
+        endTime,
+        match.competitionCategory.id,
+        match.type.value,
+        match.firstPlayer.map { PlayerDTO(it) },
+        match.secondPlayer.map { PlayerDTO(it) },
+        match.orderNumber,
+        match.groupOrRound
     )
 }

@@ -2,7 +2,6 @@ package com.graphite.competitionplanner.domain
 
 import com.graphite.competitionplanner.domain.entity.*
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 class DataGenerator {
 
@@ -25,8 +24,6 @@ class DataGenerator {
     internal fun newMatch(): Match {
         return Match(
             matchId++,
-            LocalDateTime.now(),
-            LocalDateTime.now().plusMinutes(15),
             CompetitionCategory(0),
             MatchType("POOL"),
             listOf(newPlayer("Lars", "Åkesson")),

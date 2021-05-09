@@ -35,8 +35,6 @@ class TestMappingMatchAndDTO {
         val match = Match(dto)
 
         Assertions.assertEquals(dto.id, match.id)
-        Assertions.assertEquals(dto.startTime, match.startTime)
-        Assertions.assertEquals(dto.endTime, match.endTime)
         Assertions.assertEquals(dto.competitionCategoryId, match.competitionCategory.id)
         Assertions.assertEquals(dto.matchType, match.type.value)
         Assertions.assertEquals(dto.firstPlayer.first().id, match.firstPlayer.first().id)
@@ -60,15 +58,13 @@ class TestMappingMatchAndDTO {
         )
 
         val match = Match(
-            33, LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), CompetitionCategory(33), MatchType("PLAYOFF"),
+            33, CompetitionCategory(33), MatchType("PLAYOFF"),
             listOf(p1), listOf(p2), 11, "Round of 64"
         )
 
         val dto = MatchDTO(match)
 
         Assertions.assertEquals(match.id, dto.id)
-        Assertions.assertEquals(match.startTime, dto.startTime)
-        Assertions.assertEquals(match.endTime, dto.endTime)
         Assertions.assertEquals(match.competitionCategory.id, dto.competitionCategoryId)
         Assertions.assertEquals(match.type.value, dto.matchType)
         Assertions.assertEquals(match.firstPlayer.first().id, dto.firstPlayer.first().id)
@@ -76,4 +72,7 @@ class TestMappingMatchAndDTO {
         Assertions.assertEquals(match.orderNumber, dto.matchOrderNumber)
         Assertions.assertEquals(match.groupOrRound, dto.groupOrRound)
     }
+
+//    @Test
+//    fun
 }
