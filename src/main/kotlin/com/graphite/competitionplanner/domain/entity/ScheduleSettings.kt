@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.domain.entity
 
-import com.graphite.competitionplanner.domain.dto.ScheduleMetaDataDTO
+import com.graphite.competitionplanner.domain.dto.ScheduleSettingsDTO
 
-internal data class ScheduleMetaData(
+internal data class ScheduleSettings(
     val averageMatchTime: Int,
     val numberOfTables: Int
 ) {
@@ -11,5 +11,5 @@ internal data class ScheduleMetaData(
         require(numberOfTables > 0)
     }
 
-    constructor(dto: ScheduleMetaDataDTO) : this(dto.averageMatchTime, dto.numberOfTables)
+    constructor(dto: ScheduleSettingsDTO) : this(dto.averageMatchTime, dto.numberOfTables)
 }

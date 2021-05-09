@@ -25,6 +25,6 @@ class ConcatSchedule {
         val relabeledTimeslots = second.timeslots.map {
             Timeslot(it.orderNumber + numberOfTimeslotsInFirst, it.matches)
         }
-        return Schedule(0, second.numberOfTables, first.timeslots + (relabeledTimeslots), first.metadata)
+        return Schedule(0, first.timeslots + (relabeledTimeslots), first.settings)
     }
 }

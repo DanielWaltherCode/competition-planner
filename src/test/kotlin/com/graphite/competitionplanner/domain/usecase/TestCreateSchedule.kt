@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.domain.usecase
 import com.graphite.competitionplanner.domain.dto.ClubDTO
 import com.graphite.competitionplanner.domain.dto.MatchDTO
 import com.graphite.competitionplanner.domain.dto.PlayerDTO
-import com.graphite.competitionplanner.domain.dto.ScheduleMetaDataDTO
+import com.graphite.competitionplanner.domain.dto.ScheduleSettingsDTO
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -107,7 +107,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
 
         val matches = pool1 + pool2
 
-        val schedule = createSchedule.execute(matches, ScheduleMetaDataDTO(15, 1))
+        val schedule = createSchedule.execute(matches, ScheduleSettingsDTO(15, 1))
 
         Assertions.assertEquals(matches.size, schedule.timeslots.size)
     }
@@ -122,7 +122,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          *    (3-4)    (2-4)     (3-4)
          */
         val matches = pool1
-        val schedule = createSchedule.execute(matches, ScheduleMetaDataDTO(15, 2))
+        val schedule = createSchedule.execute(matches, ScheduleSettingsDTO(15, 2))
 
         Assertions.assertEquals(3, schedule.timeslots.size)
     }
@@ -137,7 +137,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          *    (empty)  (empty)   (empty)
          */
         val matches = pool1
-        val schedule = createSchedule.execute(matches, ScheduleMetaDataDTO(15, 3))
+        val schedule = createSchedule.execute(matches, ScheduleSettingsDTO(15, 3))
 
         Assertions.assertEquals(3, schedule.timeslots.size)
     }
@@ -152,7 +152,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          */
 
         val matches = pool1 + pool2
-        val schedule = createSchedule.execute(matches, ScheduleMetaDataDTO(15, 2))
+        val schedule = createSchedule.execute(matches, ScheduleSettingsDTO(15, 2))
 
         Assertions.assertEquals(matches.size / 2, schedule.timeslots.size)
     }
@@ -171,7 +171,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          *   (5-6)     (2-4)    (1-4)    (6-7)
          */
         val matches = pool1 + pool2
-        val schedule = createSchedule.execute(matches, ScheduleMetaDataDTO(15, 3))
+        val schedule = createSchedule.execute(matches, ScheduleSettingsDTO(15, 3))
 
         Assertions.assertEquals(4, schedule.timeslots.size)
     }
@@ -191,7 +191,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          */
 
         val matches = pool1 + pool2
-        val schedule = createSchedule.execute(matches, ScheduleMetaDataDTO(15, 4))
+        val schedule = createSchedule.execute(matches, ScheduleSettingsDTO(15, 4))
 
         Assertions.assertEquals(3, schedule.timeslots.size)
     }
@@ -211,7 +211,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          */
 
         val matches = pool1 + pool3
-        val schedule = createSchedule.execute(matches, ScheduleMetaDataDTO(15, 4))
+        val schedule = createSchedule.execute(matches, ScheduleSettingsDTO(15, 4))
 
         Assertions.assertEquals(3, schedule.timeslots.size)
     }
@@ -219,7 +219,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
     @Test
     fun shouldNotScheduleAPlayerTwiceInSameTimeslot() {
         val matches = pool1
-        val schedule = createSchedule.execute(matches, ScheduleMetaDataDTO(15, 4))
+        val schedule = createSchedule.execute(matches, ScheduleSettingsDTO(15, 4))
 
         for (timeslot in schedule.timeslots) {
             val playerIds =
@@ -234,7 +234,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             createSchedule.execute(
                 matches,
-                ScheduleMetaDataDTO(15, 0)
+                ScheduleSettingsDTO(15, 0)
             )
         }
     }
@@ -271,7 +271,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             createSchedule.execute(
                 matches,
-                ScheduleMetaDataDTO(15, 3)
+                ScheduleSettingsDTO(15, 3)
             )
         }
     }

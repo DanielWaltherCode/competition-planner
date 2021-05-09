@@ -6,16 +6,16 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.lang.IllegalArgumentException
 
 @SpringBootTest
-class TestScheduleMetaData {
+class TestScheduleSettings {
 
     @Test
     fun averageMatchTimeCannotBeLessThanOne() {
-        Assertions.assertThrows(IllegalArgumentException::class.java) { ScheduleMetaData(0, 15) }
+        Assertions.assertThrows(IllegalArgumentException::class.java) { ScheduleSettings(0, 15) }
     }
 
     @Test
     fun numberOfTablesCannotBeLessThanOne() {
-        Assertions.assertThrows(IllegalArgumentException::class.java) { ScheduleMetaData(10, 0) }
+        Assertions.assertThrows(IllegalArgumentException::class.java) { ScheduleSettings(10, 0) }
     }
 
 }
