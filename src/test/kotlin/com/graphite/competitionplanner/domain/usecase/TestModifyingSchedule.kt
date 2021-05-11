@@ -1,7 +1,6 @@
 package com.graphite.competitionplanner.domain.usecase
 
 import com.graphite.competitionplanner.domain.DataGenerator
-import com.graphite.competitionplanner.domain.dto.ScheduleSettingsDTO
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,26 +20,26 @@ class TestModifyingSchedule(
 
     @Test
     fun whenModifyingNumberOfTablesThenOriginalMatchesShouldRemain() {
-        val original = createSchedule.execute(pool2, ScheduleSettingsDTO(15, 4))
+        val original = createSchedule.execute(pool2, dataGenerator.newScheduleSettings(4))
 
-        val newSettings = ScheduleSettingsDTO(10, 1)
+        val newSettings = dataGenerator.newScheduleSettings(1)
         val modified = modifySchedule.execute(original, newSettings)
 
-        val matchesInOriginalSchedule = original.timeslots.flatMap { it.matches }
-        val matchesInModifiedSchedule = modified.timeslots.flatMap { it.matches }
+        val originalMatchIds = original.timeslots.flatMap { it.matches.map { matchDTO -> matchDTO.id } }
+        val matchIdsInModifiedSchedule = modified.timeslots.flatMap { it.matches.map { matchDTO -> matchDTO.id } }
 
-        Assertions.assertEquals(matchesInOriginalSchedule, matchesInModifiedSchedule)
+        Assertions.assertEquals(originalMatchIds, matchIdsInModifiedSchedule)
     }
 
     @Test
     fun modifyingAndCreatingAreEqual() {
         val matches = pool1 + pool2
-        val schedule = createSchedule.execute(matches, ScheduleSettingsDTO(15, 3))
+        val settings = dataGenerator.newScheduleSettings(3)
+        val schedule = createSchedule.execute(matches, settings)
 
-        val scheduleToBeModified = createSchedule.execute(matches, ScheduleSettingsDTO(15, 4))
+        val scheduleToBeModified = createSchedule.execute(matches, dataGenerator.newScheduleSettings(4))
 
-        val newSettings = ScheduleSettingsDTO(15, 3)
-        val modified = modifySchedule.execute(scheduleToBeModified, newSettings)
+        val modified = modifySchedule.execute(scheduleToBeModified, settings)
 
         Assertions.assertEquals(schedule, modified)
     }
@@ -48,8 +47,8 @@ class TestModifyingSchedule(
     @Test
     fun whenModifyingScheduleToZeroTablesItShouldThrowIllegalArgumentException() {
         val matches = pool1 + pool3
-        val schedule = createSchedule.execute(matches, ScheduleSettingsDTO(15, 3))
-        val newSettings = ScheduleSettingsDTO(10, 0)
+        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettings(3))
+        val newSettings = dataGenerator.newScheduleSettings(0)
 
         Assertions.assertThrows(IllegalArgumentException::class.java) { modifySchedule.execute(schedule, newSettings) }
     }

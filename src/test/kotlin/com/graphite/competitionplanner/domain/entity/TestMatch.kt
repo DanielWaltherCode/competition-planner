@@ -20,6 +20,27 @@ class TestMatch {
             Match(
                 0,
                 CompetitionCategory(0),
+                null,
+                null,
+                MatchType("POOL"),
+                listOf(p2),
+                listOf(p2),
+                0,
+                "Group A"
+            )
+        }
+    }
+
+    @Test
+    fun startTimeMustBeBeforeEndTime() {
+        val startTime = LocalDateTime.now()
+        val endTime = startTime.minusSeconds(10)
+        Assertions.assertThrows(IllegalArgumentException::class.java) {
+            Match(
+                0,
+                CompetitionCategory(0),
+                startTime,
+                endTime,
                 MatchType("POOL"),
                 listOf(p2),
                 listOf(p2),

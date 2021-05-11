@@ -27,7 +27,37 @@ class CreateSchedule {
     }
 
     internal fun execute(matches: List<Match>, settings: ScheduleSettings): Schedule {
-        return createSchedule(matches, Schedule(0, listOf(), settings))
+        // TODO: Consider match type POOL or PLAYOFF when scheduling
+        // TODO: Probably schedule all POOL games then PLAYOFF
+        // TODO: Favor matches with same category ID together, probably need to sort matches before scheduling
+        val schedule = createSchedule(matches, Schedule(0, listOf(), settings))
+        return assignTimeInformationOnMatches(schedule)
+    }
+
+    private fun assignTimeInformationOnMatches(schedule: Schedule): Schedule {
+        // TODO: Pause between matches shall be incorporated
+        // TODO: End of day must be considered
+        val settings = schedule.settings
+
+        val timeslots = schedule.timeslots.map {
+            Timeslot(
+                it.orderNumber,
+                it.matches.map { match ->
+                    Match(
+                        match.id,
+                        match.competitionCategory,
+                        settings.startTime.plusMinutes(settings.averageMatchTime * it.orderNumber),
+                        settings.startTime.plusMinutes(settings.averageMatchTime * (it.orderNumber + 1)),
+                        match.type,
+                        match.firstPlayer,
+                        match.secondPlayer,
+                        match.orderNumber,
+                        match.groupOrRound
+                    )
+                })
+        }
+
+        return Schedule(schedule.id, timeslots, settings)
     }
 
     private fun createSchedule(tempMatches: List<Match>, scheduleTest: Schedule): Schedule {

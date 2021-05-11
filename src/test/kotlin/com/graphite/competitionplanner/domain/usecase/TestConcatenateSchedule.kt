@@ -1,7 +1,6 @@
 package com.graphite.competitionplanner.domain.usecase
 
 import com.graphite.competitionplanner.domain.DataGenerator
-import com.graphite.competitionplanner.domain.dto.ScheduleSettingsDTO
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,8 +19,9 @@ class TestConcatenateSchedule(
 
     @Test
     fun whenConcatenatingTwoSchedulesTheTotalNumberOfTimeslotsEqualTheSumOfTimeslotsForEachSchedule() {
-        val first = createSchedule.execute(pool1, ScheduleSettingsDTO(15, 4))
-        val second = createSchedule.execute(pool2, ScheduleSettingsDTO(15, 4))
+        val settings = dataGenerator.newScheduleSettings(4)
+        val first = createSchedule.execute(pool1, settings)
+        val second = createSchedule.execute(pool2, settings)
 
         val expectedNumberOfTimeSlots = first.timeslots.size + second.timeslots.size
 
@@ -38,8 +38,8 @@ class TestConcatenateSchedule(
          * - Timeslot IDs start at 0
          */
 
-        val first = createSchedule.execute(pool1, ScheduleSettingsDTO(15, 4))
-        val second = createSchedule.execute(pool3, ScheduleSettingsDTO(15, 3))
+        val first = createSchedule.execute(pool1, dataGenerator.newScheduleSettings(4))
+        val second = createSchedule.execute(pool3, dataGenerator.newScheduleSettings(3))
 
         val result = concatSchedules.execute(first, second)
 
@@ -50,8 +50,8 @@ class TestConcatenateSchedule(
 
     @Test
     fun whenConcatenatingTwoSchedulesAllMatchesFromSecondScheduleIsPlayedAfterTheFirst() {
-        val first = createSchedule.execute(pool2, ScheduleSettingsDTO(15, 4))
-        val second = createSchedule.execute(pool3, ScheduleSettingsDTO(15, 4))
+        val first = createSchedule.execute(pool2, dataGenerator.newScheduleSettings(4))
+        val second = createSchedule.execute(pool3, dataGenerator.newScheduleSettings(4))
 
         val result = concatSchedules.execute(first, second)
 

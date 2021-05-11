@@ -3,8 +3,10 @@ package com.graphite.competitionplanner.domain
 import com.graphite.competitionplanner.domain.dto.ClubDTO
 import com.graphite.competitionplanner.domain.dto.MatchDTO
 import com.graphite.competitionplanner.domain.dto.PlayerDTO
+import com.graphite.competitionplanner.domain.dto.ScheduleSettingsDTO
 import com.graphite.competitionplanner.domain.entity.*
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class DataGenerator {
 
@@ -28,6 +30,8 @@ class DataGenerator {
         return Match(
             matchId++,
             CompetitionCategory(0),
+            null,
+            null,
             MatchType("POOL"),
             listOf(newPlayer("Lars", "Åkesson")),
             listOf(newPlayer("Nils", "Holm")),
@@ -38,6 +42,10 @@ class DataGenerator {
 
     fun newPlayerDTO(): PlayerDTO {
         return PlayerDTO(newPlayer())
+    }
+
+    fun newScheduleSettings(numberOfTables: Int): ScheduleSettingsDTO {
+        return ScheduleSettingsDTO(15, numberOfTables, LocalDateTime.now())
     }
 
     /**
