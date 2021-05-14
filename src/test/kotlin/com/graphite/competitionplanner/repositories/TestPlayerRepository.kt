@@ -17,21 +17,21 @@ class TestPlayerRepository(
     @BeforeEach
     fun saveAClub() {
         val dto = ClubDTO(0, "Fake Clu", "Fake Address")
-        club = clubRepository.store(dto);
+        club = clubRepository.store(dto)
     }
 
     @AfterEach
     fun deleteClub() {
-        clubRepository.deleteClub(club.id)
+        clubRepository.delete(club)
     }
 
     @Test
     fun shouldSetIdWhenSaving() {
         val dto = PlayerDTO(0, "Lasse", "Nilsson", club, LocalDate.now())
-        val player = playerRepository.store(dto);
+        val player = playerRepository.store(dto)
 
         Assertions.assertTrue(player.id != 0)
 
-        playerRepository.deletePlayer(player.id);
+        playerRepository.deletePlayer(player.id)
     }
 }

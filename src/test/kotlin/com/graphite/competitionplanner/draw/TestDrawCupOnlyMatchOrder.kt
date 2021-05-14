@@ -35,7 +35,7 @@ class TestDrawCupOnlyMatchOrder(
     @Autowired val competitionCategoryApi: CompetitionCategoryApi,
     @Autowired val categoryApi: CategoryApi
 ) {
-    lateinit var club: ClubDTO
+    lateinit var club: ClubSpec
     lateinit var competition: CompetitionDTO
     lateinit var competitionCategory: CompetitionCategoryDTO
     var players = mutableListOf<PlayerDTO>()
@@ -43,7 +43,7 @@ class TestDrawCupOnlyMatchOrder(
     @BeforeEach
     fun setUp(){
         club = createClub()
-        competition = setupCompetitionFor(club)
+        competition = setupCompetitionFor(club.id)
         competitionCategory = addCompetitionCategoryTo(competition, "Flickor 12")
         setModeToCupOnlyFor(competitionCategory)
 
@@ -96,23 +96,22 @@ class TestDrawCupOnlyMatchOrder(
         playerRepository.addPlayerRanking(player.id, value, "SINGLES")
     }
 
-    private fun createClub(): ClubDTO {
+    private fun createClub(): ClubSpec {
         return clubApi.addClub(
-            ClubDTO(
-                null,
+            NewClubSpec(
                 "TestClub" + Random.nextLong().toString(),
                 "Testroad 12B"
             )
         )
     }
 
-    private fun addPlayer(firstName: String, club: ClubDTO) : PlayerDTO{
+    private fun addPlayer(firstName: String, club: ClubSpec): PlayerDTO {
         return playerApi.addPlayer(
             PlayerSpec(
                 firstName,
                 "Testsson",
                 ClubNoAddressDTO(
-                    club.id!!,
+                    club.id,
                     club.name
                 ),
                 LocalDate.of(2000, 3, 3)
@@ -120,13 +119,13 @@ class TestDrawCupOnlyMatchOrder(
         )
     }
 
-    private fun setupCompetitionFor(clubId: ClubDTO): CompetitionDTO {
+    private fun setupCompetitionFor(clubId: Int): CompetitionDTO {
         return competitionApi.addCompetition(
             CompetitionSpec(
                 "LocationA",
                 "Monkey cup",
                 "Welcome to competition A",
-                clubId.id!!,
+                clubId,
                 LocalDate.now(),
                 LocalDate.now()
             )

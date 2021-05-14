@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.util
 
 import com.graphite.competitionplanner.api.*
 import com.graphite.competitionplanner.api.competition.CompetitionSpec
+import com.graphite.competitionplanner.domain.dto.ClubDTO
 import com.graphite.competitionplanner.repositories.*
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
@@ -72,11 +73,11 @@ class EventListener(
     }
 
     fun setUpClub() {
-        clubService.addClub(ClubDTO(null, "Övriga", "Empty"))
-        clubService.addClub(ClubDTO(null, "Lugi", "Lund"))
-        clubService.addClub(ClubDTO(null, "Umeå IK", "Umeå Ersboda"))
-        clubService.addClub(ClubDTO(null, "Malmö", "Malmö"))
-        clubService.addClub(ClubDTO(null, "Landskrona", "Landskrona Byaväg 9"))
+        clubService.addClub(ClubDTO(0, "Övriga", "Empty"))
+        clubService.addClub(ClubDTO(0, "Lugi", "Lund"))
+        clubService.addClub(ClubDTO(0, "Umeå IK", "Umeå Ersboda"))
+        clubService.addClub(ClubDTO(0, "Malmö", "Malmö"))
+        clubService.addClub(ClubDTO(0, "Landskrona", "Landskrona Byaväg 9"))
     }
 
     fun categorySetup() {

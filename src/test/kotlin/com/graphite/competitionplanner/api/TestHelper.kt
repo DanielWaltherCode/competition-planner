@@ -34,12 +34,12 @@ class TestHelper(
         clubRepository.clearClubTable()
     }
 
-    fun anyPlayerSpecFor(club: ClubDTO) : PlayerSpec {
+    fun anyPlayerSpecFor(club: ClubSpec): PlayerSpec {
         return PlayerSpec(
             "Laban",
             "Nilsson",
             ClubNoAddressDTO(
-                club.id!!,
+                club.id,
                 club.name
             ),
             LocalDate.now().minusMonths(170)

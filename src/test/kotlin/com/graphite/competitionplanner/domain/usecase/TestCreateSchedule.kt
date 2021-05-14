@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.domain.usecase
 import com.graphite.competitionplanner.domain.DataGenerator
 import com.graphite.competitionplanner.domain.dto.MatchDTO
 import com.graphite.competitionplanner.domain.dto.ScheduleSettingsDTO
+import com.graphite.competitionplanner.domain.usecase.schedule.CreateSchedule
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

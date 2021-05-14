@@ -2,7 +2,6 @@ package com.graphite.competitionplanner.services
 
 import com.graphite.competitionplanner.domain.dto.ClubDTO
 import com.graphite.competitionplanner.domain.usecase.club.*
-import com.graphite.competitionplanner.repositories.ClubRepository
 import com.graphite.competitionplanner.service.ClubService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -13,49 +12,46 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest
 class TestClubService {
 
+    private final val mockedDeleteUseCase: DeleteClub = Mockito.mock(DeleteClub::class.java)
+    private final val mockedCreateUseCase: CreateClub = Mockito.mock(CreateClub::class.java)
+    private final val mockedUpdateUseCase: UpdateClub = Mockito.mock(UpdateClub::class.java)
+    private final val mockedListAllUseCase: ListAllClubs = Mockito.mock(ListAllClubs::class.java)
+    private final val mockedFindClub: FindClub = Mockito.mock(FindClub::class.java)
+    val service = ClubService(
+        mockedDeleteUseCase,
+        mockedCreateUseCase,
+        mockedUpdateUseCase,
+        mockedListAllUseCase,
+        mockedFindClub
+    )
+
     @Test
     fun shouldCallDeleteUseCase() {
-        val mockedDeleteUseCase = Mockito.mock(DeleteClub::class.java)
-        val mockedCreateUseCase = Mockito.mock(CreateClub::class.java)
-        val mockedUpdateUseCase = Mockito.mock(UpdateClub::class.java)
-        val mockedListAllUseCase = Mockito.mock(ListAllClubs::class.java)
-        val mockedFindClub = Mockito.mock(FindClub::class.java)
-        val service = ClubService(
-            mockedDeleteUseCase,
-            mockedCreateUseCase,
-            mockedUpdateUseCase,
-            mockedListAllUseCase,
-            mockedFindClub
-        )
-
-        service.delete(10);
-
+        service.delete(10)
         Mockito.verify(mockedDeleteUseCase, Mockito.times(1)).execute(ClubDTO(10, "", ""))
     }
 
     @Test
     fun shouldCallUpdateUseCase() {
-        val mockedDeleteUseCase = Mockito.mock(DeleteClub::class.java)
-        val mockedCreateUseCase = Mockito.mock(CreateClub::class.java)
-        val mockedUpdateUseCase = Mockito.mock(UpdateClub::class.java)
-        val mockedListAllUseCase = Mockito.mock(ListAllClubs::class.java)
-        val mockedFindClub = Mockito.mock(FindClub::class.java)
-        val service = ClubService(
-            mockedDeleteUseCase,
-            mockedCreateUseCase,
-            mockedUpdateUseCase,
-            mockedListAllUseCase,
-            mockedFindClub
-        )
-
         val dto = ClubDTO(10, "Smicker", "A")
-        val legacyDto = com.graphite.competitionplanner.api.ClubDTO(dto.id, dto.name, dto.address)
 
         `when`(mockedUpdateUseCase.execute(dto)).thenReturn(dto)
 
-        val updatedDto = service.updateClub(legacyDto);
+        val updatedDto = service.updateClub(dto)
 
-        Assertions.assertEquals(legacyDto, updatedDto)
+        Assertions.assertEquals(dto, updatedDto)
         Mockito.verify(mockedUpdateUseCase, Mockito.times(1)).execute(dto)
+    }
+
+    @Test
+    fun shouldCallCreateUseCase() {
+        val dto = ClubDTO(0, "Smicker", "A")
+
+        `when`(mockedCreateUseCase.execute(dto)).thenReturn(dto)
+
+        val createdDto = service.addClub(dto)
+
+        Assertions.assertEquals(dto, createdDto)
+        Mockito.verify(mockedCreateUseCase, Mockito.times(1)).execute(dto)
     }
 }

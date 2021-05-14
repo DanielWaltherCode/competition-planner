@@ -20,18 +20,10 @@ class ClubRepository(val dslContext: DSLContext) : IClubRepository {
         return dslContext.selectFrom(CLUB).where(CLUB.ID.eq(id)).fetchOne()
     }
 
-    @Deprecated("Will be replaced with IClubrepository.delete")
-    fun deleteClub(id: Int): Boolean {
-        val deletedRows = dslContext.deleteFrom(CLUB).where(CLUB.ID.eq(id)).execute()
-        return deletedRows >= 1
-    }
-
     override fun getAll(): List<com.graphite.competitionplanner.domain.dto.ClubDTO> {
         val records = dslContext.select().from(CLUB).fetchInto(CLUB)
         return records.map { com.graphite.competitionplanner.domain.dto.ClubDTO(it.id, it.name, it.address) }
     }
-
-    fun clearClubTable() = dslContext.deleteFrom(CLUB).execute()
 
     override fun store(dto: com.graphite.competitionplanner.domain.dto.ClubDTO): com.graphite.competitionplanner.domain.dto.ClubDTO {
         val clubRecord: ClubRecord = dslContext.newRecord(CLUB)
@@ -89,4 +81,9 @@ class ClubRepository(val dslContext: DSLContext) : IClubRepository {
         }
         return dto
     }
+
+    /**
+     * WARNING: Only use this in test code
+     */
+    fun clearClubTable() = dslContext.deleteFrom(CLUB).execute()
 }

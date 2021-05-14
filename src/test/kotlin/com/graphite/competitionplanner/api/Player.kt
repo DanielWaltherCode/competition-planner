@@ -33,14 +33,13 @@ class Player(
 {
     override val resource: String = "/player"
     val baseAddress = "http://localhost:$port/player"
-    lateinit var club: ClubDTO
+    lateinit var club: ClubSpec
     var playerId: Int = -1
 
     @BeforeEach
     private fun createClub() {
         club = clubApi.addClub(
-            ClubDTO(
-                null,
+            NewClubSpec(
                 "TestClub" + Random.nextLong().toString(),
                 "Testroad 12B"
             )
@@ -109,7 +108,7 @@ class Player(
     @Test
     fun shouldReturnNotFoundWhenClubId(){
         // Setup
-        val clubThatDoesNotExist = ClubDTO(
+        val clubThatDoesNotExist = ClubSpec(
             -1,
             "TestClub" + Random.nextLong().toString(),
             "Testroad 12B"
@@ -148,7 +147,7 @@ class Player(
             "Nilsson",
             "EXTRAFIELD",
             ClubNoAddressDTO(
-                club.id!!,
+                club.id,
                 club.name
             ),
             LocalDate.now().minusMonths(170)
