@@ -2,11 +2,8 @@ package com.graphite.competitionplanner.api
 
 import com.graphite.competitionplanner.repositories.ClubRepository
 import com.graphite.competitionplanner.service.ClubService
-import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 import javax.validation.Valid
-import kotlin.streams.toList
 
 
 @RestController
@@ -16,14 +13,12 @@ val clubService: ClubService) {
 
     @PostMapping
     fun addClub(@Valid @RequestBody clubDTO: ClubDTO): ClubDTO {
-        val club = clubRepository.addClub(clubDTO)
-        return ClubDTO(club.id, club.name, club.address)
+        return clubService.addClub(clubDTO)
     }
 
     @PutMapping
     fun updateClub(@Valid @RequestBody clubDTO: ClubDTO): ClubDTO {
-        val club = clubRepository.updateClub(clubDTO)
-        return ClubDTO(club.id, club.name, club.address)
+        return clubService.updateClub(clubDTO)
     }
 
     @GetMapping("/{clubName}")
@@ -38,13 +33,12 @@ val clubService: ClubService) {
 
     @GetMapping
     fun getAll(): List<ClubDTO> {
-        val clubs = clubRepository.getAll()
-        return clubs.stream().map { c -> ClubDTO(c.id, c.name, c.address) }.toList()
+        return clubService.getAll()
     }
 
     @DeleteMapping("/{clubId}")
     fun deleteClub(@PathVariable clubId: Int): Boolean {
-        return clubRepository.deleteClub(clubId)
+        return clubService.delete(clubId)
     }
 }
 

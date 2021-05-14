@@ -10,13 +10,10 @@ import com.graphite.competitionplanner.repositories.competition.CompetitionDrawR
 import com.graphite.competitionplanner.service.*
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
 import com.graphite.competitionplanner.service.competition.CompetitionService
-import com.graphite.competitionplanner.service.competition.Match
-import com.graphite.competitionplanner.service.competition.MatchType
 import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import kotlin.random.Random
 
@@ -38,7 +35,8 @@ class EventListener(
     val util: Util,
     val registrationService: RegistrationService,
     val userService: UserService,
-    val matchRepository: MatchRepository
+    val matchRepository: MatchRepository,
+    val clubService: ClubService
 ) {
 
     @EventListener
@@ -74,11 +72,11 @@ class EventListener(
     }
 
     fun setUpClub() {
-        clubRepository.addClub(ClubDTO(0, "Övriga", "Empty"))
-        clubRepository.addClub(ClubDTO(null, "Lugi", "Lund"))
-        clubRepository.addClub(ClubDTO(null, "Umeå IK", "Umeå Ersboda"))
-        clubRepository.addClub(ClubDTO(null, "Malmö", "Malmö"))
-        clubRepository.addClub(ClubDTO(null, "Landskrona", "Landskrona Byaväg 9"))
+        clubService.addClub(ClubDTO(null, "Övriga", "Empty"))
+        clubService.addClub(ClubDTO(null, "Lugi", "Lund"))
+        clubService.addClub(ClubDTO(null, "Umeå IK", "Umeå Ersboda"))
+        clubService.addClub(ClubDTO(null, "Malmö", "Malmö"))
+        clubService.addClub(ClubDTO(null, "Landskrona", "Landskrona Byaväg 9"))
     }
 
     fun categorySetup() {
@@ -124,7 +122,7 @@ class EventListener(
                 location = "BYE",
                 name = "BYE",
                 welcomeText = "BYE",
-                organizingClubId = 0,
+                organizingClubId = util.getClubIdOrDefault("Övriga"),
                 startDate = LocalDate.now(),
                 endDate = LocalDate.now().plusYears(10)
             )
@@ -357,7 +355,7 @@ class EventListener(
                 location = "Svedala",
                 name = "Svedala Open",
                 welcomeText = "Bonustävling!",
-                organizingClubId = util.getClubIdOrDefault("Svedala"),
+                organizingClubId = util.getClubIdOrDefault("Övriga"),
                 startDate = LocalDate.now().plusMonths(1),
                 endDate = LocalDate.now().plusMonths(1).plusDays(3)
             )

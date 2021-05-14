@@ -3,6 +3,9 @@ package com.graphite.competitionplanner.repositories
 import com.graphite.competitionplanner.Tables.CLUB
 import com.graphite.competitionplanner.Tables.PLAYER_RANKING
 import com.graphite.competitionplanner.api.PlayerSpec
+import com.graphite.competitionplanner.domain.dto.ClubDTO
+import com.graphite.competitionplanner.domain.dto.PlayerDTO
+import com.graphite.competitionplanner.domain.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.tables.Player.PLAYER
 import com.graphite.competitionplanner.tables.records.PlayerRankingRecord
 import com.graphite.competitionplanner.tables.records.PlayerRecord
@@ -13,9 +16,9 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class PlayerRepository(
-        val dslContext: DSLContext,
-        val clubRepository: ClubRepository
-) {
+    val dslContext: DSLContext,
+    val clubRepository: ClubRepository
+) : IPlayerRepository {
     private val logger = LoggerFactory.getLogger(javaClass)
 
 
@@ -113,5 +116,20 @@ class PlayerRepository(
         playerRecord.store()
 
         return playerRecord
+    }
+
+    override fun store(dto: PlayerDTO): PlayerDTO {
+        val playerRecord = dslContext.newRecord(PLAYER)
+        playerRecord.firstName = dto.firstName
+        playerRecord.lastName = dto.lastName
+        playerRecord.clubId = dto.club.id
+        playerRecord.dateOfBirth = dto.dateOfBirth
+        playerRecord.store()
+
+        return PlayerDTO(playerRecord.id, dto);
+    }
+
+    override fun playersInClub(dto: ClubDTO): List<PlayerDTO> {
+        TODO("Not yet implemented")
     }
 }

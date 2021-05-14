@@ -1,16 +1,11 @@
 package com.graphite.competitionplanner.repositories
 
-import com.graphite.competitionplanner.Tables
 import com.graphite.competitionplanner.Tables.*
-import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.tables.Competition
-import com.graphite.competitionplanner.tables.CompetitionCategory
 import com.graphite.competitionplanner.tables.PlayerRegistration.PLAYER_REGISTRATION
-import com.graphite.competitionplanner.tables.Category
 import com.graphite.competitionplanner.tables.Registration.REGISTRATION
 import com.graphite.competitionplanner.tables.records.*
 import org.jooq.DSLContext
-import org.jooq.Record
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
