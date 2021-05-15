@@ -24,11 +24,12 @@ class ClubApi(
         return ClubSpec(updatedDto)
     }
 
-    @GetMapping("/{clubName}")
-    fun findByName(@PathVariable clubName: String): ClubSpec {
-        val dto = clubService.findByName(clubName)
-        return ClubSpec(dto)
-    }
+    // TODO: These two GetMappings (clubname, and clubId) are ambiguous. Server does not know how to route requests
+//    @GetMapping("/{clubName}")
+//    fun findByName(@PathVariable clubName: String): ClubSpec {
+//        val dto = clubService.findByName(clubName)
+//        return ClubSpec(dto)
+//    }
 
     @GetMapping("/{clubId}")
     fun findById(@PathVariable clubId: Int): ClubSpec {

@@ -12,7 +12,9 @@ class CreateClub(
 
     fun execute(dto: ClubDTO): ClubDTO {
         Club(dto) // Validating
-        if (!clubRepository.doesClubExist(dto.name)) {
+
+        val nameIsAvailable = clubRepository.getAll().none { it.name == dto.name }
+        if (nameIsAvailable) {
             return clubRepository.store(dto)
         }
         return dto;

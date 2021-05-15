@@ -10,10 +10,10 @@ class FindClub(
 ) {
 
     fun byName(name: String): ClubDTO {
-        return clubRepository.findClubByName(name)
+        return clubRepository.findByName(name)
     }
 
     fun byId(id: Int): ClubDTO {
-        return clubRepository.findClubById(id)
+        return clubRepository.findById(id)
     }
 }

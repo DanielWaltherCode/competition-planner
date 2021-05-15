@@ -13,14 +13,6 @@ interface IClubRepository {
     fun store(dto: ClubDTO): ClubDTO
 
     /**
-     * Check whether a club already exist with the given name
-     *
-     * @param name Club name to search for
-     * @return True if club was found, false if not.
-     */
-    fun doesClubExist(name: String): Boolean
-
-    /**
      * Find and returns the club with the given name.
      *
      * @param name Club name to search for
@@ -28,8 +20,7 @@ interface IClubRepository {
      * @throws NotFoundException When Club with given name cannot be found
      */
     @Throws(NotFoundException::class)
-    // TODO: Rename to findByName when legacy function has been removed
-    fun findClubByName(name: String): ClubDTO
+    fun findByName(name: String): ClubDTO
 
     /**
      * Find the club with the given id
@@ -39,7 +30,7 @@ interface IClubRepository {
      * @throws NotFoundException when Club with given id cannot be found
      */
     @Throws(NotFoundException::class)
-    fun findClubById(id: Int): ClubDTO
+    fun findById(id: Int): ClubDTO
 
     /**
      * Deletes the Club

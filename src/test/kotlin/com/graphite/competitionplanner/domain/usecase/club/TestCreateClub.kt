@@ -38,8 +38,9 @@ class TestCreateClub() {
         val mockedClubRepository = mock(IClubRepository::class.java)
         val create = CreateClub(mockedClubRepository)
         val dto = ClubDTO(0, "ClubA", "Address1")
+        val clubWithSameName = ClubDTO(123, dto.name, "Address2")
 
-        `when`(mockedClubRepository.doesClubExist(dto.name)).thenReturn(true)
+        `when`(mockedClubRepository.getAll()).thenReturn(listOf(clubWithSameName))
 
         create.execute(dto)
 

@@ -1,7 +1,6 @@
 package com.graphite.competitionplanner.util
 
 import com.graphite.competitionplanner.repositories.ClubRepository
-import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CategoryRepository
 import com.graphite.competitionplanner.service.competition.CompetitionService
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
@@ -27,6 +26,6 @@ class TestUtil(
     }
 
     fun getClubIdOrDefault(clubName: String): Int {
-        return clubRepository.findByName(clubName)?.id ?: 0
+        return clubRepository.findByName(clubName).id
     }
 }

@@ -28,11 +28,9 @@ class Player(
 ) : AbstractApiTest(
     port,
     testRestTemplate
-
 )
 {
     override val resource: String = "/player"
-    val baseAddress = "http://localhost:$port/player"
     lateinit var club: ClubSpec
     var playerId: Int = -1
 
@@ -57,7 +55,11 @@ class Player(
         val playerSpec = helper.anyPlayerSpecFor(club)
 
         // Act
-        val player = testRestTemplate.postForObject(baseAddress, HttpEntity(playerSpec, getAuthenticationHeaders()), PlayerDTO::class.java)
+        val player = testRestTemplate.postForObject(
+            getUrl(),
+            HttpEntity(playerSpec, getAuthenticationHeaders()),
+            PlayerDTO::class.java
+        )
         this.playerId = player.id
 
         // Assert
@@ -75,7 +77,11 @@ class Player(
         val playerSpec = helper.anyPlayerSpecFor(club)
 
         // Act
-        val player = testRestTemplate.postForObject(baseAddress, HttpEntity(playerSpec, getAuthenticationHeaders()), PlayerDTO::class.java)
+        val player = testRestTemplate.postForObject(
+            getUrl(),
+            HttpEntity(playerSpec, getAuthenticationHeaders()),
+            PlayerDTO::class.java
+        )
         this.playerId = player.id
 
         // Assert
@@ -89,11 +95,16 @@ class Player(
         // Setup
         val request = HttpEntity<String>(getAuthenticationHeaders())
         val playerSpec = helper.anyPlayerSpecFor(club)
-        val playerOnPost = testRestTemplate.postForObject(baseAddress, HttpEntity(playerSpec, getAuthenticationHeaders()), PlayerDTO::class.java)
+        val playerOnPost = testRestTemplate.postForObject(
+            getUrl(),
+            HttpEntity(playerSpec, getAuthenticationHeaders()),
+            PlayerDTO::class.java
+        )
         this.playerId = playerOnPost.id
 
         // Act
-        val playerOnGet = testRestTemplate.getForObject(baseAddress + "/${playerOnPost.id}", PlayerDTO::class.java, request)
+        val playerOnGet =
+            testRestTemplate.getForObject(getUrl() + "/${playerOnPost.id}", PlayerDTO::class.java, request)
 
         // Assert
         Assertions.assertEquals(playerOnPost.firstName, playerOnGet.firstName)

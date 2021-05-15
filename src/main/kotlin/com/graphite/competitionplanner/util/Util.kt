@@ -10,7 +10,7 @@ val env: Environment
 ) {
 
     fun getClubIdOrDefault(clubName: String): Int {
-        return clubRepository.findByName(clubName)?.id ?: 0
+        return clubRepository.findByName(clubName).id
     }
 
     fun getTokenSecret(): String {

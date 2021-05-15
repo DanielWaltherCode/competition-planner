@@ -28,34 +28,6 @@ class TestClubRepository(
     }
 
     @Test
-    fun shouldReturnTrueIfClubWithGivenNameExist() {
-        // Setup
-        val dto = ClubDTO(0, "Luleå IK", "Stormarvägen 123")
-        val savedDto = clubRepository.store(dto)
-
-        // Act
-        val exist = clubRepository.doesClubExist(dto.name)
-
-        // Assert
-        Assertions.assertTrue(exist)
-
-        // Clean up
-        clubRepository.delete(savedDto)
-    }
-
-    @Test
-    fun shouldReturnFalseIfClubWithGivenNameDoesNotExist() {
-        // Setup
-        val dto = ClubDTO(0, "Luleå IK", "Stormarvägen 123")
-
-        // Act
-        val exist = clubRepository.doesClubExist(dto.name)
-
-        // Assert
-        Assertions.assertFalse(exist)
-    }
-
-    @Test
     fun shouldThrowNotFoundExceptionWhenDeletingClubThatDoesNotExist() {
         // Setup
         val dto = ClubDTO(10, "", "")
@@ -90,13 +62,13 @@ class TestClubRepository(
     @Test
     fun shouldThrowNotFoundExceptionWhenNotFindingClubWithGivenName() {
         // Act & Assert
-        Assertions.assertThrows(NotFoundException::class.java) { clubRepository.findClubByName("NameThatDoesNotExist") }
+        Assertions.assertThrows(NotFoundException::class.java) { clubRepository.findByName("NameThatDoesNotExist") }
     }
 
     @Test
     fun shouldThrowNotFoundExceptionWhenNotFindingClubWithGivenId() {
         // Act & Assert
-        Assertions.assertThrows(NotFoundException::class.java) { clubRepository.findClubById(-19) }
+        Assertions.assertThrows(NotFoundException::class.java) { clubRepository.findById(-19) }
     }
 
     @Test
@@ -106,7 +78,7 @@ class TestClubRepository(
         val saved = clubRepository.store(dto)
 
         // Act
-        val found = clubRepository.findClubByName(dto.name)
+        val found = clubRepository.findByName(dto.name)
 
         // Assert
         Assertions.assertEquals(saved, found)

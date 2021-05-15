@@ -34,4 +34,24 @@ class TestPlayerRepository(
 
         playerRepository.deletePlayer(player.id)
     }
+
+    @Test
+    fun shouldGetCorrectNumberOfPlayersPerClub() {
+        // Setup
+        val players = listOf<PlayerDTO>(
+            PlayerDTO(0, "Lasse", "Nilsson", club, LocalDate.now()),
+            PlayerDTO(0, "Nils", "Nilsson", club, LocalDate.now()),
+            PlayerDTO(0, "Simon", "Nilsson", club, LocalDate.now())
+        )
+
+        val storedPlayers = players.map { playerRepository.store(it) }
+
+        // Act
+        val playersInClub = playerRepository.playersInClub(club)
+
+        Assertions.assertEquals(players.size, playersInClub.size)
+
+        // Clean up
+        storedPlayers.map { playerRepository.deletePlayer(it.id) }
+    }
 }

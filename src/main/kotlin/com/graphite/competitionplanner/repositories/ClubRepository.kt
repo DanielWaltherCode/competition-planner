@@ -10,12 +10,7 @@ import org.springframework.stereotype.Repository
 @Repository
 class ClubRepository(val dslContext: DSLContext) : IClubRepository {
 
-    @Deprecated("Will be replaced with findClubByName")
-    fun findByName(name: String): ClubRecord? {
-        return dslContext.selectFrom(CLUB).where(CLUB.NAME.eq(name)).fetchOne()
-    }
-
-    @Deprecated("Will be replaced by findClubById")
+    @Deprecated("Will be replaced by findById")
     fun getById(id: Int): ClubRecord? {
         return dslContext.selectFrom(CLUB).where(CLUB.ID.eq(id)).fetchOne()
     }
@@ -33,24 +28,18 @@ class ClubRepository(val dslContext: DSLContext) : IClubRepository {
         return com.graphite.competitionplanner.domain.dto.ClubDTO(clubRecord.id, dto)
     }
 
-    // TODO: Remove this and use findClubByName
-    override fun doesClubExist(name: String): Boolean {
-        val record = dslContext.selectFrom(CLUB).where(CLUB.NAME.eq(name)).fetchOne()
-        return record != null
-    }
-
     @Throws(NotFoundException::class)
-    override fun findClubByName(name: String): com.graphite.competitionplanner.domain.dto.ClubDTO {
+    override fun findByName(name: String): com.graphite.competitionplanner.domain.dto.ClubDTO {
         val record = dslContext.selectFrom(CLUB).where(CLUB.NAME.eq(name)).fetchOne()
         if (record != null) {
             return com.graphite.competitionplanner.domain.dto.ClubDTO(record.id, record.name, record.address)
         } else {
-            throw NotFoundException("Club with name $name not found")
+            throw NotFoundException("Club with name $name not found.")
         }
     }
 
     @Throws(NotFoundException::class)
-    override fun findClubById(id: Int): com.graphite.competitionplanner.domain.dto.ClubDTO {
+    override fun findById(id: Int): com.graphite.competitionplanner.domain.dto.ClubDTO {
         val record = dslContext.selectFrom(CLUB).where(CLUB.ID.eq(id)).fetchOne()
         if (record != null) {
             return com.graphite.competitionplanner.domain.dto.ClubDTO(record.id, record.name, record.address)
@@ -65,7 +54,7 @@ class ClubRepository(val dslContext: DSLContext) : IClubRepository {
         if (deletedRows >= 1) {
             return dto
         } else {
-            throw NotFoundException("Could not delete. Club with id ${dto.id} not found")
+            throw NotFoundException("Could not delete. Club with id ${dto.id} not found.")
         }
     }
 
