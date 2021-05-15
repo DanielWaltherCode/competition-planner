@@ -1,60 +1,67 @@
 package com.graphite.competitionplanner.api
 
-import com.graphite.competitionplanner.repositories.ClubRepository
+import com.graphite.competitionplanner.domain.dto.ClubDTO
 import com.graphite.competitionplanner.service.ClubService
-import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 import javax.validation.Valid
-import kotlin.streams.toList
-
 
 @RestController
 @RequestMapping("/club")
-class ClubApi(val clubRepository: ClubRepository,
-val clubService: ClubService) {
+class ClubApi(
+    val clubService: ClubService
+) {
 
     @PostMapping
-    fun addClub(@Valid @RequestBody clubDTO: ClubDTO): ClubDTO {
-        val club = clubRepository.addClub(clubDTO)
-        return ClubDTO(club.id, club.name, club.address)
+    fun addClub(@Valid @RequestBody clubSpec: NewClubSpec): ClubSpec {
+        val dto = clubService.addClub(ClubDTO(0, clubSpec.name, clubSpec.address))
+        return ClubSpec(dto)
     }
 
     @PutMapping
-    fun updateClub(@Valid @RequestBody clubDTO: ClubDTO): ClubDTO {
-        val club = clubRepository.updateClub(clubDTO)
-        return ClubDTO(club.id, club.name, club.address)
+    fun updateClub(@Valid @RequestBody clubSpec: ClubSpec): ClubSpec {
+        val dtoUpdate = ClubDTO(clubSpec.id, clubSpec.name, clubSpec.address)
+        val updatedDto = clubService.updateClub(dtoUpdate)
+        return ClubSpec(updatedDto)
     }
 
-    @GetMapping("/{clubName}")
-    fun findByName(@PathVariable clubName: String): ClubDTO {
-        return clubService.findByName(clubName)
-    }
+    // TODO: These two GetMappings (clubname, and clubId) are ambiguous. Server does not know how to route requests
+//    @GetMapping("/{clubName}")
+//    fun findByName(@PathVariable clubName: String): ClubSpec {
+//        val dto = clubService.findByName(clubName)
+//        return ClubSpec(dto)
+//    }
 
     @GetMapping("/{clubId}")
-    fun findById(@PathVariable clubId: Int): ClubDTO {
-        return clubService.findById(clubId)
+    fun findById(@PathVariable clubId: Int): ClubSpec {
+        val dto = clubService.findById(clubId)
+        return ClubSpec(dto)
     }
 
     @GetMapping
-    fun getAll(): List<ClubDTO> {
-        val clubs = clubRepository.getAll()
-        return clubs.stream().map { c -> ClubDTO(c.id, c.name, c.address) }.toList()
+    fun getAll(): List<ClubSpec> {
+        return clubService.getAll().map { ClubSpec(it) }
     }
 
     @DeleteMapping("/{clubId}")
     fun deleteClub(@PathVariable clubId: Int): Boolean {
-        return clubRepository.deleteClub(clubId)
+        return clubService.delete(clubId)
     }
 }
 
-data class ClubDTO(
-        val id: Int? = null,
-        val name: String,
-        val address: String
+data class NewClubSpec(
+    val name: String,
+    val address: String
 )
 
+data class ClubSpec(
+    val id: Int,
+    val name: String,
+    val address: String
+) {
+    constructor(dto: ClubDTO) : this(dto.id, dto.name, dto.address)
+}
+
 data class ClubNoAddressDTO(
-        val id: Int,
-        val name: String?
+    val id: Int,
+    val name: String?
 )

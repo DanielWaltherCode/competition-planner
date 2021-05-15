@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.service
 
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.api.PlayerSpec
+import com.graphite.competitionplanner.domain.usecase.CreatePlayer
 import com.graphite.competitionplanner.repositories.ClubRepository
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.tables.Club.CLUB
@@ -14,13 +15,17 @@ import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
 
 @Service
-class PlayerService(val playerRepository: PlayerRepository, val clubRepository: ClubRepository) {
+class PlayerService(
+    val playerRepository: PlayerRepository,
+    val clubRepository: ClubRepository,
+    val createPlayer: CreatePlayer
+) {
 
     fun getPlayersByClubId(clubId: Int): List<PlayerDTO> {
         val records = playerRepository.getPlayersByClub(clubId)
         val playerDTOs = mutableListOf<PlayerDTO>()
 
-        for(record in records) {
+        for (record in records) {
             val player = record.into(PLAYER)
             val club = record.into(CLUB)
             playerDTOs.add(recordsToDTO(player, club))

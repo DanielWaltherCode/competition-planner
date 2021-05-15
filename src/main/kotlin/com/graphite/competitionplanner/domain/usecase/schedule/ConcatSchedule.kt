@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.domain.usecase
+package com.graphite.competitionplanner.domain.usecase.schedule
 
 import com.graphite.competitionplanner.domain.dto.ScheduleDTO
 import com.graphite.competitionplanner.domain.entity.Schedule

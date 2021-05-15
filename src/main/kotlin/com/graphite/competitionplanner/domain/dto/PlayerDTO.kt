@@ -17,4 +17,12 @@ data class PlayerDTO(
         ClubDTO(player.club),
         player.dateOfBirth
     )
+
+    constructor(id: Int, dto: PlayerDTO) : this(
+        id,
+        dto.firstName,
+        dto.lastName,
+        dto.club,
+        dto.dateOfBirth
+    )
 }

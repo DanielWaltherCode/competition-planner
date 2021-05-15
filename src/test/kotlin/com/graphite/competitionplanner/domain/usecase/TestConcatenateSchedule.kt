@@ -1,6 +1,8 @@
 package com.graphite.competitionplanner.domain.usecase
 
 import com.graphite.competitionplanner.domain.DataGenerator
+import com.graphite.competitionplanner.domain.usecase.schedule.ConcatSchedule
+import com.graphite.competitionplanner.domain.usecase.schedule.CreateSchedule
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
