@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.domain.entity
 
-import com.graphite.competitionplanner.domain.DataGenerator
+import com.graphite.competitionplanner.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

@@ -1,9 +1,8 @@
-package com.graphite.competitionplanner.domain.usecase
+package com.graphite.competitionplanner.domain.usecase.schedule
 
-import com.graphite.competitionplanner.domain.DataGenerator
+import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.domain.dto.MatchDTO
 import com.graphite.competitionplanner.domain.dto.ScheduleSettingsDTO
-import com.graphite.competitionplanner.domain.usecase.schedule.CreateSchedule
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -174,10 +173,10 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
 
     @Test
     fun shouldThrowIllegalArgumentExceptionWhenThereIsAnInvalidMatch() {
-        val p5 = dataGenerator.newPlayerDTO()
-        val p6 = dataGenerator.newPlayerDTO()
-        val p7 = dataGenerator.newPlayerDTO()
-        val p8 = dataGenerator.newPlayerDTO()
+        val p5 = dataGenerator.newPlayerEntityDTO()
+        val p6 = dataGenerator.newPlayerEntityDTO()
+        val p7 = dataGenerator.newPlayerEntityDTO()
+        val p8 = dataGenerator.newPlayerEntityDTO()
         val matches = listOf(
             MatchDTO(
                 7, null, null, 1, "POOL",

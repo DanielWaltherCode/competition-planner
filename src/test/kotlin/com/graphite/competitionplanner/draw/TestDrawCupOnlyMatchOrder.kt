@@ -47,9 +47,9 @@ class TestDrawCupOnlyMatchOrder(
         competitionCategory = addCompetitionCategoryTo(competition, "Flickor 12")
         setModeToCupOnlyFor(competitionCategory)
 
-        for (i in 1..8) {
+        for ((index, i) in listOf("A", "B", "C", "D", "F", "G", "H", "I").withIndex()) {
             val player = addPlayer("Player$i", club)
-            setSingleRankOn(player, 100 - i*10)
+            setSingleRankOn(player, 100 - index * 10)
             registerPlayerTo(player, competitionCategory)
             players.add(player)
         }

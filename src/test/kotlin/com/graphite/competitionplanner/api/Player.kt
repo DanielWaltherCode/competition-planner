@@ -28,8 +28,7 @@ class Player(
 ) : AbstractApiTest(
     port,
     testRestTemplate
-)
-{
+) {
     override val resource: String = "/player"
     lateinit var club: ClubSpec
     var playerId: Int = -1
@@ -45,7 +44,7 @@ class Player(
     }
 
     // Clean up after successful post requests
-    private fun cleanUp(){
+    private fun cleanUp() {
         playerService.deletePlayer(playerId)
     }
 
@@ -72,7 +71,7 @@ class Player(
     }
 
     @Test
-    fun createdPlayerShouldHaveAnId(){
+    fun createdPlayerShouldHaveAnId() {
         // Setup
         val playerSpec = helper.anyPlayerSpecFor(club)
 
@@ -91,7 +90,7 @@ class Player(
 
     @Test
     @Disabled("Couldn't figure out why deserialization doesn't work now in get method")
-    fun shouldReturnCorrectPlayer(){
+    fun shouldReturnCorrectPlayer() {
         // Setup
         val request = HttpEntity<String>(getAuthenticationHeaders())
         val playerSpec = helper.anyPlayerSpecFor(club)
@@ -117,7 +116,7 @@ class Player(
     }
 
     @Test
-    fun shouldReturnNotFoundWhenClubId(){
+    fun shouldGetHttpNotFoundWhenWhenClubDoesNotExist() {
         // Setup
         val clubThatDoesNotExist = ClubSpec(
             -1,
@@ -136,7 +135,7 @@ class Player(
     }
 
     @Test
-    fun postingAPlayerSpecWithMissingFieldsShouldReturnHttpBadRequest(){
+    fun postingAPlayerSpecWithMissingFieldsShouldReturnHttpBadRequest() {
         // Setup
         val badPlayerSpec = PlayerSpecWithMissingFields(
             "Laban"
@@ -151,7 +150,7 @@ class Player(
     }
 
     @Test
-    fun postingAPlayerSpecWithExtraFieldsShouldReturnOk(){
+    fun postingAPlayerSpecWithExtraFieldsShouldReturnOk() {
         // Setup
         val badPlayerSpec = PlayerSpecWithExtraFields(
             "Laban",
@@ -173,9 +172,34 @@ class Player(
         Assertions.assertEquals(HttpStatus.OK, response.statusCode)
     }
 
+    @Test
+    fun shouldGetHttpNotFoundWhenUpdatingPlayerThatDoesNotExist() {
+        val request = HttpEntity(
+            PlayerSpec("Agust", "Svansson", ClubNoAddressDTO(club.id, club.name), LocalDate.of(1998, 1, 2)),
+            getAuthenticationHeaders()
+        )
+
+        val response = testRestTemplate.exchange<Any>(getUrl() + "/${-1}", HttpMethod.PUT, request)
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
+    }
+
+    @Test
+    fun shouldGetHttpNotFoundWhenDeletingPlayerThatDoesNotExist() {
+        val request = HttpEntity(Boolean, getAuthenticationHeaders())
+        val response = testRestTemplate.exchange<Any>(getUrl() + "/${-3}", HttpMethod.DELETE, request)
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
+    }
+
+    @Test
+    fun shouldGetHttpNotFoundWhenNotFindingPlayer() {
+        val request = HttpEntity(PlayerDTO::class.java, getAuthenticationHeaders())
+        val response = testRestTemplate.exchange<Any>(getUrl() + "/${-4}", HttpMethod.GET, request)
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
+    }
+
 }
 
-data class PlayerSpecWithMissingFields (
+data class PlayerSpecWithMissingFields(
     val lastName: String
 )
 

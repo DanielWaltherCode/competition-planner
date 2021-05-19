@@ -1,9 +1,6 @@
-package com.graphite.competitionplanner.domain
+package com.graphite.competitionplanner
 
-import com.graphite.competitionplanner.domain.dto.ClubDTO
-import com.graphite.competitionplanner.domain.dto.MatchDTO
-import com.graphite.competitionplanner.domain.dto.PlayerDTO
-import com.graphite.competitionplanner.domain.dto.ScheduleSettingsDTO
+import com.graphite.competitionplanner.domain.dto.*
 import com.graphite.competitionplanner.domain.entity.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -16,6 +13,10 @@ class DataGenerator {
 
     internal fun newClub(): Club {
         return Club(clubId, "Lule IK", "Sjögatan")
+    }
+
+    fun newClubDTO(): ClubDTO {
+        return ClubDTO(newClub())
     }
 
     internal fun newPlayer(): Player {
@@ -40,12 +41,26 @@ class DataGenerator {
         )
     }
 
+    fun newPlayerEntityDTO(): PlayerEntityDTO {
+        return PlayerEntityDTO(newPlayer())
+    }
+
     fun newPlayerDTO(): PlayerDTO {
-        return PlayerDTO(newPlayer())
+        val player = newPlayer()
+        return PlayerDTO(player.id, player.firstName, player.lastName, player.club.id, player.dateOfBirth)
+    }
+
+    fun newNewPlayerDTO(): NewPlayerDTO {
+        val player = newPlayer()
+        return NewPlayerDTO(player.firstName, player.lastName, player.club.id, player.dateOfBirth)
     }
 
     fun newScheduleSettings(numberOfTables: Int): ScheduleSettingsDTO {
         return ScheduleSettingsDTO(15, numberOfTables, LocalDateTime.now())
+    }
+
+    fun newInvalidPlayerDTO(id: Int = 0): PlayerDTO {
+        return PlayerDTO(id, "Lisa12", "Svansson", newClub().id, LocalDate.of(2001, 10, 1))
     }
 
     /**
@@ -72,10 +87,10 @@ class DataGenerator {
     private val birthDate = LocalDate.of(1999, 4, 3)
     private val club = ClubDTO(33, "Luleå", "Midsommarvägen 13")
 
-    private val p1 = PlayerDTO(1, "Jan", "Olsson", club, birthDate)
-    private val p2 = PlayerDTO(2, "Gill", "Fiskarsson", club, birthDate)
-    private val p3 = PlayerDTO(3, "Sven", "Svensson", club, birthDate)
-    private val p4 = PlayerDTO(4, "Sture", "Sundberg", club, birthDate)
+    private val p1 = PlayerEntityDTO(1, "Jan", "Olsson", club, birthDate)
+    private val p2 = PlayerEntityDTO(2, "Gill", "Fiskarsson", club, birthDate)
+    private val p3 = PlayerEntityDTO(3, "Sven", "Svensson", club, birthDate)
+    private val p4 = PlayerEntityDTO(4, "Sture", "Sundberg", club, birthDate)
 
     private val pool1 = listOf(
         MatchDTO(
@@ -104,10 +119,10 @@ class DataGenerator {
         )
     )
 
-    private val p5 = PlayerDTO(5, "Elin", "Malsson", club, birthDate)
-    private val p6 = PlayerDTO(6, "Ewa", "Svensson", club, birthDate)
-    private val p7 = PlayerDTO(7, "Katarina", "Dalhborg", club, birthDate)
-    private val p8 = PlayerDTO(8, "Lena", "Sinè", club, birthDate)
+    private val p5 = PlayerEntityDTO(5, "Elin", "Malsson", club, birthDate)
+    private val p6 = PlayerEntityDTO(6, "Ewa", "Svensson", club, birthDate)
+    private val p7 = PlayerEntityDTO(7, "Katarina", "Dalhborg", club, birthDate)
+    private val p8 = PlayerEntityDTO(8, "Lena", "Sinè", club, birthDate)
 
     private val pool2 = listOf(
         MatchDTO(
@@ -136,9 +151,9 @@ class DataGenerator {
         )
     )
 
-    private val p9 = PlayerDTO(9, "Patrik", "Larsson", club, birthDate)
-    private val p10 = PlayerDTO(10, "Enok", "Karlsson", club, birthDate)
-    private val p11 = PlayerDTO(11, "Tintin", "Snäll", club, birthDate)
+    private val p9 = PlayerEntityDTO(9, "Patrik", "Larsson", club, birthDate)
+    private val p10 = PlayerEntityDTO(10, "Enok", "Karlsson", club, birthDate)
+    private val p11 = PlayerEntityDTO(11, "Tintin", "Snäll", club, birthDate)
 
     private val pool3 = listOf(
         MatchDTO(
