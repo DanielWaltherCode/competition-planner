@@ -21,7 +21,7 @@ class TestPlayerService(@Autowired val playerRepository: PlayerRepository,
         val originalSize = playerRepository.getPlayersByClub(clubId).size
         val player = playerRepository.addPlayer(
             PlayerSpec("Anders", "Hansson",
-                ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
+                clubId, LocalDate.now().minusMonths(170)
         )
         )
         Assertions.assertNotNull(player.id)
@@ -35,16 +35,16 @@ class TestPlayerService(@Autowired val playerRepository: PlayerRepository,
 
         playerRepository.addPlayer(PlayerSpec(
                 "Aanders", "Hansson",
-                ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
+                clubId,  LocalDate.now().minusMonths(170)
         ))
         playerRepository.addPlayer(PlayerSpec(
                 "Hasse", "Andersson",
-                ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
+                clubId,  LocalDate.now().minusMonths(170)
         ))
         playerRepository.addPlayer(
             PlayerSpec(
                 "Aaa", "Haf",
-                ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
+                clubId,  LocalDate.now().minusMonths(170)
         )
         )
         val playersWithTwoAs = playerRepository.findPlayersByPartOfName("aa")

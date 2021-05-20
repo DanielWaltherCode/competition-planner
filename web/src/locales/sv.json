@@ -80,7 +80,18 @@
     "name": "Namn",
     "club": "Klubb",
     "categories": "Klasser",
-    "sortBy": "Sortera efter"
+    "sortBy": "Sortera efter",
+    "add": {
+      "heading": "Registrera en spelare manuellt i tävlingen",
+      "helperText": "Här kan du lägga till en spelare manuellt om denne inte har anmälts av sin klubb online sedan tidigare. Det bästa är att söka fram spelaren så att vi kan autofylla uppgifterna. Om spelaren inte finns i vår databas kan du fylla i uppgifterna manuellt men då finns inga uppgifter om rankingpoäng och seedning",
+      "search": "Sök på en spelare att lägga till",
+      "firstName": "Förnamn",
+      "lastName": "Efternamn",
+      "club": "Klubb",
+      "dateOfBirth": "Födelsedatum",
+      "buttonText": "Lägg till spelare",
+      "clear": "Rensa spelare"
+    }
   },
   "draw": {
     "sidebar": {

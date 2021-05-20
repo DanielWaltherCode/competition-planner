@@ -1,10 +1,7 @@
 package com.graphite.competitionplanner.draw
 
 import com.graphite.competitionplanner.api.*
-import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
-import com.graphite.competitionplanner.api.competition.CompetitionApi
-import com.graphite.competitionplanner.api.competition.CompetitionCategoryApi
-import com.graphite.competitionplanner.api.competition.CompetitionSpec
+import com.graphite.competitionplanner.api.competition.*
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.service.*
@@ -85,8 +82,8 @@ class TestDrawCupOnlyMatchOrder(
 
     private fun registerPlayerTo(player: PlayerDTO, competitionCategory: CompetitionCategoryDTO) {
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null, player.id,
+            RegistrationSinglesSpec(
+                player.id,
                 competitionCategory.competitionCategoryId
             )
         )
@@ -110,10 +107,7 @@ class TestDrawCupOnlyMatchOrder(
             PlayerSpec(
                 firstName,
                 "Testsson",
-                ClubNoAddressDTO(
-                    club.id,
-                    club.name
-                ),
+                    club.id!!,
                 LocalDate.of(2000, 3, 3)
             )
         )

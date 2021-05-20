@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.service
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.api.PlayerSpec
 import com.graphite.competitionplanner.domain.usecase.CreatePlayer
@@ -34,8 +35,8 @@ class PlayerService(
     }
 
     fun addPlayer(playerSpec: PlayerSpec): PlayerDTO {
-        val club = clubRepository.getById(playerSpec.club.id)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No club with id ${playerSpec.club.id} found")
+        val club = clubRepository.getById(playerSpec.clubId)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No club with id ${playerSpec.clubId} found")
         val player = playerRepository.addPlayer(playerSpec)
         return recordsToDTO(player, club)
     }
@@ -86,6 +87,7 @@ data class PlayerDTO(
         val firstName: String,
         val lastName: String,
         val club: ClubNoAddressDTO,
+        @JsonFormat(pattern="yyyy-MM-dd")
         val dateOfBirth: LocalDate
 )
 
