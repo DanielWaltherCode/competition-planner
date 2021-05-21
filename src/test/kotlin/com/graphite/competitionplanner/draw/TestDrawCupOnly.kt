@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.draw
 
 import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
 import com.graphite.competitionplanner.api.competition.DrawDTO
+import com.graphite.competitionplanner.api.competition.RegistrationSinglesSpec
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionDrawRepository
@@ -84,7 +85,7 @@ class TestDrawCupOnly(
 
         val players = allPlayers.subList(0, numberOfPlayers)
         for (player in players) {
-            registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, player.id, competitionCategoryId))
+            registrationService.registerPlayerSingles(RegistrationSinglesSpec( player.id, competitionCategoryId))
         }
 
         // Act

@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.registration
 
+import com.graphite.competitionplanner.api.competition.RegistrationSinglesSpec
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.service.competition.CompetitionService
@@ -46,7 +47,7 @@ class TestRegistrationService(@Autowired val competitionService: CompetitionServ
         val competitions = competitionService.getByClubId(umeId)
         val categoriesInCompetitionOne = competitionCategoryRepository.getCategoriesInCompetition(competitions[0].id?: 0)
         // Register in same competition different category
-        registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, idToRegister, categoriesInCompetitionOne[2].categoryId))
+        registrationService.registerPlayerSingles(RegistrationSinglesSpec( idToRegister, categoriesInCompetitionOne[2].categoryId))
 
         val newRegistrations = registrationService.getRegistrationByPlayerId(idToRegister)
         val newNumberOfRegistrations = newRegistrations.competitionsAndCategories.size

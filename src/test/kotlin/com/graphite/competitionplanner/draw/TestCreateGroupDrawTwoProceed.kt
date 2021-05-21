@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.draw
 
+import com.graphite.competitionplanner.api.competition.RegistrationSinglesSpec
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionDrawRepository
@@ -59,7 +60,7 @@ class TestCreateGroupDrawTwoProceed(
         // Get 22 players
         val players = allPlayers.subList(0, 22)
         for (player in players) {
-            registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, player.id, competitionCategoryId))
+            registrationService.registerPlayerSingles(RegistrationSinglesSpec( player.id, competitionCategoryId))
         }
         val draw = drawService.createDraw(competitionCategoryId)
         // With 22 players there should be six groups, 6 matches in the first 4, 3 in the two last ones
@@ -93,7 +94,7 @@ class TestCreateGroupDrawTwoProceed(
         // Get 20 players
         val players = allPlayers.subList(0, 20)
         for (player in players) {
-            registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, player.id, competitionCategoryId))
+            registrationService.registerPlayerSingles(RegistrationSinglesSpec( player.id, competitionCategoryId))
         }
         val draw = drawService.createDraw(competitionCategoryId)
 
@@ -125,7 +126,7 @@ class TestCreateGroupDrawTwoProceed(
         // Get 9 players
         val players = allPlayers.subList(0, 9)
         for (player in players) {
-            registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, player.id, competitionCategoryId))
+            registrationService.registerPlayerSingles(RegistrationSinglesSpec( player.id, competitionCategoryId))
         }
         val draw = drawService.createDraw(competitionCategoryId)
 
@@ -153,7 +154,7 @@ class TestCreateGroupDrawTwoProceed(
 
         val players = allPlayers.subList(0, 9)
         for (player in players) {
-            registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, player.id, competitionCategoryId))
+            registrationService.registerPlayerSingles(RegistrationSinglesSpec( player.id, competitionCategoryId))
         }
         drawService.createDraw(competitionCategoryId)
 
@@ -169,7 +170,7 @@ class TestCreateGroupDrawTwoProceed(
 
         val players = allPlayers.subList(0, 9)
         for (player in players) {
-            registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, player.id, competitionCategoryId))
+            registrationService.registerPlayerSingles(RegistrationSinglesSpec( player.id, competitionCategoryId))
         }
         drawService.createDraw(competitionCategoryId)
 

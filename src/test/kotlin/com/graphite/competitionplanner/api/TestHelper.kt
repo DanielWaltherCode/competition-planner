@@ -38,12 +38,8 @@ class TestHelper(
         return PlayerSpec(
             "Laban",
             "Nilsson",
-            ClubNoAddressDTO(
-                club.id,
-                club.name
-            ),
+                club.id!!,
             LocalDate.now().minusMonths(170)
         )
-
     }
 }

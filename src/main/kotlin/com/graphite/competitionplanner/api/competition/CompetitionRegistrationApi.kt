@@ -29,8 +29,8 @@ class CompetitionRegistrationApi(
     }
 
     @PostMapping("/singles")
-    fun registerPlayerSingles(registrationSinglesDTO: RegistrationSinglesDTO): Boolean {
-        return registrationService.registerPlayerSingles(registrationSinglesDTO)
+    fun registerPlayerSingles(@RequestBody registrationSinglesSpec: RegistrationSinglesSpec): Boolean {
+        return registrationService.registerPlayerSingles(registrationSinglesSpec)
     }
 
     @PostMapping("/doubles")
@@ -43,3 +43,14 @@ class CompetitionRegistrationApi(
         return registrationService.unregister(registrationId)
     }
 }
+
+data class RegistrationSinglesSpec(
+    val playerId: Int,
+    val competitionCategoryId: Int
+)
+
+data class RegistrationDoublesSpec(
+    val firstPlayerId: Int,
+    val secondPlayerId: Int,
+    val competitionCategoryId: Int
+)

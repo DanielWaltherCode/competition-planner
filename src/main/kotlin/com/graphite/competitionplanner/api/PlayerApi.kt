@@ -56,6 +56,6 @@ class PlayerRegistrationApi(val registrationService: RegistrationService) {
 data class PlayerSpec(
     val firstName: String,
     val lastName: String,
-    val club: ClubNoAddressDTO,
+    val clubId: Int,
     val dateOfBirth: LocalDate
 )

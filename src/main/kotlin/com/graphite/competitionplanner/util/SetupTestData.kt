@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.util
 import com.graphite.competitionplanner.api.*
 import com.graphite.competitionplanner.api.competition.CompetitionSpec
 import com.graphite.competitionplanner.domain.dto.ClubDTO
+import com.graphite.competitionplanner.api.competition.RegistrationSinglesSpec
 import com.graphite.competitionplanner.repositories.*
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
@@ -134,7 +135,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "BYE",
                 lastName = "",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Övriga"), null),
+                clubId = util.getClubIdOrDefault("Övriga"),
                 dateOfBirth = LocalDate.now().minus(18, ChronoUnit.YEARS)
             )
         )
@@ -147,7 +148,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Oscar",
                 lastName = "Hansson",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Lugi"), null),
+                clubId = util.getClubIdOrDefault("Lugi"),
                 dateOfBirth = LocalDate.now().minus(18, ChronoUnit.YEARS)
             )
         )
@@ -156,7 +157,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Nils",
                 lastName = "Hansson",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Lugi"), null),
+                clubId = util.getClubIdOrDefault("Lugi"),
                 dateOfBirth = LocalDate.now().minus(14, ChronoUnit.YEARS)
             )
         )
@@ -164,7 +165,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Lennart",
                 lastName = "Eriksson",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Umeå IK"), null),
+                clubId = util.getClubIdOrDefault("Umeå IK"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -172,7 +173,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Kajsa",
                 lastName = "Säfsten",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Övriga"), null),
+                clubId = util.getClubIdOrDefault("Övriga"),
                 dateOfBirth = LocalDate.now().minus(65, ChronoUnit.YEARS)
             )
         )
@@ -180,7 +181,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Lennart",
                 lastName = "Eriksson",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Lugi"), null),
+                clubId = util.getClubIdOrDefault("Lugi"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -188,7 +189,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Lennart",
                 lastName = "Eriksson",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Malmö"), null),
+                clubId = util.getClubIdOrDefault("Malmö"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -196,7 +197,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Lennart",
                 lastName = "Eriksson",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Landskrona"), null),
+                clubId = util.getClubIdOrDefault("Landskrona"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -204,7 +205,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Mona",
                 lastName = "Nilsson",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Umeå IK"), null),
+                clubId = util.getClubIdOrDefault("Umeå IK"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -212,7 +213,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Anders",
                 lastName = "And",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Malmö"), null),
+                clubId = util.getClubIdOrDefault("Malmö"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -220,7 +221,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Lukas",
                 lastName = "Eriksson",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Lugi"), null),
+                clubId = util.getClubIdOrDefault("Lugi"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -228,7 +229,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Nina",
                 lastName = "Persson",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Umeå IK"), null),
+                clubId = util.getClubIdOrDefault("Umeå IK"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -236,7 +237,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Ola",
                 lastName = "Salo",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Landskrona"), null),
+                clubId = util.getClubIdOrDefault("Landskrona"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -244,7 +245,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Ola",
                 lastName = "Larsson",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Lugi"), null),
+                clubId = util.getClubIdOrDefault("Lugi"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -252,7 +253,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Anna",
                 lastName = "Lindh",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Lugi"), null),
+                clubId = util.getClubIdOrDefault("Lugi"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -260,7 +261,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Oscar",
                 lastName = "Lilja",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Landskrona"), null),
+                clubId = util.getClubIdOrDefault("Landskrona"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -268,7 +269,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Sam",
                 lastName = "Axén",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Umeå IK"), null),
+                clubId = util.getClubIdOrDefault("Umeå IK"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -276,7 +277,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Nils",
                 lastName = "Sundling",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Landskrona"), null),
+                clubId = util.getClubIdOrDefault("Landskrona"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -284,7 +285,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Amanda",
                 lastName = "Skiffer",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Lugi"), null),
+                clubId = util.getClubIdOrDefault("Lugi"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -292,7 +293,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Eskil",
                 lastName = "Erlandsson",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Lugi"), null),
+                clubId = util.getClubIdOrDefault("Lugi"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -300,7 +301,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Erna",
                 lastName = "Solberg",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Umeå IK"), null),
+                clubId = util.getClubIdOrDefault("Umeå IK"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -308,7 +309,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Dwight",
                 lastName = "Johnson",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Landskrona"), null),
+                clubId = util.getClubIdOrDefault("Landskrona"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -316,7 +317,7 @@ class EventListener(
             PlayerSpec(
                 firstName = "Simon",
                 lastName = "Knutsson",
-                club = ClubNoAddressDTO(util.getClubIdOrDefault("Umeå IK"), null),
+                clubId = util.getClubIdOrDefault("Umeå IK"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
@@ -409,120 +410,103 @@ class EventListener(
 
         // Have "Herrar 1" in Lugi as main competition category to play around with
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null,
+            RegistrationSinglesSpec(
                 lugiPlayers[0].id ?: 0,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null,
+            RegistrationSinglesSpec(
                 lugiPlayers[0].id ?: 0,
                 competitionCategories[1].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null,
+            RegistrationSinglesSpec(
                 lugiPlayers[1].id ?: 0,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null,
+            RegistrationSinglesSpec(
                 umePlayers[0].id ?: 0,
                 competitionCategories[1].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null,
+            RegistrationSinglesSpec(
                 otherPlayers[0].id ?: 0,
                 competitionCategories[1].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null,
+            RegistrationSinglesSpec(
                 lugiPlayers[2].id ?: 0,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null,
+            RegistrationSinglesSpec(
                 lugiPlayers[3].id ?: 0,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null,
+            RegistrationSinglesSpec(
                 lugiPlayers[4].id ?: 0,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null,
+            RegistrationSinglesSpec(
                 lugiPlayers[5].id ?: 0,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null,
+            RegistrationSinglesSpec(
                 lugiPlayers[6].id ?: 0,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null,
+            RegistrationSinglesSpec(
                 lugiPlayers[7].id ?: 0,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null,
+            RegistrationSinglesSpec(
                 umePlayers[0].id ?: 0,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null,
+            RegistrationSinglesSpec(
                 umePlayers[1].id ?: 0,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null,
+            RegistrationSinglesSpec(
                 umePlayers[2].id ?: 0,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null,
+            RegistrationSinglesSpec(
                 umePlayers[3].id ?: 0,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null,
+            RegistrationSinglesSpec(
                 umePlayers[4].id ?: 0,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
-            RegistrationSinglesDTO(
-                null,
+            RegistrationSinglesSpec(
                 umePlayers[5].id ?: 0,
                 competitionCategories[0].competitionCategoryId
             )

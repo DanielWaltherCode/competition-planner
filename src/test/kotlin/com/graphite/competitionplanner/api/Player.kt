@@ -66,8 +66,7 @@ class Player(
         Assertions.assertEquals(playerSpec.firstName, player.firstName)
         Assertions.assertEquals(playerSpec.lastName, player.lastName)
         Assertions.assertEquals(playerSpec.dateOfBirth, player.dateOfBirth)
-        Assertions.assertEquals(playerSpec.club.id, player.club.id)
-        Assertions.assertEquals(playerSpec.club.name, player.club.name)
+        Assertions.assertEquals(playerSpec.clubId, player.club.id)
         cleanUp()
     }
 
@@ -157,10 +156,7 @@ class Player(
             "Laban",
             "Nilsson",
             "EXTRAFIELD",
-            ClubNoAddressDTO(
                 club.id,
-                club.name
-            ),
             LocalDate.now().minusMonths(170)
 
         )
@@ -183,6 +179,6 @@ data class PlayerSpecWithExtraFields(
     val firstName: String,
     val lastName: String,
     val brothersName: String,
-    val club: ClubNoAddressDTO,
+    val clubId: Int,
     val dateOfBirth: LocalDate
 )
