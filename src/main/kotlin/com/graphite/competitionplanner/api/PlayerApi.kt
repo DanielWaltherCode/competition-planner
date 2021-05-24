@@ -12,13 +12,12 @@ import javax.validation.Valid
 class PlayerApi(
     val playerService: PlayerService
 ) {
-
     @PostMapping
     fun addPlayer(@Valid @RequestBody playerSpec: PlayerSpec): PlayerEntityDTO {
         val newPlayerDto = NewPlayerDTO(
             playerSpec.firstName,
             playerSpec.lastName,
-            playerSpec.club.id,
+            playerSpec.clubId,
             playerSpec.dateOfBirth
         )
         return playerService.addPlayer(newPlayerDto)
@@ -30,7 +29,7 @@ class PlayerApi(
             playerId,
             playerSpec.firstName,
             playerSpec.lastName,
-            playerSpec.club.id,
+            playerSpec.clubId,
             playerSpec.dateOfBirth
         )
         return playerService.updatePlayer(playerDto)
@@ -55,7 +54,6 @@ class PlayerApi(
     fun deletePlayer(@PathVariable playerId: Int): Boolean {
         return playerService.deletePlayer(playerId)
     }
-
 }
 
 @RestController
@@ -71,6 +69,6 @@ class PlayerRegistrationApi(val registrationService: RegistrationService) {
 data class PlayerSpec(
     val firstName: String,
     val lastName: String,
-    val club: ClubNoAddressDTO,
+    val clubId: Int,
     val dateOfBirth: LocalDate
 )

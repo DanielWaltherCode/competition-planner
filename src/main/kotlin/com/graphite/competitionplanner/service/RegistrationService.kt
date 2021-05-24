@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.service
 
+import com.graphite.competitionplanner.api.competition.RegistrationSinglesSpec
 import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CategoryRepository
@@ -20,13 +21,13 @@ class RegistrationService(
     val competitionCategoryRepository: CompetitionCategoryRepository
 ) {
 
-    fun registerPlayerSingles(registrationSinglesDTO: RegistrationSinglesDTO): Boolean {
+    fun registerPlayerSingles(registrationSinglesSpec: RegistrationSinglesSpec): Boolean {
         val registration = registrationRepository.addRegistration(LocalDate.now())
-        registrationRepository.registerPlayer(registration.id, registrationSinglesDTO.playerId)
+        registrationRepository.registerPlayer(registration.id, registrationSinglesSpec.playerId)
         val playingInRecord = registrationRepository.registerInCategory(
             registration.id,
             null,
-            registrationSinglesDTO.competitionCategoryId
+            registrationSinglesSpec.competitionCategoryId
         )
         return playingInRecord.id != null
     }

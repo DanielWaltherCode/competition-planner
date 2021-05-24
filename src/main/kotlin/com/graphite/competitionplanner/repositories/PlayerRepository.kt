@@ -28,7 +28,7 @@ class PlayerRepository(
         val playerRecord = dslContext.newRecord(PLAYER)
         playerRecord.firstName = playerSpec.firstName
         playerRecord.lastName = playerSpec.lastName
-        playerRecord.clubId = playerSpec.club.id
+        playerRecord.clubId = playerSpec.clubId
         playerRecord.dateOfBirth = playerSpec.dateOfBirth
         playerRecord.store()
 
@@ -101,7 +101,7 @@ class PlayerRepository(
         playerRecord.id = id
         playerRecord.firstName = playerSpec.firstName
         playerRecord.lastName = playerSpec.lastName
-        playerRecord.clubId = playerSpec.club.id
+        playerRecord.clubId = playerSpec.clubId
         playerRecord.dateOfBirth = playerSpec.dateOfBirth
         playerRecord.store()
 

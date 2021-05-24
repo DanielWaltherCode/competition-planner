@@ -45,11 +45,11 @@ class Player(
         Assertions.assertEquals(playerSpec.firstName, player.firstName)
         Assertions.assertEquals(playerSpec.lastName, player.lastName)
         Assertions.assertEquals(playerSpec.dateOfBirth, player.dateOfBirth)
-        Assertions.assertEquals(playerSpec.club.id, player.club.id)
-        Assertions.assertEquals(playerSpec.club.name, player.club.name)
+        Assertions.assertEquals(club.id, player.club.id)
+        Assertions.assertEquals(club.name, player.club.name)
 
         // Setup update
-        val updateSpec = PlayerSpec("MyNewName", "NewLastName", club.toNoAddressDTO(), playerSpec.dateOfBirth)
+        val updateSpec = PlayerSpec("MyNewName", "NewLastName", club.id, playerSpec.dateOfBirth)
         val updateRequest = HttpEntity(updateSpec, getAuthenticationHeaders())
 
         // Act
@@ -61,8 +61,8 @@ class Player(
         Assertions.assertEquals(updateSpec.firstName, updatedPlayer!!.firstName)
         Assertions.assertEquals(updateSpec.lastName, updatedPlayer.lastName)
         Assertions.assertEquals(updateSpec.dateOfBirth, updatedPlayer.dateOfBirth)
-        Assertions.assertEquals(updateSpec.club.id, updatedPlayer.club.id)
-        Assertions.assertEquals(updateSpec.club.name, updatedPlayer.club.name)
+        Assertions.assertEquals(club.id, updatedPlayer.club.id)
+        Assertions.assertEquals(club.name, updatedPlayer.club.name)
 
         // Setup find by id
         val findByIdRequest = HttpEntity(PlayerEntityDTO::class.java, getAuthenticationHeaders())
@@ -176,7 +176,7 @@ class Player(
 
         // Setup Update request
         val updateSpec =
-            PlayerSpec(player.firstName, player.lastName, ClubNoAddressDTO(-10, "ClubA123"), player.dateOfBirth)
+            PlayerSpec(player.firstName, player.lastName, -10, player.dateOfBirth)
         val request = HttpEntity(updateSpec, getAuthenticationHeaders())
 
         // Act
@@ -214,34 +214,10 @@ class Player(
     }
 
     @Test
-    fun shouldGetHttpOkWhenPostingPlayerSpecWithExtraFields() {
-        // Setup
-        val club = clubApi.addClub(dataGenerator.newClubSpec())
-        val badPlayerSpec = PlayerSpecWithExtraFields(
-            "Laban",
-            "Nilsson",
-            "EXTRAFIELD",
-            ClubNoAddressDTO(
-                club.id,
-                club.name
-            ),
-            LocalDate.now().minusMonths(170)
-
-        )
-        val request = HttpEntity(badPlayerSpec, getAuthenticationHeaders())
-
-        //Act
-        val response = testRestTemplate.exchange<Any>("/player", HttpMethod.POST, request)
-
-        //Assert
-        Assertions.assertEquals(HttpStatus.OK, response.statusCode)
-    }
-
-    @Test
     fun shouldGetHttpBadRequestWhenPlayerSpecFailsValidation() {
         // Setup
         val club = clubApi.addClub(dataGenerator.newClubSpec())
-        val playerSpec = PlayerSpec("", "lastName", club.toNoAddressDTO(), LocalDate.now().minusYears(10))
+        val playerSpec = PlayerSpec("", "lastName", club.id, LocalDate.now().minusYears(10))
         val request = HttpEntity(playerSpec, getAuthenticationHeaders())
 
         // Act
@@ -258,12 +234,4 @@ class Player(
 
 data class PlayerSpecWithMissingFields(
     val lastName: String
-)
-
-data class PlayerSpecWithExtraFields(
-    val firstName: String,
-    val lastName: String,
-    val brothersName: String,
-    val club: ClubNoAddressDTO,
-    val dateOfBirth: LocalDate
 )

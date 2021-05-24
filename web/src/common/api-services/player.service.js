@@ -1,18 +1,12 @@
 import Axios from "axios"
-import store from "@/store/store";
 
 const RESOURCE_NAME = "/player"
-
-let competitionId = null
-if (store.getters.competition !== null) {
-    competitionId = store.getters.competition.id
-}
 
 const PlayerService = {
     addPlayer(body) {
         return Axios.post(RESOURCE_NAME, body, {withCredentials: true})
     },
-    getRegisteredPlayersInCompetition(searchParam) {
+    getRegisteredPlayersInCompetition(searchParam, competitionId) {
         return Axios.get(`/competition/${competitionId}/registration`, {
             params: {
                 searchType: searchParam
@@ -20,6 +14,14 @@ const PlayerService = {
            withCredentials: true
         })
     },
+    searchAllPlayers(partOfName) {
+        return Axios.get(`/player/name-search`, {
+            params: {
+                partOfName: partOfName
+            },
+            withCredentials: true
+        })
+    }
 }
 
 export default PlayerService

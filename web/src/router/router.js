@@ -34,7 +34,7 @@ export default new Router({
             {
                 path: "/players",
                 name: "players",
-                component: () => import("@/components/Player")
+                component: () => import("@/components/player/Player")
             },
             {
                 path: "/draw",

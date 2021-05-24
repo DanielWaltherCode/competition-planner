@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.draw
 
 import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
+import com.graphite.competitionplanner.api.competition.RegistrationSinglesSpec
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionDrawRepository
@@ -73,7 +74,7 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
         // Get 22 players
         val players = allPlayers.subList(0, 22)
         for (player in players) {
-            registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, player.id, competitionCategoryId))
+            registrationService.registerPlayerSingles(RegistrationSinglesSpec(player.id, competitionCategoryId))
         }
         val draw = drawService.createDraw(competitionCategoryId)
         // With 22 players there should be 7 groups, 3 matches in the first 6, 6 in the last one
@@ -110,7 +111,7 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
         // Get 21 players
         val players = allPlayers.subList(0, 21)
         for (player in players) {
-            registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, player.id, competitionCategoryId))
+            registrationService.registerPlayerSingles(RegistrationSinglesSpec(player.id, competitionCategoryId))
         }
         val draw = drawService.createDraw(competitionCategoryId)
 
@@ -146,7 +147,7 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
         // Get 14 players
         val players = allPlayers.subList(0, 14)
         for (player in players) {
-            registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, player.id, competitionCategoryId))
+            registrationService.registerPlayerSingles(RegistrationSinglesSpec(player.id, competitionCategoryId))
         }
         val draw = drawService.createDraw(competitionCategoryId)
 

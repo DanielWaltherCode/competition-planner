@@ -38,7 +38,7 @@ class DrawService(
         // its easier to work with registration ids since it could be doubles and then translate back to
         // players after the draw is made
 
-        val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId);
+        val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
         val categoryMetadata: CategoryMetadataDTO
         try {
             categoryMetadata = categoryService.getCategoryMetadata(competitionCategoryId)
@@ -67,8 +67,8 @@ class DrawService(
     }
 
     private fun createSeed(competitionCategoryId: Int, categoryMetadata: CategoryMetadataDTO) {
-        val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId);
-        val playerList = mutableMapOf<Int, List<PlayerDTO>>();
+        val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
+        val playerList = mutableMapOf<Int, List<PlayerDTO>>()
         for (id in registrationIds) {
             playerList[id] = registrationService.getPlayersFromRegistrationId(id)
         }

@@ -69,12 +69,29 @@
   },
   "player": {
     "sidebar": {
-      "title": "Sortera efter",
-      "name": "Namn",
-      "club": "Klubb",
-      "categories": "Klasser"
+      "title": "Spelaralternativ",
+      "overview": "Spelaröversikt",
+      "addNew": "Lägg till spelare"
     },
-    "search": "Sök på spelare"
+    "search": "Sök på spelare",
+    "heading": "Spelare",
+    "headingHelper": "Här under spelarhantering kan du se spelare som är anmälda till tävlingen. Du kan också manuellt lägga till nya spelare. I de flesta fall anmäler dock klubbarna själva sina spelare online och de dyker sedan automatiskt upp här.",
+    "registeredPlayers": "Anmälda spelare",
+    "name": "Namn",
+    "club": "Klubb",
+    "categories": "Klasser",
+    "sortBy": "Sortera efter",
+    "add": {
+      "heading": "Registrera en spelare manuellt i tävlingen",
+      "helperText": "Här kan du lägga till en spelare manuellt om denne inte har anmälts av sin klubb online sedan tidigare. Det bästa är att söka fram spelaren så att vi kan autofylla uppgifterna. Om spelaren inte finns i vår databas kan du fylla i uppgifterna manuellt men då finns inga uppgifter om rankingpoäng och seedning",
+      "search": "Sök på en spelare att lägga till",
+      "firstName": "Förnamn",
+      "lastName": "Efternamn",
+      "club": "Klubb",
+      "dateOfBirth": "Födelsedatum",
+      "buttonText": "Lägg till spelare",
+      "clear": "Rensa spelare"
+    }
   },
   "draw": {
     "sidebar": {

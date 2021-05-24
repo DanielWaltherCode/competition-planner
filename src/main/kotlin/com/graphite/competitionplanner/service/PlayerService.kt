@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.service
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.domain.dto.NewPlayerDTO
 import com.graphite.competitionplanner.domain.dto.PlayerEntityDTO
@@ -70,11 +71,12 @@ class PlayerService(
     }
 }
 
-@Deprecated("Use Domain.dto.PlayeDTO instead")
+@Deprecated("Use Domain.dto.PlayerDTO instead")
 data class PlayerDTO(
-    val id: Int,
-    val firstName: String,
-    val lastName: String,
-    val club: ClubNoAddressDTO,
-    val dateOfBirth: LocalDate
+        val id: Int,
+        val firstName: String,
+        val lastName: String,
+        val club: ClubNoAddressDTO,
+        @JsonFormat(pattern="yyyy-MM-dd")
+        val dateOfBirth: LocalDate
 )

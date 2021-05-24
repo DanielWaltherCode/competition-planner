@@ -69,7 +69,7 @@ export default {
         "endDate": this.competition.endDate,
       }
 
-      CompetitionService.updateCompetition(objectToSave).then(res => {
+      CompetitionService.updateCompetition(objectToSave, this.competition.id).then(res => {
         this.$store.commit("set_competition", res.data)
         this.competitionUpdated = true
       }).catch(err => {

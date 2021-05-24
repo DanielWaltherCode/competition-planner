@@ -39,7 +39,7 @@ class TestPlayerApi(
     fun addTestPlayer() {
         val playerString = PlayerSpec(
                 "Laban", "Nilsson",
-                ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
+                clubId, LocalDate.now().minusMonths(170)
         )
         addedPlayer = testRestTemplate.postForObject(getUrl(),
             HttpEntity(playerString, getAuthenticationHeaders()), PlayerDTO::class.java)
@@ -53,7 +53,7 @@ class TestPlayerApi(
                 addedPlayer.id,
                 PlayerSpec(
                         newName, "Nilsson",
-                        ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
+                        clubId, LocalDate.now().minusMonths(170)
                 )
         )
         Assertions.assertNotNull(updatedPlayer)
@@ -80,7 +80,7 @@ class TestPlayerApi(
         val playerWithZ = playerApi.addPlayer(
                 PlayerSpec(
                         "Zaban", "Zilsson",
-                        ClubNoAddressDTO(clubId, null), LocalDate.now().minusMonths(170)
+                        clubId, LocalDate.now().minusMonths(170)
                 )
         )
         players = playerApi.searchByPartOfName("z")

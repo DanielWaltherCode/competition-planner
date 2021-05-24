@@ -4,7 +4,7 @@
     <div class="row">
         <div class="row justify-content-center">
           <div class="mb-3 col-md-7 d-block">
-            <label for="competition-location" class="form-label">{{ getString("newCompetition.name") }}</label>
+            <label for="competition-location" class="form-label">{{ getString("newCompetition.location") }}</label>
             <input type="text" class="form-control" id="competition-location" v-model="competitionLocation" placeholder="">
           </div>
           <div class="mb-3 col-md-7 d-block">
@@ -57,6 +57,9 @@ export default {
       competition: ""
     }
   },
+  computed: {
+    user: function (){return this.$store.getters.user}
+  },
   methods: {
     getString(string) {
       return this.$t(string)
@@ -66,7 +69,7 @@ export default {
         "location": this.competitionLocation,
         "name": this.competitionName,
         "welcomeText": this.info,
-        "organizingClubId": 129,
+        "organizingClubId": this.user.clubNoAddressDTO.id,
         "startDate": this.startDate,
         "endDate": this.endDate,
       }

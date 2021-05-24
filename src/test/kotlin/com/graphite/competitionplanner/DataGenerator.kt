@@ -28,7 +28,7 @@ class DataGenerator {
     }
 
     fun newPlayerSpec(club: ClubNoAddressDTO): PlayerSpec {
-        return PlayerSpec("Lasse", "Larrson", club, LocalDate.now().minusYears(20))
+        return PlayerSpec("Lasse", "Larrson", club.id, LocalDate.now().minusYears(20))
     }
 
     internal fun newPlayer(): Player {

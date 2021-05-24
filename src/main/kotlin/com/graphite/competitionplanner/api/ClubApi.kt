@@ -38,8 +38,8 @@ class ClubApi(
     }
 
     @GetMapping
-    fun getAll(): List<ClubSpec> {
-        return clubService.getAll().map { ClubSpec(it) }
+    fun getAll(): List<ClubDTO> {
+        return clubService.getAll()
     }
 
     @DeleteMapping("/{clubId}")
