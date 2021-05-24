@@ -24,4 +24,14 @@ class ExceptionAdvisor {
         return ResponseEntity(body, HttpStatus.NOT_FOUND)
     }
 
+    @ResponseBody
+    @ExceptionHandler(IllegalArgumentException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST) // TODO: Maybe have a more precise EntityException that extends IllegalArgumentException
+    fun entityValidationError(exception: IllegalArgumentException, request: WebRequest): ResponseEntity<Any> {
+        val body = mutableMapOf<String, Any>()
+        body["timestamp"] = LocalDateTime.now()
+        body["message"] = "${exception.message}"
+        return ResponseEntity(body, HttpStatus.BAD_REQUEST)
+    }
+
 }

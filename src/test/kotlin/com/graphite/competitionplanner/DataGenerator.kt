@@ -1,9 +1,13 @@
 package com.graphite.competitionplanner
 
+import com.graphite.competitionplanner.api.ClubNoAddressDTO
+import com.graphite.competitionplanner.api.NewClubSpec
+import com.graphite.competitionplanner.api.PlayerSpec
 import com.graphite.competitionplanner.domain.dto.*
 import com.graphite.competitionplanner.domain.entity.*
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.random.Random
 
 class DataGenerator {
 
@@ -17,6 +21,14 @@ class DataGenerator {
 
     fun newClubDTO(): ClubDTO {
         return ClubDTO(newClub())
+    }
+
+    fun newClubSpec(): NewClubSpec {
+        return NewClubSpec("Club" + Random.nextLong().toString(), "Address" + Random.nextLong().toString())
+    }
+
+    fun newPlayerSpec(club: ClubNoAddressDTO): PlayerSpec {
+        return PlayerSpec("Lasse", "Larrson", club, LocalDate.now().minusYears(20))
     }
 
     internal fun newPlayer(): Player {

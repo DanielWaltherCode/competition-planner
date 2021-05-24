@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
 import com.graphite.competitionplanner.api.competition.CompetitionApi
 import com.graphite.competitionplanner.api.competition.CompetitionCategoryApi
 import com.graphite.competitionplanner.api.competition.CompetitionSpec
+import com.graphite.competitionplanner.domain.dto.PlayerEntityDTO
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.service.*
@@ -38,10 +39,10 @@ class TestDrawCupOnlyMatchOrder(
     lateinit var club: ClubSpec
     lateinit var competition: CompetitionDTO
     lateinit var competitionCategory: CompetitionCategoryDTO
-    var players = mutableListOf<PlayerDTO>()
+    var players = mutableListOf<PlayerEntityDTO>()
 
     @BeforeEach
-    fun setUp(){
+    fun setUp() {
         club = createClub()
         competition = setupCompetitionFor(club.id)
         competitionCategory = addCompetitionCategoryTo(competition, "Flickor 12")
@@ -57,7 +58,7 @@ class TestDrawCupOnlyMatchOrder(
         drawService.createDraw(competitionCategory.competitionCategoryId)
     }
 
-    private fun addCompetitionCategoryTo(competition: CompetitionDTO, categoryName: String) : CompetitionCategoryDTO{
+    private fun addCompetitionCategoryTo(competition: CompetitionDTO, categoryName: String): CompetitionCategoryDTO {
         val categories = categoryApi.getCategories()
         val category = categories.filter { it.categoryName == categoryName }[0]
         return competitionCategoryApi.addCategoryToCompetition(
@@ -83,7 +84,7 @@ class TestDrawCupOnlyMatchOrder(
         )
     }
 
-    private fun registerPlayerTo(player: PlayerDTO, competitionCategory: CompetitionCategoryDTO) {
+    private fun registerPlayerTo(player: PlayerEntityDTO, competitionCategory: CompetitionCategoryDTO) {
         registrationService.registerPlayerSingles(
             RegistrationSinglesDTO(
                 null, player.id,
@@ -92,7 +93,7 @@ class TestDrawCupOnlyMatchOrder(
         )
     }
 
-    private fun setSingleRankOn(player: PlayerDTO, value: Int) {
+    private fun setSingleRankOn(player: PlayerEntityDTO, value: Int) {
         playerRepository.addPlayerRanking(player.id, value, "SINGLES")
     }
 
@@ -105,7 +106,7 @@ class TestDrawCupOnlyMatchOrder(
         )
     }
 
-    private fun addPlayer(firstName: String, club: ClubSpec): PlayerDTO {
+    private fun addPlayer(firstName: String, club: ClubSpec): PlayerEntityDTO {
         return playerApi.addPlayer(
             PlayerSpec(
                 firstName,
@@ -147,30 +148,38 @@ class TestDrawCupOnlyMatchOrder(
     }
 
     @Test
-    fun thenBestAndWorstRankedPlayerShouldMeetInFirstMatch(){
+    fun thenBestAndWorstRankedPlayerShouldMeetInFirstMatch() {
         val matches = matchService.getMatchesInCategory(competitionCategory.competitionCategoryId)
 
         val firstMatch = matches.filter { it.matchOrderNumber == 1 }[0]
         val bestPlayer = players[0]
         val worstPlayer = players[7]
 
-        Assertions.assertEquals(bestPlayer.id, firstMatch.firstPlayer[0].id,
-            "Expected to find the best ranked player in the first match")
-        Assertions.assertEquals(worstPlayer.id, firstMatch.secondPlayer[0].id,
-            "Expected to find the worst ranked player in the first match.")
+        Assertions.assertEquals(
+            bestPlayer.id, firstMatch.firstPlayer[0].id,
+            "Expected to find the best ranked player in the first match"
+        )
+        Assertions.assertEquals(
+            worstPlayer.id, firstMatch.secondPlayer[0].id,
+            "Expected to find the worst ranked player in the first match."
+        )
     }
 
     @Test
-    fun thenSecondBestAndSecondWorstPlayerShouldMeetInSecondMatch(){
+    fun thenSecondBestAndSecondWorstPlayerShouldMeetInSecondMatch() {
         val matches = matchService.getMatchesInCategory(competitionCategory.competitionCategoryId)
 
         val secondMatch = matches.filter { it.matchOrderNumber == 4 }[0]
         val secondBestPlayer = players[1]
         val secondWorstPlayer = players[6]
 
-        Assertions.assertEquals(secondWorstPlayer.id, secondMatch.firstPlayer[0].id,
-            "Expected to find the second worst ranked player in the fourth match as top player")
-        Assertions.assertEquals(secondBestPlayer.id, secondMatch.secondPlayer[0].id,
-            "Expected to find the second best ranked player in the second match as bottom player.")
+        Assertions.assertEquals(
+            secondWorstPlayer.id, secondMatch.firstPlayer[0].id,
+            "Expected to find the second worst ranked player in the fourth match as top player"
+        )
+        Assertions.assertEquals(
+            secondBestPlayer.id, secondMatch.secondPlayer[0].id,
+            "Expected to find the second best ranked player in the second match as bottom player."
+        )
     }
 }

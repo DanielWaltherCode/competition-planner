@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.api
 
 import com.graphite.competitionplanner.domain.dto.NewPlayerDTO
+import com.graphite.competitionplanner.domain.dto.PlayerEntityDTO
 import com.graphite.competitionplanner.service.*
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
@@ -13,25 +14,18 @@ class PlayerApi(
 ) {
 
     @PostMapping
-    fun addPlayer(@Valid @RequestBody playerSpec: PlayerSpec): PlayerDTO {
+    fun addPlayer(@Valid @RequestBody playerSpec: PlayerSpec): PlayerEntityDTO {
         val newPlayerDto = NewPlayerDTO(
             playerSpec.firstName,
             playerSpec.lastName,
             playerSpec.club.id,
             playerSpec.dateOfBirth
         )
-        val createdPlayer = playerService.addPlayer(newPlayerDto)
-        return PlayerDTO(
-            createdPlayer.id,
-            createdPlayer.firstName,
-            createdPlayer.lastName,
-            ClubNoAddressDTO(createdPlayer.club.id, playerSpec.club.name),
-            createdPlayer.dateOfBirth
-        )
+        return playerService.addPlayer(newPlayerDto)
     }
 
     @PutMapping("/{playerId}")
-    fun updatePlayer(@PathVariable playerId: Int, @Valid @RequestBody playerSpec: PlayerSpec): PlayerDTO {
+    fun updatePlayer(@PathVariable playerId: Int, @Valid @RequestBody playerSpec: PlayerSpec): PlayerEntityDTO {
         val playerDto = com.graphite.competitionplanner.domain.dto.PlayerDTO(
             playerId,
             playerSpec.firstName,
@@ -39,55 +33,22 @@ class PlayerApi(
             playerSpec.club.id,
             playerSpec.dateOfBirth
         )
-        val updatedPlayer = playerService.updatePlayer(playerDto)
-
-        return PlayerDTO(
-            updatedPlayer.id,
-            updatedPlayer.firstName,
-            updatedPlayer.lastName,
-            ClubNoAddressDTO(updatedPlayer.club.id, updatedPlayer.club.name),
-            updatedPlayer.dateOfBirth
-        )
+        return playerService.updatePlayer(playerDto)
     }
 
     @GetMapping("/{playerId}")
-    fun getPlayer(@PathVariable playerId: Int): PlayerDTO {
-        val found = playerService.getPlayerLegacy(playerId)
-        return PlayerDTO(
-            found.id,
-            found.firstName,
-            found.lastName,
-            ClubNoAddressDTO(found.club.id, found.club.name),
-            found.dateOfBirth
-        )
+    fun getPlayer(@PathVariable playerId: Int): PlayerEntityDTO {
+        return playerService.getPlayer(playerId)
     }
 
     @GetMapping("name-search")
-    fun searchByPartOfName(@RequestParam partOfName: String): List<PlayerDTO> {
-        val foundPlayers = playerService.findByName(partOfName)
-        return foundPlayers.map {
-            PlayerDTO(
-                it.id,
-                it.firstName,
-                it.lastName,
-                ClubNoAddressDTO(it.club.id, it.club.name),
-                it.dateOfBirth
-            )
-        }
+    fun searchByPartOfName(@RequestParam partOfName: String): List<PlayerEntityDTO> {
+        return playerService.findByName(partOfName)
     }
 
     @GetMapping
-    fun getPlayersByClubId(@RequestParam clubId: Int): List<PlayerDTO> {
-        val foundPlayers = playerService.getPlayersByClubId(clubId)
-        return foundPlayers.map {
-            PlayerDTO(
-                it.id,
-                it.firstName,
-                it.lastName,
-                ClubNoAddressDTO(it.club.id, it.club.name),
-                it.dateOfBirth
-            )
-        }
+    fun getPlayersByClubId(@RequestParam clubId: Int): List<PlayerEntityDTO> {
+        return playerService.getPlayersByClubId(clubId)
     }
 
     @DeleteMapping("/{playerId}")
