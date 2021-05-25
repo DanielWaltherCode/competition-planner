@@ -71,7 +71,7 @@ class CreateSchedule {
             val matchPriorities = calculateMatchPriorityBasedOn(remainingMatches, playerPriorities)
             val highestPriority = matchPriorities.maxBy { match -> match.priority }
             schedule = scheduleMatch(schedule, highestPriority!!.match, schedule.settings.numberOfTables)
-            remainingMatches = remainingMatches.filterNot { it == highestPriority.match }
+            remainingMatches = remainingMatches.filterNot { it.id == highestPriority.match.id }
         }
 
         return schedule

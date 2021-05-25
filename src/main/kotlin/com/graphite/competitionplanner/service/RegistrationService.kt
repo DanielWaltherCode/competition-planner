@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
 import kotlin.random.Random
-import kotlin.streams.toList
 
 @Service
 class RegistrationService(
@@ -49,7 +48,7 @@ class RegistrationService(
             return emptyList()
         }
         val playerRecords = registrationRepository.getPlayersFromRegistrationId(registrationId)
-        return playerRecords.map { playerService.getPlayer(it.id) }
+        return playerRecords.map { playerService.getPlayerLegacy(it.id) }
     }
 
     fun getRegisteredPlayers(competitionId: Int, searchType: String): RegisteredPlayersDTO {
@@ -57,7 +56,7 @@ class RegistrationService(
                 val players = registrationRepository.getRegistrationsInCompetition(competitionId)
                 val initialsAndPlayersMap = mutableMapOf<String, MutableSet<PlayerDTO>>()
                 for (player in players) {
-                    val playerDTO = playerService.getPlayer(player.id)
+                    val playerDTO = playerService.getPlayerLegacy(player.id)
                     val initial: String = player.lastName[0].toUpperCase() + ""
 
                     // If initial has already been added, add to list. Else create player list and add initial
@@ -74,7 +73,7 @@ class RegistrationService(
                 val players = registrationRepository.getRegistrationsInCompetition(competitionId)
                 val clubsAndPlayersMap = mutableMapOf<String, MutableSet<PlayerDTO>>()
                 for (player in players) {
-                    val playerDTO = playerService.getPlayer(player.id)
+                    val playerDTO = playerService.getPlayerLegacy(player.id)
                     val clubName = playerDTO.club.name ?: ""
                     // If initial has already been added, add to list. Else create player list and add initial
                     if(clubsAndPlayersMap.containsKey(clubName)) {
@@ -101,7 +100,7 @@ class RegistrationService(
             val registeredPlayers = mutableSetOf<PlayerDTO>()
             for (entry in playersAndCategories) {
                 if (entry.categoryName == category) {
-                    registeredPlayers.add(playerService.getPlayer(entry.playerId))
+                    registeredPlayers.add(playerService.getPlayerLegacy(entry.playerId))
                 }
             }
             groupingAndPlayers[category] = registeredPlayers
@@ -113,7 +112,7 @@ class RegistrationService(
     fun getRegistrationByPlayerId(playerId: Int): PlayerCompetitionDTO {
         // Get player and competitions
         val playerCompetitions = mutableListOf<CompetitionAndCategoriesDTO>()
-        val player = playerService.getPlayer(playerId)
+        val player = playerService.getPlayerLegacy(playerId)
         val competitionPlayingCategories = competitionCategoryRepository.getByPlayerId(playerId)
         val uniqueCompetitionIds = competitionPlayingCategories.map { it.competitionId }.distinct()
 

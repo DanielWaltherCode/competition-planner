@@ -1,0 +1,74 @@
+package com.graphite.competitionplanner.domain.usecase.player
+
+import com.graphite.competitionplanner.DataGenerator
+import com.graphite.competitionplanner.TestHelper
+import com.graphite.competitionplanner.domain.dto.ClubDTO
+import com.graphite.competitionplanner.domain.interfaces.IPlayerRepository
+import com.graphite.competitionplanner.domain.interfaces.NotFoundException
+import com.graphite.competitionplanner.domain.usecase.club.FindClub
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.mockito.Mockito.*
+
+import org.springframework.boot.test.context.SpringBootTest
+import java.lang.IllegalArgumentException
+
+@SpringBootTest
+class TestUpdatePlayer {
+
+    val dataGenerator = DataGenerator()
+    private final val mockedPlayerRepository = mock(IPlayerRepository::class.java)
+    private final val mockedFindClub = mock(FindClub::class.java)
+    val updatePlayer = UpdatePlayer(mockedPlayerRepository, mockedFindClub)
+
+    @Test
+    fun shouldCallStoreWhenEntityIsOk() {
+        // Setup
+        val dto = dataGenerator.newPlayerDTO()
+        `when`(mockedFindClub.byId(dto.clubId)).thenReturn(ClubDTO(dto.clubId, "ClubName", "ClubAddress"))
+
+        // Act
+        updatePlayer.execute(dto)
+
+        // Assert
+        verify(mockedPlayerRepository, times(1)).update(TestHelper.MockitoHelper.anyObject())
+    }
+
+    @Test
+    fun shouldNotCallStoreWhenEntityIsInvalid() {
+        // Setup
+        val dto = dataGenerator.newInvalidPlayerDTO()
+
+        // Act
+        Assertions.assertThrows(IllegalArgumentException::class.java) { updatePlayer.execute(dto) }
+
+        // Assert
+        verify(mockedPlayerRepository, never()).store(TestHelper.MockitoHelper.anyObject())
+    }
+
+    @Test
+    fun shouldNotCallStoreWhenIfClubDoesNotExist() {
+        // Setup
+        val dto = dataGenerator.newPlayerDTO()
+        `when`(mockedFindClub.byId(dto.id)).thenThrow(NotFoundException(""))
+
+        // Act
+        Assertions.assertThrows(NotFoundException::class.java) { updatePlayer.execute(dto) }
+
+        // Assert
+        verify(mockedPlayerRepository, never()).store(TestHelper.MockitoHelper.anyObject())
+    }
+
+    @Test
+    fun shouldAssertThatClubExist() {
+        // Setup
+        val dto = dataGenerator.newPlayerDTO()
+        `when`(mockedFindClub.byId(dto.clubId)).thenReturn(ClubDTO(dto.clubId, "ClubName", "ClubAddress"))
+
+        // Act
+        updatePlayer.execute(dto)
+
+        // Assert
+        verify(mockedFindClub, atLeastOnce()).byId(dto.clubId)
+    }
+}
