@@ -1,12 +1,13 @@
 package com.graphite.competitionplanner.api
 
+import com.graphite.competitionplanner.repositories.ResultRepository
 import com.graphite.competitionplanner.service.ResultDTO
 import com.graphite.competitionplanner.service.ResultService
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/result")
-class ResultApi(val resultService: ResultService) {
+class ResultApi(val resultService: ResultService, val resultRepository: ResultRepository) {
 
     // Get per day in competition
 
@@ -28,6 +29,11 @@ class ResultApi(val resultService: ResultService) {
     @GetMapping("/{matchId}")
     fun getMatchResult(@PathVariable matchId: Int): ResultDTO {
         return resultService.getResult(matchId)
+    }
+
+    @DeleteMapping("/{matchId}")
+    fun removeMatchResult(@PathVariable matchId: Int) {
+        resultRepository.deleteMatchResult(matchId)
     }
 }
 
