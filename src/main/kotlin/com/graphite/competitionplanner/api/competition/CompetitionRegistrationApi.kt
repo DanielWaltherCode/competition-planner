@@ -29,7 +29,8 @@ class CompetitionRegistrationApi(
     }
 
     @PostMapping("/singles")
-    fun registerPlayerSingles(@RequestBody registrationSinglesSpec: RegistrationSinglesSpec): Boolean {
+    fun registerPlayerSingles(@RequestBody registrationSinglesSpec: RegistrationSinglesSpec): Int {
+        // Returns registration if registration successful, -1 otherwise
         return registrationService.registerPlayerSingles(registrationSinglesSpec)
     }
 

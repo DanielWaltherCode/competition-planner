@@ -322,7 +322,7 @@ class DrawService(
 
 }
 
-data class Match(
+data class MatchSpec(
     val startTime: LocalDateTime?,
     val endTime: LocalDateTime?,
     val competitionCategoryId: Int,

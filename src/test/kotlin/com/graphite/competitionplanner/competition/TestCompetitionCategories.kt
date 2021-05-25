@@ -71,7 +71,7 @@ class TestCompetitionCategories(
 
     @Test
     fun cancelCompetitionCategory() {
-        val newCategoryId = testUtil.addCompetitionCategory("Herrar 5")
+        val newCategoryId = testUtil.addCompetitionCategory("Herrar 6")
 
         competitionCategoryService.cancelCategoryInCompetition(newCategoryId)
 

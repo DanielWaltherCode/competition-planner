@@ -22,7 +22,7 @@ class RegistrationService(
     val competitionCategoryRepository: CompetitionCategoryRepository
 ) {
 
-    fun registerPlayerSingles(registrationSinglesSpec: RegistrationSinglesSpec): Boolean {
+    fun registerPlayerSingles(registrationSinglesSpec: RegistrationSinglesSpec): Int {
         val registration = registrationRepository.addRegistration(LocalDate.now())
         registrationRepository.registerPlayer(registration.id, registrationSinglesSpec.playerId)
         val playingInRecord = registrationRepository.registerInCategory(
@@ -30,7 +30,10 @@ class RegistrationService(
             null,
             registrationSinglesSpec.competitionCategoryId
         )
-        return playingInRecord.id != null
+        if(playingInRecord.id == null) {
+            return -1
+        }
+        return registration.id
     }
 
     fun unregister(registrationId: Int): Boolean {
@@ -41,7 +44,10 @@ class RegistrationService(
         return true
     }
 
-    fun getPlayersFromRegistrationId(registrationId: Int): List<PlayerDTO> {
+    fun getPlayersFromRegistrationId(registrationId: Int?): List<PlayerDTO> {
+        if (registrationId == null) {
+            return emptyList()
+        }
         val playerRecords = registrationRepository.getPlayersFromRegistrationId(registrationId)
         return playerRecords.map { playerService.getPlayer(it.id) }
     }
