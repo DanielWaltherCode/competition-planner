@@ -25,7 +25,7 @@ class Club(
     @Test
     fun weCanCreateUpdateFindAndDeleteClub() {
         // Setup creation
-        val clubSpec = NewClubSpec("SuperClub", "SuperAddress");
+        val clubSpec = NewClubSpec("SuperClub", "SuperAddress")
 
         // Act
         val club = testRestTemplate.postForObject(

@@ -4,6 +4,7 @@ import com.graphite.competitionplanner.api.*
 import com.graphite.competitionplanner.api.competition.CompetitionSpec
 import com.graphite.competitionplanner.domain.dto.ClubDTO
 import com.graphite.competitionplanner.api.competition.RegistrationSinglesSpec
+import com.graphite.competitionplanner.domain.dto.NewPlayerDTO
 import com.graphite.competitionplanner.repositories.*
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
@@ -32,7 +33,6 @@ class EventListener(
     val competitionService: CompetitionService,
     val competitionCategoryService: CompetitionCategoryService,
     val competitionDrawRepository: CompetitionDrawRepository,
-    val drawTypeRepository: DrawTypeRepository,
     val userRepository: UserRepository,
     val util: Util,
     val registrationService: RegistrationService,
@@ -144,8 +144,8 @@ class EventListener(
     }
 
     fun playerSetup() {
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Oscar",
                 lastName = "Hansson",
                 clubId = util.getClubIdOrDefault("Lugi"),
@@ -153,168 +153,168 @@ class EventListener(
             )
         )
 
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Nils",
                 lastName = "Hansson",
                 clubId = util.getClubIdOrDefault("Lugi"),
                 dateOfBirth = LocalDate.now().minus(14, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Lennart",
                 lastName = "Eriksson",
                 clubId = util.getClubIdOrDefault("Umeå IK"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Kajsa",
                 lastName = "Säfsten",
                 clubId = util.getClubIdOrDefault("Övriga"),
                 dateOfBirth = LocalDate.now().minus(65, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Lennart",
                 lastName = "Eriksson",
                 clubId = util.getClubIdOrDefault("Lugi"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Lennart",
                 lastName = "Eriksson",
                 clubId = util.getClubIdOrDefault("Malmö"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Lennart",
                 lastName = "Eriksson",
                 clubId = util.getClubIdOrDefault("Landskrona"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Mona",
                 lastName = "Nilsson",
                 clubId = util.getClubIdOrDefault("Umeå IK"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Anders",
                 lastName = "And",
                 clubId = util.getClubIdOrDefault("Malmö"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Lukas",
                 lastName = "Eriksson",
                 clubId = util.getClubIdOrDefault("Lugi"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Nina",
                 lastName = "Persson",
                 clubId = util.getClubIdOrDefault("Umeå IK"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Ola",
                 lastName = "Salo",
                 clubId = util.getClubIdOrDefault("Landskrona"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Ola",
                 lastName = "Larsson",
                 clubId = util.getClubIdOrDefault("Lugi"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Anna",
                 lastName = "Lindh",
                 clubId = util.getClubIdOrDefault("Lugi"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Oscar",
                 lastName = "Lilja",
                 clubId = util.getClubIdOrDefault("Landskrona"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Sam",
                 lastName = "Axén",
                 clubId = util.getClubIdOrDefault("Umeå IK"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Nils",
                 lastName = "Sundling",
                 clubId = util.getClubIdOrDefault("Landskrona"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Amanda",
                 lastName = "Skiffer",
                 clubId = util.getClubIdOrDefault("Lugi"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Eskil",
                 lastName = "Erlandsson",
                 clubId = util.getClubIdOrDefault("Lugi"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Erna",
                 lastName = "Solberg",
                 clubId = util.getClubIdOrDefault("Umeå IK"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Dwight",
                 lastName = "Johnson",
                 clubId = util.getClubIdOrDefault("Landskrona"),
                 dateOfBirth = LocalDate.now().minus(19, ChronoUnit.YEARS)
             )
         )
-        playerRepository.addPlayer(
-            PlayerSpec(
+        playerRepository.store(
+            NewPlayerDTO(
                 firstName = "Simon",
                 lastName = "Knutsson",
                 clubId = util.getClubIdOrDefault("Umeå IK"),
@@ -367,7 +367,7 @@ class EventListener(
     fun competitionCategorySetup() {
         val lugiId = util.getClubIdOrDefault("Lugi")
         val lugiCompetitions = competitionService.getByClubId(lugiId)
-        val lugiCompetitionId = lugiCompetitions[0].id ?: 0
+        val lugiCompetitionId = lugiCompetitions[0].id
         competitionCategoryService.addCompetitionCategory(
             lugiCompetitionId,
             categoryRepository.getByName("Herrar 1").id
@@ -386,7 +386,7 @@ class EventListener(
 
         val umeaId = util.getClubIdOrDefault("Umeå IK")
         val umeaCompetitions = competitionService.getByClubId(umeaId)
-        val umeaCompetitionId = umeaCompetitions[0].id ?: 0
+        val umeaCompetitionId = umeaCompetitions[0].id
         competitionCategoryService.addCompetitionCategory(
             umeaCompetitionId,
             categoryRepository.getByName("Herrar 1").id
@@ -411,103 +411,103 @@ class EventListener(
         // Have "Herrar 1" in Lugi as main competition category to play around with
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                lugiPlayers[0].id ?: 0,
+                lugiPlayers[0].id,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                lugiPlayers[0].id ?: 0,
+                lugiPlayers[0].id,
                 competitionCategories[1].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                lugiPlayers[1].id ?: 0,
+                lugiPlayers[1].id,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                umePlayers[0].id ?: 0,
+                umePlayers[0].id,
                 competitionCategories[1].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                otherPlayers[0].id ?: 0,
+                otherPlayers[0].id,
                 competitionCategories[1].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                lugiPlayers[2].id ?: 0,
+                lugiPlayers[2].id,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                lugiPlayers[3].id ?: 0,
+                lugiPlayers[3].id,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                lugiPlayers[4].id ?: 0,
+                lugiPlayers[4].id,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                lugiPlayers[5].id ?: 0,
+                lugiPlayers[5].id,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                lugiPlayers[6].id ?: 0,
+                lugiPlayers[6].id,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                lugiPlayers[7].id ?: 0,
+                lugiPlayers[7].id,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                umePlayers[0].id ?: 0,
+                umePlayers[0].id,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                umePlayers[1].id ?: 0,
+                umePlayers[1].id,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                umePlayers[2].id ?: 0,
+                umePlayers[2].id,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                umePlayers[3].id ?: 0,
+                umePlayers[3].id,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                umePlayers[4].id ?: 0,
+                umePlayers[4].id,
                 competitionCategories[0].competitionCategoryId
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                umePlayers[5].id ?: 0,
+                umePlayers[5].id,
                 competitionCategories[0].competitionCategoryId
             )
         )

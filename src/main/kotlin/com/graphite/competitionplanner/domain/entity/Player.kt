@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.domain.entity
 
-import com.graphite.competitionplanner.domain.dto.PlayerDTO
+import com.graphite.competitionplanner.domain.dto.PlayerEntityDTO
 import java.time.LocalDate
 
 data class Player(
@@ -18,5 +18,5 @@ data class Player(
         require(dateOfBirth.isBefore(LocalDate.now())) { "Player's date of birth <$dateOfBirth> cannot be in the future" }
     }
 
-    constructor(dto: PlayerDTO) : this(dto.id, dto.firstName, dto.lastName, Club(dto.club), dto.dateOfBirth)
+    constructor(dto: PlayerEntityDTO) : this(dto.id, dto.firstName, dto.lastName, Club(dto.club), dto.dateOfBirth)
 }

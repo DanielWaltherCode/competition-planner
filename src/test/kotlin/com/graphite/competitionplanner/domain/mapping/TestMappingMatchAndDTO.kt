@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.domain.mapping
 
 import com.graphite.competitionplanner.domain.dto.ClubDTO
 import com.graphite.competitionplanner.domain.dto.MatchDTO
-import com.graphite.competitionplanner.domain.dto.PlayerDTO
+import com.graphite.competitionplanner.domain.dto.PlayerEntityDTO
 import com.graphite.competitionplanner.domain.entity.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -15,13 +15,13 @@ class TestMappingMatchAndDTO {
 
     @Test
     fun testConvertDtoToEntity() {
-        val p1 = PlayerDTO(
+        val p1 = PlayerEntityDTO(
             111, "Åke", "Isaksson",
             ClubDTO(2, "Lyseskil", "Bakgården 1"),
             LocalDate.of(2001, 3, 12)
         )
 
-        val p2 = PlayerDTO(
+        val p2 = PlayerEntityDTO(
             222, "Lars", "Nilsson",
             ClubDTO(2, "Lyseskil", "Bakgården 1"),
             LocalDate.of(2001, 3, 12)

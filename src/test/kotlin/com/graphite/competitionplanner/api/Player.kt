@@ -1,11 +1,9 @@
 package com.graphite.competitionplanner.api
 
 import com.graphite.competitionplanner.AbstractApiTest
-import com.graphite.competitionplanner.service.PlayerDTO
-import com.graphite.competitionplanner.service.PlayerService
+import com.graphite.competitionplanner.DataGenerator
+import com.graphite.competitionplanner.domain.dto.PlayerEntityDTO
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -16,126 +14,192 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
-import kotlin.random.Random
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class Player(
     @LocalServerPort port: Int,
     @Autowired testRestTemplate: TestRestTemplate,
-    @Autowired val clubApi: ClubApi,
-    @Autowired val helper: TestHelper,
-    @Autowired val playerService: PlayerService
+    @Autowired val clubApi: ClubApi
 ) : AbstractApiTest(
     port,
     testRestTemplate
-)
-{
+) {
     override val resource: String = "/player"
-    lateinit var club: ClubSpec
-    var playerId: Int = -1
 
-    @BeforeEach
-    private fun createClub() {
-        club = clubApi.addClub(
-            NewClubSpec(
-                "TestClub" + Random.nextLong().toString(),
-                "Testroad 12B"
-            )
-        )
-    }
-
-    // Clean up after successful post requests
-    private fun cleanUp(){
-        playerService.deletePlayer(playerId)
-    }
+    val dataGenerator = DataGenerator()
 
     @Test
-    fun createdPlayerShouldMatchSpec() {
-        // Setup
-        val playerSpec = helper.anyPlayerSpecFor(club)
+    fun canCreateUpdateFindDeletePlayer() {
+        // Setup create
+        val club = clubApi.addClub(dataGenerator.newClubSpec())
+        val playerSpec = dataGenerator.newPlayerSpec(club.toNoAddressDTO())
 
         // Act
         val player = testRestTemplate.postForObject(
             getUrl(),
             HttpEntity(playerSpec, getAuthenticationHeaders()),
-            PlayerDTO::class.java
+            PlayerEntityDTO::class.java
         )
-        this.playerId = player.id
 
-        // Assert
+        // Assert creation
         Assertions.assertEquals(playerSpec.firstName, player.firstName)
         Assertions.assertEquals(playerSpec.lastName, player.lastName)
         Assertions.assertEquals(playerSpec.dateOfBirth, player.dateOfBirth)
-        Assertions.assertEquals(playerSpec.clubId, player.club.id)
-        cleanUp()
+        Assertions.assertEquals(club.id, player.club.id)
+        Assertions.assertEquals(club.name, player.club.name)
+
+        // Setup update
+        val updateSpec = PlayerSpec("MyNewName", "NewLastName", club.id, playerSpec.dateOfBirth)
+        val updateRequest = HttpEntity(updateSpec, getAuthenticationHeaders())
+
+        // Act
+        val updateResponse =
+            testRestTemplate.exchange<PlayerEntityDTO>(getUrl() + "/${player.id}", HttpMethod.PUT, updateRequest)
+        val updatedPlayer = updateResponse.body
+
+        // Assert update
+        Assertions.assertEquals(updateSpec.firstName, updatedPlayer!!.firstName)
+        Assertions.assertEquals(updateSpec.lastName, updatedPlayer.lastName)
+        Assertions.assertEquals(updateSpec.dateOfBirth, updatedPlayer.dateOfBirth)
+        Assertions.assertEquals(club.id, updatedPlayer.club.id)
+        Assertions.assertEquals(club.name, updatedPlayer.club.name)
+
+        // Setup find by id
+        val findByIdRequest = HttpEntity(PlayerEntityDTO::class.java, getAuthenticationHeaders())
+        val foundResponse =
+            testRestTemplate.exchange<PlayerEntityDTO>(getUrl() + "/${player.id}", HttpMethod.GET, findByIdRequest)
+        val foundPlayer = foundResponse.body
+
+        Assertions.assertEquals(player.id, foundPlayer!!.id)
+        Assertions.assertEquals(updatedPlayer.firstName, foundPlayer.firstName)
+        Assertions.assertEquals(updatedPlayer.lastName, foundPlayer.lastName)
+        Assertions.assertEquals(updatedPlayer.dateOfBirth, foundPlayer.dateOfBirth)
+        Assertions.assertEquals(updatedPlayer.club.id, foundPlayer.club.id)
+        Assertions.assertEquals(updatedPlayer.club.name, foundPlayer.club.name)
+        Assertions.assertEquals(updatedPlayer.club.address, foundPlayer.club.address)
+
+        // Setup delete
+        val deleteRequest = HttpEntity(Boolean, getAuthenticationHeaders())
+        val deleteResponse =
+            testRestTemplate.exchange<Boolean>(getUrl() + "/${player.id}", HttpMethod.DELETE, deleteRequest)
+        val deleted = deleteResponse.body
+
+        Assertions.assertTrue(deleted!!)
     }
 
     @Test
-    fun createdPlayerShouldHaveAnId(){
+    fun canFindPlayerByNameSearch() {
         // Setup
-        val playerSpec = helper.anyPlayerSpecFor(club)
+        val club = clubApi.addClub(dataGenerator.newClubSpec())
+        val playerSpec = dataGenerator.newPlayerSpec(club.toNoAddressDTO())
 
-        // Act
         val player = testRestTemplate.postForObject(
             getUrl(),
             HttpEntity(playerSpec, getAuthenticationHeaders()),
-            PlayerDTO::class.java
+            PlayerEntityDTO::class.java
         )
-        this.playerId = player.id
+
+        // Setup find by name request
+        val findRequest = HttpEntity(HttpEntity.EMPTY, getAuthenticationHeaders())
+        val response = testRestTemplate.exchange<List<PlayerEntityDTO>>(
+            getUrl() + "/name-search?partOfName=${player.firstName}",
+            HttpMethod.GET,
+            findRequest
+        )
+        val found = response.body
 
         // Assert
-        Assertions.assertTrue(player.id > 0, "Creating a player should assign it an ID")
-        cleanUp()
+        Assertions.assertTrue(found!!.contains(player))
     }
 
     @Test
-    @Disabled("Couldn't figure out why deserialization doesn't work now in get method")
-    fun shouldReturnCorrectPlayer(){
+    fun canGetPlayerByClub() {
         // Setup
-        val request = HttpEntity<String>(getAuthenticationHeaders())
-        val playerSpec = helper.anyPlayerSpecFor(club)
-        val playerOnPost = testRestTemplate.postForObject(
+        val club = clubApi.addClub(dataGenerator.newClubSpec())
+        val playerSpec = dataGenerator.newPlayerSpec(club.toNoAddressDTO())
+
+        val player = testRestTemplate.postForObject(
             getUrl(),
             HttpEntity(playerSpec, getAuthenticationHeaders()),
-            PlayerDTO::class.java
+            PlayerEntityDTO::class.java
         )
-        this.playerId = playerOnPost.id
 
-        // Act
-        val playerOnGet =
-            testRestTemplate.getForObject(getUrl() + "/${playerOnPost.id}", PlayerDTO::class.java, request)
+        // Setup find by club id request
+        val findRequest = HttpEntity(HttpEntity.EMPTY, getAuthenticationHeaders())
+        val response = testRestTemplate.exchange<List<PlayerEntityDTO>>(
+            getUrl() + "/?clubId=${club.id}",
+            HttpMethod.GET,
+            findRequest
+        )
+        val found = response.body
 
         // Assert
-        Assertions.assertEquals(playerOnPost.firstName, playerOnGet.firstName)
-        Assertions.assertEquals(playerOnPost.lastName, playerOnGet.lastName)
-        Assertions.assertEquals(playerOnPost.dateOfBirth, playerOnGet.dateOfBirth)
-        Assertions.assertEquals(playerOnPost.id, playerOnGet.id)
-        Assertions.assertEquals(playerOnPost.club.id, playerOnGet.club.id)
-        Assertions.assertEquals(playerOnPost.club.name, playerOnGet.club.name)
-        cleanUp()
+        Assertions.assertTrue(found!!.contains(player))
     }
 
     @Test
-    fun shouldReturnNotFoundWhenClubId(){
+    fun shouldGetHttpNotFoundWhenDeletingPlayerThatDoesNotExist() {
         // Setup
-        val clubThatDoesNotExist = ClubSpec(
-            -1,
-            "TestClub" + Random.nextLong().toString(),
-            "Testroad 12B"
-        )
-        val badPlayerSpec = helper.anyPlayerSpecFor(clubThatDoesNotExist)
+        val request = HttpEntity(Boolean, getAuthenticationHeaders())
 
-        val request = HttpEntity(badPlayerSpec, getAuthenticationHeaders())
+        // Act
+        val response = testRestTemplate.exchange<Any>(getUrl() + "/${-1}", HttpMethod.DELETE, request)
 
-        //Act
-        val response = testRestTemplate.exchange<Any>("/player", HttpMethod.POST, request)
-
-        //Assert
+        // Assertion
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
     }
 
     @Test
-    fun postingAPlayerSpecWithMissingFieldsShouldReturnHttpBadRequest(){
+    fun shouldGetHttpNotFoundWhenUpdatingPlayerThatDoesNotExist() {
+        // Setup
+        val club = clubApi.addClub(dataGenerator.newClubSpec())
+        val updateSpec = dataGenerator.newPlayerSpec(club.toNoAddressDTO())
+        val request = HttpEntity(updateSpec, getAuthenticationHeaders())
+
+        // Act
+        val response = testRestTemplate.exchange<Any>(getUrl() + "/${-1}", HttpMethod.PUT, request)
+
+        // Assertion
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
+    }
+
+    @Test
+    fun shouldGetHttpNotFoundWhenChangingToNonExistingClub() {
+        // Setup Player
+        val club = clubApi.addClub(dataGenerator.newClubSpec())
+        val playerSpec = dataGenerator.newPlayerSpec(club.toNoAddressDTO())
+        val player = testRestTemplate.postForObject(
+            getUrl(),
+            HttpEntity(playerSpec, getAuthenticationHeaders()),
+            PlayerEntityDTO::class.java
+        )
+
+        // Setup Update request
+        val updateSpec =
+            PlayerSpec(player.firstName, player.lastName, -10, player.dateOfBirth)
+        val request = HttpEntity(updateSpec, getAuthenticationHeaders())
+
+        // Act
+        val response = testRestTemplate.exchange<Any>(getUrl() + "/${player.id}", HttpMethod.PUT, request)
+
+        // Assertion
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
+    }
+
+    @Test
+    fun shouldGetHttpNotFoundWhenNotFindingPlayer() {
+        // Setup
+        val request = HttpEntity(PlayerEntityDTO::class.java, getAuthenticationHeaders())
+
+        // Act
+        val response = testRestTemplate.exchange<Any>(getUrl() + "/${-33}", HttpMethod.GET, request)
+
+        // Assertion
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
+    }
+
+    @Test
+    fun shouldGetHttpBadRequestWhenPostingPlayerSpecWithMissingField() {
         // Setup
         val badPlayerSpec = PlayerSpecWithMissingFields(
             "Laban"
@@ -150,35 +214,24 @@ class Player(
     }
 
     @Test
-    fun postingAPlayerSpecWithExtraFieldsShouldReturnOk(){
+    fun shouldGetHttpBadRequestWhenPlayerSpecFailsValidation() {
         // Setup
-        val badPlayerSpec = PlayerSpecWithExtraFields(
-            "Laban",
-            "Nilsson",
-            "EXTRAFIELD",
-                club.id,
-            LocalDate.now().minusMonths(170)
+        val club = clubApi.addClub(dataGenerator.newClubSpec())
+        val playerSpec = PlayerSpec("", "lastName", club.id, LocalDate.now().minusYears(10))
+        val request = HttpEntity(playerSpec, getAuthenticationHeaders())
 
-        )
-        val request = HttpEntity(badPlayerSpec, getAuthenticationHeaders())
+        // Act
+        val response = testRestTemplate.exchange<Any>(getUrl(), HttpMethod.POST, request)
 
-        //Act
-        val response = testRestTemplate.exchange<Any>("/player", HttpMethod.POST, request)
-
-        //Assert
-        Assertions.assertEquals(HttpStatus.OK, response.statusCode)
+        // Assertion
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
     }
 
+    private fun ClubSpec.toNoAddressDTO(): ClubNoAddressDTO {
+        return ClubNoAddressDTO(this.id, this.name)
+    }
 }
 
-data class PlayerSpecWithMissingFields (
+data class PlayerSpecWithMissingFields(
     val lastName: String
-)
-
-data class PlayerSpecWithExtraFields(
-    val firstName: String,
-    val lastName: String,
-    val brothersName: String,
-    val clubId: Int,
-    val dateOfBirth: LocalDate
 )

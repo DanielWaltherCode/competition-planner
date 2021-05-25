@@ -9,8 +9,8 @@ data class MatchDTO(
     val endTime: LocalDateTime?,
     val competitionCategoryId: Int,
     val matchType: String,
-    val firstPlayer: List<PlayerDTO>,
-    val secondPlayer: List<PlayerDTO>,
+    val firstPlayer: List<PlayerEntityDTO>,
+    val secondPlayer: List<PlayerEntityDTO>,
     val matchOrderNumber: Int,
     val groupOrRound: String
 ) {
@@ -21,8 +21,8 @@ data class MatchDTO(
         match.endTime,
         match.competitionCategory.id,
         match.type.value,
-        match.firstPlayer.map { PlayerDTO(it) },
-        match.secondPlayer.map { PlayerDTO(it) },
+        match.firstPlayer.map { PlayerEntityDTO(it) },
+        match.secondPlayer.map { PlayerEntityDTO(it) },
         match.orderNumber,
         match.groupOrRound
     )

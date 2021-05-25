@@ -4,14 +4,17 @@ import com.graphite.competitionplanner.Tables.CLUB
 import com.graphite.competitionplanner.Tables.PLAYER_RANKING
 import com.graphite.competitionplanner.api.PlayerSpec
 import com.graphite.competitionplanner.domain.dto.ClubDTO
+import com.graphite.competitionplanner.domain.dto.NewPlayerDTO
 import com.graphite.competitionplanner.domain.dto.PlayerDTO
+import com.graphite.competitionplanner.domain.dto.PlayerEntityDTO
 import com.graphite.competitionplanner.domain.interfaces.IPlayerRepository
+import com.graphite.competitionplanner.domain.interfaces.NotFoundException
+import com.graphite.competitionplanner.tables.Club
 import com.graphite.competitionplanner.tables.Player.PLAYER
 import com.graphite.competitionplanner.tables.records.PlayerRankingRecord
 import com.graphite.competitionplanner.tables.records.PlayerRecord
 import org.jooq.DSLContext
 import org.jooq.Record
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -19,9 +22,8 @@ class PlayerRepository(
     val dslContext: DSLContext,
     val clubRepository: ClubRepository
 ) : IPlayerRepository {
-    private val logger = LoggerFactory.getLogger(javaClass)
 
-
+    @Deprecated("Use store instead")
     fun addPlayer(playerSpec: PlayerSpec): PlayerRecord {
         val playerRecord = dslContext.newRecord(PLAYER)
         playerRecord.firstName = playerSpec.firstName
@@ -33,28 +35,13 @@ class PlayerRepository(
         return playerRecord
     }
 
-    fun deletePlayer(playerId: Int): Boolean {
-        val deletedRows = dslContext.deleteFrom(PLAYER).where(PLAYER.ID.eq(playerId)).execute()
-        return deletedRows >= 1
-    }
-
+    @Deprecated("Use playersInClub instead")
     fun getPlayersByClub(clubId: Int): List<Record> {
         return dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(CLUB.ID.eq(clubId))
             .fetch()
     }
 
-    fun updatePlayer(playerId: Int, playerSpec: PlayerSpec): PlayerRecord {
-        val playerRecord = dslContext.newRecord(PLAYER)
-        playerRecord.id = playerId
-        playerRecord.firstName = playerSpec.firstName
-        playerRecord.lastName = playerSpec.lastName
-        playerRecord.clubId = playerSpec.clubId
-        playerRecord.dateOfBirth = playerSpec.dateOfBirth
-        playerRecord.update()
-
-        return playerRecord
-    }
-
+    @Deprecated("Use findById instead")
     fun getPlayer(id: Int): Record? {
         return dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(PLAYER.ID.eq(id))
             .fetchOne()
@@ -89,6 +76,7 @@ class PlayerRepository(
         }
     }
 
+    @Deprecated("Use findByName instead")
     fun findPlayersByPartOfName(partOfName: String): List<Record> {
         return dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(
             PLAYER.FIRST_NAME.startsWithIgnoreCase(partOfName)
@@ -120,30 +108,90 @@ class PlayerRepository(
         return playerRecord
     }
 
-    override fun store(dto: PlayerDTO): PlayerDTO {
+    override fun store(dto: NewPlayerDTO): PlayerDTO {
         val playerRecord = dslContext.newRecord(PLAYER)
         playerRecord.firstName = dto.firstName
         playerRecord.lastName = dto.lastName
-        playerRecord.clubId = dto.club.id
+        playerRecord.clubId = dto.clubId
         playerRecord.dateOfBirth = dto.dateOfBirth
         playerRecord.store()
 
         return PlayerDTO(playerRecord.id, dto);
     }
 
-    override fun playersInClub(dto: ClubDTO): List<PlayerDTO> {
+    override fun playersInClub(dto: ClubDTO): List<PlayerEntityDTO> {
         val records =
             dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(CLUB.ID.eq(dto.id))
                 .fetchInto(PLAYER)
 
         return records.map { record ->
-            PlayerDTO(
+            PlayerEntityDTO(
                 record.id,
                 record.firstName,
                 record.lastName,
-                ClubDTO(record.clubId, "", ""),
+                ClubDTO(record.clubId, dto.name, dto.address),
                 record.dateOfBirth
             )
         }
+    }
+
+    @Throws(NotFoundException::class)
+    override fun findById(id: Int): PlayerDTO {
+        val record = getPlayerRecord(id)
+        if (record != null) {
+            return PlayerDTO(record.id, record.firstName, record.lastName, record.clubId, record.dateOfBirth)
+        } else {
+            throw NotFoundException("Player with ID $id not found.")
+        }
+    }
+
+    override fun findByName(startOfName: String): List<PlayerEntityDTO> {
+        val records = dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(
+            PLAYER.FIRST_NAME.startsWithIgnoreCase(startOfName)
+                .or(PLAYER.LAST_NAME.startsWithIgnoreCase(startOfName))
+        ).fetch()
+        return records.map { transformIntoPlayerEntityDto(it) }
+    }
+
+    private fun transformIntoPlayerEntityDto(playerClubRecord: Record): PlayerEntityDTO {
+        val player = playerClubRecord.into(PLAYER)
+        val club = playerClubRecord.into(Club.CLUB)
+        return PlayerEntityDTO(
+            player.id,
+            player.firstName,
+            player.lastName,
+            ClubDTO(club.id, club.name, club.address),
+            player.dateOfBirth
+        )
+    }
+
+    @Throws(NotFoundException::class)
+    override fun update(dto: PlayerDTO): PlayerDTO {
+        val playerRecord = dslContext.newRecord(PLAYER)
+        playerRecord.id = dto.id
+        playerRecord.firstName = dto.firstName
+        playerRecord.lastName = dto.lastName
+        playerRecord.clubId = dto.clubId
+        playerRecord.dateOfBirth = dto.dateOfBirth
+        val rowsUpdated = playerRecord.update()
+        if (rowsUpdated < 1) {
+            throw NotFoundException("Could not update. Player with id ${dto.id} not found.")
+        }
+        return dto
+    }
+
+    @Throws(NotFoundException::class)
+    override fun delete(dto: PlayerDTO): PlayerDTO {
+        val player = getPlayerRecord(dto.id)
+        if (player != null) {
+            player.delete()
+            return PlayerDTO(player.id, player.firstName, player.lastName, player.clubId, player.dateOfBirth)
+        } else {
+            throw NotFoundException("Could not delete. Player with id ${dto.id} not found.")
+        }
+    }
+
+    private fun getPlayerRecord(id: Int): PlayerRecord? {
+        return dslContext.selectFrom(PLAYER).where(PLAYER.ID.eq(id)).fetchOne()
     }
 }

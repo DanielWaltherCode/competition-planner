@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.domain.mapping
 
 import com.graphite.competitionplanner.domain.dto.ClubDTO
-import com.graphite.competitionplanner.domain.dto.PlayerDTO
+import com.graphite.competitionplanner.domain.dto.PlayerEntityDTO
 import com.graphite.competitionplanner.domain.entity.Club
 import com.graphite.competitionplanner.domain.entity.Player
 import org.junit.jupiter.api.Assertions
@@ -19,7 +19,7 @@ class TestMappingPlayerAndDTO {
             Club(3, "ClubA", "Address 1"),
             LocalDate.of(1992, 10, 18)
         )
-        val dto = PlayerDTO(player)
+        val dto = PlayerEntityDTO(player)
 
         Assertions.assertEquals(player.id, dto.id)
         Assertions.assertEquals(player.firstName, dto.firstName)
@@ -32,7 +32,7 @@ class TestMappingPlayerAndDTO {
 
     @Test
     fun testConvertDtoToPlayerEntity() {
-        val dto = PlayerDTO(
+        val dto = PlayerEntityDTO(
             111, "Test", "Isaksson",
             ClubDTO(6, "Lyseskil", "Bakgården 1"),
             LocalDate.of(2001, 3, 12)

@@ -1,8 +1,6 @@
 package com.graphite.competitionplanner.competition
 
-import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.api.competition.CompetitionSpec
-import com.graphite.competitionplanner.repositories.ClubRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
 import com.graphite.competitionplanner.service.competition.CompetitionService
 import com.graphite.competitionplanner.util.Util
@@ -16,7 +14,6 @@ import java.time.LocalDate
 class TestCompetitionsService(
     @Autowired val competitionService: CompetitionService,
     @Autowired val competitionRepository: CompetitionRepository,
-    @Autowired val clubRepository: ClubRepository,
     @Autowired val util: Util
 ) {
 
@@ -76,7 +73,7 @@ class TestCompetitionsService(
         )
 
         val originalSize: Int = competitionRepository.getAll().size
-        competitionRepository.deleteCompetition(competition.id ?: 0)
+        competitionRepository.deleteCompetition(competition.id)
         Assertions.assertEquals(originalSize - 1, competitionRepository.getAll().size)
     }
 
