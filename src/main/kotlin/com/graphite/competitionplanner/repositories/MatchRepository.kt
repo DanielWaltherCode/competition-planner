@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.repositories
 
 import com.graphite.competitionplanner.Tables.MATCH
-import com.graphite.competitionplanner.service.competition.Match
+import com.graphite.competitionplanner.service.competition.MatchSpec
 import com.graphite.competitionplanner.service.competition.MatchType
 import com.graphite.competitionplanner.tables.records.MatchRecord
 import org.jooq.DSLContext
@@ -50,33 +50,40 @@ class MatchRepository(val dslContext: DSLContext) {
         return registrationIdSet
     }
 
-    fun addMatch(match: Match): Int {
+    fun addMatch(matchSpec: MatchSpec): MatchRecord {
         val matchRecord = dslContext.newRecord(MATCH)
-        matchRecord.startTime = match.startTime
-        matchRecord.endTime = match.endTime
-        matchRecord.competitionCategoryId = match.competitionCategoryId
-        matchRecord.matchType = match.matchType.name
-        matchRecord.firstRegistrationId = match.firstRegistrationId
-        matchRecord.secondRegistrationId = match.secondRegistrationId
-        matchRecord.matchOrderNumber = match.matchOrderNumber
-        matchRecord.groupOrRound = match.groupOrRound
+        matchRecord.startTime = matchSpec.startTime
+        matchRecord.endTime = matchSpec.endTime
+        matchRecord.competitionCategoryId = matchSpec.competitionCategoryId
+        matchRecord.matchType = matchSpec.matchType.name
+        matchRecord.firstRegistrationId = matchSpec.firstRegistrationId
+        matchRecord.secondRegistrationId = matchSpec.secondRegistrationId
+        matchRecord.matchOrderNumber = matchSpec.matchOrderNumber
+        matchRecord.groupOrRound = matchSpec.groupOrRound
         matchRecord.store()
-        return matchRecord.id
+        return matchRecord
     }
 
-    fun updateMatch(matchId: Int, match: Match): MatchRecord {
+    fun updateMatch(matchId: Int, matchSpec: MatchSpec): MatchRecord {
         val matchRecord = dslContext.newRecord(MATCH)
         matchRecord.id = matchId
-        matchRecord.startTime = match.startTime
-        matchRecord.endTime = match.endTime
-        matchRecord.competitionCategoryId = match.competitionCategoryId
-        matchRecord.matchType = match.matchType.name
-        matchRecord.firstRegistrationId = match.firstRegistrationId
-        matchRecord.secondRegistrationId = match.secondRegistrationId
-        matchRecord.matchOrderNumber = match.matchOrderNumber
-        matchRecord.groupOrRound = match.groupOrRound
+        matchRecord.startTime = matchSpec.startTime
+        matchRecord.endTime = matchSpec.endTime
+        matchRecord.competitionCategoryId = matchSpec.competitionCategoryId
+        matchRecord.matchType = matchSpec.matchType.name
+        matchRecord.firstRegistrationId = matchSpec.firstRegistrationId
+        matchRecord.secondRegistrationId = matchSpec.secondRegistrationId
+        matchRecord.matchOrderNumber = matchSpec.matchOrderNumber
+        matchRecord.groupOrRound = matchSpec.groupOrRound
         matchRecord.update()
         return matchRecord
+    }
+
+    fun setWinner(matchId: Int, winnerRegistrationId: Int) {
+       dslContext.update(MATCH)
+           .set(MATCH.WINNER, winnerRegistrationId)
+           .where(MATCH.ID.eq(matchId))
+           .execute()
     }
 
     fun isCategoryDrawn(competitionCategoryId: Int): Boolean {
@@ -86,8 +93,7 @@ class MatchRepository(val dslContext: DSLContext) {
     }
 
     fun deleteMatchesForCategory(competitionCategoryId: Int) {
-        dslContext.deleteFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
-            .and(MATCH.HAS_FINISHED.eq(false))).execute()
+        dslContext.deleteFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
     }
 
     fun clearTable() {

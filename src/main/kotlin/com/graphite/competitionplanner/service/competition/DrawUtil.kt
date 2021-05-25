@@ -13,7 +13,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
         val player3 = registrationIds[2]
 
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -25,7 +25,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
             )
         )
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -37,7 +37,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
             )
         )
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -62,7 +62,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
         val player4 = registrationIds[3]
 
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -74,7 +74,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
             )
         )
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -86,7 +86,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
             )
         )
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -98,7 +98,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
             )
         )
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -110,7 +110,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
             )
         )
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -122,7 +122,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
             )
         )
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -149,7 +149,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
         val player5 = registrationIds[4]
 
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -161,7 +161,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
             )
         )
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -173,7 +173,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
             )
         )
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -185,7 +185,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
             )
         )
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -197,7 +197,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
             )
         )
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -209,7 +209,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
             )
         )
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -221,7 +221,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
             )
         )
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -233,7 +233,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
             )
         )
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -245,7 +245,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
             )
         )
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -257,7 +257,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
             )
         )
         matchRepository.addMatch(
-            Match(
+            MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,
@@ -315,7 +315,8 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
 
     fun getNumberOfSeeds(nrPlayersPerGroup: Int, numberOfRegisteredPlayers: Int): Int {
         when(numberOfRegisteredPlayers) {
-            in 0..11 -> return 2
+            in 0..5 -> return 1
+            in 6..11 -> return 2
             in 12..24 -> return 4
             else -> return 8
         }
@@ -354,7 +355,7 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
         return matchUps
     }
 
-    fun createDirectToPlayoff(competitionCategoryId: Int, registrationIds: List<Int>): List<Match> {
+    fun createDirectToPlayoff(competitionCategoryId: Int, registrationIds: List<Int>): List<MatchSpec> {
         val playOrder = getPlayoffOrderWhereOneProceeds(registrationIds.size)
         val registrationPositions = playOrder.map { 0 }.toMutableList()    // Create list with player and opponent (or BYE if there is no opponent)
         for (idOrder in registrationIds.indices) {
@@ -367,10 +368,10 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
         }
         // Convert raw list to match up list
         val round = getRound(playOrder.size / 2)
-        val matches = mutableListOf<Match>()
+        val matches = mutableListOf<MatchSpec>()
         var matchOrderNumber = 1
         for (i in registrationPositions.indices step 2) {
-            val match = Match(
+            val match = MatchSpec(
                 startTime = null,
                 endTime = null,
                 competitionCategoryId = competitionCategoryId,

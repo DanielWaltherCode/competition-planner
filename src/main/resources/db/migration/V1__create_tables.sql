@@ -74,7 +74,7 @@ create table match
     second_registration_id          INTEGER REFERENCES registration (id),
     match_order_number INTEGER NOT NULL,
     group_or_round VARCHAR(30), /* Either which group or which round */
-    has_finished boolean DEFAULT false
+    winner INTEGER references registration(id)
 );
 
 
@@ -91,5 +91,6 @@ create table game
     game_number                 INTEGER NOT NULL,
     first_registration_result  INTEGER NOT NULL,
     second_registration_result INTEGER NOT NULL,
-    match_id INTEGER references match (id) ON DELETE CASCADE NOT NULL
+    match_id INTEGER references match (id) ON DELETE CASCADE NOT NULL,
+    unique (game_number, match_id)
 );
