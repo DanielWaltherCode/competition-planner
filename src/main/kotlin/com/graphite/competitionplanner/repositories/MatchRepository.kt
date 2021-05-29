@@ -1,11 +1,14 @@
 package com.graphite.competitionplanner.repositories
 
-import com.graphite.competitionplanner.Tables.MATCH
+import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.service.competition.MatchSpec
 import com.graphite.competitionplanner.service.competition.MatchType
 import com.graphite.competitionplanner.tables.records.MatchRecord
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Repository
 class MatchRepository(val dslContext: DSLContext) {
@@ -18,6 +21,30 @@ class MatchRepository(val dslContext: DSLContext) {
         return dslContext
             .select().from(MATCH)
             .where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+            .fetchInto(MATCH)
+    }
+
+    fun getMatchesInCompetitionByDay(competitionId: Int, day: LocalDate): List<MatchRecord> {
+        val startTime = LocalDateTime.of(day, LocalTime.of(0, 0))
+        val endTime = LocalDateTime.of(day, LocalTime.of(23, 59))
+        return dslContext
+            .select().from(COMPETITION)
+            .join(COMPETITION_CATEGORY)
+            .on(COMPETITION.ID.eq(COMPETITION_CATEGORY.COMPETITION_ID))
+            .join(MATCH)
+            .on(COMPETITION_CATEGORY.ID.eq(MATCH.COMPETITION_CATEGORY_ID))
+            .where(COMPETITION.ID.eq(competitionId)).and(MATCH.START_TIME.between(startTime, endTime))
+            .fetchInto(MATCH)
+    }
+
+    fun getMatchesInCompetition(competitionId: Int): List<MatchRecord> {
+        return dslContext
+            .select().from(COMPETITION)
+            .join(COMPETITION_CATEGORY)
+            .on(COMPETITION.ID.eq(COMPETITION_CATEGORY.COMPETITION_ID))
+            .join(MATCH)
+            .on(COMPETITION_CATEGORY.ID.eq(MATCH.COMPETITION_CATEGORY_ID))
+            .where(COMPETITION.ID.eq(competitionId))
             .fetchInto(MATCH)
     }
 

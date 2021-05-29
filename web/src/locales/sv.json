@@ -176,5 +176,16 @@
         "nrTables": "Antal bord"
       }
     }
+  },
+  "results": {
+    "heading": "Matcher och resultat",
+    "startTime": "Starttid",
+    "category": "Klass",
+    "result": "Resultat"
+  },
+  "Exceptions": {
+    "GameValidationException": {
+      "1": "För få set inrapporterade"
+    }
   }
 }
