@@ -48,7 +48,7 @@ class ResultService(
 
     fun updateGameResult(matchId: Int, gameId: Int, gameSpec: GameSpec): ResultDTO {
         val match = matchService.getMatch(matchId)
-        val gameRules = categoryService.getCategoryGameRules(match.competitionCategoryId)
+        val gameRules = categoryService.getCategoryGameRules(match.competitionCategory.competitionCategoryId)
         validateGame(gameRules, gameSpec)
         resultRepository.updateGameResult(gameId, matchId, gameSpec)
         return getResult(matchId)
@@ -71,7 +71,7 @@ class ResultService(
             validateGame(gameRules, game)
         }
         if ((resultSpec.gameList.size) < (gameRules.nrSets / 2.0)) {
-            throw GameValidationException("Too few games reported")
+            throw GameValidationException("För få set inrapporterade")
         }
     }
 
@@ -79,7 +79,7 @@ class ResultService(
         if (game.firstRegistrationResult < gameRules.winScore
             && game.secondRegistrationResult < gameRules.winScore
         ) {
-            throw GameValidationException("At least one player needs to reach ${gameRules.winScore}")
+            throw GameValidationException("Åtminstone en spelare måste nå ${gameRules.winScore}")
         }
     }
 
