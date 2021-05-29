@@ -161,6 +161,72 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
     }
 
     @Test
+    fun balanceMatchesDependingOnCategories() {
+        /**
+         * Given two categories:
+         * - Where one category is larger than the other,
+         * - and we want both categories to start playing their matches at the same time.
+         * We want the two categories to split the number of available tables evenly.
+         *
+         * In this case we have two categories
+         * - Category 1 can play 6 parallel matches
+         * - Category 2 can play 4 parallel matches
+         * - We are bound to 8 tables
+         *
+         * A fair split would be that category 1 gets at least 4 tables and category 2 gets at least 3 tables
+         */
+
+        val classOnePoolA = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+        val classOnePoolB = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+        val classOnePoolC = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+
+        val classTwoPoolA = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 2)
+        val classTwoPoolB = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 2)
+
+        val allMatches = classOnePoolA + classOnePoolB + classOnePoolC + classTwoPoolA + classTwoPoolB
+
+        val settings = ScheduleSettingsDTO(30, 8, LocalDateTime.now().withHour(9).plusDays(7))
+
+        val schedule = createSchedule.execute(allMatches, settings)
+
+        // Assert first time slot has two matches from category 2 and two matches from category 1
+        val matchesFromCategoryOne = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 1 }
+        val matchesFromCategoryTwo = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 2 }
+
+        Assertions.assertTrue(matchesFromCategoryOne.size >= 4, "Expected category one to get at least 4 tables")
+        Assertions.assertTrue(matchesFromCategoryTwo.size >= 3, "Expected category two to get at least 3 tables")
+    }
+
+    @Test
+    fun balanceMatchesDependingOnCategories2() {
+        val classOnePoolA = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+        val classOnePoolB = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+        val classOnePoolC = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+
+        val classTwoPoolA = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 2)
+        val classTwoPoolB = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 2)
+
+        val classThreePoolA = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 3)
+        val classThreePoolB = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 3)
+
+        val allMatches =
+            classOnePoolA + classOnePoolB + classOnePoolC + classTwoPoolA + classTwoPoolB + classThreePoolA + classThreePoolB
+
+        val settings = ScheduleSettingsDTO(30, 8, LocalDateTime.now().withHour(9).plusDays(7))
+
+        val schedule = createSchedule.execute(allMatches, settings)
+
+        // Assert first time slot has two matches from category 2 and two matches from category 1
+        val matchesFromCategoryOne = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 1 }
+        val matchesFromCategoryTwo = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 2 }
+        val matchesFromCategoryThree = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 3 }
+
+        Assertions.assertTrue(matchesFromCategoryOne.size >= 3)
+        Assertions.assertTrue(matchesFromCategoryTwo.size >= 2)
+        Assertions.assertTrue(matchesFromCategoryThree.size >= 2)
+    }
+
+    @Test
     fun shouldThrowIllegalArgumentExceptionWhenNumberOfTablesIsZero() {
         val matches = pool1 + pool3
         Assertions.assertThrows(IllegalArgumentException::class.java) {
