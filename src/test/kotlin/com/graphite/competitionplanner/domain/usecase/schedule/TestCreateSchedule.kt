@@ -263,10 +263,10 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
 
     @Test
     fun shouldThrowIllegalArgumentExceptionWhenThereIsAnInvalidMatch() {
-        val p5 = dataGenerator.newPlayerEntityDto()
-        val p6 = dataGenerator.newPlayerEntityDto()
-        val p7 = dataGenerator.newPlayerEntityDto()
-        val p8 = dataGenerator.newPlayerEntityDto()
+        val p5 = dataGenerator.newPlayerEntityDTO()
+        val p6 = dataGenerator.newPlayerEntityDTO()
+        val p7 = dataGenerator.newPlayerEntityDTO()
+        val p8 = dataGenerator.newPlayerEntityDTO()
         val matches = listOf(
             MatchDTO(
                 7, null, null, 1, "POOL",

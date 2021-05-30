@@ -107,7 +107,7 @@ class DataGenerator {
         dateOfBirth
     )
 
-    fun newPlayerEntityDto(
+    fun newPlayerEntityDTO(
         id: Int = 1,
         firstName: String = "Gunnar",
         lastName: String = "Åkerberg",
