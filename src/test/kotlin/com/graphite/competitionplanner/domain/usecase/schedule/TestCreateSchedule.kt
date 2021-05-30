@@ -161,7 +161,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
     }
 
     @Test
-    fun balanceMatchesDependingOnCategories() {
+    fun balanceMatchesWithTwoCategories() {
         /**
          * Given two categories:
          * - Where one category is larger than the other,
@@ -173,7 +173,8 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          * - Category 2 can play 4 parallel matches
          * - We are bound to 8 tables
          *
-         * A fair split would be that category 1 gets at least 4 tables and category 2 gets at least 3 tables
+         * Current implementation performs scheduling in a round robin fashion which means we would expect four
+         * matches from each category be scheduled per timeslot (until the smaller class runs out of matches)
          */
 
         val classOnePoolA = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
@@ -189,16 +190,19 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
 
         val schedule = createSchedule.execute(allMatches, settings)
 
-        // Assert first time slot has two matches from category 2 and two matches from category 1
         val matchesFromCategoryOne = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 1 }
         val matchesFromCategoryTwo = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 2 }
 
         Assertions.assertTrue(matchesFromCategoryOne.size >= 4, "Expected category one to get at least 4 tables")
-        Assertions.assertTrue(matchesFromCategoryTwo.size >= 3, "Expected category two to get at least 3 tables")
+        Assertions.assertTrue(matchesFromCategoryTwo.size >= 4, "Expected category two to get at least 4 tables")
     }
 
     @Test
-    fun balanceMatchesDependingOnCategories2() {
+    fun balanceMatchesWithThreeCategories() {
+        /**
+         * Due to the round robin scheduling we can expect that each category gets at least two matches per timeslot given
+         * we have 8 tables divided on 3 categories.
+         */
         val classOnePoolA = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
         val classOnePoolB = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
         val classOnePoolC = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
@@ -216,14 +220,34 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
 
         val schedule = createSchedule.execute(allMatches, settings)
 
-        // Assert first time slot has two matches from category 2 and two matches from category 1
         val matchesFromCategoryOne = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 1 }
         val matchesFromCategoryTwo = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 2 }
         val matchesFromCategoryThree = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 3 }
 
-        Assertions.assertTrue(matchesFromCategoryOne.size >= 3)
+        Assertions.assertTrue(matchesFromCategoryOne.size >= 2)
         Assertions.assertTrue(matchesFromCategoryTwo.size >= 2)
         Assertions.assertTrue(matchesFromCategoryThree.size >= 2)
+    }
+
+    @Test
+    fun balanceMatchesWhenFewTables() {
+        val classOnePoolA = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+        val classOnePoolB = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+        val classOnePoolC = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+
+        val classTwoPoolA = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 2)
+
+        val allMatches = classOnePoolA + classOnePoolB + classOnePoolC + classTwoPoolA
+
+        val settings = ScheduleSettingsDTO(30, 2, LocalDateTime.now().withHour(9).plusDays(7))
+
+        val schedule = createSchedule.execute(allMatches, settings)
+
+        val matchesFromCategoryOne = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 1 }
+        val matchesFromCategoryTwo = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 2 }
+
+        Assertions.assertTrue(matchesFromCategoryOne.isNotEmpty())
+        Assertions.assertTrue(matchesFromCategoryTwo.isNotEmpty())
     }
 
     @Test
