@@ -37,7 +37,7 @@ class TestUpdatePlayer {
     @Test
     fun shouldNotCallStoreWhenEntityIsInvalid() {
         // Setup
-        val dto = dataGenerator.newInvalidPlayerDTO()
+        val dto = dataGenerator.newPlayerDTO(firstName = "Per123")
 
         // Act
         Assertions.assertThrows(IllegalArgumentException::class.java) { updatePlayer.execute(dto) }
@@ -50,7 +50,7 @@ class TestUpdatePlayer {
     fun shouldNotCallStoreWhenIfClubDoesNotExist() {
         // Setup
         val dto = dataGenerator.newPlayerDTO()
-        `when`(mockedFindClub.byId(dto.id)).thenThrow(NotFoundException(""))
+        `when`(mockedFindClub.byId(dto.clubId)).thenThrow(NotFoundException(""))
 
         // Act
         Assertions.assertThrows(NotFoundException::class.java) { updatePlayer.execute(dto) }

@@ -6,7 +6,6 @@ internal class Timeslot(
     val orderNumber: Int,
     var matches: List<Match>
 ) {
-
     init {
         require(matches.isNotEmpty()) { "A timeslot cannot have an empty list of matches" }
     }
