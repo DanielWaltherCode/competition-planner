@@ -9,8 +9,8 @@ internal data class ScheduleSettings(
     val startTime: LocalDateTime
 ) {
     init {
-        require(averageMatchTime > 0)
-        require(numberOfTables > 0)
+        require(averageMatchTime > 0) { "Average match time must be greater than zero" }
+        require(numberOfTables > 0) { "Number of tables must be greater than zero" }
     }
 
     constructor(dto: ScheduleSettingsDTO) : this(dto.averageMatchTime, dto.numberOfTables, dto.startTime)

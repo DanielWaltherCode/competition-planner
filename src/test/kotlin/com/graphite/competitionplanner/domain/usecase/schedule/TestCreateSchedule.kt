@@ -27,7 +27,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
 
         val matches = pool1 + pool2
 
-        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettings(1))
+        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettingsDTO(numberOfTables = 1))
 
         Assertions.assertEquals(matches.size, schedule.timeslots.size)
     }
@@ -42,7 +42,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          *    (3-4)    (2-4)     (3-4)
          */
         val matches = pool1
-        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettings(2))
+        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettingsDTO(numberOfTables = 2))
 
         Assertions.assertEquals(3, schedule.timeslots.size)
     }
@@ -57,7 +57,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          *    (empty)  (empty)   (empty)
          */
         val matches = pool1
-        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettings(3))
+        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettingsDTO(numberOfTables = 3))
 
         Assertions.assertEquals(3, schedule.timeslots.size)
     }
@@ -72,7 +72,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          */
 
         val matches = pool1 + pool2
-        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettings(2))
+        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettingsDTO(numberOfTables = 2))
 
         Assertions.assertEquals(matches.size / 2, schedule.timeslots.size)
     }
@@ -91,7 +91,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          *   (5-6)     (2-4)    (1-4)    (6-7)
          */
         val matches = pool1 + pool2
-        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettings(3))
+        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettingsDTO(numberOfTables = 3))
 
         Assertions.assertEquals(4, schedule.timeslots.size)
     }
@@ -111,7 +111,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          */
 
         val matches = pool1 + pool2
-        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettings(4))
+        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettingsDTO(numberOfTables = 4))
 
         Assertions.assertEquals(3, schedule.timeslots.size)
     }
@@ -131,7 +131,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          */
 
         val matches = pool1 + pool3
-        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettings(4))
+        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettingsDTO(numberOfTables = 4))
 
         Assertions.assertEquals(3, schedule.timeslots.size)
     }
@@ -151,7 +151,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
     @Test
     fun shouldNotScheduleAPlayerTwiceInSameTimeslot() {
         val matches = pool1
-        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettings(4))
+        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettingsDTO(numberOfTables = 4))
 
         for (timeslot in schedule.timeslots) {
             val playerIds =
@@ -263,10 +263,10 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
 
     @Test
     fun shouldThrowIllegalArgumentExceptionWhenThereIsAnInvalidMatch() {
-        val p5 = dataGenerator.newPlayerEntityDTO()
-        val p6 = dataGenerator.newPlayerEntityDTO()
-        val p7 = dataGenerator.newPlayerEntityDTO()
-        val p8 = dataGenerator.newPlayerEntityDTO()
+        val p5 = dataGenerator.newPlayerEntityDto()
+        val p6 = dataGenerator.newPlayerEntityDto()
+        val p7 = dataGenerator.newPlayerEntityDto()
+        val p8 = dataGenerator.newPlayerEntityDto()
         val matches = listOf(
             MatchDTO(
                 7, null, null, 1, "POOL",
@@ -297,7 +297,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             createSchedule.execute(
                 matches,
-                dataGenerator.newScheduleSettings(3)
+                dataGenerator.newScheduleSettingsDTO(numberOfTables = 3)
             )
         }
     }

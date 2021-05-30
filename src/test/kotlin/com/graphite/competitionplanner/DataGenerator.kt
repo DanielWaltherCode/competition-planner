@@ -15,13 +15,121 @@ class DataGenerator {
     private var clubId = 0
     private var matchId = 0
 
-    internal fun newClub(): Club {
-        return Club(clubId, "Lule IK", "Sjögatan")
-    }
+    internal fun newClub(
+        id: Int = clubId++,
+        name: String = "Lule IK",
+        address: String = "Sjögatan"
+    ) = Club(
+        id,
+        name,
+        address
+    )
 
-    fun newClubDTO(): ClubDTO {
-        return ClubDTO(newClub())
-    }
+    internal fun newPlayer(
+        id: Int = playerId++,
+        firstName: String = "Ida",
+        lastName: String = "Larsson",
+        club: Club = newClub(),
+        dateOfBirth: LocalDate = LocalDate.of(1999, 1, 1)
+    ) = Player(
+        id,
+        firstName,
+        lastName,
+        club,
+        dateOfBirth
+    )
+
+    internal fun newMatch(
+        id: Int = matchId++,
+        competitionCategory: CompetitionCategory = CompetitionCategory(0),
+        startTime: LocalDateTime = LocalDateTime.now(),
+        endTime: LocalDateTime = LocalDateTime.now().plusMinutes(15),
+        matchType: MatchType = MatchType("POOL"),
+        firstPlayer: List<Player> = listOf(newPlayer(firstName = "Lars", lastName = "Åkesson")),
+        secondPlayer: List<Player> = listOf(newPlayer(firstName = "Lars", lastName = "Åkesson")),
+        orderNumber: Int = 0,
+        groupOrRound: String = "GROUP A"
+    ) = Match(
+        id,
+        competitionCategory,
+        startTime,
+        endTime,
+        matchType,
+        firstPlayer,
+        secondPlayer,
+        orderNumber,
+        groupOrRound
+    )
+
+    internal fun newScheduleSettings(
+        averageMatchTime: Long = 15,
+        numberOfTables: Int = 8,
+        startTime: LocalDateTime = LocalDateTime.now()
+    ) = ScheduleSettings(
+        averageMatchTime,
+        numberOfTables,
+        startTime
+    )
+
+    fun newClubDTO(
+        id: Int = clubId++,
+        name: String = "Lule IK",
+        address: String = "Sjögatan"
+    ) = ClubDTO(
+        id,
+        name,
+        address
+    )
+
+    fun newPlayerDTO(
+        id: Int = playerId++,
+        firstName: String = "Nisse",
+        lastName: String = "Nilsson",
+        clubId: Int = 1,
+        dateOfBirth: LocalDate = LocalDate.of(1999, 1, 1)
+    ) = PlayerDTO(
+        id,
+        firstName,
+        lastName,
+        clubId,
+        dateOfBirth
+    )
+
+    fun newNewPlayerDTO(
+        firstName: String = "Lars",
+        lastName: String = "Larsson",
+        clubId: Int = 1,
+        dateOfBirth: LocalDate = LocalDate.of(1999, 1, 1)
+    ) = NewPlayerDTO(
+        firstName,
+        lastName,
+        clubId,
+        dateOfBirth
+    )
+
+    fun newPlayerEntityDto(
+        id: Int = 1,
+        firstName: String = "Gunnar",
+        lastName: String = "Åkerberg",
+        clubDTO: ClubDTO = newClubDTO(),
+        dateOfBirth: LocalDate = LocalDate.of(1999, 1, 1)
+    ) = PlayerEntityDTO(
+        id,
+        firstName,
+        lastName,
+        clubDTO,
+        dateOfBirth
+    )
+
+    fun newScheduleSettingsDTO(
+        averageMatchTime: Long = 15,
+        numberOfTables: Int = 8,
+        startTime: LocalDateTime = LocalDateTime.now()
+    ) = ScheduleSettingsDTO(
+        averageMatchTime,
+        numberOfTables,
+        startTime
+    )
 
     fun newClubSpec(): NewClubSpec {
         return NewClubSpec("Club" + Random.nextLong().toString(), "Address" + Random.nextLong().toString())
@@ -29,50 +137,6 @@ class DataGenerator {
 
     fun newPlayerSpec(club: ClubNoAddressDTO): PlayerSpec {
         return PlayerSpec("Lasse", "Larrson", club.id, LocalDate.now().minusYears(20))
-    }
-
-    internal fun newPlayer(): Player {
-        return newPlayer("Ida", "Larsson")
-    }
-
-    internal fun newPlayer(firstName: String, lastName: String): Player {
-        return Player(playerId++, firstName, lastName, newClub(), LocalDate.of(1999, 1, 1))
-    }
-
-    internal fun newMatch(): Match {
-        return Match(
-            matchId++,
-            CompetitionCategory(0),
-            null,
-            null,
-            MatchType("POOL"),
-            listOf(newPlayer("Lars", "Åkesson")),
-            listOf(newPlayer("Nils", "Holm")),
-            0,
-            "Group A"
-        )
-    }
-
-    fun newPlayerEntityDTO(): PlayerEntityDTO {
-        return PlayerEntityDTO(newPlayer())
-    }
-
-    fun newPlayerDTO(): PlayerDTO {
-        val player = newPlayer()
-        return PlayerDTO(player.id, player.firstName, player.lastName, player.club.id, player.dateOfBirth)
-    }
-
-    fun newNewPlayerDTO(): NewPlayerDTO {
-        val player = newPlayer()
-        return NewPlayerDTO(player.firstName, player.lastName, player.club.id, player.dateOfBirth)
-    }
-
-    fun newScheduleSettings(numberOfTables: Int): ScheduleSettingsDTO {
-        return ScheduleSettingsDTO(15, numberOfTables, LocalDateTime.now())
-    }
-
-    fun newInvalidPlayerDTO(id: Int = 0): PlayerDTO {
-        return PlayerDTO(id, "Lisa12", "Svansson", newClub().id, LocalDate.of(2001, 10, 1))
     }
 
     /**
@@ -87,7 +151,8 @@ class DataGenerator {
         assert(numberOfPlayers < 11) { "Not that many! Maximum of 10 players per pool." }
 
         val postFixes = ('A'..'J').toList()
-        val players = (0..numberOfPlayers).map { newPlayer("Player" + postFixes[it], "LastName") }
+        val players =
+            (0..numberOfPlayers).map { newPlayer(firstName = "Player" + postFixes[it], lastName = "LastName") }
 
         val matches = mutableListOf<MatchDTO>()
         for (i in 0..numberOfPlayers) {

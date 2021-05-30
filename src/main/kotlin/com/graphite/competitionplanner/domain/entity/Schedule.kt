@@ -7,7 +7,6 @@ internal data class Schedule(
     val timeslots: List<Timeslot>,
     val settings: ScheduleSettings
 ) {
-
     constructor(dto: ScheduleDTO) : this(
         dto.id,
         dto.timeslots.map { Timeslot(it) },

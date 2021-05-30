@@ -3,7 +3,6 @@ package com.graphite.competitionplanner.domain.usecase.player
 import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.TestHelper
 import com.graphite.competitionplanner.domain.dto.ClubDTO
-import com.graphite.competitionplanner.domain.dto.NewPlayerDTO
 import com.graphite.competitionplanner.domain.dto.PlayerDTO
 import com.graphite.competitionplanner.domain.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.domain.interfaces.NotFoundException
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import org.springframework.boot.test.context.SpringBootTest
 import java.lang.IllegalArgumentException
-import java.time.LocalDate
 
 @SpringBootTest
 class TestCreatePlayer {
@@ -49,8 +47,7 @@ class TestCreatePlayer {
     @Test
     fun shouldNotCallStoreWhenEntityIsInvalid() {
         // Assert
-        val club = dataGenerator.newClubDTO()
-        val dto = NewPlayerDTO("", "lastName", club.id, LocalDate.of(1990, 5, 18))
+        val dto = dataGenerator.newNewPlayerDTO("")
 
         // Act
         Assertions.assertThrows(IllegalArgumentException::class.java) { createPlayer.execute(dto) }
