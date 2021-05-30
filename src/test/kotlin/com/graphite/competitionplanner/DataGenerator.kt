@@ -76,24 +76,96 @@ class DataGenerator {
     }
 
     /**
-     * Pool with 4 players i.e. 6 matches
+     * Generates a set of matches for a pool with the given amount of players. The generated matches
+     * are so that every player will go up against each other player exactly once.
+     *
+     * @param numberOfPlayers Number of players in the pool
+     * @param categoryId Category the pool / players belong to
      */
-    fun pool1(): List<MatchDTO> {
-        return pool1
+    fun poolOf(numberOfPlayers: Int = 4, categoryId: Int = 2): List<MatchDTO> {
+        assert(numberOfPlayers > 1) { "Yo! Think I can create a pool with less than 2 players?!" }
+        assert(numberOfPlayers < 11) { "Not that many! Maximum of 10 players per pool." }
+
+        val postFixes = ('A'..'J').toList()
+        val players = (0..numberOfPlayers).map { newPlayer("Player" + postFixes[it], "LastName") }
+
+        val matches = mutableListOf<MatchDTO>()
+        for (i in 0..numberOfPlayers) {
+            for (j in i + 1..numberOfPlayers) {
+                matches.add(
+                    MatchDTO(
+                        matchId++,
+                        null,
+                        null,
+                        categoryId,
+                        "POOL",
+                        listOf(PlayerEntityDTO(players[i])),
+                        listOf(PlayerEntityDTO(players[j])),
+                        0,
+                        "GROUP"
+                    )
+                )
+            }
+        }
+        return matches
     }
 
     /**
      * Pool with 4 players i.e. 6 matches
      */
-    fun pool2(): List<MatchDTO> {
-        return pool2
+    fun pool1(categoryId: Int = 1): List<MatchDTO> {
+        return pool1.map {
+            MatchDTO(
+                it.id,
+                it.startTime,
+                it.endTime,
+                categoryId,
+                it.matchType,
+                it.firstPlayer,
+                it.secondPlayer,
+                it.matchOrderNumber,
+                it.groupOrRound
+            )
+        }
     }
+
+    /**
+     * Pool with 4 players i.e. 6 matches
+     */
+    fun pool2(categoryId: Int = 1): List<MatchDTO> {
+        return pool2.map {
+            MatchDTO(
+                it.id,
+                it.startTime,
+                it.endTime,
+                categoryId,
+                it.matchType,
+                it.firstPlayer,
+                it.secondPlayer,
+                it.matchOrderNumber,
+                it.groupOrRound
+            )
+        }
+    }
+
 
     /**
      * Pool with 3 players i.e 3 matches
      */
-    fun pool3(): List<MatchDTO> {
-        return pool3
+    fun pool3(categoryId: Int = 1): List<MatchDTO> {
+        return pool3.map {
+            MatchDTO(
+                it.id,
+                it.startTime,
+                it.endTime,
+                categoryId,
+                it.matchType,
+                it.firstPlayer,
+                it.secondPlayer,
+                it.matchOrderNumber,
+                it.groupOrRound
+            )
+        }
     }
 
     private val birthDate = LocalDate.of(1999, 4, 3)
