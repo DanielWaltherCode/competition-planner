@@ -39,7 +39,8 @@ class WebSecurity(
                 "/swagger-ui.html",
                 "/webjars/**",
                 "/login/**",
-                "/request-token/**"
+                "/request-token/**",
+                "/open/**"
             ).permitAll()
             .and().authorizeRequests().anyRequest()
             .authenticated() // by default uses a Bean by the type CorsConfigurationSource (defined below)

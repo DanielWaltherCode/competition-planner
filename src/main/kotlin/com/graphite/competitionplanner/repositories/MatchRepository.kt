@@ -86,8 +86,7 @@ class MatchRepository(val dslContext: DSLContext) {
     }
 
     fun deleteMatchesForCategory(competitionCategoryId: Int) {
-        dslContext.deleteFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
-            .and(MATCH.HAS_FINISHED.eq(false))).execute()
+        dslContext.deleteFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
     }
 
     fun clearTable() {

@@ -1,0 +1,127 @@
+{
+  "header": {
+    "overview": "Hem",
+    "players": "Spelare",
+    "draws": "Tävlingar",
+    "schedule": "Klubbar"
+  },
+  "landing": {
+    "choice": "Välj en tävling"
+  },
+  "competition": {
+    "nav": {
+      "overview": "Översikt",
+      "seeds": "Seedade spelare",
+      "categories": "Klasser",
+      "matches": "Matcher",
+      "players": "Spelare"
+    },
+    "overview": {
+      "header": "Välkommen till {competition}",
+      "generalInfo": "Allmän information"
+    },
+    "categories": {
+      "header": "Klasser",
+      "name": "Namn",
+      "nrContestants": "Antal startande"
+    },
+    "matches": {
+      "header": "Matcher",
+      "date": "Dag"
+    }
+  },
+  "newCompetition": {
+    "title": "Tävlingsöversikt",
+    "name": "Namn",
+    "info": "Tävlingsinformation",
+    "startDate": "Startdatum",
+    "endDate": "Slutdatum",
+    "location": "Plats",
+    "competitionAdded": "Tävlingen är skapad. Du kan nu gå vidare till nästa steg.",
+    "competitionUpdated": "Tävlingen uppdaterades"
+  },
+  "general": {
+    "save": "Spara",
+    "saveChanges": "Spara ändringar",
+    "next": "Nästa"
+  },
+  "draw": {
+    "main":  {
+      "notDrawnTitle": "Klassen har inte lottats än.",
+      "notDrawnNoPlayers": "Klassen har inte lottats än och det finns än så länge inga anmälda spelare",
+      "registeredPlayers": "Anmälda spelare",
+      "group": "Pool",
+      "drawMade": "Klassen har lottats",
+      "deleteDraw": "Ta bort lottning",
+      "redraw": "Lotta om"
+    },
+    "pool": {
+      "club": "Klubb",
+      "groups": "Pool-lottning",
+      "playoff": "Slutspelslottning",
+      "matches": "Matcher",
+      "time": "Tid",
+      "result": "Resultat",
+      "noTime": "Tid ej satt"
+    }
+  },
+  "schedule": {
+    "sidebar": {
+      "overview": "Översikt",
+      "advanced": "Avancerat"
+    },
+    "main": {
+      "heading": "Schema och tidssättning",
+      "helperText": "Om inga tidsönskemål för en klass har gjorts när schemat läggs kommer algoritmen att välja en tid automatiskt. Det går bra att välja exempelvis speldag för en klass och sen låta algoritmen sätta tiden mer noggrant. Man inte välja exakt starttid utan att först ha valt speldag och tidsintervall",
+      "categoryStartTimes": "Starttider för klasser",
+      "category": "Klass",
+      "day": "Speldag",
+      "notSelected": "Välj något åt mig",
+      "timeSpan": "Välj ett tidsintervall",
+      "startTime": "Välj exakt starttid",
+      "helpMe": "Välj något åt mig",
+      "addCategory": "Lägg till ny klass den här dagen",
+      "dropdownPlaceholder": "Välj en klass",
+      "intervals": {
+        "NOT_SELECTED": "Välj något åt mig",
+        "EARLY_MORNING": "Tidig förmiddag",
+        "LATE_MORNING": "Sen förmiddag",
+        "EARLY_AFTERNOON": "Tidig eftermiddag",
+        "LATE_AFTERNOON": "Sen eftermiddag",
+        "EVENING": "Kväll"
+      }
+    },
+    "generalInfo": {
+      "heading": "Viktiga övergripande inställningar",
+      "startEnd": "Hallens öppettider och antal bord",
+      "startEndHelper": "Här kan du ange när tävlingen börjar och slutar varje dag. Är det för få eller för många tävlingsdagar här kan du ändra det ",
+      "startEndHelperHere": "här",
+      "nrTables": "Antal bord",
+      "matchTime": "Speltid per match (i minuter)",
+      "startTime": "Starttid",
+      "endTime": "Sluttid",
+      "cannotChangeTables": "Bordsinställningarna för den här dagen har ändrats under 'Avancerat'. För att uppdatera, gå till den fliken.",
+      "availableTablesHeading": "Antal bord tävlingen spelas på",
+      "availableTablesHelper": "Här sätts antalet tillgängliga bord för varje speldag som helhet. Om det varierar per timme kan detta ställas in ",
+      "availableTablesHelperHere": "här",
+      "availableTablesNotSet": "Ej valt, behöver väljas",
+      "averageMatchTimeHeading": "Genomsnittlig matchtid",
+      "averageMatchTimeHelper": "Ställ in tiden varje enskild match ska tilldelas i schemat",
+      "minutes": " minuter"
+    },
+    "advanced": {
+      "heading": "Avancerade schemainställningar",
+      "pauseHeading": "Pauser i en klass",
+      "pauseHelper": "Här kan du säkerställa att matcher inom en klass inte spelas för tätt inpå varandra.",
+      "pauseGroup": "Paus mellan gruppmatcher",
+      "pausePlayoff": "Paus mellan slutspelsmatcher",
+      "pauseBetweenGroupAndPlayoff": "Paus mellan gruppspelet och slutspelet",
+      "availableTables": {
+        "heading": "Tillgängliga bord per dag och timme",
+        "daySelection": "Välj en dag",
+        "hour": "Timme",
+        "nrTables": "Antal bord"
+      }
+    }
+  }
+}
