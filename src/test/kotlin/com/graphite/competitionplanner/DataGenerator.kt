@@ -8,6 +8,8 @@ import com.graphite.competitionplanner.domain.entity.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.random.Random
+import kotlin.time.Duration
+import kotlin.time.minutes
 
 class DataGenerator {
 
@@ -62,13 +64,15 @@ class DataGenerator {
     )
 
     internal fun newScheduleSettings(
-        averageMatchTime: Long = 15,
+        averageMatchTime: Duration = 15.minutes,
         numberOfTables: Int = 8,
-        startTime: LocalDateTime = LocalDateTime.now()
+        startTime: LocalDateTime = LocalDateTime.now(),
+        endTime: LocalDateTime = LocalDateTime.now().plusHours(8)
     ) = ScheduleSettings(
         averageMatchTime,
         numberOfTables,
-        startTime
+        startTime,
+        endTime
     )
 
     fun newClubDTO(
@@ -108,7 +112,7 @@ class DataGenerator {
     )
 
     fun newPlayerEntityDTO(
-        id: Int = 1,
+        id: Int = playerId++,
         firstName: String = "Gunnar",
         lastName: String = "Åkerberg",
         clubDTO: ClubDTO = newClubDTO(),
@@ -121,14 +125,38 @@ class DataGenerator {
         dateOfBirth
     )
 
+    fun newMatchDTO(
+        id: Int = matchId++,
+        competitionCategoryId: Int = 0,
+        startTime: LocalDateTime = LocalDateTime.now(),
+        endTime: LocalDateTime = LocalDateTime.now().plusMinutes(15),
+        matchType: String = "POOL",
+        firstPlayer: List<PlayerEntityDTO> = listOf(newPlayerEntityDTO(firstName = "Lars", lastName = "Åkesson")),
+        secondPlayer: List<PlayerEntityDTO> = listOf(newPlayerEntityDTO(firstName = "Lars", lastName = "Åkesson")),
+        orderNumber: Int = 0,
+        groupOrRound: String = "GROUP A"
+    ) = MatchDTO(
+        id,
+        startTime,
+        endTime,
+        competitionCategoryId,
+        matchType,
+        firstPlayer,
+        secondPlayer,
+        orderNumber,
+        groupOrRound
+    )
+
     fun newScheduleSettingsDTO(
-        averageMatchTime: Long = 15,
+        averageMatchTime: Duration = 15.minutes,
         numberOfTables: Int = 8,
-        startTime: LocalDateTime = LocalDateTime.now()
+        startTime: LocalDateTime = LocalDateTime.now(),
+        endTime: LocalDateTime = LocalDateTime.now().plusHours(8)
     ) = ScheduleSettingsDTO(
         averageMatchTime,
         numberOfTables,
-        startTime
+        startTime,
+        endTime
     )
 
     fun newClubSpec(): NewClubSpec {

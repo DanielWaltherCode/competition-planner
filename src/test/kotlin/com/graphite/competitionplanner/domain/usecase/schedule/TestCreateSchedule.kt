@@ -2,13 +2,14 @@ package com.graphite.competitionplanner.domain.usecase.schedule
 
 import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.domain.dto.MatchDTO
-import com.graphite.competitionplanner.domain.dto.ScheduleSettingsDTO
+import com.graphite.competitionplanner.util.plusDuration
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.lang.IllegalArgumentException
 import java.time.LocalDateTime
+import kotlin.time.minutes
 
 @SpringBootTest
 class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
@@ -138,14 +139,60 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
 
     @Test
     fun matchesShouldHaveCorrectStartAndEndTime() {
-        val settings = ScheduleSettingsDTO(15, 1, LocalDateTime.now())
+        val settings = dataGenerator.newScheduleSettingsDTO()
 
         val schedule = createSchedule.execute(pool1, settings)
 
         val matches = schedule.timeslots.flatMap { it.matches }
 
         Assertions.assertEquals(settings.startTime, matches.first().startTime)
-        Assertions.assertEquals(settings.startTime.plusMinutes(settings.averageMatchTime), matches.first().endTime)
+        Assertions.assertEquals(settings.startTime.plusDuration(settings.averageMatchTime), matches.first().endTime)
+    }
+
+    @Test
+    fun whenNoMoreTimeForTheDayNextTimeslotShouldBeScheduledNextDay() {
+        val startTime = LocalDateTime.now()
+        val averageMatchTime = 15.minutes
+        val endTime = startTime.plusDuration(averageMatchTime)
+        val settings = dataGenerator.newScheduleSettingsDTO(
+            averageMatchTime = averageMatchTime,
+            startTime = startTime,
+            endTime = endTime,
+            numberOfTables = 1
+        )
+
+        val matches = listOf(dataGenerator.newMatchDTO(), dataGenerator.newMatchDTO())
+
+        val schedule = createSchedule.execute(matches, settings)
+
+        Assertions.assertTrue(schedule.timeslots.size == 2)
+
+        val firstTimeslot = schedule.timeslots.first()
+        val secondTimeslot = schedule.timeslots.last()
+        Assertions.assertEquals(
+            firstTimeslot.matches.first().startTime!!.plusDays(1),
+            secondTimeslot.matches.first().startTime
+        )
+    }
+
+    @Test
+    fun timeBetweenTimeslotsIsZero() {
+        val settings = dataGenerator.newScheduleSettingsDTO(15.minutes, 1, LocalDateTime.now())
+        val schedule = createSchedule.execute(pool1, settings)
+        val zipped = schedule.timeslots.zipWithNext()
+        val startTimeEqualEndTime =
+            zipped.all { it.first.matches.first().endTime == it.second.matches.first().startTime }
+        Assertions.assertTrue(startTimeEqualEndTime)
+    }
+
+    @Test
+    fun matchesInSameTimeSlotHasSameStartAndEndTimes() {
+        val settings = dataGenerator.newScheduleSettingsDTO()
+        val schedule = createSchedule.execute(pool1 + pool2, settings)
+        val matches = schedule.timeslots.first().matches
+
+        Assertions.assertTrue(matches.all { matches.first().startTime == it.startTime })
+        Assertions.assertTrue(matches.all { matches.first().endTime == it.endTime })
     }
 
     @Test
@@ -186,7 +233,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
 
         val allMatches = classOnePoolA + classOnePoolB + classOnePoolC + classTwoPoolA + classTwoPoolB
 
-        val settings = ScheduleSettingsDTO(30, 8, LocalDateTime.now().withHour(9).plusDays(7))
+        val settings = dataGenerator.newScheduleSettingsDTO(numberOfTables = 8)
 
         val schedule = createSchedule.execute(allMatches, settings)
 
@@ -216,7 +263,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
         val allMatches =
             classOnePoolA + classOnePoolB + classOnePoolC + classTwoPoolA + classTwoPoolB + classThreePoolA + classThreePoolB
 
-        val settings = ScheduleSettingsDTO(30, 8, LocalDateTime.now().withHour(9).plusDays(7))
+        val settings = dataGenerator.newScheduleSettingsDTO(numberOfTables = 8)
 
         val schedule = createSchedule.execute(allMatches, settings)
 
@@ -239,7 +286,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
 
         val allMatches = classOnePoolA + classOnePoolB + classOnePoolC + classTwoPoolA
 
-        val settings = ScheduleSettingsDTO(30, 2, LocalDateTime.now().withHour(9).plusDays(7))
+        val settings = dataGenerator.newScheduleSettingsDTO(numberOfTables = 2)
 
         val schedule = createSchedule.execute(allMatches, settings)
 
@@ -256,7 +303,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             createSchedule.execute(
                 matches,
-                ScheduleSettingsDTO(15, 0, LocalDateTime.now())
+                dataGenerator.newScheduleSettingsDTO(numberOfTables = 0)
             )
         }
     }
