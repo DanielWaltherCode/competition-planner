@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.api
 
 import com.graphite.competitionplanner.domain.interfaces.NotFoundException
+import com.graphite.competitionplanner.util.exception.GameValidationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -25,7 +26,7 @@ class ExceptionAdvisor {
     }
 
     @ResponseBody
-    @ExceptionHandler(IllegalArgumentException::class)
+    @ExceptionHandler(IllegalArgumentException::class, GameValidationException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST) // TODO: Maybe have a more precise EntityException that extends IllegalArgumentException
     fun entityValidationError(exception: IllegalArgumentException, request: WebRequest): ResponseEntity<Any> {
         val body = mutableMapOf<String, Any>()
