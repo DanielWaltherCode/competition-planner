@@ -8,7 +8,10 @@ import com.graphite.competitionplanner.domain.entity.Match
 import com.graphite.competitionplanner.domain.entity.Schedule
 import com.graphite.competitionplanner.domain.entity.ScheduleSettings
 import com.graphite.competitionplanner.domain.entity.Timeslot
+import com.graphite.competitionplanner.util.plusDuration
 import org.springframework.stereotype.Component
+import java.time.temporal.ChronoUnit
+import kotlin.time.DurationUnit
 
 @Component
 class CreateSchedule {
@@ -36,28 +39,27 @@ class CreateSchedule {
 
     private fun assignTimeInformationOnMatches(schedule: Schedule): Schedule {
         // TODO: Pause between matches shall be incorporated
-        // TODO: End of day must be considered
         val settings = schedule.settings
 
-        val timeslots = schedule.timeslots.map {
-            Timeslot(
-                it.orderNumber,
-                it.matches.map { match ->
-                    Match(
-                        match.id,
-                        match.competitionCategory,
-                        settings.startTime.plusMinutes(settings.averageMatchTime * it.orderNumber),
-                        settings.startTime.plusMinutes(settings.averageMatchTime * (it.orderNumber + 1)),
-                        match.type,
-                        match.firstPlayer,
-                        match.secondPlayer,
-                        match.orderNumber,
-                        match.groupOrRound
-                    )
-                })
-        }
+        val timeslots = schedule.timeslots.map { it.assignTimeToMatches(schedule.settings) }
 
         return Schedule(schedule.id, timeslots, settings)
+    }
+
+    private fun Timeslot.assignTimeToMatches(settings: ScheduleSettings): Timeslot {
+        val dayInMinutes = settings.startTime.until(settings.endTime, ChronoUnit.MINUTES)
+        val timeslotsPerDay = dayInMinutes / settings.averageMatchTime.toLong(DurationUnit.MINUTES)
+        val timeslotOrderForTheDay = this.orderNumber % timeslotsPerDay
+        val dayOfTimeslot = this.orderNumber / timeslotsPerDay
+        val matchStart = settings.startTime.plusDays(dayOfTimeslot)
+            .plusDuration(settings.averageMatchTime * timeslotOrderForTheDay.toInt())
+        val matchEnd = settings.startTime.plusDays(dayOfTimeslot)
+            .plusDuration(settings.averageMatchTime * (timeslotOrderForTheDay + 1).toInt())
+
+        return Timeslot(
+            this.orderNumber,
+            this.matches.map { match -> Match(match, matchStart, matchEnd) }
+        )
     }
 
     private fun createSchedule(tempMatches: List<Match>, scheduleTest: Schedule): Schedule {
