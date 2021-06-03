@@ -49,6 +49,7 @@
 import CategoryList from "@/components/category/CategoryList"
 import CategoryGeneralSettings from "@/components/category/CategoryGeneralSettings"
 import CategoryGameSettings from "@/components/category/CategoryGameSettings";
+import CategoryService from "@/common/api-services/categoryservice";
 
 export default {
   name: "Categories",
@@ -69,37 +70,11 @@ export default {
     this.shownTab = "GENERAL_RULES"
     this.activeCategory = null
     this.categories = []
-    this.categoryNames = [
-      "Herrar 1",
-      "Herrar 2",
-      "Herrar 3",
-      "Herrar 4",
-      "Herrar 5",
-      "Herrar 6",
-      "Damer 1",
-      "Damer 2",
-      "Damer 3",
-      "Damer 4",
-      "Damjuniorer 17",
-      "Flickor 14",
-      "Flickor 13",
-      "Flickor 12",
-      "Flickor 11",
-      "Flickor 10",
-      "Flickor 9",
-      "Flickor 8",
-      "Herrjuniorer 17",
-      "Pojkar 15",
-      "Pojkar 14",
-      "Pojkar 13",
-      "Pojkar 12",
-      "Pojkar 11",
-      "Pojkar 10",
-      "Pojkar 9",
-      "Pojkar 8",
-      "Herrdubbel",
-      "Damdubbel"
-    ]
+    CategoryService.getCategories().then(res => {
+      console.log(res.data)
+      this.categoryNames = res.data.map(item => item.categoryName).filter(name => name !== "BYE")
+      console.log(this.categoryNames)
+    })
   },
   methods: {
     fillFormWithClass: function (classId) {
