@@ -57,10 +57,10 @@ class TestDrawCupOnlyMatchOrder(
 
     private fun addCompetitionCategoryTo(competition: CompetitionDTO, categoryName: String): CompetitionCategoryDTO {
         val categories = categoryApi.getCategories()
-        val category = categories.filter { it.categoryName == categoryName }[0]
+        val category = categories.filter { it.name == categoryName }[0]
         return competitionCategoryApi.addCategoryToCompetition(
             competition.id,
-            category.categoryId
+            category.id
         ).categories[0]
     }
 
