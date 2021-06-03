@@ -7,9 +7,9 @@
           <category-list
               v-on:selectedClass="fillFormWithClass"
               v-on:createdClass="createClass"
-              v-bind:categories="categories"
+              v-bind:competitionCategories="competitionCategories"
               v-bind:activeCategory="activeCategory"
-              v-bind:categoryNames="categoryNames"
+              v-bind:categories="categories"
           />
         </div>
         <div v-if="activeCategory !== null" class="col-6 pt-5 ps-md-5">
@@ -62,34 +62,41 @@ export default {
     return {
       shownTab: "",
       activeCategory: Object,
-      categories: [],
-      categoryNames: []
+      competitionCategories: [],
+      categories: []
     }
   },
   created() {
     this.shownTab = "GENERAL_RULES"
     this.activeCategory = null
-    this.categories = []
+    this.competitionCategories = []
     CategoryService.getCategories().then(res => {
-      console.log(res.data)
-      this.categoryNames = res.data.map(item => item.categoryName).filter(name => name !== "BYE")
-      console.log(this.categoryNames)
+      this.categories = res.data.filter(category => category.name !== "BYE")
     })
+  },
+  computed: {
+    competition: function () {
+      return this.$store.getters.competition
+    }
   },
   methods: {
     fillFormWithClass: function (classId) {
-      this.activeCategory = this.categories.find((item) => {
+      this.activeCategory = this.competitionCategories.find((item) => {
         return (item.id === classId)
       })
     },
-    createClass: function (classId) {
-      this.activeCategory = this.defaultClass(classId)
-      this.categories.push(this.activeCategory)
+    createClass: function (category) {
+      console.log(this.competition.id)
+      CategoryService.createCompetitionCategory(this.competition.id, category.id).then(res => {
+        console.log(res.data)
+      })
+      this.activeCategory = this.defaultClass(category)
+      this.competitionCategories.push(this.activeCategory)
     },
-    defaultClass: function (classId) {
+    defaultClass: function (category) {
       return {
-        id: this.categories.length + 1,
-        name: classId,
+        id: this.competitionCategories.length + 1,
+        name: category.name,
         cost: 110,
         startTime: "10AM 2022-10-18",
         drawType: "POOL",

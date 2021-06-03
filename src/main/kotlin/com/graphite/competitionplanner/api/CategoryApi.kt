@@ -17,9 +17,8 @@ class CategoryApi(val categoryRepository: CategoryRepository) {
 
 }
 
-
 data class CategoryDTO(
-    val categoryId: Int,
-    val categoryName: String,
-    val categoryType: String
+    val id: Int,
+    val name: String,
+    val type: String
 )
