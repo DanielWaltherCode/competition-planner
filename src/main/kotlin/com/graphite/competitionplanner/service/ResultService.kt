@@ -83,7 +83,7 @@ class ResultService(
         }
     }
 
-    private fun recordToDTO(gameRecord: GameRecord): GameDTO {
+    public fun recordToDTO(gameRecord: GameRecord): GameDTO {
         return GameDTO(
             gameRecord.id,
             gameRecord.gameNumber,

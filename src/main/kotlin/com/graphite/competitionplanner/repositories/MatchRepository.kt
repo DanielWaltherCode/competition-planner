@@ -34,6 +34,7 @@ class MatchRepository(val dslContext: DSLContext) {
             .join(MATCH)
             .on(COMPETITION_CATEGORY.ID.eq(MATCH.COMPETITION_CATEGORY_ID))
             .where(COMPETITION.ID.eq(competitionId)).and(MATCH.START_TIME.between(startTime, endTime))
+            .orderBy(MATCH.ID.asc())
             .fetchInto(MATCH)
     }
 
@@ -45,6 +46,7 @@ class MatchRepository(val dslContext: DSLContext) {
             .join(MATCH)
             .on(COMPETITION_CATEGORY.ID.eq(MATCH.COMPETITION_CATEGORY_ID))
             .where(COMPETITION.ID.eq(competitionId))
+            .orderBy(MATCH.ID.asc())
             .fetchInto(MATCH)
     }
 

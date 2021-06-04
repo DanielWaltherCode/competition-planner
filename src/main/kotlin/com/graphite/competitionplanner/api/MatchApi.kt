@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.api
 
+import com.graphite.competitionplanner.service.MatchAndResultDTO
 import com.graphite.competitionplanner.service.MatchDTO
 import com.graphite.competitionplanner.service.MatchService
 import com.graphite.competitionplanner.service.competition.MatchSpec
@@ -16,12 +17,12 @@ class MatchApi(val matchService: MatchService) {
     }
 
     @GetMapping("/{competitionId}/{day}")
-    fun getMatchesInCompetitionByDay(@PathVariable competitionId: Int, @PathVariable day: LocalDate): List<MatchDTO> {
+    fun getMatchesInCompetitionByDay(@PathVariable competitionId: Int, @PathVariable day: LocalDate): List<MatchAndResultDTO> {
         return matchService.getMatchesInCompetitionByDay(competitionId, day)
     }
 
     @GetMapping("/{competitionId}")
-    fun getAllMatchesInCompetition(@PathVariable competitionId: Int): List<MatchDTO> {
+    fun getAllMatchesInCompetition(@PathVariable competitionId: Int): List<MatchAndResultDTO> {
         return matchService.getMatchesInCompetition(competitionId)
     }
 }

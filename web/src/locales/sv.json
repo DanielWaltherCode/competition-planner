@@ -65,7 +65,8 @@
   "general": {
     "save": "Spara",
     "saveChanges": "Spara ändringar",
-    "next": "Nästa"
+    "next": "Nästa",
+    "close": "Avbryt"
   },
   "player": {
     "sidebar": {
@@ -181,7 +182,17 @@
     "heading": "Matcher och resultat",
     "startTime": "Starttid",
     "category": "Klass",
-    "result": "Resultat"
+    "result": "Resultat",
+    "register": "Registrera result",
+    "update": "Uppdatera result",
+    "round": "Grupp/runda",
+    "group": "Pool",
+    "modal": {
+      "header": "Registrera result",
+      "add": "Lägg till set",
+      "remove": "Ta bort set",
+      "delete": "Ta bort resultat"
+    }
   },
   "Exceptions": {
     "GameValidationException": {
