@@ -141,6 +141,7 @@ class TestResultService(
         val result = resultService.getResult(match.id)
         Assertions.assertNotNull(result.gameList)
         Assertions.assertEquals(3, result.gameList.size)
+
     }
 
     @Test
