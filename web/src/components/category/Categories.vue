@@ -86,17 +86,19 @@ export default {
       })
     },
     createClass: function (category) {
-      console.log(this.competition.id)
       CategoryService.createCompetitionCategory(this.competition.id, category.id).then(res => {
-        console.log(res.data)
+        let newlyCreatedCompetitionCategory = res.data.categories.find(competitionCategory => competitionCategory.categoryName === category.name)
+        this.activeCategory = this.addDefaultValuesTo(newlyCreatedCompetitionCategory)
+        console.log(JSON.stringify(this.activeCategory))
+        // TODO: Save default settings to backend
+        // TODO: Any changes to settings should be saved to backend
       })
-      this.activeCategory = this.defaultClass(category)
       this.competitionCategories.push(this.activeCategory)
     },
-    defaultClass: function (category) {
+    addDefaultValuesTo: function (competitionCategory) {
       return {
-        id: this.competitionCategories.length + 1,
-        name: category.name,
+        id: competitionCategory.competitionCategoryId,
+        name: competitionCategory.categoryName,
         cost: 110,
         startTime: "10AM 2022-10-18",
         drawType: "POOL",
