@@ -6,11 +6,11 @@
         Skapa ny klass
       </button>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
-        <li :key="name" v-for="name in categoryNames">
-          <a @click="creatingNewClass(name)" class="dropdown-item" href="#">{{ name }}</a>
+        <li :key="category.id" v-for="category in categories">
+          <a @click="creatingNewClass(category)" class="dropdown-item" href="#">{{ category.name }}</a>
         </li>
       </ul>
-      <span :key="category.id" v-for="category in categories"
+      <span :key="category.id" v-for="category in competitionCategories"
             :class="{active: category.id === activeCategory.id}">
         <a @click="selectingAClass(category.id)"
            href="#" :class="{active: category.id === activeCategory.id}"
@@ -24,16 +24,16 @@
 export default {
   name: "CategoryList",
   props: {
-    categories: Array,
+    competitionCategories: Array,
     activeCategory: Object,
-    categoryNames: Array
+    categories: Array
   },
   methods: {
     selectingAClass: function (categoryId) {
       this.$emit('selectedClass', categoryId)
     },
-    creatingNewClass: function (categoryId) {
-      this.$emit('createdClass', categoryId)
+    creatingNewClass: function (category) {
+      this.$emit('createdClass', category)
     }
   }
 }

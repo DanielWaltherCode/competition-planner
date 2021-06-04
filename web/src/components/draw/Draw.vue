@@ -44,9 +44,6 @@
 
         <!-- If class is drawn -->
         <div v-if="isChosenCategoryDrawn && draw !== null">
-          <div>
-            <p>{{$t("draw.main.drawMade")}}</p>
-          </div>
           <div id="group-section">
             <div id="main-header">
               <h2>{{ $t("draw.pool.groups") }}</h2>
@@ -167,7 +164,7 @@ export default {
       if(match.firstPlayer.length === 1) {
         playerOne = match.firstPlayer[0].firstName + " " + match.firstPlayer[0].lastName
       }
-      else if (match.firstPlayer.length === 1) {
+      else if (match.firstPlayer.length === 2) {
         playerOne = match.firstPlayer[0].firstName + " " + match.firstPlayer[0].lastName + "/" +
             match.firstPlayer[1].firstName + " " + match.firstPlayer[1].lastName
       }
@@ -178,7 +175,7 @@ export default {
       if(match.secondPlayer.length === 1) {
         playerTwo = match.secondPlayer[0].firstName + " " + match.secondPlayer[0].lastName
       }
-      else if (match.firstPlayer.length === 1) {
+      else if (match.firstPlayer.length === 2) {
         playerTwo = match.secondPlayer[0].firstName + " " + match.secondPlayer[0].lastName + "/" +
             match.secondPlayer[1].firstName + " " + match.secondPlayer[1].lastName
       }

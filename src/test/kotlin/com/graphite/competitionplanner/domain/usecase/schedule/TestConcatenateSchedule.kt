@@ -19,7 +19,7 @@ class TestConcatenateSchedule(
 
     @Test
     fun whenConcatenatingTwoSchedulesTheTotalNumberOfTimeslotsEqualTheSumOfTimeslotsForEachSchedule() {
-        val settings = dataGenerator.newScheduleSettings(4)
+        val settings = dataGenerator.newScheduleSettingsDTO(numberOfTables = 4)
         val first = createSchedule.execute(pool1, settings)
         val second = createSchedule.execute(pool2, settings)
 
@@ -38,8 +38,8 @@ class TestConcatenateSchedule(
          * - Timeslot IDs start at 0
          */
 
-        val first = createSchedule.execute(pool1, dataGenerator.newScheduleSettings(4))
-        val second = createSchedule.execute(pool3, dataGenerator.newScheduleSettings(3))
+        val first = createSchedule.execute(pool1, dataGenerator.newScheduleSettingsDTO(numberOfTables = 4))
+        val second = createSchedule.execute(pool3, dataGenerator.newScheduleSettingsDTO(numberOfTables = 3))
 
         val result = concatSchedules.execute(first, second)
 
@@ -50,8 +50,8 @@ class TestConcatenateSchedule(
 
     @Test
     fun whenConcatenatingTwoSchedulesAllMatchesFromSecondScheduleIsPlayedAfterTheFirst() {
-        val first = createSchedule.execute(pool2, dataGenerator.newScheduleSettings(4))
-        val second = createSchedule.execute(pool3, dataGenerator.newScheduleSettings(4))
+        val first = createSchedule.execute(pool2, dataGenerator.newScheduleSettingsDTO(numberOfTables = 4))
+        val second = createSchedule.execute(pool3, dataGenerator.newScheduleSettingsDTO(numberOfTables = 4))
 
         val result = concatSchedules.execute(first, second)
 

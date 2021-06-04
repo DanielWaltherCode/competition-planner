@@ -20,6 +20,18 @@ internal data class Match(
         require(startTime?.isBefore(endTime) ?: true) { "When specified, start time must be before end time" }
     }
 
+    constructor(match: Match, startTime: LocalDateTime?, endTime: LocalDateTime?) : this(
+        match.id,
+        match.competitionCategory,
+        startTime,
+        endTime,
+        match.type,
+        match.firstPlayer,
+        match.secondPlayer,
+        match.orderNumber,
+        match.groupOrRound
+    )
+
     constructor(dto: MatchDTO) : this(
         dto.id,
         CompetitionCategory(dto.competitionCategoryId),

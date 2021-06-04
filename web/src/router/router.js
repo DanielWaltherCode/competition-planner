@@ -50,6 +50,11 @@ export default new Router({
                 path: "/schedule-advanced",
                 name: "schedule-advanced",
                 component: () => import("@/components/schedule/ScheduleAdvanced"),
+            },
+            {
+                path: "/results",
+                name: "results",
+                component: () => import("@/components/result/Result"),
             }
         ],
         scrollBehavior() {

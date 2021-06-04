@@ -6,7 +6,6 @@ import com.graphite.competitionplanner.service.*
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
 import com.graphite.competitionplanner.service.competition.CompetitionService
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDateTime
 
 /* Handle categories in competitions */
 @RestController
@@ -16,8 +15,10 @@ class CompetitionCategoryApi(
     val competitionCategoryService: CompetitionCategoryService
 ) {
     // Handle categories in competitions
-    @PostMapping("/categoryId")
+    @PostMapping("/{categoryId}")
     fun addCategoryToCompetition(@PathVariable competitionId: Int, @PathVariable categoryId: Int): CompetitionAndCategoriesDTO {
+        // TODO: We need to guard against a user adding same category to same competition twice to avoid
+        // TODO: foreign key crash in database
         competitionCategoryService.addCompetitionCategory(
             competitionId,
             categoryId

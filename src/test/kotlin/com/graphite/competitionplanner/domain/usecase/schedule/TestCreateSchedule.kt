@@ -2,13 +2,14 @@ package com.graphite.competitionplanner.domain.usecase.schedule
 
 import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.domain.dto.MatchDTO
-import com.graphite.competitionplanner.domain.dto.ScheduleSettingsDTO
+import com.graphite.competitionplanner.util.plusDuration
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.lang.IllegalArgumentException
 import java.time.LocalDateTime
+import kotlin.time.minutes
 
 @SpringBootTest
 class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
@@ -27,7 +28,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
 
         val matches = pool1 + pool2
 
-        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettings(1))
+        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettingsDTO(numberOfTables = 1))
 
         Assertions.assertEquals(matches.size, schedule.timeslots.size)
     }
@@ -42,7 +43,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          *    (3-4)    (2-4)     (3-4)
          */
         val matches = pool1
-        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettings(2))
+        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettingsDTO(numberOfTables = 2))
 
         Assertions.assertEquals(3, schedule.timeslots.size)
     }
@@ -57,7 +58,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          *    (empty)  (empty)   (empty)
          */
         val matches = pool1
-        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettings(3))
+        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettingsDTO(numberOfTables = 3))
 
         Assertions.assertEquals(3, schedule.timeslots.size)
     }
@@ -72,7 +73,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          */
 
         val matches = pool1 + pool2
-        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettings(2))
+        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettingsDTO(numberOfTables = 2))
 
         Assertions.assertEquals(matches.size / 2, schedule.timeslots.size)
     }
@@ -91,7 +92,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          *   (5-6)     (2-4)    (1-4)    (6-7)
          */
         val matches = pool1 + pool2
-        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettings(3))
+        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettingsDTO(numberOfTables = 3))
 
         Assertions.assertEquals(4, schedule.timeslots.size)
     }
@@ -111,7 +112,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          */
 
         val matches = pool1 + pool2
-        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettings(4))
+        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettingsDTO(numberOfTables = 4))
 
         Assertions.assertEquals(3, schedule.timeslots.size)
     }
@@ -131,27 +132,73 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          */
 
         val matches = pool1 + pool3
-        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettings(4))
+        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettingsDTO(numberOfTables = 4))
 
         Assertions.assertEquals(3, schedule.timeslots.size)
     }
 
     @Test
     fun matchesShouldHaveCorrectStartAndEndTime() {
-        val settings = ScheduleSettingsDTO(15, 1, LocalDateTime.now())
+        val settings = dataGenerator.newScheduleSettingsDTO()
 
         val schedule = createSchedule.execute(pool1, settings)
 
         val matches = schedule.timeslots.flatMap { it.matches }
 
         Assertions.assertEquals(settings.startTime, matches.first().startTime)
-        Assertions.assertEquals(settings.startTime.plusMinutes(settings.averageMatchTime), matches.first().endTime)
+        Assertions.assertEquals(settings.startTime.plusDuration(settings.averageMatchTime), matches.first().endTime)
+    }
+
+    @Test
+    fun whenNoMoreTimeForTheDayNextTimeslotShouldBeScheduledNextDay() {
+        val startTime = LocalDateTime.now()
+        val averageMatchTime = 15.minutes
+        val endTime = startTime.plusDuration(averageMatchTime)
+        val settings = dataGenerator.newScheduleSettingsDTO(
+            averageMatchTime = averageMatchTime,
+            startTime = startTime,
+            endTime = endTime,
+            numberOfTables = 1
+        )
+
+        val matches = listOf(dataGenerator.newMatchDTO(), dataGenerator.newMatchDTO())
+
+        val schedule = createSchedule.execute(matches, settings)
+
+        Assertions.assertTrue(schedule.timeslots.size == 2)
+
+        val firstTimeslot = schedule.timeslots.first()
+        val secondTimeslot = schedule.timeslots.last()
+        Assertions.assertEquals(
+            firstTimeslot.matches.first().startTime!!.plusDays(1),
+            secondTimeslot.matches.first().startTime
+        )
+    }
+
+    @Test
+    fun timeBetweenTimeslotsIsZero() {
+        val settings = dataGenerator.newScheduleSettingsDTO(15.minutes, 1, LocalDateTime.now())
+        val schedule = createSchedule.execute(pool1, settings)
+        val zipped = schedule.timeslots.zipWithNext()
+        val startTimeEqualEndTime =
+            zipped.all { it.first.matches.first().endTime == it.second.matches.first().startTime }
+        Assertions.assertTrue(startTimeEqualEndTime)
+    }
+
+    @Test
+    fun matchesInSameTimeSlotHasSameStartAndEndTimes() {
+        val settings = dataGenerator.newScheduleSettingsDTO()
+        val schedule = createSchedule.execute(pool1 + pool2, settings)
+        val matches = schedule.timeslots.first().matches
+
+        Assertions.assertTrue(matches.all { matches.first().startTime == it.startTime })
+        Assertions.assertTrue(matches.all { matches.first().endTime == it.endTime })
     }
 
     @Test
     fun shouldNotScheduleAPlayerTwiceInSameTimeslot() {
         val matches = pool1
-        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettings(4))
+        val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettingsDTO(numberOfTables = 4))
 
         for (timeslot in schedule.timeslots) {
             val playerIds =
@@ -161,12 +208,102 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
     }
 
     @Test
+    fun balanceMatchesWithTwoCategories() {
+        /**
+         * Given two categories:
+         * - Where one category is larger than the other,
+         * - and we want both categories to start playing their matches at the same time.
+         * We want the two categories to split the number of available tables evenly.
+         *
+         * In this case we have two categories
+         * - Category 1 can play 6 parallel matches
+         * - Category 2 can play 4 parallel matches
+         * - We are bound to 8 tables
+         *
+         * Current implementation performs scheduling in a round robin fashion which means we would expect four
+         * matches from each category be scheduled per timeslot (until the smaller class runs out of matches)
+         */
+
+        val classOnePoolA = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+        val classOnePoolB = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+        val classOnePoolC = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+
+        val classTwoPoolA = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 2)
+        val classTwoPoolB = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 2)
+
+        val allMatches = classOnePoolA + classOnePoolB + classOnePoolC + classTwoPoolA + classTwoPoolB
+
+        val settings = dataGenerator.newScheduleSettingsDTO(numberOfTables = 8)
+
+        val schedule = createSchedule.execute(allMatches, settings)
+
+        val matchesFromCategoryOne = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 1 }
+        val matchesFromCategoryTwo = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 2 }
+
+        Assertions.assertTrue(matchesFromCategoryOne.size >= 4, "Expected category one to get at least 4 tables")
+        Assertions.assertTrue(matchesFromCategoryTwo.size >= 4, "Expected category two to get at least 4 tables")
+    }
+
+    @Test
+    fun balanceMatchesWithThreeCategories() {
+        /**
+         * Due to the round robin scheduling we can expect that each category gets at least two matches per timeslot given
+         * we have 8 tables divided on 3 categories.
+         */
+        val classOnePoolA = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+        val classOnePoolB = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+        val classOnePoolC = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+
+        val classTwoPoolA = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 2)
+        val classTwoPoolB = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 2)
+
+        val classThreePoolA = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 3)
+        val classThreePoolB = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 3)
+
+        val allMatches =
+            classOnePoolA + classOnePoolB + classOnePoolC + classTwoPoolA + classTwoPoolB + classThreePoolA + classThreePoolB
+
+        val settings = dataGenerator.newScheduleSettingsDTO(numberOfTables = 8)
+
+        val schedule = createSchedule.execute(allMatches, settings)
+
+        val matchesFromCategoryOne = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 1 }
+        val matchesFromCategoryTwo = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 2 }
+        val matchesFromCategoryThree = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 3 }
+
+        Assertions.assertTrue(matchesFromCategoryOne.size >= 2)
+        Assertions.assertTrue(matchesFromCategoryTwo.size >= 2)
+        Assertions.assertTrue(matchesFromCategoryThree.size >= 2)
+    }
+
+    @Test
+    fun balanceMatchesWhenFewTables() {
+        val classOnePoolA = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+        val classOnePoolB = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+        val classOnePoolC = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)
+
+        val classTwoPoolA = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 2)
+
+        val allMatches = classOnePoolA + classOnePoolB + classOnePoolC + classTwoPoolA
+
+        val settings = dataGenerator.newScheduleSettingsDTO(numberOfTables = 2)
+
+        val schedule = createSchedule.execute(allMatches, settings)
+
+        val matchesFromCategoryOne = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 1 }
+        val matchesFromCategoryTwo = schedule.timeslots.first().matches.filter { it.competitionCategoryId == 2 }
+
+        Assertions.assertTrue(matchesFromCategoryOne.isNotEmpty())
+        Assertions.assertTrue(matchesFromCategoryTwo.isNotEmpty())
+    }
+
+    @Test
     fun shouldThrowIllegalArgumentExceptionWhenNumberOfTablesIsZero() {
         val matches = pool1 + pool3
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             createSchedule.execute(
                 matches,
-                ScheduleSettingsDTO(15, 0, LocalDateTime.now())
+                dataGenerator.newScheduleSettingsDTO(numberOfTables = 0)
             )
         }
     }
@@ -207,7 +344,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             createSchedule.execute(
                 matches,
-                dataGenerator.newScheduleSettings(3)
+                dataGenerator.newScheduleSettingsDTO(numberOfTables = 3)
             )
         }
     }
