@@ -17,6 +17,10 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap');
 
+* {
+  box-sizing: border-box;
+}
+
 #app {
   font-family: 'Open Sans', sans-serif;;
   -webkit-font-smoothing: antialiased;

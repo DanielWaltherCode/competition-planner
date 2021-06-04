@@ -1,42 +1,39 @@
 <template>
-  <div>
-    <div class="container-fluid">
-        <!-- Main content -->
-        <div id="main" class="d-grid">
-          <match-result v-for="match in matches" :match="match" :key="match.id"></match-result>
-        </div>
-          <div v-if="matches.length === 0">
-            <p>
-              Klassen har inte lottats än
-            </p>
-          </div>
-        </div>
+  <div v-if="match" class="card">
+    <div class="card-header">
+      <h2 class="fs-5"> {{ getTitle() }}</h2>
     </div>
+    <div class="card-body">
+      <div class="row">
+        <p class="col-5 text-start" :class="isPlayerOneWinner(match) ? 'fw-bold': ''">{{ getPlayerOne(match) }}</p>
+        <p class="col-1 p-0" v-for="game in match.result.gameList" :key="game.id">
+          {{ game.firstRegistrationResult }}
+        </p>
+      </div>
+      <div class="row">
+        <p class="col-5 text-start" :class="isPlayerTwoWinner(match) ? 'fw-bold': ''">{{ getPlayerTwo(match) }}</p>
+        <p class="col-1 p-0" v-for="game in match.result.gameList" :key="game.id">
+          {{ game.secondRegistrationResult }}
+        </p>
+      </div>
+
+    </div>
+  </div>
 </template>
 
 <script>
-import ApiService from "../../api-services/api.service";
-import MatchResult from "../MatchResult";
-
 export default {
-  name: "CompetitionMatches",
-  components: {MatchResult},
-  data() {
-    return {
-      matches: [],
-      selectedMatch: null,
-      competitionId: 0
-    }
-  },
-  mounted() {
-    this.competitionId = this.$route.params.competitionId
-    this.getMatches()
+  name: "MatchResult",
+  props: {
+    match: Object
   },
   methods: {
-    getMatches() {
-      ApiService.getMatchesInCompetition(this.competitionId).then(res => {
-        this.matches = res.data
-      })
+    getTitle() {
+      if (this.match.matchType === 'GROUP') {
+        return this.match.competitionCategory.categoryName + " | " + this.$t("results.group") + " " + this.match.groupOrRound
+      } else {
+        return this.match.competitionCategory.categoryName
+      }
     },
     getPlayerOne(match) {
       let playerOne = ""
@@ -64,7 +61,7 @@ export default {
       }
     },
     isPlayerOneWinner(match) {
-      if(match.winner.length > 0) {
+      if (match.winner.length > 0) {
         const winnerIds = match.winner.map(winner => winner.id)
         if (winnerIds.includes(match.firstPlayer[0].id)) {
           return true
@@ -73,7 +70,7 @@ export default {
       return false
     },
     isPlayerTwoWinner(match) {
-      if(match.winner.length > 0) {
+      if (match.winner.length > 0) {
         const winnerIds = match.winner.map(winner => winner.id)
         if (winnerIds.includes(match.secondPlayer[0].id)) {
           return true
@@ -82,30 +79,9 @@ export default {
       return false
     }
   }
-
 }
 </script>
 
 <style scoped>
-th {
-  text-decoration: underline;
-}
-
-#main {
-  margin-top: 30px;
-  grid-gap: 2rem;
-}
-
-@media (min-width: 600px) {
-  #main {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1000px) {
-  #main {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
 
 </style>

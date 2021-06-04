@@ -28,6 +28,12 @@
                     {{ $t("competition.nav.categories") }}
                   </router-link>
                 </li>
+                <li class="nav-item">
+                  <router-link class="nav-link" :to="`/competition/${competition.id}/matches`"
+                               :class="$router.currentRoute.path.includes('matches') ? 'active' : ''">
+                    {{ $t("competition.nav.matches") }}
+                  </router-link>
+                </li>
               </ul>
           </div>
         </div>

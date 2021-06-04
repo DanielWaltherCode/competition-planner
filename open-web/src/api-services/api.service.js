@@ -31,7 +31,7 @@ const ApiService = {
 
     // Matches/Results
     getMatchesInCompetition(competitionId) {
-        return Axios.get(`${RESOURCE_NAME}/matches/${competitionId}`)
+        return Axios.get(`${RESOURCE_NAME}/${competitionId}/matches`)
     }
 }
 

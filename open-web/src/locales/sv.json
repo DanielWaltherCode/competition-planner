@@ -62,7 +62,8 @@
       "matches": "Matcher",
       "time": "Tid",
       "result": "Resultat",
-      "noTime": "Tid ej satt"
+      "noTime": "Tid ej satt",
+      "player": "Spelare"
     }
   },
   "schedule": {
@@ -122,6 +123,26 @@
         "hour": "Timme",
         "nrTables": "Antal bord"
       }
+    }
+  },
+  "competitionLanding": {
+    "welcomeTo": "Välkommen till ",
+    "about": "Om tävlingen"
+  },
+  "results": {
+    "heading": "Matcher och resultat",
+    "startTime": "Starttid",
+    "category": "Klass",
+    "result": "Resultat",
+    "register": "Registrera result",
+    "update": "Uppdatera result",
+    "round": "Grupp/runda",
+    "group": "Pool",
+    "modal": {
+      "header": "Registrera result",
+      "add": "Lägg till set",
+      "remove": "Ta bort set",
+      "delete": "Ta bort resultat"
     }
   }
 }

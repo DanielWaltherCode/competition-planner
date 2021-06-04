@@ -21,6 +21,10 @@ export default new Router({
                 component: () => import("@/components/competition/Competition"),
                 children: [
                     {
+                        path: "/competition/:competitionId",
+                        component: () => import("@/components/competition/CompetitionLanding"),
+                    },
+                    {
                         path: "/competition/:competitionId/categories",
                         component: () => import("@/components/competition/CompetitionCategories"),
                     },

@@ -57,6 +57,7 @@ class WebSecurity(
         val configuration = CorsConfiguration()
         configuration.allowCredentials = true
         configuration.allowedOrigins = listOf("http://localhost:8080",
+            "http://localhost:3000",
             "http://167.71.65.197",
             "http://competition.travexperten.nu",
             "https://competition.travexperten.nu",
