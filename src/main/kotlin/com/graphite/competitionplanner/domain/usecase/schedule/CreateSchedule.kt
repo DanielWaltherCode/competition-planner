@@ -38,12 +38,10 @@ class CreateSchedule {
     }
 
     private fun assignTimeInformationOnMatches(schedule: Schedule): Schedule {
-        // TODO: Pause between matches shall be incorporated
-        val settings = schedule.settings
-
-        val timeslots = schedule.timeslots.map { it.assignTimeToMatches(schedule.settings) }
-
-        return Schedule(schedule.id, timeslots, settings)
+        with(schedule) {
+            val timeslots = timeslots.map { it.assignTimeToMatches(settings) }
+            return Schedule(id, timeslots, settings)
+        }
     }
 
     private fun Timeslot.assignTimeToMatches(settings: ScheduleSettings): Timeslot {

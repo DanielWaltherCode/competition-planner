@@ -16,6 +16,7 @@ class DataGenerator {
     private var playerId = 0
     private var clubId = 0
     private var matchId = 0
+    private var competitionId = 0
 
     internal fun newClub(
         id: Int = clubId++,
@@ -73,6 +74,30 @@ class DataGenerator {
         numberOfTables,
         startTime,
         endTime
+    )
+
+    internal fun newLocation(
+        name: String = "Svedala Arena"
+    ) = Location(
+        name
+    )
+
+    internal fun newCompetition(
+        id: Int = competitionId++,
+        location: Location = newLocation(),
+        name: String = "TestCompetition",
+        welcomeText: String = "Welcome to Test Competition",
+        organizer: Club = newClub(),
+        startDate: LocalDate = LocalDate.now(),
+        endDate: LocalDate = LocalDate.now().plusDays(1)
+    ) = Competition(
+        id,
+        location,
+        name,
+        welcomeText,
+        organizer,
+        startDate,
+        endDate
     )
 
     fun newClubDTO(
@@ -222,6 +247,7 @@ class DataGenerator {
         }
     }
 
+
     /**
      * Pool with 4 players i.e. 6 matches
      */
@@ -240,7 +266,6 @@ class DataGenerator {
             )
         }
     }
-
 
     /**
      * Pool with 3 players i.e 3 matches
