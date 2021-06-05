@@ -63,7 +63,8 @@ export default {
       shownTab: "",
       activeCategory: Object,
       competitionCategories: [],
-      categories: []
+      categories: [],
+      possibleMetaDataValues: Object
     }
   },
   created() {
@@ -72,6 +73,9 @@ export default {
     this.competitionCategories = []
     CategoryService.getCategories().then(res => {
       this.categories = res.data.filter(category => category.name !== "BYE")
+    })
+    CategoryService.getPossibleMetaDataValues(this.competition.id).then(res => {
+      this.possibleMetaDataValues = res.data
     })
   },
   computed: {
@@ -86,17 +90,42 @@ export default {
       })
     },
     createClass: function (category) {
-      console.log(this.competition.id)
       CategoryService.createCompetitionCategory(this.competition.id, category.id).then(res => {
-        console.log(res.data)
+        let newlyCreatedCompetitionCategory = res.data.categories.find(competitionCategory => competitionCategory.categoryName === category.name)
+        this.activeCategory = this.addDefaultValuesTo(newlyCreatedCompetitionCategory)
+        this.competitionCategories.push(this.activeCategory)
+        this.saveCompetitionCategorySettings(this.activeCategory)
       })
-      this.activeCategory = this.defaultClass(category)
-      this.competitionCategories.push(this.activeCategory)
     },
-    defaultClass: function (category) {
+    saveCompetitionCategorySettings: function(competitionCategory) {
+      CategoryService.addMetaData(this.competition.id, competitionCategory.id, this.asMetaSpec(competitionCategory))
+      CategoryService.addGameRules(competitionCategory.id, this.asGameSpec(competitionCategory))
+    },
+    asMetaSpec: function(competitionCategory) {
       return {
-        id: this.competitionCategories.length + 1,
-        name: category.name,
+        cost: competitionCategory.cost,
+        drawTypeId: this.possibleMetaDataValues.drawTypes.find(drawType => drawType.name === "POOL_ONLY").id,
+        nrPlayersPerGroup: competitionCategory.playersPerPool,
+        nrPlayersToPlayoff: competitionCategory.playersThatAdvancePerGroup,
+        poolDrawStrategyId: this.possibleMetaDataValues.drawStrategies.find(strategy => strategy.name === "normal").id,
+      }
+    },
+    asGameSpec: function(competitionCategory) {
+      return {
+        nrSets: competitionCategory.defaultGameSettings.numberOfSets,
+        winScore: competitionCategory.defaultGameSettings.playingUntil,
+        winMargin: competitionCategory.defaultGameSettings.winMargin,
+        nrSetsFinal: competitionCategory.endGameSettings.numberOfSets,
+        winScoreFinal: competitionCategory.endGameSettings.playingUntil,
+        winMarginFinal: competitionCategory.endGameSettings.winMargin,
+        winScoreTiebreak: competitionCategory.tiebreakSettings.playingUntil,
+        winMarginTieBreak: competitionCategory.tiebreakSettings.winMargin
+      }
+    },
+    addDefaultValuesTo: function (competitionCategory) {
+      return {
+        id: competitionCategory.competitionCategoryId,
+        name: competitionCategory.categoryName,
         cost: 110,
         startTime: "10AM 2022-10-18",
         drawType: "POOL",
