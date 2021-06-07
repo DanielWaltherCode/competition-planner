@@ -46,7 +46,7 @@ class TestCreatePlayer {
 
     @Test
     fun shouldNotCallStoreWhenEntityIsInvalid() {
-        // Assert
+        // Setup
         val dto = dataGenerator.newNewPlayerDTO("")
 
         // Act

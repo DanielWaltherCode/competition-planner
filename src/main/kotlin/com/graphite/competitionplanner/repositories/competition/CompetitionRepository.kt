@@ -2,6 +2,9 @@ package com.graphite.competitionplanner.repositories.competition
 
 import com.graphite.competitionplanner.Tables.COMPETITION
 import com.graphite.competitionplanner.api.competition.CompetitionSpec
+import com.graphite.competitionplanner.domain.dto.CompetitionDTO
+import com.graphite.competitionplanner.domain.dto.NewCompetitionDTO
+import com.graphite.competitionplanner.domain.interfaces.ICompetitionRepository
 import com.graphite.competitionplanner.tables.Club
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.records.CompetitionRecord
@@ -11,7 +14,7 @@ import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 @Repository
-class CompetitionRepository(val dslContext: DSLContext) {
+class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository {
 
     fun addCompetition(competitionSpec: CompetitionSpec): CompetitionRecord {
         val competitionRecord = dslContext.newRecord(Competition.COMPETITION)
@@ -106,7 +109,13 @@ class CompetitionRepository(val dslContext: DSLContext) {
     fun getAll(): List<Record> {
         return dslContext.select().from(Competition.COMPETITION).join(Club.CLUB).on(
             Competition.COMPETITION.ORGANIZING_CLUB.eq(
-                Club.CLUB.ID)).fetch()
+                Club.CLUB.ID
+            )
+        ).fetch()
+    }
+
+    override fun store(dto: NewCompetitionDTO): CompetitionDTO {
+        TODO("Not yet implemented")
     }
 
 }

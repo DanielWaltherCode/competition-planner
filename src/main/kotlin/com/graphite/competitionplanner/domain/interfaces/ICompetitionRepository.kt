@@ -1,0 +1,16 @@
+package com.graphite.competitionplanner.domain.interfaces
+
+import com.graphite.competitionplanner.domain.dto.CompetitionDTO
+import com.graphite.competitionplanner.domain.dto.NewCompetitionDTO
+
+interface ICompetitionRepository {
+
+    /**
+     * Stores the Club
+     *
+     * @param dto Club to be stored
+     * @return A new club with identical values as the given dto except the Id
+     */
+    fun store(dto: NewCompetitionDTO): CompetitionDTO
+
+}
