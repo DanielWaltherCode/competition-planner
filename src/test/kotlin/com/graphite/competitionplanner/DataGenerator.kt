@@ -184,6 +184,41 @@ class DataGenerator {
         endTime
     )
 
+    fun newNewCompetitionDTO(
+        name: String = "TestCompetition",
+        location: String = "Arena IK",
+        welcomeText: String = "Välkommna till TestCompetition",
+        organizingClubId: Int = newClub().id,
+        startDate: LocalDate = LocalDate.now(),
+        endDate: LocalDate = LocalDate.now().plusDays(3)
+    ) = NewCompetitionDTO(
+        name,
+        location,
+        welcomeText,
+        organizingClubId,
+        startDate,
+        endDate
+    )
+
+    fun newCompetitionDTO(
+        id: Int = 1,
+        name: LocationDTO = LocationDTO("TestCompetition"),
+        location: String = "Arena IK",
+        welcomeText: String = "Välkommna till TestCompetition",
+        organizingClubId: Int = newClub().id,
+        startDate: LocalDate = LocalDate.now(),
+        endDate: LocalDate = LocalDate.now().plusDays(3)
+    ) = CompetitionDTO(
+        id,
+        name,
+        location,
+        welcomeText,
+        organizingClubId,
+        startDate,
+        endDate
+    )
+
+
     fun newClubSpec(): NewClubSpec {
         return NewClubSpec("Club" + Random.nextLong().toString(), "Address" + Random.nextLong().toString())
     }

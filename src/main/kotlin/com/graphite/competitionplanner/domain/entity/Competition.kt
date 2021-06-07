@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.domain.entity
 
 import java.time.LocalDate
 
-data class Competition(
+internal data class Competition(
     val id: Int,
     val location: Location,
     val name: String,
