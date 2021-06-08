@@ -118,4 +118,8 @@ class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository
         TODO("Not yet implemented")
     }
 
+    override fun findCompetitionsFor(clubId: Int): List<CompetitionDTO> {
+        TODO("Not yet implemented")
+    }
+
 }
