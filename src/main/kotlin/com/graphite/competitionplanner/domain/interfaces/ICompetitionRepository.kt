@@ -13,4 +13,12 @@ interface ICompetitionRepository {
      */
     fun store(dto: NewCompetitionDTO): CompetitionDTO
 
+    /**
+     * Find all competitions for the club with the given id
+     *
+     * @param clubId: A club's id
+     * @return A list of all competitions that belongs to the given id
+     */
+    fun findCompetitionsFor(clubId: Int): List<CompetitionDTO>
+
 }
