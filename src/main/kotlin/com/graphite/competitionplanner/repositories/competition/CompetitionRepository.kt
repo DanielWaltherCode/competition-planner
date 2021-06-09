@@ -3,8 +3,10 @@ package com.graphite.competitionplanner.repositories.competition
 import com.graphite.competitionplanner.Tables.COMPETITION
 import com.graphite.competitionplanner.api.competition.CompetitionSpec
 import com.graphite.competitionplanner.domain.dto.CompetitionDTO
+import com.graphite.competitionplanner.domain.dto.LocationDTO
 import com.graphite.competitionplanner.domain.dto.NewCompetitionDTO
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionRepository
+import com.graphite.competitionplanner.domain.interfaces.NotFoundException
 import com.graphite.competitionplanner.tables.Club
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.records.CompetitionRecord
@@ -115,11 +117,51 @@ class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository
     }
 
     override fun store(dto: NewCompetitionDTO): CompetitionDTO {
-        TODO("Not yet implemented")
+        val record = dto.toRecord()
+        record.store()
+        return record.toDto()
     }
 
     override fun findCompetitionsFor(clubId: Int): List<CompetitionDTO> {
         TODO("Not yet implemented")
+    }
+
+    @Throws(NotFoundException::class)
+    override fun delete(competitionId: Int): CompetitionDTO {
+        val competition = getCompetitionRecord(competitionId)
+        if (competition != null) {
+            competition.delete()
+            return competition.toDto()
+        } else {
+            throw NotFoundException("Could not delete. Competition with id $competitionId not found")
+        }
+    }
+
+    private fun getCompetitionRecord(id: Int): CompetitionRecord? {
+        return dslContext.selectFrom(COMPETITION).where(COMPETITION.ID.eq(id)).fetchOne()
+    }
+
+    private fun NewCompetitionDTO.toRecord(): CompetitionRecord {
+        val record = dslContext.newRecord(Competition.COMPETITION)
+        record.location = this.location
+        record.name = this.name
+        record.welcomeText = this.welcomeText
+        record.organizingClub = this.organizingClubId
+        record.startDate = this.startDate
+        record.endDate = this.endDate
+        return record
+    }
+
+    private fun CompetitionRecord.toDto(): CompetitionDTO {
+        return CompetitionDTO(
+            this.id,
+            LocationDTO(this.location),
+            this.name,
+            this.welcomeText,
+            this.organizingClub,
+            this.startDate,
+            this.endDate
+        )
     }
 
 }

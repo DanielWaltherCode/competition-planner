@@ -21,4 +21,12 @@ interface ICompetitionRepository {
      */
     fun findCompetitionsFor(clubId: Int): List<CompetitionDTO>
 
+    /**
+     * Delete the competition with the given Id
+     *
+     * @param competitionId: A competition's id
+     * @return The delete competition
+     * @Throws NotFoundException When there is no competition with the given id
+     */
+    fun delete(competitionId: Int): CompetitionDTO
 }
