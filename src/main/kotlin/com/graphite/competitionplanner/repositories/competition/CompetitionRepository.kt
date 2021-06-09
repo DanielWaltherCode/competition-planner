@@ -123,7 +123,8 @@ class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository
     }
 
     override fun findCompetitionsFor(clubId: Int): List<CompetitionDTO> {
-        TODO("Not yet implemented")
+        val records = dslContext.selectFrom(COMPETITION).where(COMPETITION.ORGANIZING_CLUB.eq(clubId)).fetch()
+        return records.map { it.toDto() }
     }
 
     @Throws(NotFoundException::class)
