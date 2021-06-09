@@ -51,4 +51,42 @@ class TestCompetitionRepository(
     fun shouldThrowNotFoundWhenTryingToDeleteCompetitionThatDoesNotExist() {
         Assertions.assertThrows(NotFoundException::class.java) { competitionRepository.delete(-10) }
     }
+
+    @Test
+    fun shouldReturnAllCompetitionsForTheGivenClub() {
+        // Setup
+        val newCompetition1 = dataGenerator.newNewCompetitionDTO(organizingClubId = club.id)
+        val competition1 = competitionRepository.store(newCompetition1)
+        val newCompetition2 = dataGenerator.newNewCompetitionDTO(organizingClubId = club.id)
+        val competition2 = competitionRepository.store(newCompetition2)
+
+        // Act
+        val competitions = competitionRepository.findCompetitionsFor(club.id)
+
+        // Assert
+        Assertions.assertTrue(competitions.contains(competition1), "Expected to find competition 1")
+        Assertions.assertTrue(competitions.contains(competition2), "Expected to find competition 2")
+
+        // Clean up
+        competitionRepository.delete(competition1.id)
+        competitionRepository.delete(competition2.id)
+    }
+
+    @Test
+    fun shouldGetEmptyListIfClubDoesNotExist() {
+        // Act
+        val competitions = competitionRepository.findCompetitionsFor(-10)
+
+        // Assert
+        Assertions.assertTrue(competitions.isEmpty())
+    }
+
+    @Test
+    fun shouldGetEmptyListIfClubDoesNotHaveAnyCompetitions() {
+        // Act
+        val competitions = competitionRepository.findCompetitionsFor(club.id)
+
+        // Assert
+        Assertions.assertTrue(competitions.isEmpty())
+    }
 }
