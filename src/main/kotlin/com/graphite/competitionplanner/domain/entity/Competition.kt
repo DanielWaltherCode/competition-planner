@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.domain.entity
 
+import com.graphite.competitionplanner.domain.dto.CompetitionDTO
 import java.time.LocalDate
 
 internal data class Competition(
@@ -7,13 +8,23 @@ internal data class Competition(
     val location: Location,
     val name: String,
     val welcomeText: String,
-    val organizer: Club,
     val startDate: LocalDate,
     val endDate: LocalDate
 ) {
+    lateinit var organizer: Club
+
     init {
         require(name.isNotEmpty())
         require(name.isNotBlank())
         require(startDate.isBefore(endDate) || startDate == endDate)
     }
+
+    constructor(dto: CompetitionDTO) : this(
+        dto.id,
+        Location(dto.location),
+        dto.name,
+        dto.welcomeText,
+        dto.startDate,
+        dto.endDate
+    )
 }

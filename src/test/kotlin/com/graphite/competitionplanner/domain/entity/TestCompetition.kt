@@ -22,7 +22,6 @@ class TestCompetition {
                 dataGenerator.newLocation(),
                 "Svedala",
                 "Välkommen",
-                dataGenerator.newClub(),
                 startDate,
                 endDate
             )
@@ -38,7 +37,6 @@ class TestCompetition {
                 dataGenerator.newLocation(),
                 "Svedala",
                 "Välkommen",
-                dataGenerator.newClub(),
                 startDate,
                 startDate
             )
@@ -53,7 +51,6 @@ class TestCompetition {
                 dataGenerator.newLocation(),
                 "",
                 "Välkommen",
-                dataGenerator.newClub(),
                 LocalDate.of(1999, 10, 18),
                 LocalDate.of(1999, 10, 19)
             )
@@ -68,7 +65,6 @@ class TestCompetition {
                 dataGenerator.newLocation(),
                 "   ",
                 "Välkommen",
-                dataGenerator.newClub(),
                 LocalDate.of(1999, 10, 18),
                 LocalDate.of(1999, 10, 19)
             )

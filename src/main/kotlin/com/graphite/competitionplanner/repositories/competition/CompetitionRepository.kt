@@ -138,8 +138,30 @@ class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository
         }
     }
 
+    @Throws(NotFoundException::class)
+    override fun update(dto: CompetitionDTO): CompetitionDTO {
+        val record = dto.toRecord()
+        val rowsUpdated = record.update()
+        if (rowsUpdated < 1) {
+            throw NotFoundException("Could not update. Competition with id ${dto.id} not found.")
+        }
+        return record.toDto()
+    }
+
     private fun getCompetitionRecord(id: Int): CompetitionRecord? {
         return dslContext.selectFrom(COMPETITION).where(COMPETITION.ID.eq(id)).fetchOne()
+    }
+
+    private fun CompetitionDTO.toRecord(): CompetitionRecord {
+        val record = dslContext.newRecord(Competition.COMPETITION)
+        record.id = this.id
+        record.location = this.location.name
+        record.name = this.name
+        record.welcomeText = this.welcomeText
+        record.organizingClub = this.organizerId
+        record.startDate = this.startDate
+        record.endDate = this.endDate
+        return record
     }
 
     private fun NewCompetitionDTO.toRecord(): CompetitionRecord {

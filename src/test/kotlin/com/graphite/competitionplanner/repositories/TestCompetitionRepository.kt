@@ -89,4 +89,39 @@ class TestCompetitionRepository(
         // Assert
         Assertions.assertTrue(competitions.isEmpty())
     }
+
+    @Test
+    fun shouldUpdateValues() {
+        // Setup
+        val newCompetition = dataGenerator.newNewCompetitionDTO(organizingClubId = club.id)
+        val competition = competitionRepository.store(newCompetition)
+
+        // Act
+        val updateDto = dataGenerator.newCompetitionDTO(
+            id = competition.id,
+            location = competition.location,
+            name = "NewName",
+            welcomeText = "New text",
+            organizingClubId = competition.organizerId,
+            startDate = competition.startDate,
+            endDate = competition.endDate
+        )
+        val updatedCompetition = competitionRepository.update(updateDto)
+
+        // Assert
+        Assertions.assertEquals(updateDto.name, updatedCompetition.name)
+        Assertions.assertEquals(updateDto.location, updatedCompetition.location)
+        Assertions.assertEquals(updateDto.welcomeText, updatedCompetition.welcomeText)
+        Assertions.assertEquals(updateDto.startDate, updatedCompetition.startDate)
+        Assertions.assertEquals(updateDto.endDate, updatedCompetition.endDate)
+
+        // Clean up
+        competitionRepository.delete(competition.id)
+    }
+
+    @Test
+    fun shouldThrowNotFoundExceptionIfClubCannotBeFoundWhenUpdating() {
+        val dto = dataGenerator.newCompetitionDTO(id = -1, organizingClubId = club.id)
+        Assertions.assertThrows(NotFoundException::class.java) { competitionRepository.update(dto) }
+    }
 }
