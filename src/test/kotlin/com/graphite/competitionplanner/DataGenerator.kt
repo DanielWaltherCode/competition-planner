@@ -87,7 +87,6 @@ class DataGenerator {
         location: Location = newLocation(),
         name: String = "TestCompetition",
         welcomeText: String = "Welcome to Test Competition",
-        organizer: Club = newClub(),
         startDate: LocalDate = LocalDate.now(),
         endDate: LocalDate = LocalDate.now().plusDays(1)
     ) = Competition(
@@ -95,7 +94,6 @@ class DataGenerator {
         location,
         name,
         welcomeText,
-        organizer,
         startDate,
         endDate
     )
@@ -202,16 +200,16 @@ class DataGenerator {
 
     fun newCompetitionDTO(
         id: Int = 1,
-        name: LocationDTO = LocationDTO("TestCompetition"),
-        location: String = "Arena IK",
+        location: LocationDTO = LocationDTO("Arena IK"),
+        name: String = "Test Competition",
         welcomeText: String = "Välkommna till TestCompetition",
         organizingClubId: Int = newClub().id,
         startDate: LocalDate = LocalDate.now(),
         endDate: LocalDate = LocalDate.now().plusDays(3)
     ) = CompetitionDTO(
         id,
-        name,
         location,
+        name,
         welcomeText,
         organizingClubId,
         startDate,

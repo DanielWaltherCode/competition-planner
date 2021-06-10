@@ -29,4 +29,12 @@ interface ICompetitionRepository {
      * @Throws NotFoundException When there is no competition with the given id
      */
     fun delete(competitionId: Int): CompetitionDTO
+
+    /**
+     * Updated the given competition
+     *
+     * @param dto: Competition to update
+     * @Throws NotFoundException When the competition cannot be found
+     */
+    fun update(dto: CompetitionDTO): CompetitionDTO
 }
