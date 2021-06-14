@@ -22,7 +22,7 @@ class TestTimeslot {
         val timeslot = Timeslot(0, listOf(match))
 
         Assertions.assertEquals(2, timeslot.playerIds.size)
-        Assertions.assertTrue(timeslot.playerIds.contains(match.firstPlayer.first().id))
-        Assertions.assertTrue(timeslot.playerIds.contains(match.secondPlayer.first().id))
+        Assertions.assertTrue(timeslot.playerIds.contains(match.firstTeamPlayerIds.first()))
+        Assertions.assertTrue(timeslot.playerIds.contains(match.secondTeamPlayerIds.first()))
     }
 }

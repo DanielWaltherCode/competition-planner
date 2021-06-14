@@ -39,7 +39,7 @@ class TestDeleteClub {
         // Setup
         val dto = ClubDTO(133, "Silken IK", "Travgatan 37")
 
-        `when`(mockedPlayerRepository.playersInClub(dto)).thenReturn(listOf(dataGenerator.newPlayerEntityDTO(clubDTO = dto)))
+        `when`(mockedPlayerRepository.playersInClub(dto)).thenReturn(listOf(dataGenerator.newPlayerWithClubDTO(clubDTO = dto)))
 
         // Act
         Assertions.assertThrows(Exception::class.java) { deleteClub.execute(dto) }

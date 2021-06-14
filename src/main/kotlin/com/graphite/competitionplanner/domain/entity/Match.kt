@@ -9,14 +9,15 @@ internal data class Match(
     val startTime: LocalDateTime?,
     val endTime: LocalDateTime?,
     val type: MatchType,
-    val firstPlayer: List<Player>,
-    val secondPlayer: List<Player>,
+    val firstTeamPlayerIds: List<Int>,
+    val secondTeamPlayerIds: List<Int>,
     val orderNumber: Int,
     val groupOrRound: String // Either group name (e.g. Group "A") or the round like Round of 64, Quarterfinals
 ) {
     init {
-        require(firstPlayer.map { it.id }.intersect(secondPlayer.map { it.id }).none()
-        ) { "At least one player belongs to both teams" + secondPlayer.map { id } + firstPlayer.map { id } }
+        require(
+            firstTeamPlayerIds.intersect(secondTeamPlayerIds).none()
+        ) { "At least one player belongs to both teams $secondTeamPlayerIds $firstTeamPlayerIds" }
         require(startTime?.isBefore(endTime) ?: true) { "When specified, start time must be before end time" }
     }
 
@@ -26,8 +27,8 @@ internal data class Match(
         startTime,
         endTime,
         match.type,
-        match.firstPlayer,
-        match.secondPlayer,
+        match.firstTeamPlayerIds,
+        match.secondTeamPlayerIds,
         match.orderNumber,
         match.groupOrRound
     )
@@ -38,8 +39,8 @@ internal data class Match(
         dto.startTime,
         dto.endTime,
         MatchType(dto.matchType),
-        dto.firstPlayer.map { Player(it) },
-        dto.secondPlayer.map { Player(it) },
+        dto.firstPlayer,
+        dto.secondPlayer,
         dto.matchOrderNumber,
         dto.groupOrRound
     )

@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.api
 
 import com.graphite.competitionplanner.domain.dto.NewPlayerDTO
-import com.graphite.competitionplanner.domain.dto.PlayerEntityDTO
+import com.graphite.competitionplanner.domain.dto.PlayerWithClubDTO
 import com.graphite.competitionplanner.service.*
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
@@ -13,7 +13,7 @@ class PlayerApi(
     val playerService: PlayerService
 ) {
     @PostMapping
-    fun addPlayer(@Valid @RequestBody playerSpec: PlayerSpec): PlayerEntityDTO {
+    fun addPlayer(@Valid @RequestBody playerSpec: PlayerSpec): PlayerWithClubDTO {
         val newPlayerDto = NewPlayerDTO(
             playerSpec.firstName,
             playerSpec.lastName,
@@ -24,7 +24,7 @@ class PlayerApi(
     }
 
     @PutMapping("/{playerId}")
-    fun updatePlayer(@PathVariable playerId: Int, @Valid @RequestBody playerSpec: PlayerSpec): PlayerEntityDTO {
+    fun updatePlayer(@PathVariable playerId: Int, @Valid @RequestBody playerSpec: PlayerSpec): PlayerWithClubDTO {
         val playerDto = com.graphite.competitionplanner.domain.dto.PlayerDTO(
             playerId,
             playerSpec.firstName,
@@ -36,17 +36,17 @@ class PlayerApi(
     }
 
     @GetMapping("/{playerId}")
-    fun getPlayer(@PathVariable playerId: Int): PlayerEntityDTO {
+    fun getPlayer(@PathVariable playerId: Int): PlayerWithClubDTO {
         return playerService.getPlayer(playerId)
     }
 
     @GetMapping("name-search")
-    fun searchByPartOfName(@RequestParam partOfName: String): List<PlayerEntityDTO> {
+    fun searchByPartOfName(@RequestParam partOfName: String): List<PlayerWithClubDTO> {
         return playerService.findByName(partOfName)
     }
 
     @GetMapping
-    fun getPlayersByClubId(@RequestParam clubId: Int): List<PlayerEntityDTO> {
+    fun getPlayersByClubId(@RequestParam clubId: Int): List<PlayerWithClubDTO> {
         return playerService.getPlayersByClubId(clubId)
     }
 
