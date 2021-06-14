@@ -201,8 +201,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
         val schedule = createSchedule.execute(matches, dataGenerator.newScheduleSettingsDTO(numberOfTables = 4))
 
         for (timeslot in schedule.timeslots) {
-            val playerIds =
-                timeslot.matches.flatMap { it.firstPlayer.map { p -> p.id } + it.secondPlayer.map { p -> p.id } }
+            val playerIds = timeslot.matches.flatMap { it.firstPlayer + it.secondPlayer }
             Assertions.assertEquals(playerIds.size, playerIds.distinct().size)
         }
     }
@@ -310,34 +309,34 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
 
     @Test
     fun shouldThrowIllegalArgumentExceptionWhenThereIsAnInvalidMatch() {
-        val p5 = dataGenerator.newPlayerEntityDTO()
-        val p6 = dataGenerator.newPlayerEntityDTO()
-        val p7 = dataGenerator.newPlayerEntityDTO()
-        val p8 = dataGenerator.newPlayerEntityDTO()
+        val p5 = dataGenerator.newPlayerDTO()
+        val p6 = dataGenerator.newPlayerDTO()
+        val p7 = dataGenerator.newPlayerDTO()
+        val p8 = dataGenerator.newPlayerDTO()
         val matches = listOf(
             MatchDTO(
                 7, null, null, 1, "POOL",
-                listOf(p5), listOf(p6), 0, "GROUP"
+                listOf(p5.id), listOf(p6.id), 0, "GROUP"
             ),
             MatchDTO(
                 8, null, null, 1, "POOL",
-                listOf(p5), listOf(p7), 0, "GROUP"
+                listOf(p5.id), listOf(p7.id), 0, "GROUP"
             ),
             MatchDTO(
                 9, null, null, 1, "POOL",
-                listOf(p5), listOf(p5), 0, "GROUP"
+                listOf(p5.id), listOf(p5.id), 0, "GROUP"
             ), // Illegal
             MatchDTO(
                 10, null, null, 1, "POOL",
-                listOf(p6), listOf(p7), 0, "GROUP"
+                listOf(p6.id), listOf(p7.id), 0, "GROUP"
             ),
             MatchDTO(
                 11, null, null, 1, "POOL",
-                listOf(p6), listOf(p8), 0, "GROUP"
+                listOf(p6.id), listOf(p8.id), 0, "GROUP"
             ),
             MatchDTO(
                 12, null, null, 1, "POOL",
-                listOf(p7), listOf(p8), 0, "GROUP"
+                listOf(p7.id), listOf(p8.id), 0, "GROUP"
             )
         )
 

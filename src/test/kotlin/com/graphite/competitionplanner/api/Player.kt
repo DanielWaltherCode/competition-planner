@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.api
 
 import com.graphite.competitionplanner.AbstractApiTest
 import com.graphite.competitionplanner.DataGenerator
-import com.graphite.competitionplanner.domain.dto.PlayerEntityDTO
+import com.graphite.competitionplanner.domain.dto.PlayerWithClubDTO
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,7 +38,7 @@ class Player(
         val player = testRestTemplate.postForObject(
             getUrl(),
             HttpEntity(playerSpec, getAuthenticationHeaders()),
-            PlayerEntityDTO::class.java
+            PlayerWithClubDTO::class.java
         )
 
         // Assert creation
@@ -54,7 +54,7 @@ class Player(
 
         // Act
         val updateResponse =
-            testRestTemplate.exchange<PlayerEntityDTO>(getUrl() + "/${player.id}", HttpMethod.PUT, updateRequest)
+            testRestTemplate.exchange<PlayerWithClubDTO>(getUrl() + "/${player.id}", HttpMethod.PUT, updateRequest)
         val updatedPlayer = updateResponse.body
 
         // Assert update
@@ -65,9 +65,9 @@ class Player(
         Assertions.assertEquals(club.name, updatedPlayer.club.name)
 
         // Setup find by id
-        val findByIdRequest = HttpEntity(PlayerEntityDTO::class.java, getAuthenticationHeaders())
+        val findByIdRequest = HttpEntity(PlayerWithClubDTO::class.java, getAuthenticationHeaders())
         val foundResponse =
-            testRestTemplate.exchange<PlayerEntityDTO>(getUrl() + "/${player.id}", HttpMethod.GET, findByIdRequest)
+            testRestTemplate.exchange<PlayerWithClubDTO>(getUrl() + "/${player.id}", HttpMethod.GET, findByIdRequest)
         val foundPlayer = foundResponse.body
 
         Assertions.assertEquals(player.id, foundPlayer!!.id)
@@ -96,12 +96,12 @@ class Player(
         val player = testRestTemplate.postForObject(
             getUrl(),
             HttpEntity(playerSpec, getAuthenticationHeaders()),
-            PlayerEntityDTO::class.java
+            PlayerWithClubDTO::class.java
         )
 
         // Setup find by name request
         val findRequest = HttpEntity(HttpEntity.EMPTY, getAuthenticationHeaders())
-        val response = testRestTemplate.exchange<List<PlayerEntityDTO>>(
+        val response = testRestTemplate.exchange<List<PlayerWithClubDTO>>(
             getUrl() + "/name-search?partOfName=${player.firstName}",
             HttpMethod.GET,
             findRequest
@@ -121,12 +121,12 @@ class Player(
         val player = testRestTemplate.postForObject(
             getUrl(),
             HttpEntity(playerSpec, getAuthenticationHeaders()),
-            PlayerEntityDTO::class.java
+            PlayerWithClubDTO::class.java
         )
 
         // Setup find by club id request
         val findRequest = HttpEntity(HttpEntity.EMPTY, getAuthenticationHeaders())
-        val response = testRestTemplate.exchange<List<PlayerEntityDTO>>(
+        val response = testRestTemplate.exchange<List<PlayerWithClubDTO>>(
             getUrl() + "/?clubId=${club.id}",
             HttpMethod.GET,
             findRequest
@@ -171,7 +171,7 @@ class Player(
         val player = testRestTemplate.postForObject(
             getUrl(),
             HttpEntity(playerSpec, getAuthenticationHeaders()),
-            PlayerEntityDTO::class.java
+            PlayerWithClubDTO::class.java
         )
 
         // Setup Update request
@@ -189,7 +189,7 @@ class Player(
     @Test
     fun shouldGetHttpNotFoundWhenNotFindingPlayer() {
         // Setup
-        val request = HttpEntity(PlayerEntityDTO::class.java, getAuthenticationHeaders())
+        val request = HttpEntity(PlayerWithClubDTO::class.java, getAuthenticationHeaders())
 
         // Act
         val response = testRestTemplate.exchange<Any>(getUrl() + "/${-33}", HttpMethod.GET, request)

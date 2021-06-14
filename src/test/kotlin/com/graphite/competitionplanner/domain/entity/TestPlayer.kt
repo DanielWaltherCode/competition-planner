@@ -16,42 +16,42 @@ class TestPlayer() {
     @Test
     fun firstNameCannotBeEmpty() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            Player(0, "", "lastname", club, LocalDate.of(1992, 10, 18))
+            dataGenerator.newPlayer(firstName = "")
         }
     }
 
     @Test
     fun firstNameCannotContainNumbers() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            Player(0, "Lennart1", "lastname", club, LocalDate.of(1992, 10, 18))
+            dataGenerator.newPlayer(firstName = "Lennart1")
         }
     }
 
     @Test
     fun firstNameCanContainNonEnglishLetters() {
         Assertions.assertDoesNotThrow {
-            Player(0, "ÅÄÖГ敗", "lastname", club, LocalDate.of(1992, 10, 18))
+            dataGenerator.newPlayer(firstName = "ÅÄÖГ敗")
         }
     }
 
     @Test
     fun lastNameCannotBeEmpty() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            Player(0, "firstname", "", club, LocalDate.of(1992, 10, 18))
+            dataGenerator.newPlayer(lastName = "")
         }
     }
 
     @Test
     fun lastNameCannotContainLetters() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            Player(0, "firstname", "lastname123", club, LocalDate.of(1992, 10, 18))
+            dataGenerator.newPlayer(lastName = "lastname123")
         }
     }
 
     @Test
     fun lastNameCanContainNonEnglishLetters() {
         Assertions.assertDoesNotThrow {
-            Player(0, "firstname", "ÅÄÖГ敗", club, LocalDate.of(1992, 10, 18))
+            dataGenerator.newPlayer(lastName = "ÅÄÖГ敗")
         }
     }
 
@@ -59,7 +59,7 @@ class TestPlayer() {
     fun dateOfBirthCannotBeInTheFuture() {
         val future = LocalDate.now().plusDays(100)
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            Player(0, "firstname", "lastName", club, future)
+            dataGenerator.newPlayer(dateOfBirth = future)
         }
     }
 }

@@ -178,7 +178,7 @@ class CreateSchedule {
      * Return a list of player ids that belongs to this match
      */
     private fun Match.playerIds(): List<Int> {
-        return this.firstPlayer.map { it.id } + this.secondPlayer.map { it.id }
+        return this.firstTeamPlayerIds + this.secondTeamPlayerIds
     }
 
     /**

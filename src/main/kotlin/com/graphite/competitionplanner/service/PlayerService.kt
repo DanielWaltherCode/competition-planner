@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.service
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.domain.dto.NewPlayerDTO
-import com.graphite.competitionplanner.domain.dto.PlayerEntityDTO
+import com.graphite.competitionplanner.domain.dto.PlayerWithClubDTO
 import com.graphite.competitionplanner.domain.usecase.player.*
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.tables.Club.CLUB
@@ -25,23 +25,23 @@ class PlayerService(
     val findPlayer: FindPlayer
 ) {
 
-    fun getPlayersByClubId(clubId: Int): List<PlayerEntityDTO> {
+    fun getPlayersByClubId(clubId: Int): List<PlayerWithClubDTO> {
         return listAllPlayersInClub.execute(clubId)
     }
 
-    fun addPlayer(player: NewPlayerDTO): PlayerEntityDTO {
+    fun addPlayer(player: NewPlayerDTO): PlayerWithClubDTO {
         return createPlayer.execute(player)
     }
 
-    fun updatePlayer(player: com.graphite.competitionplanner.domain.dto.PlayerDTO): PlayerEntityDTO {
+    fun updatePlayer(player: com.graphite.competitionplanner.domain.dto.PlayerDTO): PlayerWithClubDTO {
         return updatePlayer.execute(player)
     }
 
-    fun getPlayer(playerId: Int): PlayerEntityDTO {
+    fun getPlayer(playerId: Int): PlayerWithClubDTO {
         return findPlayer.byId(playerId)
     }
 
-    fun findByName(partOfName: String): List<PlayerEntityDTO> {
+    fun findByName(partOfName: String): List<PlayerWithClubDTO> {
         return findPlayer.byPartName(partOfName)
     }
 

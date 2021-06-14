@@ -32,13 +32,11 @@ class DataGenerator {
         id: Int = playerId++,
         firstName: String = "Ida",
         lastName: String = "Larsson",
-        club: Club = newClub(),
         dateOfBirth: LocalDate = LocalDate.of(1999, 1, 1)
     ) = Player(
         id,
         firstName,
         lastName,
-        club,
         dateOfBirth
     )
 
@@ -48,8 +46,8 @@ class DataGenerator {
         startTime: LocalDateTime = LocalDateTime.now(),
         endTime: LocalDateTime = LocalDateTime.now().plusMinutes(15),
         matchType: MatchType = MatchType("POOL"),
-        firstPlayer: List<Player> = listOf(newPlayer(firstName = "Lars", lastName = "Åkesson")),
-        secondPlayer: List<Player> = listOf(newPlayer(firstName = "Lars", lastName = "Åkesson")),
+        firstPlayer: List<Int> = listOf(newPlayer(firstName = "Lars", lastName = "Åkesson").id),
+        secondPlayer: List<Int> = listOf(newPlayer(firstName = "Lars", lastName = "Åkesson").id),
         orderNumber: Int = 0,
         groupOrRound: String = "GROUP A"
     ) = Match(
@@ -134,13 +132,13 @@ class DataGenerator {
         dateOfBirth
     )
 
-    fun newPlayerEntityDTO(
+    fun newPlayerWithClubDTO(
         id: Int = playerId++,
         firstName: String = "Gunnar",
         lastName: String = "Åkerberg",
         clubDTO: ClubDTO = newClubDTO(),
         dateOfBirth: LocalDate = LocalDate.of(1999, 1, 1)
-    ) = PlayerEntityDTO(
+    ) = PlayerWithClubDTO(
         id,
         firstName,
         lastName,
@@ -154,8 +152,8 @@ class DataGenerator {
         startTime: LocalDateTime = LocalDateTime.now(),
         endTime: LocalDateTime = LocalDateTime.now().plusMinutes(15),
         matchType: String = "POOL",
-        firstPlayer: List<PlayerEntityDTO> = listOf(newPlayerEntityDTO(firstName = "Lars", lastName = "Åkesson")),
-        secondPlayer: List<PlayerEntityDTO> = listOf(newPlayerEntityDTO(firstName = "Lars", lastName = "Åkesson")),
+        firstPlayer: List<Int> = listOf(newPlayerDTO(firstName = "Lars", lastName = "Åkesson").id),
+        secondPlayer: List<Int> = listOf(newPlayerDTO(firstName = "Lars", lastName = "Åkesson").id),
         orderNumber: Int = 0,
         groupOrRound: String = "GROUP A"
     ) = MatchDTO(
@@ -250,8 +248,8 @@ class DataGenerator {
                         null,
                         categoryId,
                         "POOL",
-                        listOf(PlayerEntityDTO(players[i])),
-                        listOf(PlayerEntityDTO(players[j])),
+                        listOf(players[i].id),
+                        listOf(players[j].id),
                         0,
                         "GROUP"
                     )
@@ -322,86 +320,86 @@ class DataGenerator {
     private val birthDate = LocalDate.of(1999, 4, 3)
     private val club = ClubDTO(33, "Luleå", "Midsommarvägen 13")
 
-    private val p1 = PlayerEntityDTO(1, "Jan", "Olsson", club, birthDate)
-    private val p2 = PlayerEntityDTO(2, "Gill", "Fiskarsson", club, birthDate)
-    private val p3 = PlayerEntityDTO(3, "Sven", "Svensson", club, birthDate)
-    private val p4 = PlayerEntityDTO(4, "Sture", "Sundberg", club, birthDate)
+    private val p1 = PlayerDTO(1, "Jan", "Olsson", club.id, birthDate)
+    private val p2 = PlayerDTO(2, "Gill", "Fiskarsson", club.id, birthDate)
+    private val p3 = PlayerDTO(3, "Sven", "Svensson", club.id, birthDate)
+    private val p4 = PlayerDTO(4, "Sture", "Sundberg", club.id, birthDate)
 
     private val pool1 = listOf(
         MatchDTO(
             1, null, null, 1, "POOL",
-            listOf(p1), listOf(p2), 0, "GROUP"
+            listOf(p1.id), listOf(p2.id), 0, "GROUP"
         ),
         MatchDTO(
             2, null, null, 1, "POOL",
-            listOf(p1), listOf(p3), 0, "GROUP"
+            listOf(p1.id), listOf(p3.id), 0, "GROUP"
         ),
         MatchDTO(
             3, null, null, 1, "POOL",
-            listOf(p1), listOf(p4), 0, "GROUP"
+            listOf(p1.id), listOf(p4.id), 0, "GROUP"
         ),
         MatchDTO(
             4, null, null, 1, "POOL",
-            listOf(p2), listOf(p3), 0, "GROUP"
+            listOf(p2.id), listOf(p3.id), 0, "GROUP"
         ),
         MatchDTO(
             5, null, null, 1, "POOL",
-            listOf(p2), listOf(p4), 0, "GROUP"
+            listOf(p2.id), listOf(p4.id), 0, "GROUP"
         ),
         MatchDTO(
             6, null, null, 1, "POOL",
-            listOf(p3), listOf(p4), 0, "GROUP"
+            listOf(p3.id), listOf(p4.id), 0, "GROUP"
         )
     )
 
-    private val p5 = PlayerEntityDTO(5, "Elin", "Malsson", club, birthDate)
-    private val p6 = PlayerEntityDTO(6, "Ewa", "Svensson", club, birthDate)
-    private val p7 = PlayerEntityDTO(7, "Katarina", "Dalhborg", club, birthDate)
-    private val p8 = PlayerEntityDTO(8, "Lena", "Sinè", club, birthDate)
+    private val p5 = PlayerDTO(5, "Elin", "Malsson", club.id, birthDate)
+    private val p6 = PlayerDTO(6, "Ewa", "Svensson", club.id, birthDate)
+    private val p7 = PlayerDTO(7, "Katarina", "Dalhborg", club.id, birthDate)
+    private val p8 = PlayerDTO(8, "Lena", "Sinè", club.id, birthDate)
 
     private val pool2 = listOf(
         MatchDTO(
             7, null, null, 1, "POOL",
-            listOf(p5), listOf(p6), 0, "GROUP"
+            listOf(p5.id), listOf(p6.id), 0, "GROUP"
         ),
         MatchDTO(
             8, null, null, 1, "POOL",
-            listOf(p5), listOf(p7), 0, "GROUP"
+            listOf(p5.id), listOf(p7.id), 0, "GROUP"
         ),
         MatchDTO(
             9, null, null, 1, "POOL",
-            listOf(p5), listOf(p8), 0, "GROUP"
+            listOf(p5.id), listOf(p8.id), 0, "GROUP"
         ),
         MatchDTO(
             10, null, null, 1, "POOL",
-            listOf(p6), listOf(p7), 0, "GROUP"
+            listOf(p6.id), listOf(p7.id), 0, "GROUP"
         ),
         MatchDTO(
             11, null, null, 1, "POOL",
-            listOf(p6), listOf(p8), 0, "GROUP"
+            listOf(p6.id), listOf(p8.id), 0, "GROUP"
         ),
         MatchDTO(
             12, null, null, 1, "POOL",
-            listOf(p7), listOf(p8), 0, "GROUP"
+            listOf(p7.id), listOf(p8.id), 0, "GROUP"
         )
     )
 
-    private val p9 = PlayerEntityDTO(9, "Patrik", "Larsson", club, birthDate)
-    private val p10 = PlayerEntityDTO(10, "Enok", "Karlsson", club, birthDate)
-    private val p11 = PlayerEntityDTO(11, "Tintin", "Snäll", club, birthDate)
+    private val p9 = PlayerDTO(9, "Patrik", "Larsson", club.id, birthDate)
+    private val p10 = PlayerDTO(10, "Enok", "Karlsson", club.id, birthDate)
+    private val p11 = PlayerDTO(11, "Tintin", "Snäll", club.id, birthDate)
 
     private val pool3 = listOf(
         MatchDTO(
             13, null, null, 1, "POOL",
-            listOf(p9), listOf(p10), 0, "GROUP"
+            listOf(p9.id), listOf(p10.id), 0, "GROUP"
         ),
         MatchDTO(
             14, null, null, 1, "POOL",
-            listOf(p9), listOf(p11), 0, "GROUP"
+            listOf(p9.id), listOf(p11.id), 0, "GROUP"
         ),
         MatchDTO(
             15, null, null, 1, "POOL",
-            listOf(p10), listOf(p11), 0, "GROUP"
+            listOf(p10.id), listOf(p11.id), 0, "GROUP"
         )
     )
 

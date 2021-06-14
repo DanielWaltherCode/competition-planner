@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.domain.interfaces
 import com.graphite.competitionplanner.domain.dto.ClubDTO
 import com.graphite.competitionplanner.domain.dto.NewPlayerDTO
 import com.graphite.competitionplanner.domain.dto.PlayerDTO
-import com.graphite.competitionplanner.domain.dto.PlayerEntityDTO
+import com.graphite.competitionplanner.domain.dto.PlayerWithClubDTO
 
 interface IPlayerRepository {
 
@@ -17,7 +17,7 @@ interface IPlayerRepository {
     /**
      * Return all players for the given club
      */
-    fun playersInClub(dto: ClubDTO): List<PlayerEntityDTO>
+    fun playersInClub(dto: ClubDTO): List<PlayerWithClubDTO>
 
     /**
      * Return the Player with the given Id
@@ -36,7 +36,7 @@ interface IPlayerRepository {
      * @param partName: Search string
      * @Return List of Players
      */
-    fun findByName(startOfName: String): List<PlayerEntityDTO>
+    fun findByName(startOfName: String): List<PlayerWithClubDTO>
 
     /**
      * Updates the Player with the given id

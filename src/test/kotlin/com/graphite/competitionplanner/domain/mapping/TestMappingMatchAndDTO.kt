@@ -1,8 +1,7 @@
 package com.graphite.competitionplanner.domain.mapping
 
-import com.graphite.competitionplanner.domain.dto.ClubDTO
+import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.domain.dto.MatchDTO
-import com.graphite.competitionplanner.domain.dto.PlayerEntityDTO
 import com.graphite.competitionplanner.domain.entity.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -13,23 +12,29 @@ import java.time.LocalDateTime
 @SpringBootTest
 class TestMappingMatchAndDTO {
 
+    val dataGenerator = DataGenerator()
+
     @Test
     fun testConvertDtoToEntity() {
-        val p1 = PlayerEntityDTO(
-            111, "Åke", "Isaksson",
-            ClubDTO(2, "Lyseskil", "Bakgården 1"),
-            LocalDate.of(2001, 3, 12)
+        val p1 = dataGenerator.newPlayerDTO(
+            id = 111,
+            firstName = "Åke",
+            lastName = "Isaksson",
+            clubId = 1,
+            dateOfBirth = LocalDate.of(2001, 3, 12)
         )
 
-        val p2 = PlayerEntityDTO(
-            222, "Lars", "Nilsson",
-            ClubDTO(2, "Lyseskil", "Bakgården 1"),
-            LocalDate.of(2001, 3, 12)
+        val p2 = dataGenerator.newPlayerDTO(
+            id = 222,
+            firstName = "Lars",
+            lastName = "Nilsson",
+            clubId = 2,
+            dateOfBirth = LocalDate.of(2001, 3, 12)
         )
 
         val dto = MatchDTO(
             1, LocalDateTime.now(), LocalDateTime.now().plusMinutes(10), 1, "POOL",
-            listOf(p1), listOf(p2), 1, "GROUP A"
+            listOf(p1.id), listOf(p2.id), 1, "GROUP A"
         )
 
         val match = Match(dto)
@@ -39,29 +44,30 @@ class TestMappingMatchAndDTO {
         Assertions.assertEquals(dto.endTime, match.endTime)
         Assertions.assertEquals(dto.competitionCategoryId, match.competitionCategory.id)
         Assertions.assertEquals(dto.matchType, match.type.value)
-        Assertions.assertEquals(dto.firstPlayer.first().id, match.firstPlayer.first().id)
-        Assertions.assertEquals(dto.secondPlayer.first().id, match.secondPlayer.first().id)
+        Assertions.assertEquals(dto.firstPlayer.first(), match.firstTeamPlayerIds.first())
+        Assertions.assertEquals(dto.secondPlayer.first(), match.secondTeamPlayerIds.first())
         Assertions.assertEquals(dto.matchOrderNumber, match.orderNumber)
         Assertions.assertEquals(dto.groupOrRound, match.groupOrRound)
     }
 
     @Test
     fun testConvertEntityToDto() {
+        val club = dataGenerator.newClub()
         val p1 = Player(
             33, "Test", "Testsson",
-            Club(3, "ClubA", "Address 1"),
             LocalDate.of(1992, 10, 18)
         )
+        p1.club = club
 
         val p2 = Player(
             44, "Isak", "Testsson",
-            Club(3, "ClubA", "Address 1"),
             LocalDate.of(1992, 10, 18)
         )
+        p2.club = club
 
         val match = Match(
             33, CompetitionCategory(33), LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), MatchType("PLAYOFF"),
-            listOf(p1), listOf(p2), 11, "Round of 64"
+            listOf(p1.id), listOf(p2.id), 11, "Round of 64"
         )
 
         val dto = MatchDTO(match)
@@ -71,8 +77,8 @@ class TestMappingMatchAndDTO {
         Assertions.assertEquals(match.endTime, dto.endTime)
         Assertions.assertEquals(match.competitionCategory.id, dto.competitionCategoryId)
         Assertions.assertEquals(match.type.value, dto.matchType)
-        Assertions.assertEquals(match.firstPlayer.first().id, dto.firstPlayer.first().id)
-        Assertions.assertEquals(match.secondPlayer.first().id, dto.secondPlayer.first().id)
+        Assertions.assertEquals(match.firstTeamPlayerIds.first(), dto.firstPlayer.first())
+        Assertions.assertEquals(match.secondTeamPlayerIds.first(), dto.secondPlayer.first())
         Assertions.assertEquals(match.orderNumber, dto.matchOrderNumber)
         Assertions.assertEquals(match.groupOrRound, dto.groupOrRound)
     }

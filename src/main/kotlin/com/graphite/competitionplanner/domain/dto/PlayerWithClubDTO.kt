@@ -6,7 +6,7 @@ import java.time.LocalDate
 /**
  * This is the data transfer object of the Player entity class
  */
-data class PlayerEntityDTO(
+data class PlayerWithClubDTO(
     val id: Int,
     val firstName: String,
     val lastName: String,
@@ -19,15 +19,6 @@ data class PlayerEntityDTO(
         player.lastName,
         ClubDTO(player.club),
         player.dateOfBirth
-    )
-
-    @Deprecated("Should not be used")
-    constructor(id: Int, dto: PlayerEntityDTO) : this(
-        id,
-        dto.firstName,
-        dto.lastName,
-        dto.club,
-        dto.dateOfBirth
     )
 
     constructor(player: PlayerDTO, club: ClubDTO) : this(

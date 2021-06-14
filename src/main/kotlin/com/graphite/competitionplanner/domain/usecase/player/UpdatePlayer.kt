@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.domain.usecase.player
 
 import com.graphite.competitionplanner.domain.dto.PlayerDTO
-import com.graphite.competitionplanner.domain.dto.PlayerEntityDTO
+import com.graphite.competitionplanner.domain.dto.PlayerWithClubDTO
 import com.graphite.competitionplanner.domain.entity.Player
 import com.graphite.competitionplanner.domain.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.domain.usecase.club.FindClub
@@ -12,10 +12,10 @@ class UpdatePlayer(
     val playerRepository: IPlayerRepository,
     val verifyClubExist: FindClub
 ) {
-    fun execute(dto: PlayerDTO): PlayerEntityDTO {
+    fun execute(dto: PlayerDTO): PlayerWithClubDTO {
         val club = verifyClubExist.byId(dto.clubId)
-        val player = PlayerEntityDTO(dto, club)
-        Player(player) // Verifying
+        val player = PlayerWithClubDTO(dto, club)
+        Player(dto) // Verifying
         playerRepository.update(dto)
         return player
     }

@@ -11,7 +11,6 @@ import java.time.LocalDateTime
 class TestMatch {
 
     private final val dataGenerator = DataGenerator()
-    private final val p1 = dataGenerator.newPlayer()
     private final val p2 = dataGenerator.newPlayer()
 
     @Test
@@ -23,8 +22,8 @@ class TestMatch {
                 null,
                 null,
                 MatchType("POOL"),
-                listOf(p2),
-                listOf(p2),
+                listOf(p2.id),
+                listOf(p2.id),
                 0,
                 "Group A"
             )
@@ -42,8 +41,8 @@ class TestMatch {
                 startTime,
                 endTime,
                 MatchType("POOL"),
-                listOf(p2),
-                listOf(p2),
+                listOf(p2.id),
+                listOf(p2.id),
                 0,
                 "Group A"
             )

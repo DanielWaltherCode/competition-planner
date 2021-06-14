@@ -10,7 +10,7 @@ internal class Timeslot(
         require(matches.isNotEmpty()) { "A timeslot cannot have an empty list of matches" }
     }
 
-    var playerIds = matches.flatMap { it.firstPlayer.map { p -> p.id } + it.secondPlayer.map { p -> p.id } }
+    var playerIds = matches.flatMap { it.firstTeamPlayerIds + it.secondTeamPlayerIds }
 
     constructor(dto: TimeslotDTO) : this(
         dto.orderNumber,

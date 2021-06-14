@@ -11,6 +11,7 @@ class UpdateCompetition(
 ) {
 
     fun execute(dto: CompetitionDTO): CompetitionDTO {
+
         Competition(dto)
         return repository.update(dto)
     }

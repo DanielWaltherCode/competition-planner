@@ -6,7 +6,7 @@ import com.graphite.competitionplanner.api.PlayerSpec
 import com.graphite.competitionplanner.domain.dto.ClubDTO
 import com.graphite.competitionplanner.domain.dto.NewPlayerDTO
 import com.graphite.competitionplanner.domain.dto.PlayerDTO
-import com.graphite.competitionplanner.domain.dto.PlayerEntityDTO
+import com.graphite.competitionplanner.domain.dto.PlayerWithClubDTO
 import com.graphite.competitionplanner.domain.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.domain.interfaces.NotFoundException
 import com.graphite.competitionplanner.tables.Club
@@ -119,13 +119,13 @@ class PlayerRepository(
         return PlayerDTO(playerRecord.id, dto);
     }
 
-    override fun playersInClub(dto: ClubDTO): List<PlayerEntityDTO> {
+    override fun playersInClub(dto: ClubDTO): List<PlayerWithClubDTO> {
         val records =
             dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(CLUB.ID.eq(dto.id))
                 .fetchInto(PLAYER)
 
         return records.map { record ->
-            PlayerEntityDTO(
+            PlayerWithClubDTO(
                 record.id,
                 record.firstName,
                 record.lastName,
@@ -145,18 +145,18 @@ class PlayerRepository(
         }
     }
 
-    override fun findByName(startOfName: String): List<PlayerEntityDTO> {
+    override fun findByName(startOfName: String): List<PlayerWithClubDTO> {
         val records = dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(
             PLAYER.FIRST_NAME.startsWithIgnoreCase(startOfName)
                 .or(PLAYER.LAST_NAME.startsWithIgnoreCase(startOfName))
         ).fetch()
-        return records.map { transformIntoPlayerEntityDto(it) }
+        return records.map { transformIntoPlayerWithDto(it) }
     }
 
-    private fun transformIntoPlayerEntityDto(playerClubRecord: Record): PlayerEntityDTO {
+    private fun transformIntoPlayerWithDto(playerClubRecord: Record): PlayerWithClubDTO {
         val player = playerClubRecord.into(PLAYER)
         val club = playerClubRecord.into(Club.CLUB)
-        return PlayerEntityDTO(
+        return PlayerWithClubDTO(
             player.id,
             player.firstName,
             player.lastName,

@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.draw
 
 import com.graphite.competitionplanner.api.*
 import com.graphite.competitionplanner.api.competition.*
-import com.graphite.competitionplanner.domain.dto.PlayerEntityDTO
+import com.graphite.competitionplanner.domain.dto.PlayerWithClubDTO
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.service.*
@@ -36,7 +36,7 @@ class TestDrawCupOnlyMatchOrder(
     lateinit var club: ClubSpec
     lateinit var competition: CompetitionDTO
     lateinit var competitionCategory: CompetitionCategoryDTO
-    var players = mutableListOf<PlayerEntityDTO>()
+    var players = mutableListOf<PlayerWithClubDTO>()
 
     @BeforeEach
     fun setUp() {
@@ -81,7 +81,7 @@ class TestDrawCupOnlyMatchOrder(
         )
     }
 
-    private fun registerPlayerTo(player: PlayerEntityDTO, competitionCategory: CompetitionCategoryDTO) {
+    private fun registerPlayerTo(player: PlayerWithClubDTO, competitionCategory: CompetitionCategoryDTO) {
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 player.id,
@@ -90,7 +90,7 @@ class TestDrawCupOnlyMatchOrder(
         )
     }
 
-    private fun setSingleRankOn(player: PlayerEntityDTO, value: Int) {
+    private fun setSingleRankOn(player: PlayerWithClubDTO, value: Int) {
         playerRepository.addPlayerRanking(player.id, value, "SINGLES")
     }
 
@@ -103,7 +103,7 @@ class TestDrawCupOnlyMatchOrder(
         )
     }
 
-    private fun addPlayer(firstName: String, club: ClubSpec): PlayerEntityDTO {
+    private fun addPlayer(firstName: String, club: ClubSpec): PlayerWithClubDTO {
         return playerApi.addPlayer(
             PlayerSpec(
                 firstName,
