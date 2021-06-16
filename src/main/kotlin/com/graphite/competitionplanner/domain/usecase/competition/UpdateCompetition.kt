@@ -9,11 +9,8 @@ import org.springframework.stereotype.Component
 class UpdateCompetition(
     val repository: ICompetitionRepository
 ) {
-
     fun execute(dto: CompetitionDTO): CompetitionDTO {
-
         Competition(dto)
         return repository.update(dto)
     }
-
 }

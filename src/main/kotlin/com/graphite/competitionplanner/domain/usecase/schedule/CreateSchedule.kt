@@ -85,7 +85,7 @@ class CreateSchedule {
      * Helper data structure that group all matches belong to same category
      */
     private data class MatchesGroupedOnCategory(
-        val category: CompetitionCategory,
+        val competitionCategoryId: Int,
         var matches: List<Match>
     )
 
@@ -192,7 +192,11 @@ class CreateSchedule {
      * Returns a list of matches grouped by category
      */
     private fun List<Match>.groupByCategory(): List<MatchesGroupedOnCategory> {
-        val categories = this.map { it.competitionCategory }.distinct()
-        return categories.map { MatchesGroupedOnCategory(it, this.filter { match -> match.competitionCategory == it }) }
+        val categories = this.map { it.competitionCategoryId }.distinct()
+        return categories.map {
+            MatchesGroupedOnCategory(
+                it,
+                this.filter { match -> match.competitionCategoryId == it })
+        }
     }
 }

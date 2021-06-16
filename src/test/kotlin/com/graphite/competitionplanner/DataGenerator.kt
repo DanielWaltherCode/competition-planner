@@ -17,6 +17,7 @@ class DataGenerator {
     private var clubId = 0
     private var matchId = 0
     private var competitionId = 0
+    private var competitionCategoryId = 0
 
     internal fun newClub(
         id: Int = clubId++,
@@ -42,7 +43,7 @@ class DataGenerator {
 
     internal fun newMatch(
         id: Int = matchId++,
-        competitionCategory: CompetitionCategory = CompetitionCategory(0),
+        competitionCategoryId: Int = 0,
         startTime: LocalDateTime = LocalDateTime.now(),
         endTime: LocalDateTime = LocalDateTime.now().plusMinutes(15),
         matchType: MatchType = MatchType("POOL"),
@@ -52,7 +53,7 @@ class DataGenerator {
         groupOrRound: String = "GROUP A"
     ) = Match(
         id,
-        competitionCategory,
+        competitionCategoryId,
         startTime,
         endTime,
         matchType,

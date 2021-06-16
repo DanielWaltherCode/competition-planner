@@ -19,7 +19,7 @@ data class MatchDTO(
         match.id,
         match.startTime,
         match.endTime,
-        match.competitionCategory.id,
+        match.competitionCategoryId,
         match.type.value,
         match.firstTeamPlayerIds,
         match.secondTeamPlayerIds,

@@ -18,7 +18,7 @@ class TestMatch {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             Match(
                 0,
-                CompetitionCategory(0),
+                0,
                 null,
                 null,
                 MatchType("POOL"),
@@ -37,7 +37,7 @@ class TestMatch {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             Match(
                 0,
-                CompetitionCategory(0),
+                0,
                 startTime,
                 endTime,
                 MatchType("POOL"),
