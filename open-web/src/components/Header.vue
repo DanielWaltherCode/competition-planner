@@ -2,56 +2,28 @@
   <header id="header" class="header">
     <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01"
+                aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-          <div class="d-flex align-items-center">
-          <router-link to="landing" :key="$route.fullPath" class="navbar-brand">
-            <h2 id="brand">LET'S COMPETE</h2>
-          </router-link>
-          </div>
-          <div>
-
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <router-link class="nav-link" to="/overview"
-                   :class="$router.currentRoute.path === '/overview' ? 'active' : ''">
-                  {{ $t("header.overview") }}
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link class="nav-link" to="/classes"
-                             :class="$router.currentRoute.path === '/classes' ? 'active' : ''">
-                  {{ $t("header.classes") }}
-                </router-link>
-              </li>
-            <li class="nav-item dropdown" >
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                {{$t("header.handle.title")}}
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <li class="nav-item">
-                  <!-- Note one exclamation point here for competition, all others have two -->
-                  <router-link class="nav-link submenu" to="/new-competition"
-                     :class="$router.currentRoute.path === '/new-competition' ? 'active' : ''" >
-                    {{ $t("header.handle.newCompetition") }}
-                  </router-link>
-                </li>
-                <li class="nav-item">
-                  <!-- Note one exclamation point here for competition, all others have two -->
-                  <router-link class="nav-link submenu" to="/choose-competition"
-                     :class="$router.currentRoute.path === '/choose-competition' ? 'active' : ''">
-                    {{ $t("header.handle.administerCompetition") }}
-                  </router-link>
-                </li>
-              </ul>
+          <ul class="navbar-nav w-100 d-flex justify-content-around align-items-center">
+            <li class="nav-item">
+              {{ $t("header.firstText") }}
+            </li>
+            <li class="d-flex align-items-center">
+              <i class="fas fa-trophy me-2"></i>
+              <router-link to="/landing" :key="$route.fullPath" class="navbar-brand">
+                <h2 id="brand">LET'S COMPETE</h2>
+              </router-link>
+            </li>
+            <li class="nav-item">
+              <input type="text" class="form-check" placeholder="Sök på en spelare">
             </li>
           </ul>
-          </div>
         </div>
       </div>
-      </nav>
+    </nav>
   </header>
 </template>
 
@@ -62,12 +34,8 @@ export default {
   data() {
     return {}
   },
-  computed: {
-
-  },
-  methods: {
-
-  }
+  computed: {},
+  methods: {}
 }
 </script>
 
@@ -78,19 +46,19 @@ nav {
 }
 
 #brand {
-  color: white;
+  color: var(--main-color);
 }
 
 .navbar {
-  background-color: var(--main-color) !important;
+  background-color: white !important;
 }
 
 .nav-link {
-  color: white !important;
+  color: var(--main-color) !important;
 }
 
 .submenu {
-  color: var(--main-color) !important;
+  color: white !important;
 }
 
 .navbar-collapse {

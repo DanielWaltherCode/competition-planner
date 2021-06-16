@@ -62,7 +62,11 @@ class WebSecurity(
             "http://competition.travexperten.nu",
             "https://competition.travexperten.nu",
             "http://www.competition.travexperten.nu",
-            "https://www.competition.travexperten.nu")
+            "https://www.competition.travexperten.nu",
+            "http://open.competition.travexperten.nu",
+            "https://open.competition.travexperten.nu",
+            "http://www.open.competition.travexperten.nu",
+            "https://www.open.competition.travexperten.nu")
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         configuration.allowedHeaders = listOf(
             "X-Requested-With",

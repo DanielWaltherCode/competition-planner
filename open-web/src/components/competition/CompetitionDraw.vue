@@ -76,7 +76,6 @@ export default {
   data() {
     return {
       competitionId: 0,
-      categoryId: 0,
       isCategoryDrawn: false,
       category: {},
       draw: null,
@@ -85,24 +84,29 @@ export default {
       registeredPlayersLists: []
     }
   },
+  props: {
+    categoryId: Number
+  },
   components: {PoolDraw},
   mounted() {
     this.competitionId = this.$route.params.competitionId
-    this.categoryId = this.$route.params.categoryId
-    ApiService.getCategory(this.competitionId, this.categoryId).then(res => {
-      this.category = res.data
-    })
-    ApiService.isClassDrawn(this.competitionId, this.categoryId).then(res => {
-      if (res.data === true) {
-        this.isCategoryDrawn = true
-        this.getDraw(this.competitionId, this.categoryId)
-      } else {
-        this.isCategoryDrawn = false
-        this.getRegisteredPlayers()
-      }
-    })
+    this.getCategoryData()
   },
   methods: {
+    getCategoryData() {
+      ApiService.getCategory(this.competitionId, this.categoryId).then(res => {
+        this.category = res.data
+      })
+      ApiService.isClassDrawn(this.competitionId, this.categoryId).then(res => {
+        if (res.data === true) {
+          this.isCategoryDrawn = true
+          this.getDraw(this.competitionId, this.categoryId)
+        } else {
+          this.isCategoryDrawn = false
+          this.getRegisteredPlayers()
+        }
+      })
+    },
     getDraw() {
       ApiService.getDraw(this.competitionId, this.categoryId).then(res => {
         this.draw = res.data

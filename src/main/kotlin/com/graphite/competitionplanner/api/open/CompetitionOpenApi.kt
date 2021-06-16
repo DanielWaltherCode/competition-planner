@@ -53,6 +53,15 @@ class CompetitionOpenApi(
         return registrationService.getPlayersInCompetitionCategory(competitionCategoryId)
     }
 
+    @GetMapping("/{competitionId}/registration")
+    @ApiModelProperty(value = "Allowed values", allowableValues = "club, category, name", required = false)
+    fun getPlayersInCompetition(
+        @PathVariable competitionId: Int,
+        @RequestParam searchType: String
+    ): RegisteredPlayersDTO {
+        return registrationService.getRegisteredPlayers(competitionId, searchType)
+    }
+
     @GetMapping("/{competitionId}/categories/{categoryId}")
     fun getCategory(@PathVariable categoryId: Int): CompetitionCategory {
         return competitionCategoryService.getByCompetitionCategoryId(categoryId)

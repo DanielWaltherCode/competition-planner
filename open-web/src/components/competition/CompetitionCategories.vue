@@ -1,35 +1,49 @@
 <template>
-<div>
-  <ul class="list-group list-group-flush w-25 m-4">
-    <li class="list-group-item text-start" v-for="category in categories" :key="category.competitionCategoryId">
-      <h5 class="mb-1 search-result" v-on:click="chooseCategory(category.competitionCategoryId)">
-        {{category.categoryName}}
-      </h5>
-    </li>
-  </ul>
-</div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="sidebar col-md-3">
+        <div class="sidebar-header">
+          <h4> {{ $t("competition.categories.header") }}</h4>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item" v-for="category in categories"
+              @click="chooseCategory(category.competitionCategoryId)" :key="category.competitionCategoryId"
+              :class="chosenCategoryId === category.competitionCategoryId ? 'active' : ''">
+            {{ category.categoryName }}
+          </li>
+        </ul>
+      </div>
+      <competition-draw v-if="chosenCategoryId !== 0" :category-id="chosenCategoryId" :key="chosenCategoryId" class="col-md-9"></competition-draw>
+    </div>
+  </div>
 </template>
 
 <script>
 
 import ApiService from "../../api-services/api.service";
+import CompetitionDraw from "./CompetitionDraw";
 
 export default {
-name: "CompetitionCategories",
-data() {
-  return {
-    categories: []
-  }
-},
+  name: "CompetitionCategories",
+  components: {CompetitionDraw},
+  data() {
+    return {
+      chosenCategoryId: 0,
+      categories: []
+    }
+  },
   mounted() {
     const competitionId = this.$route.params.competitionId
     ApiService.getCompetitionCategories(competitionId).then(res => {
       this.categories = res.data.categories
+      if(this.categories.length > 0) {
+        this.chooseCategory(this.categories[0].competitionCategoryId)
+      }
     })
   },
   methods: {
     chooseCategory(categoryId) {
-      this.$router.push(`/competition/${this.$route.params.competitionId}/draw/${categoryId}`)
+      this.chosenCategoryId = categoryId
     }
   }
 }

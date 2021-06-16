@@ -1,13 +1,10 @@
 <template>
   <div id="competition-header">
-    <div>
-      <router-link class="text-white fs-5 d-flex p-2" to="/">{{$t("header.overview")}}</router-link>
-    </div>
-    <div id="nav-top">
-      <i class="bi bi-building text-white"></i>
+    <div id="nav-top" class="d-flex align-items-center justify-content-center">
+      <i class="fas fa-tag fa-2x text-white me-2"></i>
       <h2 class="text-white">{{ competition.name }}</h2>
     </div>
-    <header  class="header">
+    <header class="header">
       <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01"
@@ -18,20 +15,26 @@
               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
                   <router-link class="nav-link" :to="`/competition/${competition.id}`"
-                               :class="$router.currentRoute.path === '/overview' ? 'active' : ''">
+                               :class="activeRoute.includes('/overview') ? 'active' : ''">
                     {{ $t("competition.nav.overview") }}
                   </router-link>
                 </li>
                 <li class="nav-item">
                   <router-link class="nav-link" :to="`/competition/${competition.id}/categories`"
-                               :class="$router.currentRoute.path.includes('categories') ? 'active' : ''">
+                               :class="activeRoute.includes('categories') ? 'active' : ''">
                     {{ $t("competition.nav.categories") }}
                   </router-link>
                 </li>
                 <li class="nav-item">
                   <router-link class="nav-link" :to="`/competition/${competition.id}/matches`"
-                               :class="$router.currentRoute.path.includes('matches') ? 'active' : ''">
+                               :class="activeRoute.includes('matches') ? 'active' : ''">
                     {{ $t("competition.nav.matches") }}
+                  </router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link class="nav-link" :to="`/competition/${competition.id}/players`"
+                               :class="activeRoute.includes('players') ? 'active' : ''">
+                    {{ $t("competition.nav.players") }}
                   </router-link>
                 </li>
               </ul>
@@ -45,8 +48,18 @@
 <script>
 export default {
   name: "CompetitionHeader",
+  data() {
+    return {
+      activeRoute: ""
+    }
+  },
   props: {
-    competition: Object
+    competition: Object,
+  },
+  watch: {
+    $route() {
+      this.activeRoute = this.$router.currentRoute.path
+    }
   }
 }
 </script>
@@ -61,10 +74,6 @@ nav {
   box-shadow: 0 3px #efefef;
 }
 
-#brand {
-  color: white;
-}
-
 .navbar {
   background-color: var(--main-color) !important;
 }
@@ -73,12 +82,8 @@ nav {
   color: white !important;
 }
 
-.submenu {
-  color: var(--main-color) !important;
-}
-
-.navbar-collapse {
-  justify-content: space-between;
+.active {
+  font-weight: bold;
 }
 
 #navbar button {

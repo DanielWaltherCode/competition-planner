@@ -7,7 +7,7 @@
         </div>
           <div v-if="matches.length === 0">
             <p>
-              Klassen har inte lottats än
+             {{$t("results.notDrawn")}}
             </p>
           </div>
         </div>
