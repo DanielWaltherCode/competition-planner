@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <main>
+    <h1 class="p-4">{{ $t("schedule.main.heading") }}</h1>
     <div class="container-fluid">
       <div class="row gx-5">
 
@@ -17,11 +18,10 @@
 
         <!-- Main content -->
         <div id="main" class="col-md-9">
-          <h1> {{ $t("schedule.main.heading") }}</h1>
-          <div id="categories" class="row">
-            <h2>{{ $t("schedule.main.categoryStartTimes") }}</h2>
-            <p> {{ $t("schedule.main.helperText") }}</p>
-            <div id="table-container" class="col-sm-12 m-auto">
+          <div id="categories" class="row m-3">
+            <h3 class="p-3">{{ $t("schedule.main.categoryStartTimes") }}</h3>
+            <p class="w-75 mx-auto"> {{ $t("schedule.main.helperText") }}</p>
+            <div id="table-container" class="col-sm-12 mx-auto">
               <table class="table table-bordered">
                 <thead>
                 <tr>
@@ -69,7 +69,7 @@
             <!-- General information about competition -->
             <div id="general-info" class="row">
               <div>
-                <h2>{{ $t("schedule.generalInfo.heading") }}</h2>
+                <h3 class="p-3">{{ $t("schedule.generalInfo.heading") }}</h3>
                 <!-- Daily start end -->
                 <div class="col-sm-8 m-auto">
                   <div>
@@ -163,7 +163,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script>
@@ -298,12 +298,9 @@ export default {
 
 <style scoped>
 
-#main {
-  margin-top: 20px;
-}
-
-#main h2, p {
-  margin-bottom: 30px;
+h1 {
+  background-color: var(--clr-primary-100);
+  margin-bottom: 0;
 }
 
 #categories h4, p {

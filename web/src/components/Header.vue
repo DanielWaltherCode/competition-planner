@@ -1,6 +1,6 @@
 <template>
   <header id="header" class="header">
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-light">
       <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -121,7 +121,7 @@ export default {
 </script>
 
 <style scoped>
-
+/*
 nav {
   box-shadow: 0 3px #efefef;
 }
@@ -140,7 +140,7 @@ nav {
 
 .submenu {
   color: var(--main-color) !important;
-}
+}*/
 
 .navbar-collapse {
   justify-content: space-between;

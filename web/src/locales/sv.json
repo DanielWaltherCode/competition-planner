@@ -11,7 +11,7 @@
     "chosenCompetition": "Du hanterar ",
     "handle": {
       "title": "Hantera",
-      "newCompetition": "Skapa ny tävling",
+      "newCompetition": "Eller skapa en ny tävling",
       "administerCompetition": "Hantera befintlig tävling"
     }
   },
@@ -76,7 +76,7 @@
     },
     "search": "Sök på spelare",
     "heading": "Spelare",
-    "headingHelper": "Här under spelarhantering kan du se spelare som är anmälda till tävlingen. Du kan också manuellt lägga till nya spelare. I de flesta fall anmäler dock klubbarna själva sina spelare online och de dyker sedan automatiskt upp här.",
+    "headingHelper": "Här kan du se spelare som är anmälda till tävlingen. Du kan också manuellt lägga till nya spelare. I de flesta fall anmäler dock klubbarna själva sina spelare online och de dyker sedan automatiskt upp här.",
     "registeredPlayers": "Anmälda spelare",
     "name": "Namn",
     "club": "Klubb",
@@ -126,7 +126,7 @@
     },
     "main": {
       "heading": "Schema och tidssättning",
-      "helperText": "Om inga tidsönskemål för en klass har gjorts när schemat läggs kommer algoritmen att välja en tid automatiskt. Det går bra att välja exempelvis speldag för en klass och sen låta algoritmen sätta tiden mer noggrant. Man inte välja exakt starttid utan att först ha valt speldag och tidsintervall",
+      "helperText": "Tidssättning för alla matcher i tävlingen kan ske automatiskt. Om inga tidsönskemål för en klass har gjorts när schemat läggs kommer tider att sättas automatiskt. Det går bra att välja exempelvis speldag för en klass och sen låta algoritmen sätta tiden mer noggrant. Man kan inte välja exakt starttid utan att först ha valt speldag och tidsintervall",
       "categoryStartTimes": "Starttider för klasser",
       "category": "Klass",
       "day": "Speldag",

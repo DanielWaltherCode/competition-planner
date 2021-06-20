@@ -21,20 +21,18 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap');
 
 #app {
-  font-family: 'Open Sans', sans-serif;;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   font-weight: 400;
   text-align: center;
-  color: black;
-  font-size: 1em;
+  font-size: 1.1em;
 }
 
 h1, h2, h3 {
   color: var(--main-color);
-  margin-top: 20px !important;
-  margin-bottom: 20px !important;
   text-align: center;
+}
+
+.form-label {
+  display: flex !important;
 }
 
 /* Global variables */
@@ -61,8 +59,10 @@ h1, h2, h3 {
   color: var(--main-color)
 }
 
+/*
 .btn-primary {
   background-color: var(--main-color) !important;
+  border: 1px solid var(--main-color) !important;
 }
 
 .btn-check:active+.btn-outline-primary, .btn-check:checked+.btn-outline-primary, .btn-outline-primary.active, .btn-outline-primary.dropdown-toggle.show, .btn-outline-primary:active{
@@ -78,7 +78,7 @@ h1, h2, h3 {
 .btn-outline-primary {
   color: var(--main-color) !important;
   border: 1px solid var(--main-color) !important;
-}
+}*/
 
 
 /* Sidebar styling */

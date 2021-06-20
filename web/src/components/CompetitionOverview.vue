@@ -1,43 +1,62 @@
 <template>
-  <main class="container-fluid" v-if="competition">
-    <h2>{{ getString("newCompetition.title") }}</h2>
-    <div class="row">
-        <div class="row justify-content-center">
-          <div class="mb-3 col-md-7 d-block">
-            <label for="competition-location" class="form-label">{{ getString("newCompetition.location") }}</label>
+  <main v-if="competition" class="mb-4">
+    <h1 class="p-4">{{ getString("newCompetition.title") }}</h1>
+    <div class="container-fluid">
+      <div class="row">
+        <form class="row justify-content-center bg-white mt-3">
+          <div class="col-md-7">
+
+          <div class="form-group mb-4">
+            <div class="d-flex align-items-center mb-2">
+              <i class="fas fa-location-arrow me-2"></i>
+              <label for="competition-location" class="form-label mb-0">{{
+                  getString("newCompetition.location")
+                }}</label>
+            </div>
             <input type="text" class="form-control" id="competition-location" v-model="competition.location">
           </div>
-          <div class="mb-3 col-md-7 d-block">
-            <label for="competition-name" class="form-label">{{ getString("newCompetition.name") }}</label>
+          <div class="mb-4">
+            <div class="d-flex align-items-center mb-2">
+              <i class="fas fa-user-friends me-2"></i>
+              <label for="competition-name" class="form-label mb-0">{{ getString("newCompetition.name") }}</label>
+            </div>
             <input type="text" class="form-control" id="competition-name" v-model="competition.name">
           </div>
-          <div class="mb-3 col-md-7 d-block">
-            <label for="info" class="form-label">{{ getString("newCompetition.info") }}</label>
-            <textarea class="form-control" id="info" v-model="competition.welcomeText" placeholder="" />
+          <div class="mb-4">
+            <div class="d-flex align-items-center mb-2">
+              <i class="fas fa-file-signature me-2"></i>
+              <label for="info" class="form-label mb-0">{{ getString("newCompetition.info") }}</label>
+            </div>
+            <textarea class="form-control" id="info" v-model="competition.welcomeText" placeholder=""/>
           </div>
-          <div class="mb-3 col-md-7">
-            <label for="start-date" class="form-label">{{ getString("newCompetition.startDate") }}</label>
+          <div class="mb-4">
+            <div class="d-flex align-items-center mb-2">
+              <i class="fas fa-calendar-day me-2"></i>
+              <label for="start-date" class="form-label mb-0">{{ getString("newCompetition.startDate") }}</label>
+            </div>
             <input type="date" class="form-control" id="start-date" v-model="competition.startDate">
           </div>
-          <div class="mb-3 col-md-7">
-            <label for="end-date" class="form-label">{{ getString("newCompetition.endDate") }}</label>
+          <div class="mb-4">
+            <div class="d-flex align-items-center mb-2">
+              <i class="fas fa-calendar-day me-2"></i>
+              <label for="end-date" class="form-label mb-0">{{ getString("newCompetition.endDate") }}</label>
+            </div>
             <input type="date" class="form-control" id="end-date" v-model="competition.endDate">
           </div>
-        </div>
-    </div>
-    <div id="bottom">
-      <div>
-        <button class="btn btn-outline-primary" @click="save">{{ getString("general.saveChanges") }}</button>
+          <div class="d-flex justify-content-end">
+            <button class="btn btn-light" @click="save">{{ getString("general.saveChanges") }}</button>
+          </div>
+          <div v-if="competitionUpdated">
+            <p> {{ getString("newCompetition.competitionUpdated") }}</p>
+            <button class="btn btn-secondary">
+              <i class="bi bi-arrow-right"></i>
+              {{ getString("general.next") }}
+            </button>
+          </div>
+          </div>
+        </form>
       </div>
-      <div v-if="competitionUpdated">
-        <p> {{ getString("newCompetition.competitionUpdated") }}</p>
-        <button class="btn btn-secondary">
-          <i class="bi bi-arrow-right"></i>
-          {{ getString("general.next") }}
-        </button>
-      </div>
     </div>
-
   </main>
 </template>
 
@@ -51,9 +70,13 @@ export default {
       competitionUpdated: false
     }
   },
-  computed : {
-    isLoggedIn : function(){ return this.$store.getters.isLoggedIn},
-    competition: function(){ return this.$store.getters.competition},
+  computed: {
+    isLoggedIn: function () {
+      return this.$store.getters.isLoggedIn
+    },
+    competition: function () {
+      return this.$store.getters.competition
+    },
   },
   methods: {
     getString(string) {
@@ -84,15 +107,8 @@ export default {
 
 <style scoped>
 
-main {
-  height: 100vh;
-  background: url("../assets/hero-bg.png") top center no-repeat;
-  background-size: cover;
-}
-
-.form-label {
-  width: 100%;
-  text-align: left;
+h1 {
+  background-color: var(--clr-primary-100);
 }
 
 </style>

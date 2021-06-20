@@ -1,10 +1,10 @@
 <template>
   <div>
+    <h1 class="p-4">{{ $t("results.heading") }}</h1>
     <div class="container-fluid">
       <div class="row gx-5">
         <!-- Main content -->
         <div id="main">
-          <h1> {{ $t("results.heading") }}</h1>
           <div id="table-container" class="table-responsive" v-if="matches.length > 0">
             <table class="table table-borderless">
               <thead>
@@ -34,11 +34,11 @@
                   <p class="pe-2" v-for="game in match.result.gameList" :key="game.id">
                     {{ game.firstRegistrationResult }} - {{ game.secondRegistrationResult}}
                   </p></td>
-                <td><p class="report-result" @click="registerResult(match)"
+                <td><button type="button" class="btn btn-light" @click="registerResult(match)"
                        data-bs-toggle="modal" data-bs-target="#resultModal">
                   <span v-if="match.result.gameList.length === 0">{{ $t("results.register") }}</span>
                   <span v-if="match.result.gameList.length > 0">{{ $t("results.update") }}</span>
-                </p></td>
+                </button></td>
               </tr>
               </tbody>
             </table>
@@ -52,7 +52,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <div id="modal-table" class="col-12 m-auto">
+                    <div id="modal-table" class="col-12 mx-auto">
                       <table class="table table-borderless">
                         <thead>
                         <tr>
@@ -270,6 +270,12 @@ export default {
 </script>
 
 <style scoped>
+
+h1 {
+  background-color: var(--clr-primary-100);
+  margin-bottom: 0;
+}
+
 th {
   text-decoration: underline;
 }
