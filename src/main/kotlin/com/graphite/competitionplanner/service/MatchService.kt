@@ -40,9 +40,9 @@ class MatchService(val matchRepository: MatchRepository,
         return matchRecords.map { matchRecordToDTO(it) }
     }
 
-    fun getGroupMatchesInCategory(competitionCategoryId: Int): List<MatchDTO> {
+    fun getGroupMatchesInCategory(competitionCategoryId: Int): List<MatchAndResultDTO> {
         val matchRecords = matchRepository.getMatchesInCategoryForMatchType(competitionCategoryId, MatchType.GROUP)
-        return matchRecords.map { matchRecordToDTO(it) }
+        return matchRecords.map { recordToMatchAndResultDTO(it) }
     }
 
     fun getPlayoffMatchesInCategory(competitionCategoryId: Int): List<MatchDTO> {

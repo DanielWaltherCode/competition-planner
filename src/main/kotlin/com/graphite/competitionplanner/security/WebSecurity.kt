@@ -39,7 +39,8 @@ class WebSecurity(
                 "/swagger-ui.html",
                 "/webjars/**",
                 "/login/**",
-                "/request-token/**"
+                "/request-token/**",
+                "/open/**"
             ).permitAll()
             .and().authorizeRequests().anyRequest()
             .authenticated() // by default uses a Bean by the type CorsConfigurationSource (defined below)
@@ -56,11 +57,16 @@ class WebSecurity(
         val configuration = CorsConfiguration()
         configuration.allowCredentials = true
         configuration.allowedOrigins = listOf("http://localhost:8080",
+            "http://localhost:3000",
             "http://167.71.65.197",
             "http://competition.travexperten.nu",
             "https://competition.travexperten.nu",
             "http://www.competition.travexperten.nu",
-            "https://www.competition.travexperten.nu")
+            "https://www.competition.travexperten.nu",
+            "http://open.competition.travexperten.nu",
+            "https://open.competition.travexperten.nu",
+            "http://www.open.competition.travexperten.nu",
+            "https://www.open.competition.travexperten.nu")
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         configuration.allowedHeaders = listOf(
             "X-Requested-With",
