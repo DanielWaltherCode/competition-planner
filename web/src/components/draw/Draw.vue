@@ -19,21 +19,24 @@
         </div>
 
         <!-- Main content -->
-        <div id="main" class="col-md-8 mx-auto" v-if="chosenCategory !== null">
-          <h3 class="p-4">{{ chosenCategory.categoryName }}</h3>
-          <!-- If class is not drawn yet -->
-          <div v-if="!isChosenCategoryDrawn ">
-            <div class="main-upper" v-if="registeredPlayersLists.length > 0">
-              <p> {{ $t("draw.main.notDrawnTitle") }}</p>
-              <br>
-              <p> {{ $t("draw.main.notDrawnBody") }}</p>
-              <button class="btn btn-primary" @click="createDraw">{{ $t("draw.main.drawNow") }}</button>
+        <div class="col-md-9 ps-0" v-if="chosenCategory !== null">
+          <div class="blue-section row">
+            <div class="top-content col-md-10 mx-auto">
+              <h3 class="p-4">{{ chosenCategory.categoryName }}</h3>
+              <!-- If class is not drawn yet -->
+              <div v-if="!isChosenCategoryDrawn " class="pb-4">
+                <div v-if="registeredPlayersLists.length > 0">
+                  <p> {{ $t("draw.main.notDrawnTitle") }} {{ $t("draw.main.notDrawnBody") }}</p>
+                  <button class="btn btn-primary" @click="createDraw">{{ $t("draw.main.drawNow") }}</button>
+                </div>
+                <div v-if="registeredPlayersLists.length === 0">
+                  <p>{{ $t("draw.main.notDrawnNoPlayers") }}</p>
+                </div>
+              </div>
             </div>
-            <div v-if="registeredPlayersLists.length === 0">
-              <p>{{ $t("draw.main.notDrawnNoPlayers") }}</p>
-            </div>
+          </div>
             <!-- List of registered players if there are any -->
-            <div id="registered-players" v-if="registeredPlayersLists.length > 0">
+            <div id="registered-players" v-if="!isChosenCategoryDrawn && registeredPlayersLists.length > 0">
               <h3>{{ $t("draw.main.registeredPlayers") }}</h3>
               <div v-for="(playerList, index) in registeredPlayersLists" :key="index">
                 <div v-for="player in playerList" :key="player.id">
@@ -41,13 +44,12 @@
                 </div>
               </div>
             </div>
-          </div>
 
           <!-- If class is drawn -->
           <div v-if="isChosenCategoryDrawn && draw !== null">
             <div id="group-section">
               <div id="main-header">
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-end p-3">
                   <button type="button" class="btn btn-danger me-3" @click="deleteDraw">{{
                       $t("draw.main.deleteDraw")
                     }}
@@ -59,33 +61,34 @@
                 </div>
               </div>
               <br>
-              <div v-for="group in draw.groupDraw.groups" :key="group.groupName" class="row mb-4 d-flex align-items-start p-3 border rounded">
+              <div v-for="group in draw.groupDraw.groups" :key="group.groupName"
+                   class="row mb-4 d-flex align-items-start p-3 border rounded">
                 <h4 class="text-start mb-3">{{ $t("draw.main.group") }} {{ group.groupName }}</h4>
                 <div class="col-sm-4">
-                  <p class="text-start">{{$t("player.heading")}}</p>
-                <PoolDraw :group="group"/>
+                  <p class="text-start">{{ $t("player.heading") }}</p>
+                  <PoolDraw :group="group"/>
                 </div>
                 <div class="col-sm-8">
                   <div id="matches" class="row justify-content-center">
-                    <p class="text-start">{{$t("draw.pool.matches")}}</p>
-                      <table class="table table-bordered table-striped table-sm">
-                        <thead class="thead-dark">
-                        <tr>
-                          <th>{{ $t("draw.pool.time") }}</th>
-                          <th></th>
-                          <th></th>
-                          <th>{{ $t("draw.pool.result") }}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr class="group-matches" v-for="match in group.matches" :key="match.id">
-                          <td>{{ getTime(match) }}</td>
-                          <td>{{ getPlayerOne(match) }}</td>
-                          <td>{{ getPlayerTwo(match) }}</td>
-                          <td></td>
-                        </tr>
-                        </tbody>
-                      </table>
+                    <p class="text-start">{{ $t("draw.pool.matches") }}</p>
+                    <table class="table table-bordered table-striped table-sm">
+                      <thead class="thead-dark">
+                      <tr>
+                        <th>{{ $t("draw.pool.time") }}</th>
+                        <th></th>
+                        <th></th>
+                        <th>{{ $t("draw.pool.result") }}</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr class="group-matches" v-for="match in group.matches" :key="match.id">
+                        <td>{{ getTime(match) }}</td>
+                        <td>{{ getPlayerOne(match) }}</td>
+                        <td>{{ getPlayerTwo(match) }}</td>
+                        <td></td>
+                      </tr>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
                 <br>
@@ -94,7 +97,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div>>
   </main>
 </template>
 
@@ -207,12 +210,6 @@ export default {
 h1 {
   background-color: var(--clr-primary-100);
   margin-bottom: 0;
-}
-
-.main-upper {
-  background: #f5f4f4;
-  padding: 10px;
-  box-shadow: 0 2px #efefef;
 }
 
 .heading p {

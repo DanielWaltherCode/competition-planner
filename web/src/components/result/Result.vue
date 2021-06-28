@@ -4,14 +4,14 @@
     <div class="container-fluid">
       <div class="row gx-5">
         <!-- Main content -->
-        <div id="main">
+        <div id="main" class="p-4">
           <div id="table-container" class="table-responsive" v-if="matches.length > 0">
             <table class="table table-borderless">
               <thead>
               <tr>
                 <th scope="col" class="col-1">{{ $t("results.startTime") }}</th>
-                <th scope="col" class="col-1">{{ $t("results.category") }}</th>
-                <th scope="col" class="col-1">
+                <th scope="col" class="col-1" v-if="!isMobile">{{ $t("results.category") }}</th>
+                <th scope="col" class="col-1" v-if="!isMobile">
                   {{ $t("results.round") }}
                 </th>
                 <th scope="col" class="col-2"></th>
@@ -23,8 +23,8 @@
               <tbody>
               <tr v-for="match in matches" :key="match.id">
                 <td>{{ getTime(match) }}</td>
-                <td>{{ match.competitionCategory.categoryName }}</td>
-                <td>
+                <td v-if="!isMobile">{{ match.competitionCategory.categoryName }}</td>
+                <td v-if="!isMobile">
                   <span v-if="match.matchType === 'GROUP'"> {{$t("results.group")}}</span>
                   {{ match.groupOrRound}}
                 </td>
@@ -152,6 +152,14 @@ export default {
   computed: {
     competition: function () {
       return this.$store.getters.competition
+    },
+    isMobile: function () {
+      const width = window.innerWidth
+          || document.documentElement.clientWidth
+          || document.body.clientWidth;
+      console.log("width: " + width)
+      console.log(width < 700)
+      return width < 700;
     }
   },
   mounted() {

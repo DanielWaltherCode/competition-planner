@@ -11,7 +11,7 @@
     "chosenCompetition": "Du hanterar ",
     "handle": {
       "title": "Hantera",
-      "newCompetition": "Eller skapa en ny tävling",
+      "newCompetition": "Skapa en ny tävling",
       "administerCompetition": "Hantera befintlig tävling"
     }
   },
@@ -172,6 +172,7 @@
       "pauseBetweenGroupAndPlayoff": "Paus mellan gruppspelet och slutspelet",
       "availableTables": {
         "heading": "Tillgängliga bord per dag och timme",
+        "infoText": "Här kan du ställa in hur många bord som finns tillgängliga per timme om antalet tillgängliga bord varierar under dagen.",
         "daySelection": "Välj en dag",
         "hour": "Timme",
         "nrTables": "Antal bord"
@@ -183,12 +184,12 @@
     "startTime": "Starttid",
     "category": "Klass",
     "result": "Resultat",
-    "register": "Registrera result",
+    "register": "Registrera",
     "update": "Uppdatera result",
     "round": "Grupp/runda",
     "group": "Pool",
     "modal": {
-      "header": "Registrera result",
+      "header": "Registrera resultat",
       "add": "Lägg till set",
       "remove": "Ta bort set",
       "delete": "Ta bort resultat"

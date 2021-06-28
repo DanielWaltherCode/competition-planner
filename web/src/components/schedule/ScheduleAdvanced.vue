@@ -15,10 +15,10 @@
             </li>
           </ul>
         </div>
-        <div id="main" class="col-md-8 mx-auto">
-          <h3 class="p-4"> {{ $t("schedule.advanced.heading") }}</h3>
+        <div id="main" class="col-md-9 mx-auto px-0">
           <!-- Handle pauses -->
-          <div id="pauses">
+          <div id="pauses" class="blue-section p-4">
+            <h3 class="p-4"> {{ $t("schedule.advanced.heading") }}</h3>
             <h4>{{ $t("schedule.advanced.pauseHeading") }}</h4>
             <p>{{ $t("schedule.advanced.pauseHelper") }}</p>
 
@@ -35,7 +35,6 @@
               </div>
 
               <div class="col-md-4">
-
                 <label for="playoff-pause" class="form-label">{{ $t("schedule.advanced.pausePlayoff") }}</label>
                 <select id="playoff-pause" class="form-control"
                         v-on:change="setPause" v-model="scheduleMetadata.pauseBetweenPlayoffMatches">
@@ -58,8 +57,10 @@
               </div>
             </div>
           </div>
-          <div id="available-tables" class="mt-4 py-4 border-top border-dark w-100">
+          <div id="available-tables" class="p-4">
             <h4 class="text-start">{{ $t("schedule.advanced.availableTables.heading") }}</h4>
+            <p class="text-start">{{ $t("schedule.advanced.availableTables.infoText") }}</p>
+            <p></p>
             <div class="mt-4">
               <h5 class="text-start">{{ $t("schedule.advanced.availableTables.daySelection") }}</h5>
               <div class="d-flex mb-4">
@@ -68,7 +69,9 @@
                   {{ day }}</p>
               </div>
             </div>
-            <div>
+            <div class="row">
+              <div class="col-md-10 mx-auto">
+
               <table class="table table-bordered">
                 <thead>
                 <tr>
@@ -96,6 +99,7 @@
                 </tr>
                 </tbody>
               </table>
+            </div>
             </div>
           </div>
         </div>

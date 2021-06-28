@@ -17,11 +17,13 @@
         </div>
 
         <!-- Main content -->
-        <div id="main" class="col-md-9">
-          <div id="categories" class="row m-3">
-            <h3 class="p-3">{{ $t("schedule.main.categoryStartTimes") }}</h3>
-            <p class="w-75 mx-auto"> {{ $t("schedule.main.helperText") }}</p>
-            <div id="table-container" class="col-sm-12 mx-auto">
+        <div id="main" class="col-md-9 ps-0">
+          <div id="categories" class="row">
+            <div>
+              <h3 class="p-4 blue-section">{{ $t("schedule.main.categoryStartTimes") }}</h3>
+              <p class="w-75 mx-auto p-2"> {{ $t("schedule.main.helperText") }}</p>
+            </div>
+            <div id="table-container" class="col-sm-12 mx-auto my-4">
               <table class="table table-bordered">
                 <thead>
                 <tr>
@@ -67,7 +69,7 @@
               </table>
             </div>
             <!-- General information about competition -->
-            <div id="general-info" class="row">
+            <div class="row blue-section p-3">
               <div>
                 <h3 class="p-3">{{ $t("schedule.generalInfo.heading") }}</h3>
                 <!-- Daily start end -->
@@ -131,9 +133,10 @@
                         </td>
                         <td>
                           <p v-if="tableDay.nrTables === -1">{{ $t("schedule.generalInfo.cannotChangeTables") }}</p>
-                          <select v-if="tableDay.nrTables !== -1" id="table-selection" class="form-control" v-model="tableDay.nrTables"
+                          <select v-if="tableDay.nrTables !== -1" id="table-selection" class="form-control"
+                                  v-model="tableDay.nrTables"
                                   v-on:change="setAvailableTables(tableDay.day)">
-                            <option value="0"> {{$t("schedule.generalInfo.availableTablesNotSet")}}</option>
+                            <option value="0"> {{ $t("schedule.generalInfo.availableTablesNotSet") }}</option>
                             <option v-for="i in 100" :key="i" :value="i">
                               {{ i }}
                             </option>
@@ -312,16 +315,8 @@ h5 {
 }
 
 /* General info section */
-#general-info {
-  margin-top: 40px;
-  background-color: var(--grey-color);
-}
-
 #general-info a {
   display: inline;
 }
 
-#general-info h5 {
-  margin-top: 30px;
-}
 </style>

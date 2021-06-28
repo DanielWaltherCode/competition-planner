@@ -23,15 +23,15 @@
         </div>
 
         <!-- Main content -->
-        <div id="main" class="col-md-8 m-auto">
+        <div id="main" class="col-md-9 mx-auto">
           <div v-if="displayChoice === 'overview'">
-            <div class="row">
-              <p class="text-start col-md-9 mx-auto my-4">{{ $t("player.headingHelper") }}</p>
+            <div class="row blue-section">
+              <p class="text-start col-md-9 mx-auto p-4">{{ $t("player.headingHelper") }}</p>
             </div>
             <!-- Show currently registered players -->
-            <div id="registered-players" class="mt-4 pt-3 border-top m-auto">
+            <div id="registered-players" class="pt-4 m-auto">
               <h3> {{ $t("player.registeredPlayers") }}</h3>
-              <div class="row col-md-10 mx-auto my-4">
+              <div class="row col-md-10 mx-auto">
                 <div class="col-sm-7 mb-2">
                   <div class="d-flex align-items-center mb-2">
                     <i class="fas fa-search me-2"></i>
@@ -66,16 +66,15 @@
                 </div>
               </div>
             </div>
-
           </div>
           <!-- Add new player -->
           <div v-if="displayChoice === 'addNew'">
-            <div class="row mb-4">
+            <div class="row p-4 blue-section">
               <h4 class="text-start">{{ $t("player.add.heading") }}</h4>
               <p class="text-start">{{ $t("player.add.helperText") }}</p>
             </div>
             <div class="row">
-              <div class="d-flex mb-4">
+              <div class="d-flex p-4">
                 <autocomplete class="col-sm-8 me-2" id="autocomplete-field"
                               ref="autocomplete"
                               :search="searchPlayers"
@@ -90,46 +89,50 @@
                 </button>
               </div>
               <div id="input-form" class="rounded row p-3">
+                <div class="col-md-11">
+                  <div class="row mx-auto">
+                    <div class="col-sm-6 mb-3">
+                      <label for="firstName" class="text-start form-label"> {{ $t("player.add.firstName") }}</label>
+                      <input type="text" :disabled="player !== null" class="form-control" v-model="firstName"
+                             id="firstName">
+                    </div>
 
-                <div class="col-sm-6 mb-3">
-                  <label for="firstName" class="text-start form-label"> {{ $t("player.add.firstName") }}</label>
-                  <input type="text" :disabled="player !== null" class="form-control" v-model="firstName"
-                         id="firstName">
-                </div>
+                    <div class="col-sm-6 mb-3">
+                      <label for="lastName" class="text-start form-label"> {{ $t("player.add.lastName") }}</label>
+                      <input type="text" :disabled="player !== null" class="form-control" v-model="lastName"
+                             id="lastName">
+                    </div>
 
-                <div class="col-sm-6 mb-3">
-                  <label for="lastName" class="text-start form-label"> {{ $t("player.add.lastName") }}</label>
-                  <input type="text" :disabled="player !== null" class="form-control" v-model="lastName" id="lastName">
-                </div>
+                    <div class="col-sm-6 mb-3">
+                      <label for="club-select" class="form-label"> {{ $t("player.add.club") }}</label>
+                      <select :disabled="player !== null" class="form-control" name="club-select" id="club-select"
+                              v-model="club">
+                        <option v-for="club in clubs" :key="club.id" :value="club">
+                          {{ club.name }}
+                        </option>
+                      </select>
+                    </div>
+                    <div class="col-sm-6 mb-3">
+                      <label for="dateOfBirth" class="text-start form-label"> {{ $t("player.add.dateOfBirth") }}</label>
+                      <input type="date" :disabled="player !== null" class="form-control" v-model="dateOfBirth"
+                             id="dateOfBirth">
+                    </div>
+                    <div class="form-check col-sm-6 mb-3">
+                      <div v-for="category in competitionCategories" :key="category.competitionCategoryId">
 
-                <div class="col-sm-6 mb-3">
-                  <label for="club-select" class="form-label"> {{ $t("player.add.club") }}</label>
-                  <select :disabled="player !== null" class="form-control" name="club-select" id="club-select"
-                          v-model="club">
-                    <option v-for="club in clubs" :key="club.id" :value="club">
-                      {{ club.name }}
-                    </option>
-                  </select>
-                </div>
-                <div class="col-sm-6 mb-3">
-                  <label for="dateOfBirth" class="text-start form-label"> {{ $t("player.add.dateOfBirth") }}</label>
-                  <input type="date" :disabled="player !== null" class="form-control" v-model="dateOfBirth"
-                         id="dateOfBirth">
-                </div>
-                <div class="form-check col-sm-6 mb-3">
-                  <div v-for="category in competitionCategories" :key="category.competitionCategoryId">
-
-                    <input class="form-check-input ms-1" type="checkbox" :value="category.categoryName"
-                           :id="category.competitionCategoryId" v-model="selectedCategories">
-                    <label class="form-check-label d-flex ps-2" :for="category.competitionCategoryId">
-                      {{ category.categoryName }}
-                    </label>
+                        <input class="form-check-input ms-1" type="checkbox" :value="category.categoryName"
+                               :id="category.competitionCategoryId" v-model="selectedCategories">
+                        <label class="form-check-label d-flex ps-2" :for="category.competitionCategoryId">
+                          {{ category.categoryName }}
+                        </label>
+                      </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                      <button type="button" class="btn btn-primary" @click="addPlayerToCompetition">
+                        {{ $t("player.add.buttonText") }}
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <div class="d-flex justify-content-end">
-                  <button type="button" class="btn btn-primary" @click="addPlayerToCompetition">
-                    {{ $t("player.add.buttonText") }}
-                  </button>
                 </div>
               </div>
             </div>
@@ -304,7 +307,7 @@ h1 {
 }
 
 .heading {
-  color: gray;
+  color: var(--clr-primary-400);
   border-bottom: 1px solid lightgrey;
   text-align: left;
 }
