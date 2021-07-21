@@ -27,7 +27,8 @@
       "greeting": "Välkommen {username}",
       "competitionChoice": "Välj en befintlig tävling att administrera",
       "noCompetitionSelected": "Ingen tävling vald",
-      "newCompetition": "Eller sätt upp en ny tävling"
+      "newCompetition": "Eller sätt upp en ny tävling",
+      "handleSelected": "Hantera vald tävling"
     },
     "middle": {
       "title": "Vad vi erbjuder",
@@ -62,6 +63,12 @@
     "competitionAdded": "Tävlingen är skapad. Du kan nu gå vidare till nästa steg.",
     "competitionUpdated": "Tävlingen uppdaterades"
   },
+  "categories": {
+    "title": "Klasser",
+    "overview": "Översikt",
+    "gameRules": "Matchregler",
+    "noCategories": "Inga klasser är skapade än så länge"
+  },
   "general": {
     "save": "Spara",
     "saveChanges": "Spara ändringar",
@@ -75,7 +82,7 @@
       "addNew": "Lägg till spelare"
     },
     "search": "Sök på spelare",
-    "heading": "Spelare",
+    "title": "Spelare",
     "headingHelper": "Här kan du se spelare som är anmälda till tävlingen. Du kan också manuellt lägga till nya spelare. I de flesta fall anmäler dock klubbarna själva sina spelare online och de dyker sedan automatiskt upp här.",
     "registeredPlayers": "Anmälda spelare",
     "name": "Namn",
@@ -91,7 +98,8 @@
       "club": "Klubb",
       "dateOfBirth": "Födelsedatum",
       "buttonText": "Lägg till spelare",
-      "clear": "Rensa spelare"
+      "clear": "Rensa spelare",
+      "success": "Spelare tillagd"
     }
   },
   "draw": {
@@ -99,6 +107,7 @@
       "title": "Klasser"
     },
     "main":  {
+      "title": "Lottning",
       "notDrawnTitle": "Klassen har inte lottats än.",
       "notDrawnNoPlayers": "Klassen har inte lottats än och det finns än så länge inga anmälda spelare",
       "notDrawnBody": "För att lotta nu med lottningsreglerna som har satts upp under klassinformation kan du klicka på knappen nedan.",
@@ -180,7 +189,7 @@
     }
   },
   "results": {
-    "heading": "Matcher och resultat",
+    "title": "Matcher och resultat",
     "startTime": "Starttid",
     "category": "Klass",
     "result": "Resultat",
@@ -193,7 +202,8 @@
       "add": "Lägg till set",
       "remove": "Ta bort set",
       "delete": "Ta bort resultat"
-    }
+    },
+    "noMatches": "Ingen lottning är gjord än så inga matcher är uppsatta"
   },
   "Exceptions": {
     "GameValidationException": {

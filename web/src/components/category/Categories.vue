@@ -1,7 +1,11 @@
 <template>
   <main class="container-fluid">
     <div class="row">
-      <h1 class="display-1 text-start ps-3 ps-md-5 ">KLASSER</h1>
+      <h1 class="p-4">
+        <i @click="$router.push('/overview')" class="fas fa-arrow-left" style="float: left"></i>
+        {{ $t("categories.title") }}
+        <i @click="$router.push('/players')" class="fas fa-arrow-right" style="float: right"></i>
+      </h1>
       <div class="row justify-content-start flex-grow-1">
         <div class="col-3">
           <category-list
@@ -17,13 +21,13 @@
             <li class="nav-item" role="presentation">
               <button class="nav-link active" id="overview-tab" data-bs-toggle="tab"
                       data-bs-target="#overview" type="button" role="tab" aria-controls="overview"
-                      aria-selected="true">Översikt
+                      aria-selected="true">{{$t("categories.overview")}}
               </button>
             </li>
             <li class="nav-item" role="presentation">
               <button class="nav-link" id="matchrules-tab" data-bs-toggle="tab"
                       data-bs-target="#matchrules" type="button" role="tab" aria-controls="matchrules"
-                      aria-selected="false">Matchregler
+                      aria-selected="false">{{$t("categories.gameRules")}}
               </button>
             </li>
           </ul>
@@ -38,7 +42,7 @@
           </form>
         </div>
         <div v-else class="col justify-content-center">
-          <h2 class="display-3">Inga klasser skapade</h2>
+          <h3 class="text-dark p-4">{{$t("categories.noCategories")}}</h3>
         </div>
       </div>
     </div>
@@ -160,13 +164,7 @@ main {
 }
 
 h1 {
-  border-bottom: 0.5rem solid var(--clr-primary-500);
+  background-color: var(--clr-primary-100);
 }
 
-.display-1 {
-  font-family: 'Bebas Neue', cursive;
-  letter-spacing: 0.5rem;
-  color: var(--clr-primary-500);
-  background-color: #E0EAFF; /*var(--clr-primary-100);*/
-}
 </style>

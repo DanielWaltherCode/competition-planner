@@ -12,7 +12,9 @@ import "aos/dist/aos.css";
 import store from "@/store/store";
 import 'vue2-timepicker/dist/VueTimepicker.css'
 import '@fortawesome/fontawesome-free/css/all.min.css'
+import Toasted from 'vue-toasted';
 
+Vue.use(Toasted)
 // import UserService from "@/common/api-services/user.service";
 
 

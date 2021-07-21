@@ -1,6 +1,10 @@
 <template>
   <main>
-    <h1 class="p-4">{{ $t("header.draws") }}</h1>
+    <h1 class="p-4">
+      <i @click="$router.push('/players')" class="fas fa-arrow-left" style="float: left"></i>
+      {{ $t("draw.main.title") }}
+      <i @click="$router.push('/schedule')" class="fas fa-arrow-right" style="float: right"></i>
+    </h1>
     <div class="container-fluid">
       <div class="row gx-5">
 

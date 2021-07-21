@@ -6,12 +6,12 @@
                 aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse d-flex" id="navbarTogglerDemo01">
-            <router-link to="landing" :key="$route.fullPath" class="navbar-brand">
-              <h2 id="brand">LET'S COMPETE</h2>
-            </router-link>
+        <router-link to="landing" :key="$route.fullPath" class="navbar-brand">
+          <h2 id="brand">LET'S COMPETE</h2>
+        </router-link>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
             <div v-if="!!competition" class="text-dark">
-              <p class="mb-0"> {{ $t("header.chosenCompetition") }} <span
+              <p class="mb-0 ms-3"> {{ $t("header.chosenCompetition") }} <span
                   class="fw-bolder"> {{ competition.name }}</span></p>
             </div>
             <div class="d-flex align-items-center">

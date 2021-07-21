@@ -1,137 +1,138 @@
 <template>
-  <main>
+  <main class="container-fluid">
+    <div class="row">
+      <h1 class="p-4">
+        <i @click="$router.push('/classes')" class="fas fa-arrow-left" style="float: left"></i>
+        {{ $t("player.title") }}
+        <i @click="$router.push('/draw')" class="fas fa-arrow-right" style="float: right"></i>
+      </h1>
 
-    <h1 class="p-4">{{ $t("player.heading") }}</h1>
-    <div class="container-fluid">
-      <div class="row">
-
-        <!-- Sidebar -->
-        <div class="sidebar col-md-3">
-          <div class="sidebar-header">
-            <h4> {{ $t("player.sidebar.title") }}</h4>
-          </div>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item" @click="makeDisplayChoice('overview')"
-                :class="displayChoice === 'overview' ? 'active' : ''">
-              {{ $t("player.sidebar.overview") }}
-            </li>
-            <li class="list-group-item" @click="makeDisplayChoice('addNew')"
-                :class="displayChoice === 'addNew' ? 'active' : ''">
-              {{ $t("player.sidebar.addNew") }}
-            </li>
-          </ul>
+      <!-- Sidebar -->
+      <div class="sidebar col-md-3">
+        <div class="sidebar-header">
+          <h4> {{ $t("player.sidebar.title") }}</h4>
         </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item" @click="makeDisplayChoice('overview')"
+              :class="displayChoice === 'overview' ? 'active' : ''">
+            {{ $t("player.sidebar.overview") }}
+          </li>
+          <li class="list-group-item" @click="makeDisplayChoice('addNew')"
+              :class="displayChoice === 'addNew' ? 'active' : ''">
+            {{ $t("player.sidebar.addNew") }}
+          </li>
+        </ul>
+      </div>
 
-        <!-- Main content -->
-        <div id="main" class="col-md-9 mx-auto">
-          <div v-if="displayChoice === 'overview'">
-            <div class="row blue-section">
-              <p class="text-start col-md-9 mx-auto p-4">{{ $t("player.headingHelper") }}</p>
-            </div>
-            <!-- Show currently registered players -->
-            <div id="registered-players" class="pt-4 m-auto">
-              <h3> {{ $t("player.registeredPlayers") }}</h3>
-              <div class="row col-md-10 mx-auto">
-                <div class="col-sm-7 mb-2">
-                  <div class="d-flex align-items-center mb-2">
-                    <i class="fas fa-search me-2"></i>
-                    <label for="playerSearch" class="form-label d-flex mb-0"> {{ $t("player.search") }}</label>
-                  </div>
-                  <input type="text" class="form-control" v-model="searchString" id="playerSearch">
+      <!-- Main content -->
+      <div id="main" class="col-md-9 mx-auto">
+        <div v-if="displayChoice === 'overview'">
+          <div class="row blue-section">
+            <p class="text-start col-md-9 mx-auto p-4">{{ $t("player.headingHelper") }}</p>
+          </div>
+          <!-- Show currently registered players -->
+          <div id="registered-players" class="pt-4 m-auto">
+            <h3> {{ $t("player.registeredPlayers") }}</h3>
+            <div class="row col-md-10 mx-auto">
+              <div class="col-sm-7 mb-2">
+                <div class="d-flex align-items-center mb-2">
+                  <i class="fas fa-search me-2"></i>
+                  <label for="playerSearch" class="form-label d-flex mb-0"> {{ $t("player.search") }}</label>
                 </div>
-                <div class="col-sm-5 justify-content-center">
-                  <p class="fw-bolder"> {{ $t("player.sortBy") }}</p>
-                  <div>
-                    <div id="sort-choice">
-                      <p @click="makeChoice('name')" class="d-inline" :class="choice === 'name' ? 'active' : ''">
-                        {{ $t("player.name") }}
-                      </p>
-                      <p class="mx-2 d-inline" @click="makeChoice('club')" :class="choice === 'club' ? 'active' : ''">
-                        {{ $t("player.club") }}
-                      </p>
-                      <p class="d-inline" @click="makeChoice('categories')"
-                         :class="choice === 'categories' ? 'active' : ''">
-                        {{ $t("player.categories") }}
-                      </p>
-                    </div>
+                <input type="text" class="form-control" v-model="searchString" id="playerSearch">
+              </div>
+              <div class="col-sm-5 justify-content-center">
+                <p class="fw-bolder"> {{ $t("player.sortBy") }}</p>
+                <div>
+                  <div id="sort-choice">
+                    <p @click="makeChoice('name')" class="d-inline" :class="choice === 'name' ? 'active' : ''">
+                      {{ $t("player.name") }}
+                    </p>
+                    <p class="mx-2 d-inline" @click="makeChoice('club')" :class="choice === 'club' ? 'active' : ''">
+                      {{ $t("player.club") }}
+                    </p>
+                    <p class="d-inline" @click="makeChoice('categories')"
+                       :class="choice === 'categories' ? 'active' : ''">
+                      {{ $t("player.categories") }}
+                    </p>
                   </div>
                 </div>
               </div>
-              <div v-for="(players, grouping) in filterPlayers" :key="grouping">
-                <div class="heading">
-                  <p> {{ grouping }} </p>
-                </div>
-                <div v-for="player in players" :key="player.id" class="players">
-                  <p class="player-name">{{ player.lastName + ", " + player.firstName }}</p>
-                </div>
+            </div>
+            <div v-for="(players, grouping) in filterPlayers" :key="grouping">
+              <div class="heading">
+                <p> {{ grouping }} </p>
+              </div>
+              <div v-for="player in players" :key="player.id" class="players">
+                <p class="player-name">{{ player.lastName + ", " + player.firstName }}</p>
               </div>
             </div>
           </div>
-          <!-- Add new player -->
-          <div v-if="displayChoice === 'addNew'">
-            <div class="row p-4 blue-section">
-              <h4 class="text-start">{{ $t("player.add.heading") }}</h4>
-              <p class="text-start">{{ $t("player.add.helperText") }}</p>
+        </div>
+        <!-- Add new player -->
+        <div v-if="displayChoice === 'addNew'">
+          <div class="row p-4 blue-section">
+            <h4 class="text-start">{{ $t("player.add.heading") }}</h4>
+            <p class="text-start">{{ $t("player.add.helperText") }}</p>
+          </div>
+          <div class="row">
+            <div class="d-flex p-5">
+              <autocomplete class="col-sm-8 me-2" id="autocomplete-field"
+                            ref="autocomplete"
+                            :search="searchPlayers"
+                            auto-select
+                            :get-result-value="getSearchResult"
+                            :placeholder="$t('player.add.search')"
+                            @submit="handleSubmit">
+              </autocomplete>
+              <button class="btn btn-primary" type="button" @click="clearPlayer"> {{
+                  $t("player.add.clear")
+                }}
+              </button>
             </div>
-            <div class="row">
-              <div class="d-flex p-4">
-                <autocomplete class="col-sm-8 me-2" id="autocomplete-field"
-                              ref="autocomplete"
-                              :search="searchPlayers"
-                              auto-select
-                              :get-result-value="getSearchResult"
-                              :placeholder="$t('player.add.search')"
-                              @submit="handleSubmit">
-                </autocomplete>
-                <button class="btn btn-primary" type="button" @click="clearPlayer"> {{
-                    $t("player.add.clear")
-                  }}
-                </button>
-              </div>
-              <div id="input-form" class="rounded row p-3">
-                <div class="col-md-11">
-                  <div class="row mx-auto">
-                    <div class="col-sm-6 mb-3">
-                      <label for="firstName" class="text-start form-label"> {{ $t("player.add.firstName") }}</label>
-                      <input type="text" :disabled="player !== null" class="form-control" v-model="firstName"
-                             id="firstName">
-                    </div>
+            <div id="input-form" class="rounded row p-3">
+              <div class="col-md-11">
+                <div class="row mx-auto">
+                  <div class="col-sm-6 mb-3">
+                    <label for="firstName" class="text-start form-label"> {{ $t("player.add.firstName") }}</label>
+                    <input type="text" :disabled="player !== null" class="form-control" v-model="firstName"
+                           id="firstName">
+                  </div>
 
-                    <div class="col-sm-6 mb-3">
-                      <label for="lastName" class="text-start form-label"> {{ $t("player.add.lastName") }}</label>
-                      <input type="text" :disabled="player !== null" class="form-control" v-model="lastName"
-                             id="lastName">
-                    </div>
+                  <div class="col-sm-6 mb-3">
+                    <label for="lastName" class="text-start form-label"> {{ $t("player.add.lastName") }}</label>
+                    <input type="text" :disabled="player !== null" class="form-control" v-model="lastName"
+                           id="lastName">
+                  </div>
 
-                    <div class="col-sm-6 mb-3">
-                      <label for="club-select" class="form-label"> {{ $t("player.add.club") }}</label>
-                      <select :disabled="player !== null" class="form-control" name="club-select" id="club-select"
-                              v-model="club">
-                        <option v-for="club in clubs" :key="club.id" :value="club">
-                          {{ club.name }}
-                        </option>
-                      </select>
-                    </div>
-                    <div class="col-sm-6 mb-3">
-                      <label for="dateOfBirth" class="text-start form-label"> {{ $t("player.add.dateOfBirth") }}</label>
-                      <input type="date" :disabled="player !== null" class="form-control" v-model="dateOfBirth"
-                             id="dateOfBirth">
-                    </div>
-                    <div class="form-check col-sm-6 mb-3">
-                      <div v-for="category in competitionCategories" :key="category.competitionCategoryId">
+                  <div class="col-sm-6 mb-3">
+                    <label for="club-select" class="form-label"> {{ $t("player.add.club") }}</label>
+                    <select :disabled="player !== null" class="form-control" name="club-select" id="club-select"
+                            v-model="club">
+                      <option v-for="club in clubs" :key="club.id" :value="club">
+                        {{ club.name }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-sm-6 mb-3">
+                    <label for="dateOfBirth" class="text-start form-label"> {{ $t("player.add.dateOfBirth") }}</label>
+                    <input type="date" :disabled="player !== null" class="form-control" v-model="dateOfBirth"
+                           id="dateOfBirth">
+                  </div>
+                  <div class="form-check col-sm-6 mb-3">
+                    <div v-for="category in competitionCategories" :key="category.competitionCategoryId">
 
-                        <input class="form-check-input ms-1" type="checkbox" :value="category.categoryName"
-                               :id="category.competitionCategoryId" v-model="selectedCategories">
-                        <label class="form-check-label d-flex ps-2" :for="category.competitionCategoryId">
-                          {{ category.categoryName }}
-                        </label>
-                      </div>
+                      <input class="form-check-input ms-1" type="checkbox" :value="category.categoryName"
+                             :id="category.competitionCategoryId" v-model="selectedCategories">
+                      <label class="form-check-label d-flex ps-2" :for="category.competitionCategoryId">
+                        {{ category.categoryName }}
+                      </label>
                     </div>
-                    <div class="d-flex justify-content-end">
-                      <button type="button" class="btn btn-primary" @click="addPlayerToCompetition">
-                        {{ $t("player.add.buttonText") }}
-                      </button>
-                    </div>
+                  </div>
+                  <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-primary" @click="addPlayerToCompetition">
+                      {{ $t("player.add.buttonText") }}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -288,8 +289,8 @@ export default {
           playerId: this.player.id,
           competitionCategoryId: category.competitionCategoryId
         }
-        console.log("Registrationspec", registrationSpec)
         RegistrationService.registerPlayerSingles(this.competition.id, registrationSpec)
+        this.$toasted.show(this.$tc("player.add.success")).goAway(3000)
       })
     },
     reRoute() {

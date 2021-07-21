@@ -1,6 +1,9 @@
 <template>
   <main v-if="competition" class="mb-4">
-    <h1 class="p-4">{{ getString("newCompetition.title") }}</h1>
+     <h1 class="p-4">{{ getString("newCompetition.title") }}
+       <i @click="$router.push('/classes')" class="fas fa-arrow-right" style="float: right"></i>
+     </h1>
+
     <div class="container-fluid">
       <div class="row">
         <form class="row justify-content-center bg-white mt-3">
@@ -44,14 +47,7 @@
             <input type="date" class="form-control" id="end-date" v-model="competition.endDate">
           </div>
           <div class="d-flex justify-content-end">
-            <button class="btn btn-light" @click="save">{{ getString("general.saveChanges") }}</button>
-          </div>
-          <div v-if="competitionUpdated">
-            <p> {{ getString("newCompetition.competitionUpdated") }}</p>
-            <button class="btn btn-secondary">
-              <i class="bi bi-arrow-right"></i>
-              {{ getString("general.next") }}
-            </button>
+            <button class="btn btn-light" type="button" @click="save">{{ getString("general.saveChanges") }}</button>
           </div>
           </div>
         </form>
@@ -95,6 +91,7 @@ export default {
       CompetitionService.updateCompetition(objectToSave, this.competition.id).then(res => {
         this.$store.commit("set_competition", res.data)
         this.competitionUpdated = true
+        this.$toasted.show(this.$tc("newCompetition.competitionUpdated")).goAway(3000)
       }).catch(err => {
             console.log("Couldn't add competition", err)
           }
@@ -110,5 +107,7 @@ export default {
 h1 {
   background-color: var(--clr-primary-100);
 }
+
+
 
 </style>

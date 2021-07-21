@@ -1,6 +1,10 @@
 <template>
   <div>
-    <h1 class="p-4">{{ $t("results.heading") }}</h1>
+    <h1 class="p-4">
+      <i @click="$router.push('/schedule')" class="fas fa-arrow-left" style="float: left"></i>
+      {{ $t("results.title") }}
+      <i @click="$router.push('/nothing')" class="fas fa-arrow-right" style="float: right"></i>
+    </h1>
     <div class="container-fluid">
       <div class="row gx-5">
         <!-- Main content -->
@@ -123,8 +127,7 @@
           </div>
           <div v-if="matches.length === 0">
             <p>
-              No draw
-              {{ matches.length }}
+             {{$t("results.noMatches")}}
             </p>
           </div>
         </div>

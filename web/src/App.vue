@@ -134,4 +134,14 @@ h1, h2, h3 {
 .blue-section .h1, h2, h3, h4, h5, h6 {
   color: #8f4570;
 }
+
+.fa-arrow-right:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.fa-arrow-left:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
 </style>

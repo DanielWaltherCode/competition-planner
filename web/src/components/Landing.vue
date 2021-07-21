@@ -29,7 +29,7 @@
                 <p v-if="loginFailed" class="text-danger">{{ getString("landing.heading.loginFailed") }}</p>
               </div>
               <div v-if="isLoggedIn">
-                <!-- If logged in, either choose an existing competition or set up a new -->
+                <!-- If logged in, either choose an existing competition or set up a new one -->
                 <br>
                 <div>
                   <div class="form-group">
@@ -50,6 +50,13 @@
                     <span>{{ getString("header.handle.newCompetition") }} </span>
                     <i class="bi bi-arrow-right"></i>
                   </button>
+                    <button
+                        v-if="selectedCompetition !== 'none'"
+                        class="btn btn-light ms-2 mt-5"
+                        @click="$router.push('/overview')">
+                      <span>{{ getString("landing.heading.handleSelected") }} </span>
+                      <i class="bi bi-arrow-right"></i>
+                    </button>
                 </div>
               </div>
             </div>
