@@ -18,6 +18,7 @@ class DataGenerator {
     private var matchId = 0
     private var competitionId = 0
     private var competitionCategoryId = 0
+    private var categoryId = 0
 
     internal fun newClub(
         id: Int = clubId++,
@@ -95,6 +96,14 @@ class DataGenerator {
         welcomeText,
         startDate,
         endDate
+    )
+
+    internal fun newCategory(
+        id: Int = categoryId++,
+        name: String = "A Test Category"
+    ) = Category(
+        id,
+        name
     )
 
     fun newClubDTO(
@@ -213,6 +222,22 @@ class DataGenerator {
         organizingClubId,
         startDate,
         endDate
+    )
+
+    fun newCategoryDTO(
+        id: Int = 1,
+        name: String = "A Custom Category"
+    ) = CategoryDTO(
+        id,
+        name
+    )
+
+    fun newCompetitionCategoryDTO(
+        id: Int = 1,
+        category: CategoryDTO = newCategoryDTO()
+    ) = CompetitionCategoryDTO(
+        id,
+        category
     )
 
 

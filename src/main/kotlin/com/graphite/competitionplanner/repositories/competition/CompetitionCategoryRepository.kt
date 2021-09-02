@@ -2,6 +2,9 @@ package com.graphite.competitionplanner.repositories.competition
 
 import com.graphite.competitionplanner.Tables
 import com.graphite.competitionplanner.Tables.*
+import com.graphite.competitionplanner.domain.dto.CategoryDTO
+import com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO
+import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.records.CategoryRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryRecord
@@ -51,7 +54,7 @@ class CategoryRepository(val dslContext: DSLContext) {
  * N..N table for categories at a given competition
  */
 @Repository
-class CompetitionCategoryRepository(val dslContext: DSLContext) {
+class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCategoryRepository {
 
     fun addCompetitionCategory(competitionId: Int, categoryId: Int): Int {
         val record = dslContext.newRecord(COMPETITION_CATEGORY)
@@ -188,6 +191,47 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) {
     }
 
     fun clearTable() = dslContext.deleteFrom(COMPETITION_CATEGORY).execute()
+
+    override fun getCompetitionCategoriesIn(competitionId: Int): List<CompetitionCategoryDTO> {
+        val records = dslContext.select()
+            .from(COMPETITION_CATEGORY)
+            .join(CATEGORY).on(COMPETITION_CATEGORY.CATEGORY.eq(CATEGORY.ID))
+            .where(COMPETITION_CATEGORY.COMPETITION_ID.eq(competitionId))
+        return records.map {
+            CompetitionCategoryDTO(
+                it.getValue(COMPETITION_CATEGORY.ID),
+                CategoryDTO(
+                    it.getValue(CATEGORY.ID),
+                    it.getValue(CATEGORY.CATEGORY_NAME)
+                )
+            )
+        }
+    }
+
+    override fun addCompetitionCategoryTo(competitionId: Int, dto: CategoryDTO) {
+        val record = dslContext.newRecord(COMPETITION_CATEGORY)
+        record.competitionId = competitionId
+        record.category = dto.id
+        record.store()
+    }
+
+    override fun deleteCompetitionCategoryFrom(competitionCategoryId: Int) {
+        dslContext.deleteFrom(COMPETITION_CATEGORY)
+            .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
+            .execute()
+    }
+
+    override fun getAvailableCategories(): List<CategoryDTO> {
+        return dslContext.selectFrom(CATEGORY).fetch().map { it.toDto() }
+    }
+
+    override fun addAvailableCategory(dto: CategoryDTO) {
+        TODO("Not yet implemented")
+    }
+
+    private fun CategoryRecord.toDto(): CategoryDTO {
+        return CategoryDTO(this.id, this.categoryName)
+    }
 }
 
 data class CategoriesAndPlayers(
