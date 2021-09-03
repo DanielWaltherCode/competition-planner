@@ -144,4 +144,13 @@ h1, h2, h3 {
   cursor: pointer;
   text-decoration: underline;
 }
+
+.clickable:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.custom-select{
+  background: none !important;
+}
 </style>

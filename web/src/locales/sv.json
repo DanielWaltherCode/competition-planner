@@ -67,7 +67,47 @@
     "title": "Klasser",
     "overview": "Översikt",
     "gameRules": "Matchregler",
-    "noCategories": "Inga klasser är skapade än så länge"
+    "noCategories": "Inga klasser är skapade än så länge",
+    "createNew": "Skapa ny klass",
+    "addClass": "Lägg till klassen",
+    "alreadyAddedCategories": "Tillagda klasser"
+  },
+  "categoryGameRules": {
+    "nrSets": "Antal set",
+    "winScore": "Man spelar till",
+    "winMargin": "Vinstmarginal",
+    "differentEndgame": "Tillämpa andra matchregler i slutspelet",
+    "differentEndgameFrom": "Annat antal set i slutspel från omgång",
+    "winMarginFinals": "Vinstmarginal i slutspel",
+    "nrSetsEndgame": "Antal set i slutspel",
+    "useTiebreak": "Tiebreak används i sista set",
+    "winScoreTiebreak": "I tiebreak spelar man till",
+    "winMarginTiebreak": "Vinstmarginal i tiebreak"
+  },
+  "categorySettings": {
+    "cost": "Avgift för klassen",
+    "playersPerGroup": "Antal spelare per grupp",
+    "playersToPlayoff": "Antal spelare till slutspel från varje grupp",
+    "drawType": "Lottningstyp",
+    "drawTypes": {
+      "POOL_ONLY": "Enbart gruppspel",
+      "CUP_ONLY": "Bara cupspel",
+      "POOL_AND_CUP": "Grupper med cupslutspel"
+    },
+    "drawStrategy": "Lottningsstrategi",
+    "drawStrategies": {
+      "NORMAL": "Vanlig lottning",
+      "SNAKE": "Snake-lottning"
+    }
+  },
+  "round": {
+    "UNKNOWN": "Tillämpa ej",
+    "FINAL": "Final",
+    "SEMI_FINAL": "Semifinal",
+    "QUARTER_FINAL": "Kvartsfinal",
+    "ROUND_OF_16": "Åttondelsfinal",
+    "ROUND_OF_32": "16-delsfinal",
+    "ROUND_OF_64": "32-delsfinal"
   },
   "general": {
     "save": "Spara",
@@ -198,7 +238,19 @@
     "round": "Grupp/runda",
     "group": "Pool",
     "modal": {
+      "errors": {
+        "1": "För få set för att avsluta matchen är inrapporterade. Dubbelkolla gärna inställningarna för klassen för att se vilka regler som är uppsatta",
+        "2": "I minst ett av setten verkar båda spelare ha lägre resultat än det som krävs för att vinna. Dubbelkolla gärna inställningarna för klassen för att se vilka regler som är uppsatta",
+        "3": "Något gick fel och vinnaren kunde inte registreras. Var vänlig kontakta supporten"
+      },
       "header": "Registrera resultat",
+      "savePartial": "Spara delresultat",
+      "savePartialExplanation": "Används för att rapportera in delresultat löpande under en match. Dessa valideras inte och det registeras ingen vinnare.",
+      "registerFinishedMatch": "Spara slutgiltigt resultat",
+      "helperTexts": "Hjälp",
+      "registerFinishedMatchExplanation": "Används när matchen är klar och resultaten ska sparas permanent. Validering sker",
+      "info": "Inställningarna för hur många set matchen innehåller och hur många poäng som krävs för att vinna ställs in för klassen som helhet. Du kan ändra inställningarna under ",
+      "linkToCategorySettings": "klassinställningar",
       "add": "Lägg till set",
       "remove": "Ta bort set",
       "delete": "Ta bort resultat"

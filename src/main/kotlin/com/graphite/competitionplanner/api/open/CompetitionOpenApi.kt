@@ -6,7 +6,7 @@ import com.graphite.competitionplanner.service.*
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
 import com.graphite.competitionplanner.service.competition.CompetitionDTO
 import com.graphite.competitionplanner.service.competition.CompetitionService
-import com.graphite.competitionplanner.service.competition.DrawService
+import com.graphite.competitionplanner.service.draw.DrawService
 import io.swagger.annotations.ApiModelProperty
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
@@ -35,7 +35,7 @@ class CompetitionOpenApi(
     }
 
     @GetMapping("/{competitionId}/categories")
-    fun getCompetitionCategories(@PathVariable competitionId: Int): CompetitionAndCategoriesDTO {
+    fun getCompetitionCategories(@PathVariable competitionId: Int): List<CompetitionCategoryDTO> {
         return competitionService.getCategoriesInCompetition(competitionId)
     }
 

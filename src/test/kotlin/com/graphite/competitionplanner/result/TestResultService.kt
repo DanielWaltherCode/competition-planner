@@ -10,7 +10,7 @@ import com.graphite.competitionplanner.repositories.ResultRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionDrawRepository
 import com.graphite.competitionplanner.service.*
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
-import com.graphite.competitionplanner.service.competition.DrawService
+import com.graphite.competitionplanner.service.draw.DrawService
 import com.graphite.competitionplanner.util.TestUtil
 import com.graphite.competitionplanner.util.Util
 import com.graphite.competitionplanner.util.exception.GameValidationException
@@ -51,10 +51,10 @@ class TestResultService(
         val categoryMetadata = categoryService.getCategoryMetadata(competitionCategoryId)
         val categoryMetadataSpec = CategoryMetadataSpec(
             cost = categoryMetadata.cost,
-            drawTypeId = categoryMetadata.drawType.id,
+            drawType = categoryMetadata.drawType,
             nrPlayersPerGroup = 3,
             nrPlayersToPlayoff = 1,
-            poolDrawStrategyId = categoryMetadata.poolDrawStrategyId
+            poolDrawStrategy = categoryMetadata.poolDrawStrategy
         )
 
         categoryService.updateCategoryMetadata(competitionCategoryId, categoryMetadata.id, categoryMetadataSpec)
@@ -111,20 +111,11 @@ class TestResultService(
     fun testAddFaultyResults() {
         val matches = matchService.getMatchesInCategory(competitionCategoryId)
 
-        // Add too few sets
-        var gameList = mutableListOf<GameSpec>()
-        gameList.add(GameSpec(1, 11, 9))
-        gameList.add(GameSpec(2, 11, 9))
-        var resultSpec = ResultSpec(gameList)
-        Assertions.assertThrows(GameValidationException::class.java) {
-            resultService.addResult(matches[1].id, resultSpec)
-        }
-
-        gameList = mutableListOf<GameSpec>()
+        val gameList = mutableListOf<GameSpec>()
         gameList.add(GameSpec(1, 11, 9))
         gameList.add(GameSpec(2, 11, 9))
         gameList.add(GameSpec(3, 10, 9))
-        resultSpec = ResultSpec(gameList)
+        val resultSpec = ResultSpec(gameList)
 
         Assertions.assertThrows(GameValidationException::class.java) {
             resultService.addResult(matches[1].id, resultSpec)
@@ -155,7 +146,7 @@ class TestResultService(
         gameList.add(GameSpec(2, 11, 6))
         gameList.add(GameSpec(3, 11, 6))
         val resultSpec = ResultSpec(gameList)
-        val updatedResult = resultService.updateFullMatchResult(match.id, resultSpec)
+        val updatedResult = resultService.addFinalMatchResult(match.id, resultSpec)
 
         //Assertions
         val newSize = resultRepository.countResults()

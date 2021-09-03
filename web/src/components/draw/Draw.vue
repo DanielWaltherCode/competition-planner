@@ -14,10 +14,10 @@
             <h4> {{ $t("draw.sidebar.title") }}</h4>
           </div>
           <ul class="list-group list-group-flush">
-            <li v-for="category in competitionCategories" class="list-group-item" :key="category.competitionCategoryId"
+            <li v-for="category in competitionCategories" class="list-group-item" :key="category.id"
                 @click="makeChoice(category)"
-                :class="category.categoryName === chosenCategory.categoryName ? 'active' : ''">
-              {{ category.categoryName }}
+                :class="category.name === chosenCategory.name ? 'active' : ''">
+              {{ category.name }}
             </li>
           </ul>
         </div>
@@ -26,7 +26,7 @@
         <div class="col-md-9 ps-0" v-if="chosenCategory !== null">
           <div class="blue-section row">
             <div class="top-content col-md-10 mx-auto">
-              <h3 class="p-4">{{ chosenCategory.categoryName }}</h3>
+              <h3 class="p-4">{{ chosenCategory.name }}</h3>
               <!-- If class is not drawn yet -->
               <div v-if="!isChosenCategoryDrawn " class="pb-4">
                 <div v-if="registeredPlayersLists.length > 0">
@@ -69,7 +69,6 @@
                    class="row mb-4 d-flex align-items-start p-3 border rounded">
                 <h4 class="text-start mb-3">{{ $t("draw.main.group") }} {{ group.groupName }}</h4>
                 <div class="col-sm-4">
-                  <p class="text-start">{{ $t("player.heading") }}</p>
                   <PoolDraw :group="group"/>
                 </div>
                 <div class="col-sm-8">
@@ -109,6 +108,7 @@
 import DrawService from "@/common/api-services/draw.service";
 import RegistrationService from "@/common/api-services/registration.service";
 import PoolDraw from "@/components/draw/PoolDraw";
+import CategoryService from "@/common/api-services/category.service";
 
 export default {
   components: {PoolDraw},
@@ -130,7 +130,7 @@ export default {
     }
   },
   mounted() {
-    DrawService.getCompetitionCategories(this.competition.id).then(res => {
+    CategoryService.getCompetitionCategories(this.competition.id).then(res => {
       this.competitionCategories = res.data.categories
       if (this.competitionCategories.length > 0) {
         this.makeChoice(this.competitionCategories[0])
@@ -143,10 +143,10 @@ export default {
     },
     makeChoice(category) {
       this.chosenCategory = category
-      DrawService.isClassDrawn(this.competition.id, category.competitionCategoryId).then(res => {
+      DrawService.isClassDrawn(this.competition.id, category.id).then(res => {
         if (res.data === true) {
           this.isChosenCategoryDrawn = true
-          this.getDraw(category.competitionCategoryId)
+          this.getDraw(category.id)
         } else {
           this.isChosenCategoryDrawn = false
           this.getRegisteredPlayers()
@@ -154,13 +154,13 @@ export default {
       })
     },
     createDraw() {
-      DrawService.createDraw(this.competition.id, this.chosenCategory.competitionCategoryId).then(res => {
+      DrawService.createDraw(this.competition.id, this.chosenCategory.id).then(res => {
         this.draw = res.data
         this.isChosenCategoryDrawn = true
       })
     },
     deleteDraw() {
-      DrawService.deleteDraw(this.competition.id, this.chosenCategory.competitionCategoryId).then(() => {
+      DrawService.deleteDraw(this.competition.id, this.chosenCategory.id).then(() => {
         this.isChosenCategoryDrawn = false
         this.getRegisteredPlayers()
       })
@@ -171,7 +171,7 @@ export default {
       })
     },
     getRegisteredPlayers() {
-      RegistrationService.getRegistrationsInCategory(this.competition.id, this.chosenCategory.competitionCategoryId)
+      RegistrationService.getRegistrationsInCategory(this.competition.id, this.chosenCategory.id)
           .then(res => {
             this.registeredPlayersLists = res.data
           })

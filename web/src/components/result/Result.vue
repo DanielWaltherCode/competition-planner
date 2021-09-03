@@ -27,109 +27,40 @@
               <tbody>
               <tr v-for="match in matches" :key="match.id">
                 <td>{{ getTime(match) }}</td>
-                <td v-if="!isMobile">{{ match.competitionCategory.categoryName }}</td>
+                <td v-if="!isMobile">{{ match.competitionCategory.name }}</td>
                 <td v-if="!isMobile">
-                  <span v-if="match.matchType === 'GROUP'"> {{$t("results.group")}}</span>
-                  {{ match.groupOrRound}}
+                  <span v-if="match.matchType === 'GROUP'"> {{ $t("results.group") }}</span>
+                  {{ match.groupOrRound }}
                 </td>
                 <td :class="isPlayerOneWinner(match) ? 'fw-bold': ''">{{ getPlayerOne(match) }}</td>
                 <td :class="isPlayerTwoWinner(match) ? 'fw-bold': ''">{{ getPlayerTwo(match) }}</td>
                 <td v-if="match !== null" class="d-flex justify-content-center">
                   <p class="pe-2" v-for="game in match.result.gameList" :key="game.id">
-                    {{ game.firstRegistrationResult }} - {{ game.secondRegistrationResult}}
+                    {{ game.firstRegistrationResult }} - {{ game.secondRegistrationResult }}
                   </p></td>
-                <td><button type="button" class="btn btn-light" @click="registerResult(match)"
-                       data-bs-toggle="modal" data-bs-target="#resultModal">
-                  <span v-if="match.result.gameList.length === 0">{{ $t("results.register") }}</span>
-                  <span v-if="match.result.gameList.length > 0">{{ $t("results.update") }}</span>
-                </button></td>
+                <td>
+                  <button type="button" class="btn btn-light" @click="selectMatch(match)">
+                    <span v-if="match.result.gameList.length === 0">{{ $t("results.register") }}</span>
+                    <span v-if="match.result.gameList.length > 0">{{ $t("results.update") }}</span>
+                  </button>
+                </td>
               </tr>
               </tbody>
             </table>
             <!-- Modal -->
-            <div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel"
-                 aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="resultModalLabel"></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <div id="modal-table" class="col-12 mx-auto">
-                      <table class="table table-borderless">
-                        <thead>
-                        <tr>
-                          <th class="col-4"></th>
-                          <th></th>
-                          <th></th>
-                          <th></th>
-                          <th></th>
-                          <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <!-- Player 1 -->
-                        <tr v-if="this.selectedMatch !== null">
-                          <td>{{ getPlayerOne(this.selectedMatch) }}</td>
-                          <td v-for="game in selectedMatch.result.gameList" :key="game.id">
-                            <select class="form-control" v-model="game.firstRegistrationResult">
-                              <option v-for="i in 30" :key="i" :value="i">
-                                {{ i }}
-                              </option>
-                            </select>
-                          </td>
-                          <td v-for="(game, index) in gamesToAdd" :key="index">
-                            <select class="form-control" v-model="game.firstRegistrationResult">
-                              <option v-for="i in 30" :key="i" :value="i">
-                                {{ i }}
-                              </option>
-                            </select>
-                          </td>
-                        </tr>
-                        <!-- Player 2 -->
-                        <tr v-if="selectedMatch !== null">
-                          <td>{{ getPlayerTwo(selectedMatch) }}</td>
-                          <td v-for="game in selectedMatch.result.gameList" :key="game.id">
-                            <select class="form-control" v-model="game.secondRegistrationResult">
-                              <option v-for="i in 30" :key="i" :value="i">
-                                {{ i }}
-                              </option>
-                            </select>
-                          </td>
-                          <td v-for="(game, index) in gamesToAdd" :key="index">
-                            <select class="form-control" v-model="game.secondRegistrationResult">
-                              <option v-for="i in 30" :key="i" :value="i">
-                                {{ i }}
-                              </option>
-                            </select>
-                          </td>
-                        </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" @click="addGame">{{ $t("results.modal.add") }}
-                    </button>
-                    <button type="button" class="btn btn-primary" @click="removeGame">{{ $t("results.modal.remove") }}
-                    </button>
-                    <button type="button" class="btn btn-secondary" @click="closeWithoutSaving" data-bs-dismiss="modal">
-                      {{ $t("general.close") }}
-                    </button>
-                    <button type="button" class="btn btn-primary" @click="saveResults" data-bs-dismiss="modal">{{ $t("general.save") }}</button>
-                    <button type="button" class="btn btn-danger" @click="deleteResults" data-bs-dismiss="modal">{{ $t("results.modal.delete") }}</button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <vue-final-modal v-model="showModal" classes="modal-container" content-class="modal-content">
+              <register-result
+                  :selected-match="getMatchCopy()"
+                  v-on:close="hideModal"
+                  v-on:closeAndUpdate="hideModalAndUpdate"></register-result>
+            </vue-final-modal>
+          </div>
 
-          </div>
-          <div v-if="matches.length === 0">
-            <p>
-             {{$t("results.noMatches")}}
-            </p>
-          </div>
+        </div>
+        <div v-if="matches.length === 0">
+          <p>
+            {{ $t("results.noMatches") }}
+          </p>
         </div>
       </div>
     </div>
@@ -138,18 +69,20 @@
 
 <script>
 import MatchService from "@/common/api-services/match.service";
-import ResultService from "@/common/api-services/result.service";
+import {getPlayerOne, getPlayerTwo} from "@/common/util";
+import RegisterResult from "@/components/result/RegisterResult";
 
 export default {
   name: "ResultComponent",
+  components: {RegisterResult},
   data() {
     return {
       activeResultsReporting: false,
       matches: [],
       selectedMatch: null,
       gameResults: [],
-      removedGames: [],
-      gamesToAdd: []
+      nrGames: null,
+      showModal: false
     }
   },
   computed: {
@@ -176,33 +109,15 @@ export default {
       })
     },
     // TODO - move to util
-    getPlayerOne(match) {
-      let playerOne = ""
-      if (match.firstPlayer.length === 1) {
-        playerOne = match.firstPlayer[0].firstName + " " + match.firstPlayer[0].lastName + " " + match.firstPlayer[0].club.name
-      } else if (match.firstPlayer.length === 2) {
-        playerOne = match.firstPlayer[0].firstName + " " + match.firstPlayer[0].lastName + " " + match.firstPlayer[0].club.name + "/" +
-            match.firstPlayer[1].firstName + " " + match.firstPlayer[1].lastName + " " + match.firstPlayer[1].club.name
-      }
-      return playerOne
-    },
-    getPlayerTwo(match) {
-      let playerTwo = ""
-      if (match.secondPlayer.length === 1) {
-        playerTwo = match.secondPlayer[0].firstName + " " + match.secondPlayer[0].lastName + " " + match.secondPlayer[0].club.name
-      } else if (match.firstPlayer.length === 2) {
-        playerTwo = match.secondPlayer[0].firstName + " " + match.secondPlayer[0].lastName + " " + match.secondPlayer[0].club.name + "/" +
-            match.secondPlayer[1].firstName + " " + match.secondPlayer[1].lastName + " " + match.secondPlayer[1].club.name
-      }
-      return playerTwo
-    },
+    getPlayerOne: getPlayerOne,
+    getPlayerTwo: getPlayerTwo,
     getTime(match) {
       if (match != null && match.startTime === null) {
         return this.$t("draw.pool.noTime")
       }
     },
     isPlayerOneWinner(match) {
-      if(match.winner.length > 0) {
+      if (match.winner.length > 0) {
         const winnerIds = match.winner.map(winner => winner.id)
         if (winnerIds.includes(match.firstPlayer[0].id)) {
           return true
@@ -211,31 +126,13 @@ export default {
       return false
     },
     isPlayerTwoWinner(match) {
-      if(match.winner.length > 0) {
+      if (match.winner.length > 0) {
         const winnerIds = match.winner.map(winner => winner.id)
         if (winnerIds.includes(match.secondPlayer[0].id)) {
           return true
         }
       }
       return false
-    },
-    registerResult(match) {
-      // Ensure helper arrays are empty before setting results
-      this.gamesToAdd = []
-      this.removedGames = []
-      this.selectedMatch = match
-      if (this.selectedMatch.result.gameList.length === 0) {
-        this.addGame()
-      }
-    },
-    closeWithoutSaving() {
-      // If games were removed or added, ensure these actions are undone
-      this.gamesToAdd = []
-      this.removedGames.forEach(game => {
-        this.selectedMatch.result.gameList.push(game)
-      })
-      this.removedGames = []
-      this.selectedMatch = null
     },
     removeGame() {
       if (this.gamesToAdd.length > 0) {
@@ -244,37 +141,25 @@ export default {
         this.removedGames.push(this.selectedMatch.result.gameList.pop())
       }
     },
-    addGame() {
-      this.gamesToAdd.push(
-          {
-            firstRegistrationResult: 0,
-            secondRegistrationResult: 0,
-            gameNumber: (this.gamesToAdd.length + this.selectedMatch.result.gameList.length) + 1
-          })
+    selectMatch(selectedMatch) {
+      this.selectedMatch = selectedMatch
+      this.showModal = true
     },
-    saveResults() {
-      // If there are existing games, update result
-      if (this.selectedMatch.result.gameList.length > 0) {
-        const gameList = this.selectedMatch.result.gameList.concat(this.gamesToAdd)
-        ResultService.updateResult(this.selectedMatch.id, {gameList: gameList}).then(() => {
-          this.selectedMatch = null
-          this.getMatches()
-        })
-      }
-      else {
-        ResultService.addResult(this.selectedMatch.id, {gameList: this.gamesToAdd}).then(() => {
-          this.selectedMatch = null
-          this.getMatches()
-        }).catch(err => {
-          console.log(err.data)
-        })
-      }
-
+    getMatchCopy() {
+      return JSON.parse(JSON.stringify(this.selectedMatch));
     },
-    deleteResults() {
-      ResultService.deleteResult(this.selectedMatch.id)
-      this.selectedMatch = null
-      this.getMatches()
+    hideModalAndUpdate(matchId) {
+      MatchService.getMatch(matchId).then(res => {
+        for(let i = 0; i < this.matches.length; i++) {
+          if (this.matches[i].id === matchId) {
+            this.$set(this.matches, i, res.data)
+          }
+        }
+      })
+      this.hideModal()
+    },
+    hideModal() {
+      this.showModal = false
     }
   }
 }
@@ -295,4 +180,20 @@ th {
   cursor: pointer;
   opacity: 0.7;
 }
+
+::v-deep .modal-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+::v-deep .modal-content {
+  max-height: 90%;
+  max-width: 75%;
+  margin: 0 1rem;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.25rem;
+  background: #fff;
+}
+
 </style>

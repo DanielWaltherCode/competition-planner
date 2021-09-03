@@ -1,4 +1,7 @@
 package com.graphite.competitionplanner.util.exception
 
-class GameValidationException(message: String) : Exception(message) {
+import org.springframework.http.HttpStatus
+import org.springframework.web.server.ResponseStatusException
+
+class GameValidationException(status: HttpStatus, reason: String) : ResponseStatusException(status, reason) {
 }

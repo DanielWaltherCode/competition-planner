@@ -39,7 +39,7 @@
                 </thead>
                 <tbody>
                 <tr v-for="category in categoryStartTimeDTO.categoryStartTimeList" :key="category.id">
-                  <td>{{ category.categoryDTO.categoryName }}</td>
+                  <td>{{ category.categoryDTO.name }}</td>
                   <!-- Select date -->
                   <td>
                     <select id="date-selection" class="form-control"
@@ -176,11 +176,11 @@
 <script>
 import {getFormattedDate, getHoursMinutes} from "@/common/util";
 import VueTimepicker from 'vue2-timepicker/src/vue-timepicker.vue'
-import DrawService from "@/common/api-services/draw.service";
 import CategoryStartTimeService from "@/common/api-services/schedule/category-start-time.service";
 import DailyStartEndService from "@/common/api-services/schedule/daily-start-end.service";
 import AvailableTablesService from "@/common/api-services/schedule/available-tables.service";
 import ScheduleMetadataService from "@/common/api-services/schedule/schedule-metadata.service";
+import CategoryService from "@/common/api-services/category.service";
 
 export default {
   name: "Schedule",
@@ -203,7 +203,7 @@ export default {
     }
   },
   mounted() {
-    DrawService.getCompetitionCategories(this.competition.id).then(res => {
+    CategoryService.getCompetitionCategories(this.competition.id).then(res => {
       this.competitionCategories = res.data.categories
     })
     this.getCategoryStartTimes()

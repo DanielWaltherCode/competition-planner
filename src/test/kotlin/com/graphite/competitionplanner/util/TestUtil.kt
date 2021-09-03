@@ -22,7 +22,7 @@ class TestUtil(
         return competitionCategoryService.addCompetitionCategory(
             umeaCompetitionId,
             categoryRepository.getByName(name).id
-        )
+        ).id
     }
 
     fun getClubIdOrDefault(clubName: String): Int {

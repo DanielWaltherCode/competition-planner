@@ -46,9 +46,11 @@ class TestCategoryGameRules(@Autowired val testUtil: TestUtil,
            categoryGameRulesDTO.nrSets,
            categoryGameRulesDTO.winScore,
             categoryGameRulesDTO.winMargin,
+            categoryGameRulesDTO.differentNumberOfGamesFromRound,
             newNrSetsFinal,
             categoryGameRulesDTO.winScoreFinal,
             newWinMarginFinal,
+            categoryGameRulesDTO.tiebreakInFinalGame,
             null, null
         )
         val updatedCategory = categoryService.updateCategoryGameRules(categoryGameRulesDTO.id,

@@ -35,8 +35,7 @@ class TestCompetitionCategories(
         val umeaId = util.getClubIdOrDefault("Umeå IK")
         val competitions = competitionService.getByClubId(umeaId)
         val competitionCategories = competitionService.getCategoriesInCompetition(competitions[0].id ?: 0)
-        Assertions.assertTrue(competitionCategories.categories.isNotEmpty())
-        Assertions.assertNotNull(competitionCategories.competition.organizingClub)
+        Assertions.assertTrue(competitionCategories.isNotEmpty())
     }
 
     @Test

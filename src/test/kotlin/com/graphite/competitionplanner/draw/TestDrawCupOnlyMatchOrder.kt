@@ -8,7 +8,8 @@ import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.service.*
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
 import com.graphite.competitionplanner.service.competition.CompetitionDTO
-import com.graphite.competitionplanner.service.competition.DrawService
+import com.graphite.competitionplanner.service.draw.DrawService
+import com.graphite.competitionplanner.service.draw.DrawType
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -52,7 +53,7 @@ class TestDrawCupOnlyMatchOrder(
             players.add(player)
         }
 
-        drawService.createDraw(competitionCategory.competitionCategoryId)
+        drawService.createDraw(competitionCategory.id)
     }
 
     private fun addCompetitionCategoryTo(competition: CompetitionDTO, categoryName: String): CompetitionCategoryDTO {
@@ -61,21 +62,21 @@ class TestDrawCupOnlyMatchOrder(
         return competitionCategoryApi.addCategoryToCompetition(
             competition.id,
             category.id
-        ).categories[0]
+        )
     }
 
     private fun setModeToCupOnlyFor(competitionCategory: CompetitionCategoryDTO) {
-        val categoryMetadata = categoryService.getCategoryMetadata(competitionCategory.competitionCategoryId)
+        val categoryMetadata = categoryService.getCategoryMetadata(competitionCategory.id)
         val categoryMetadataSpec = CategoryMetadataSpec(
             cost = categoryMetadata.cost,
-            drawTypeId = 2, // CUP ONLY. How is it set in database though?
+            drawType = DrawType.CUP_ONLY,
             nrPlayersPerGroup = categoryMetadata.nrPlayersPerGroup,
             nrPlayersToPlayoff = categoryMetadata.nrPlayersToPlayoff,
-            poolDrawStrategyId = categoryMetadata.poolDrawStrategyId
+            poolDrawStrategy = categoryMetadata.poolDrawStrategy
         )
 
         categoryService.updateCategoryMetadata(
-            competitionCategory.competitionCategoryId,
+            competitionCategory.id,
             categoryMetadata.id,
             categoryMetadataSpec
         )
@@ -85,7 +86,7 @@ class TestDrawCupOnlyMatchOrder(
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 player.id,
-                competitionCategory.competitionCategoryId
+                competitionCategory.id
             )
         )
     }
@@ -143,7 +144,7 @@ class TestDrawCupOnlyMatchOrder(
 
     @Test
     fun thenBestAndWorstRankedPlayerShouldMeetInFirstMatch() {
-        val matches = matchService.getMatchesInCategory(competitionCategory.competitionCategoryId)
+        val matches = matchService.getMatchesInCategory(competitionCategory.id)
 
         val firstMatch = matches.filter { it.matchOrderNumber == 1 }[0]
         val bestPlayer = players[0]
@@ -161,7 +162,7 @@ class TestDrawCupOnlyMatchOrder(
 
     @Test
     fun thenSecondBestAndSecondWorstPlayerShouldMeetInSecondMatch() {
-        val matches = matchService.getMatchesInCategory(competitionCategory.competitionCategoryId)
+        val matches = matchService.getMatchesInCategory(competitionCategory.id)
 
         val secondMatch = matches.filter { it.matchOrderNumber == 4 }[0]
         val secondBestPlayer = players[1]

@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.api.competition
 
-import com.graphite.competitionplanner.service.competition.DrawService
-import com.graphite.competitionplanner.service.competition.GroupDrawDTO
-import com.graphite.competitionplanner.service.competition.PlayoffDTO
+import com.graphite.competitionplanner.service.draw.DrawService
+import com.graphite.competitionplanner.service.draw.GroupDrawDTO
+import com.graphite.competitionplanner.service.draw.PlayoffDTO
 import org.springframework.web.bind.annotation.*
 
 @RestController

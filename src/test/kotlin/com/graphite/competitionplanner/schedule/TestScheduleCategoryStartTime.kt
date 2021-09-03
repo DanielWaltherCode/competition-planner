@@ -54,11 +54,11 @@ class TestScheduleCategoryStartTime(
         competitionCategory1 = competitionCategoryService.addCompetitionCategory(
             competitionId,
             categoryRepository.getByName("Herrar 1").id
-        )
+        ).id
         competitionCategory2 = competitionCategoryService.addCompetitionCategory(
             competitionId,
             categoryRepository.getByName("Herrar 2").id
-        )
+        ).id
 
         // Competition start times are set up automatically now so fetch the two ones just added
         categoryStartTimes = scheduleService.getCategoryStartTimesForCompetition(competitionId)

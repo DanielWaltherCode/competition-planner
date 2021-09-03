@@ -10,11 +10,13 @@ import com.graphite.competitionplanner.repositories.competition.CompetitionCateg
 import com.graphite.competitionplanner.service.CategoryService
 import com.graphite.competitionplanner.service.CompetitionCategoryDTO
 import com.graphite.competitionplanner.service.ScheduleService
+import com.graphite.competitionplanner.service.draw.DrawStrategy
+import com.graphite.competitionplanner.service.draw.DrawType
+import com.graphite.competitionplanner.service.draw.Round
 import org.springframework.context.annotation.Lazy
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
-import java.time.LocalDateTime
 
 @Service
 class CompetitionCategoryService(
@@ -49,41 +51,48 @@ class CompetitionCategoryService(
         competitionCategoryRepository.deleteCategoryInCompetition(categoryId)
     }
 
-    fun addCompetitionCategory(competitionId: Int, categoryId: Int): Int {
+    fun addCompetitionCategory(competitionId: Int, categoryId: Int): CompetitionCategoryDTO {
         val competitionCategoryId = competitionCategoryRepository.addCompetitionCategory(
             competitionId,
             categoryId
         )
 
+        setUpDefaultCategoryData(competitionCategoryId)
+        val addedCategory = competitionCategoryRepository.getById(competitionCategoryId)
+        return CompetitionCategoryDTO(addedCategory.categoryId, addedCategory.categoryName)
+    }
+
+    fun setUpDefaultCategoryData(competitionCategoryId: Int) {
         // Also set up default metadata and game rules that can later be modified
-        // This default sets draw type to 3 == Pool and cup and draw strategy to 1 == normal
         categoryService.addCategoryMetadata(
             competitionCategoryId,
             CategoryMetadataSpec(
                 cost = 150f,
-                drawTypeId = 3,
+                drawType = DrawType.POOL_AND_CUP,
                 nrPlayersPerGroup = 4,
                 nrPlayersToPlayoff = 2,
-                poolDrawStrategyId = 1
+                poolDrawStrategy = DrawStrategy.NORMAL
             )
         )
-        categoryService.addCategoryGameRules(competitionCategoryId,
-        CategoryGameRulesSpec(
-            nrSets = 5,
-            winScore = 11,
-            winMargin = 2,
-            nrSetsFinal = 7,
-            winScoreFinal = 11,
-            winMarginFinal = 2,
-            winScoreTiebreak = null,
-            winMarginTieBreak = null
-        )
+        categoryService.addCategoryGameRules(
+            competitionCategoryId,
+            CategoryGameRulesSpec(
+                nrSets = 5,
+                winScore = 11,
+                winMargin = 2,
+                differentNumberOfGamesFromRound = Round.UNKNOWN,
+                nrSetsFinal = 7,
+                winScoreFinal = 11,
+                winMarginFinal = 2,
+                tiebreakInFinalGame = false,
+                winScoreTiebreak = 7,
+                winMarginTiebreak = 2
+            )
         )
 
         // Add to category start time table
         // All fields are null but it's easier to display on website if categories are already in this table
         scheduleService.addCategoryStartTime(competitionCategoryId, CategoryStartTimeSpec(null, null, null))
-        return competitionCategoryId
     }
 
     fun getByCompetitionCategoryId(competitionCategoryId: Int): CompetitionCategory {

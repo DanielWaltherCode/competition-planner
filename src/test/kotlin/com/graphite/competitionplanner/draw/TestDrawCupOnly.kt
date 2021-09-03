@@ -9,10 +9,10 @@ import com.graphite.competitionplanner.repositories.competition.CompetitionDrawR
 import com.graphite.competitionplanner.service.CategoryService
 import com.graphite.competitionplanner.service.MatchService
 import com.graphite.competitionplanner.service.RegistrationService
-import com.graphite.competitionplanner.service.RegistrationSinglesDTO
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
-import com.graphite.competitionplanner.service.competition.DrawService
-import com.graphite.competitionplanner.service.competition.Round
+import com.graphite.competitionplanner.service.draw.DrawService
+import com.graphite.competitionplanner.service.draw.DrawType
+import com.graphite.competitionplanner.service.draw.Round
 import com.graphite.competitionplanner.util.TestUtil
 import org.junit.jupiter.api.*
 import org.junit.jupiter.params.ParameterizedTest
@@ -46,10 +46,10 @@ class TestDrawCupOnly(
         val categoryMetadata = categoryService.getCategoryMetadata(competitionCategoryId)
         val categoryMetadataSpec = CategoryMetadataSpec(
             cost = categoryMetadata.cost,
-            drawTypeId = 2, // CUP ONLY. How is it set in database though?
+            drawType = DrawType.CUP_ONLY,
             nrPlayersPerGroup = categoryMetadata.nrPlayersPerGroup,
             nrPlayersToPlayoff = categoryMetadata.nrPlayersToPlayoff,
-            poolDrawStrategyId = categoryMetadata.poolDrawStrategyId
+            poolDrawStrategy = categoryMetadata.poolDrawStrategy
         )
 
         categoryService.updateCategoryMetadata(competitionCategoryId, categoryMetadata.id, categoryMetadataSpec)

@@ -120,12 +120,12 @@
                            id="dateOfBirth">
                   </div>
                   <div class="form-check col-sm-6 mb-3">
-                    <div v-for="category in competitionCategories" :key="category.competitionCategoryId">
+                    <div v-for="category in competitionCategories" :key="category.id">
 
-                      <input class="form-check-input ms-1" type="checkbox" :value="category.categoryName"
-                             :id="category.competitionCategoryId" v-model="selectedCategories">
-                      <label class="form-check-label d-flex ps-2" :for="category.competitionCategoryId">
-                        {{ category.categoryName }}
+                      <input class="form-check-input ms-1" type="checkbox" :value="category.name"
+                             :id="category.id" v-model="selectedCategories">
+                      <label class="form-check-label d-flex ps-2" :for="category.id">
+                        {{ category.name }}
                       </label>
                     </div>
                   </div>
@@ -148,9 +148,9 @@
 import PlayerService from "@/common/api-services/player.service";
 import Autocomplete from '@trevoreyre/autocomplete-vue'
 import '@trevoreyre/autocomplete-vue/dist/style.css';
-import DrawService from "@/common/api-services/draw.service";
 import ClubService from "@/common/api-services/club.service";
 import RegistrationService from "@/common/api-services/registration.service";
+import CategoryService from "@/common/api-services/category.service";
 
 export default {
   name: "Player",
@@ -202,7 +202,7 @@ export default {
   },
   mounted() {
     this.fetchPlayers()
-    DrawService.getCompetitionCategories(this.competition.id).then(res => {
+    CategoryService.getCompetitionCategories(this.competition.id).then(res => {
       this.competitionCategories = res.data.categories
     })
     ClubService.getClubs().then(res => {
@@ -283,11 +283,11 @@ export default {
       this.clearPlayer()
     },
     registerPlayer() {
-      const categoriesToRegisterIn = this.competitionCategories.filter(val => this.selectedCategories.includes(val.categoryName))
+      const categoriesToRegisterIn = this.competitionCategories.filter(val => this.selectedCategories.includes(val.name))
       categoriesToRegisterIn.forEach(category => {
         const registrationSpec = {
           playerId: this.player.id,
-          competitionCategoryId: category.competitionCategoryId
+          competitionCategoryId: category.id
         }
         RegistrationService.registerPlayerSingles(this.competition.id, registrationSpec)
         this.$toasted.show(this.$tc("player.add.success")).goAway(3000)

@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.api
 import com.graphite.competitionplanner.service.MatchAndResultDTO
 import com.graphite.competitionplanner.service.MatchDTO
 import com.graphite.competitionplanner.service.MatchService
-import com.graphite.competitionplanner.service.competition.MatchSpec
+import com.graphite.competitionplanner.service.draw.MatchSpec
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
@@ -24,5 +24,10 @@ class MatchApi(val matchService: MatchService) {
     @GetMapping("/{competitionId}")
     fun getAllMatchesInCompetition(@PathVariable competitionId: Int): List<MatchAndResultDTO> {
         return matchService.getMatchesInCompetition(competitionId)
+    }
+
+    @GetMapping("single/{matchId}")
+    fun getMatch(@PathVariable matchId: Int): MatchAndResultDTO {
+        return matchService.getMatchWithResult(matchId);
     }
 }
