@@ -49,18 +49,51 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldBeAbleToStoreCompetitionCategory() {
         // Setup
-        val category = competitionCategoryRepository.getAvailableCategories().find { it.name == "Pojkar 8" }
-        competitionCategoryRepository.addCompetitionCategoryTo(competition.id, category!!)
+        val category = competitionCategoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }
+        val dto = dataGenerator.newCompetitionCategoryDTO(category = category!!)
+        val addedCompetitionCategory = competitionCategoryRepository.addCompetitionCategoryTo(competition.id, dto)
 
         // Act
         val categories = competitionCategoryRepository.getCompetitionCategoriesIn(competition.id)
+        val actualCategory = categories.find { it.id == addedCompetitionCategory.id }
 
         // Assert
-        Assertions.assertEquals(1, categories.size)
-        Assertions.assertEquals("Pojkar 8", categories.first().category.name)
+        Assertions.assertEquals(addedCompetitionCategory, actualCategory)
 
         // Clean up
-        competitionCategoryRepository.deleteCompetitionCategoryFrom(categories.first().id)
+        competitionCategoryRepository.deleteCompetitionCategory(addedCompetitionCategory.id)
+    }
+
+    @Test
+    fun shouldReturnNewlyStoredCompetitionCategory() {
+        // Setup
+        val category = competitionCategoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }
+        val dto = dataGenerator.newCompetitionCategoryDTO(category = category!!)
+
+        // Act
+        val competitionCategory = competitionCategoryRepository.addCompetitionCategoryTo(competition.id, dto)
+
+        // Assert
+        Assertions.assertTrue(competitionCategory.id > 0)
+        Assertions.assertEquals(dto.category, competitionCategory.category)
+        Assertions.assertEquals(dto.settings, competitionCategory.settings)
+        Assertions.assertEquals(dto.gameSettings, competitionCategory.gameSettings)
+
+        // Clean up
+        competitionCategoryRepository.deleteCompetitionCategory(competitionCategory.id)
+    }
+
+    @Test
+    fun shouldBeAbleToGetDrawType() {
+        competitionCategoryRepository.getDrawType("POOL_ONLY")
+        competitionCategoryRepository.getDrawType("CUP_ONLY")
+        competitionCategoryRepository.getDrawType("POOL_AND_CUP")
+    }
+
+    @Test
+    fun shouldBeAbleToGetPoolDrawStrategyTypes() {
+        competitionCategoryRepository.getPoolDrawStrategy("normal")
+        competitionCategoryRepository.getPoolDrawStrategy("snake")
     }
 
     @Test

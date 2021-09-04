@@ -234,10 +234,64 @@ class DataGenerator {
 
     fun newCompetitionCategoryDTO(
         id: Int = 1,
-        category: CategoryDTO = newCategoryDTO()
+        category: CategoryDTO = newCategoryDTO(),
+        settings: GeneralSettingsDTO = newGeneralSettingsDTO(),
+        gameSettings: GameSettingsDTO = newGameSettingsDTO()
     ) = CompetitionCategoryDTO(
         id,
-        category
+        category,
+        settings,
+        gameSettings
+    )
+
+    fun newDrawTypeDTO(
+        id: Int = 3,
+        name: String = "POOL_AND_CUP"
+    ) = DrawTypeDTO(
+        id,
+        name
+    )
+
+    fun newPoolDrawStrategyDTO(
+        id: Int = 1,
+        name: String = "normal"
+    ) = PoolDrawStrategyDTO(
+        id,
+        name
+    )
+
+    fun newGameSettingsDTO(
+        numberOfSets: Int = 2,
+        winScore: Int = 11,
+        winMargin: Int = 3,
+        numberOfSetsFinal: Int = 5,
+        winScoreFinal: Int = 7,
+        winMarginFinal: Int = 3,
+        winScoreTiebreak: Int = 3,
+        winMarginTieBreak: Int = 3
+    ) = GameSettingsDTO(
+        numberOfSets,
+        winScore,
+        winMargin,
+        numberOfSetsFinal,
+        winScoreFinal,
+        winMarginFinal,
+        winScoreTiebreak,
+        winMarginTieBreak
+    )
+
+    fun newGeneralSettingsDTO(
+        cost: Float = 150f,
+        drawType: DrawTypeDTO = newDrawTypeDTO(),
+        playersPerGroup: Int = 4,
+        playersToPlayOff: Int = 2,
+        poolDrawStrategy: PoolDrawStrategyDTO = newPoolDrawStrategyDTO()
+    ) = GeneralSettingsDTO(
+        cost,
+        drawType,
+        playersPerGroup,
+        playersToPlayOff,
+        poolDrawStrategy
     )
 
 

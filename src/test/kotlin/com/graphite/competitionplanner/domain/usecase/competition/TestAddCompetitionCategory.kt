@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.domain.usecase.competition
 import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.TestHelper
 import com.graphite.competitionplanner.domain.dto.CategoryDTO
+import com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -61,21 +62,30 @@ class TestAddCompetitionCategory {
     }
 
     @Test
-    fun shouldCallRepositoryToStore() {
+    fun shouldCallRepositoryToStoreWithDefaultSettings() {
         // Setup
-        val dto = dataGenerator.newCategoryDTO(id = 0, name = "HERRDUBBEL")
+        val category = dataGenerator.newCategoryDTO(id = 0, name = "HERRDUBBEL")
+        val settings = dataGenerator.newGeneralSettingsDTO(cost = 150f, playersPerGroup = 4, playersToPlayOff = 2)
+        val gameSettings = dataGenerator.newGameSettingsDTO(
+            numberOfSets = 5, winScore = 11, winMargin = 2, numberOfSetsFinal = 7,
+            winScoreFinal = 11, winMarginFinal = 2, winScoreTiebreak = 2, winMarginTieBreak = 2
+        )
+
         val competitionId = 1
-        `when`(mockedRepository.getAvailableCategories()).thenReturn(listOf(dto))
+        `when`(mockedRepository.getAvailableCategories()).thenReturn(listOf(category))
         `when`(mockedRepository.getCompetitionCategoriesIn(competitionId)).thenReturn(emptyList())
+        `when`(mockedRepository.getDrawType(TestHelper.MockitoHelper.anyObject())).thenReturn(settings.drawType)
+        `when`(mockedRepository.getPoolDrawStrategy(TestHelper.MockitoHelper.anyObject())).thenReturn(settings.poolDrawStrategy)
 
         // Act
-        addCompetitionCategory.execute(competitionId, dto)
+        addCompetitionCategory.execute(competitionId, category)
 
         // Assert
+        val expected = CompetitionCategoryDTO(0, category, settings, gameSettings)
+        verify(mockedRepository, Mockito.times(1)).addCompetitionCategoryTo(competitionId, expected)
         verify(mockedRepository, Mockito.times(1)).addCompetitionCategoryTo(
             anyInt(),
             TestHelper.MockitoHelper.anyObject()
         )
-        verify(mockedRepository, Mockito.times(1)).addCompetitionCategoryTo(competitionId, dto)
     }
 }

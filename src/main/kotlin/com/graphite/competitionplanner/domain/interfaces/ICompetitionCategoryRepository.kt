@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.domain.interfaces
 
-import com.graphite.competitionplanner.domain.dto.CategoryDTO
-import com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO
+import com.graphite.competitionplanner.domain.dto.*
 
+// TODO: Split this
 interface ICompetitionCategoryRepository {
 
     /**
@@ -11,14 +11,14 @@ interface ICompetitionCategoryRepository {
     fun getCompetitionCategoriesIn(competitionId: Int): List<CompetitionCategoryDTO>
 
     /**
-     * Add a category to the given competition
+     * Add a new competition category to the given competition
      */
-    fun addCompetitionCategoryTo(competitionId: Int, dto: CategoryDTO)
+    fun addCompetitionCategoryTo(competitionId: Int, dto: CompetitionCategoryDTO): CompetitionCategoryDTO
 
     /**
-     * Delete the given competition category
+     * Delete the given competition category, as well as all associated general- and game settings
      */
-    fun deleteCompetitionCategoryFrom(competitionCategoryId: Int)
+    fun deleteCompetitionCategory(competitionCategoryId: Int)
 
     /**
      * Return a list of available categories
@@ -30,4 +30,14 @@ interface ICompetitionCategoryRepository {
      * is identical to one that already exist, then this function does nothing.
      */
     fun addAvailableCategory(dto: CategoryDTO)
+
+    /**
+     * Returns the draw type with the given name
+     */
+    fun getDrawType(name: String): DrawTypeDTO
+
+    /**
+     * Returns the pool draw type with the given name
+     */
+    fun getPoolDrawStrategy(name: String): PoolDrawStrategyDTO
 }
