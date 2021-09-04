@@ -3,18 +3,18 @@ package com.graphite.competitionplanner.service.competition
 import com.graphite.competitionplanner.api.CategoryStartTimeSpec
 import com.graphite.competitionplanner.api.competition.CategoryGameRulesSpec
 import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
+import com.graphite.competitionplanner.domain.dto.CategoryDTO
+import com.graphite.competitionplanner.domain.usecase.competition.AddCompetitionCategory
 import com.graphite.competitionplanner.repositories.ClubRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategory
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.service.CategoryService
-import com.graphite.competitionplanner.service.CompetitionCategoryDTO
 import com.graphite.competitionplanner.service.ScheduleService
 import org.springframework.context.annotation.Lazy
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
-import java.time.LocalDateTime
 
 @Service
 class CompetitionCategoryService(
@@ -22,7 +22,8 @@ class CompetitionCategoryService(
     val competitionCategoryRepository: CompetitionCategoryRepository,
     @Lazy val scheduleService: ScheduleService,
     val categoryService: CategoryService,
-    val registrationRepository: RegistrationRepository
+    val registrationRepository: RegistrationRepository,
+    val addCompetitionCategory: AddCompetitionCategory
 ) {
     /**
      * Cancel competition category. This is used when players have already
@@ -88,5 +89,12 @@ class CompetitionCategoryService(
 
     fun getByCompetitionCategoryId(competitionCategoryId: Int): CompetitionCategory {
         return competitionCategoryRepository.getById(competitionCategoryId)
+    }
+
+    fun addCompetitionCategory(
+        competitionId: Int,
+        category: CategoryDTO
+    ): com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO {
+        return addCompetitionCategory.execute(competitionId, category)
     }
 }
