@@ -258,7 +258,7 @@ class DrawService(
         if (groupMatches.isNotEmpty()) {
             val distinctGroups = groupMatches.map { it.groupOrRound }.distinct()
             for (group in distinctGroups) {
-                val matchesInGroup = mutableListOf<MatchDTO>()
+                val matchesInGroup = mutableListOf<MatchAndResultDTO>()
                 for (match in groupMatches) {
                     if (match.groupOrRound.equals(group)) {
                         matchesInGroup.add(match)
@@ -344,7 +344,7 @@ data class GroupDrawDTO(
 data class SingleGroupDTO(
     val groupName: String,
     val poolDraw: List<PoolDrawDTO>,
-    val matches: List<MatchDTO>,
+    val matches: List<MatchAndResultDTO>,
     val nrPlayers: Int
 )
 

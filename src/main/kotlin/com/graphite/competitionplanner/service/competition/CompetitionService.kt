@@ -113,7 +113,6 @@ fun recordsToDto(competition: CompetitionRecord, club: ClubRecord): CompetitionD
     )
 }
 
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CompetitionDTO(
     val id: Int,
     val name: String,
