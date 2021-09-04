@@ -17,6 +17,8 @@ class DataGenerator {
     private var clubId = 0
     private var matchId = 0
     private var competitionId = 0
+    private var competitionCategoryId = 0
+    private var categoryId = 0
 
     internal fun newClub(
         id: Int = clubId++,
@@ -42,7 +44,7 @@ class DataGenerator {
 
     internal fun newMatch(
         id: Int = matchId++,
-        competitionCategory: CompetitionCategory = CompetitionCategory(0),
+        competitionCategoryId: Int = 0,
         startTime: LocalDateTime = LocalDateTime.now(),
         endTime: LocalDateTime = LocalDateTime.now().plusMinutes(15),
         matchType: MatchType = MatchType("POOL"),
@@ -52,7 +54,7 @@ class DataGenerator {
         groupOrRound: String = "GROUP A"
     ) = Match(
         id,
-        competitionCategory,
+        competitionCategoryId,
         startTime,
         endTime,
         matchType,
@@ -94,6 +96,14 @@ class DataGenerator {
         welcomeText,
         startDate,
         endDate
+    )
+
+    internal fun newCategory(
+        id: Int = categoryId++,
+        name: String = "A Test Category"
+    ) = Category(
+        id,
+        name
     )
 
     fun newClubDTO(
@@ -212,6 +222,76 @@ class DataGenerator {
         organizingClubId,
         startDate,
         endDate
+    )
+
+    fun newCategoryDTO(
+        id: Int = 1,
+        name: String = "A Custom Category"
+    ) = CategoryDTO(
+        id,
+        name
+    )
+
+    fun newCompetitionCategoryDTO(
+        id: Int = 1,
+        category: CategoryDTO = newCategoryDTO(),
+        settings: GeneralSettingsDTO = newGeneralSettingsDTO(),
+        gameSettings: GameSettingsDTO = newGameSettingsDTO()
+    ) = CompetitionCategoryDTO(
+        id,
+        category,
+        settings,
+        gameSettings
+    )
+
+    fun newDrawTypeDTO(
+        id: Int = 3,
+        name: String = "POOL_AND_CUP"
+    ) = DrawTypeDTO(
+        id,
+        name
+    )
+
+    fun newPoolDrawStrategyDTO(
+        id: Int = 1,
+        name: String = "normal"
+    ) = PoolDrawStrategyDTO(
+        id,
+        name
+    )
+
+    fun newGameSettingsDTO(
+        numberOfSets: Int = 2,
+        winScore: Int = 11,
+        winMargin: Int = 3,
+        numberOfSetsFinal: Int = 5,
+        winScoreFinal: Int = 7,
+        winMarginFinal: Int = 3,
+        winScoreTiebreak: Int = 3,
+        winMarginTieBreak: Int = 3
+    ) = GameSettingsDTO(
+        numberOfSets,
+        winScore,
+        winMargin,
+        numberOfSetsFinal,
+        winScoreFinal,
+        winMarginFinal,
+        winScoreTiebreak,
+        winMarginTieBreak
+    )
+
+    fun newGeneralSettingsDTO(
+        cost: Float = 150f,
+        drawType: DrawTypeDTO = newDrawTypeDTO(),
+        playersPerGroup: Int = 4,
+        playersToPlayOff: Int = 2,
+        poolDrawStrategy: PoolDrawStrategyDTO = newPoolDrawStrategyDTO()
+    ) = GeneralSettingsDTO(
+        cost,
+        drawType,
+        playersPerGroup,
+        playersToPlayOff,
+        poolDrawStrategy
     )
 
 

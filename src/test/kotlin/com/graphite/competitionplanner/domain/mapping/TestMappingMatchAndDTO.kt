@@ -42,7 +42,7 @@ class TestMappingMatchAndDTO {
         Assertions.assertEquals(dto.id, match.id)
         Assertions.assertEquals(dto.startTime, match.startTime)
         Assertions.assertEquals(dto.endTime, match.endTime)
-        Assertions.assertEquals(dto.competitionCategoryId, match.competitionCategory.id)
+        Assertions.assertEquals(dto.competitionCategoryId, match.competitionCategoryId)
         Assertions.assertEquals(dto.matchType, match.type.value)
         Assertions.assertEquals(dto.firstPlayer.first(), match.firstTeamPlayerIds.first())
         Assertions.assertEquals(dto.secondPlayer.first(), match.secondTeamPlayerIds.first())
@@ -66,16 +66,15 @@ class TestMappingMatchAndDTO {
         p2.club = club
 
         val match = Match(
-            33, CompetitionCategory(33), LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), MatchType("PLAYOFF"),
+            33, 33, LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), MatchType("PLAYOFF"),
             listOf(p1.id), listOf(p2.id), 11, "Round of 64"
         )
-
         val dto = MatchDTO(match)
 
         Assertions.assertEquals(match.id, dto.id)
         Assertions.assertEquals(match.startTime, dto.startTime)
         Assertions.assertEquals(match.endTime, dto.endTime)
-        Assertions.assertEquals(match.competitionCategory.id, dto.competitionCategoryId)
+        Assertions.assertEquals(match.competitionCategoryId, dto.competitionCategoryId)
         Assertions.assertEquals(match.type.value, dto.matchType)
         Assertions.assertEquals(match.firstTeamPlayerIds.first(), dto.firstPlayer.first())
         Assertions.assertEquals(match.secondTeamPlayerIds.first(), dto.secondPlayer.first())

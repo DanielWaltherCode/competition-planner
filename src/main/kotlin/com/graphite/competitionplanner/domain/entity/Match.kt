@@ -5,7 +5,7 @@ import java.time.LocalDateTime
 
 internal data class Match(
     val id: Int,
-    val competitionCategory: CompetitionCategory,
+    val competitionCategoryId: Int,
     val startTime: LocalDateTime?,
     val endTime: LocalDateTime?,
     val type: MatchType,
@@ -23,7 +23,7 @@ internal data class Match(
 
     constructor(match: Match, startTime: LocalDateTime?, endTime: LocalDateTime?) : this(
         match.id,
-        match.competitionCategory,
+        match.competitionCategoryId,
         startTime,
         endTime,
         match.type,
@@ -35,7 +35,7 @@ internal data class Match(
 
     constructor(dto: MatchDTO) : this(
         dto.id,
-        CompetitionCategory(dto.competitionCategoryId),
+        dto.competitionCategoryId,
         dto.startTime,
         dto.endTime,
         MatchType(dto.matchType),
