@@ -7,10 +7,7 @@ import com.graphite.competitionplanner.domain.interfaces.IClubRepository
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.domain.interfaces.NotFoundException
 import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
@@ -82,19 +79,6 @@ class TestCompetitionCategoryRepository(
 
         // Clean up
         repository.delete(competitionCategory.id)
-    }
-
-    @Test
-    fun shouldBeAbleToGetDrawType() {
-        repository.getDrawType("POOL_ONLY")
-        repository.getDrawType("CUP_ONLY")
-        repository.getDrawType("POOL_AND_CUP")
-    }
-
-    @Test
-    fun shouldBeAbleToGetPoolDrawStrategyTypes() {
-        repository.getPoolDrawStrategy("normal")
-        repository.getPoolDrawStrategy("snake")
     }
 
     @Test

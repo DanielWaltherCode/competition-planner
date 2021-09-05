@@ -198,8 +198,6 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             .on(COMPETITION_CATEGORY.ID.eq(COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID))
             .join(COMPETITION_CATEGORY_GAME_RULES)
             .on(COMPETITION_CATEGORY.ID.eq(COMPETITION_CATEGORY_GAME_RULES.COMPETITION_CATEGORY_ID))
-            .join(DRAW_TYPE).on(COMPETITION_CATEGORY_METADATA.DRAW_TYPE_ID.eq(DRAW_TYPE.ID))
-            .join(POOL_DRAW_STRATEGY).on(COMPETITION_CATEGORY_METADATA.POOL_DRAW_STRATEGY_ID.eq(POOL_DRAW_STRATEGY.ID))
             .where(COMPETITION_CATEGORY.COMPETITION_ID.eq(competitionId))
         return records.map {
             CompetitionCategoryDTO(
@@ -210,16 +208,10 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
                 ),
                 GeneralSettingsDTO(
                     it.getValue(COMPETITION_CATEGORY_METADATA.COST),
-                    DrawTypeDTO(
-                        it.getValue(DRAW_TYPE.ID),
-                        it.getValue(DRAW_TYPE.NAME)
-                    ),
+                    DrawTypeDTO(it.getValue(COMPETITION_CATEGORY_METADATA.DRAW_TYPE)),
                     it.getValue(COMPETITION_CATEGORY_METADATA.NR_PLAYERS_PER_GROUP),
                     it.getValue(COMPETITION_CATEGORY_METADATA.NR_PLAYERS_TO_PLAYOFF),
-                    PoolDrawStrategyDTO(
-                        it.getValue(POOL_DRAW_STRATEGY.ID),
-                        it.getValue(POOL_DRAW_STRATEGY.NAME)
-                    )
+                    PoolDrawStrategyDTO(it.getValue(COMPETITION_CATEGORY_METADATA.POOL_DRAW_STRATEGY))
                 ),
                 GameSettingsDTO(
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.NR_SETS),
@@ -294,16 +286,6 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         TODO("Not yet implemented")
     }
 
-    override fun getDrawType(name: String): DrawTypeDTO {
-        val record = dslContext.selectFrom(DRAW_TYPE).fetch().first { it.name == name }
-        return record.toDto()
-    }
-
-    override fun getPoolDrawStrategy(name: String): PoolDrawStrategyDTO {
-        val record = dslContext.selectFrom(POOL_DRAW_STRATEGY).fetch().first { it.name == name }
-        return record.toDto()
-    }
-
     private fun GameSettingsDTO.toRecord(competitionCategoryId: Int): CompetitionCategoryGameRulesRecord {
         val record = dslContext.newRecord(COMPETITION_CATEGORY_GAME_RULES)
         record.let {
@@ -325,20 +307,12 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         record.let {
             it.competitionCategoryId = competitionCategoryId
             it.cost = this.cost
-            it.drawTypeId = this.drawType.id
+            it.drawType = this.drawType.name
             it.nrPlayersPerGroup = this.playersPerGroup
             it.nrPlayersToPlayoff = this.playersToPlayOff
-            it.poolDrawStrategyId = this.poolDrawStrategy.id
+            it.poolDrawStrategy = this.poolDrawStrategy.name
         }
         return record
-    }
-
-    private fun PoolDrawStrategyRecord.toDto(): PoolDrawStrategyDTO {
-        return PoolDrawStrategyDTO(this.id, this.name)
-    }
-
-    private fun DrawTypeRecord.toDto(): DrawTypeDTO {
-        return DrawTypeDTO(this.id, this.name)
     }
 
     private fun CategoryRecord.toDto(): CategoryDTO {
