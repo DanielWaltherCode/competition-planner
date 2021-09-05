@@ -8,10 +8,9 @@ import com.graphite.competitionplanner.repositories.competition.CompetitionDrawR
 import com.graphite.competitionplanner.service.CategoryService
 import com.graphite.competitionplanner.service.MatchService
 import com.graphite.competitionplanner.service.RegistrationService
-import com.graphite.competitionplanner.service.RegistrationSinglesDTO
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
-import com.graphite.competitionplanner.service.competition.DrawService
-import com.graphite.competitionplanner.service.competition.Round
+import com.graphite.competitionplanner.service.draw.DrawService
+import com.graphite.competitionplanner.service.draw.Round
 import com.graphite.competitionplanner.util.TestUtil
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -19,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import java.time.LocalDateTime
 
 @SpringBootTest
 class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
@@ -42,10 +40,10 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
         val categoryMetadata = categoryService.getCategoryMetadata(competitionCategoryId)
         val categoryMetadataSpec = CategoryMetadataSpec(
             cost = categoryMetadata.cost,
-            drawTypeId = categoryMetadata.drawType.id,
+            drawType = categoryMetadata.drawType,
             nrPlayersPerGroup = 3,
             nrPlayersToPlayoff = 1,
-            poolDrawStrategyId = categoryMetadata.poolDrawStrategyId
+            poolDrawStrategy = categoryMetadata.poolDrawStrategy
         )
 
         categoryService.updateCategoryMetadata(competitionCategoryId, categoryMetadata.id, categoryMetadataSpec)

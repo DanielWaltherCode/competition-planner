@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("category")
 class CategoryApi(val categoryRepository: CategoryRepository) {
 
+    // Returns a list of all possible categories
     @GetMapping
     fun getCategories(): List<CategoryDTO> {
         val categoryRecords = categoryRepository.getCategories()

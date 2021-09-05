@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.service.competition
+package com.graphite.competitionplanner.service.draw
 
 import org.springframework.stereotype.Component
 

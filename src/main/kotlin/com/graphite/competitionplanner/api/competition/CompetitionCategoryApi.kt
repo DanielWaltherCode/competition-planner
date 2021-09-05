@@ -1,10 +1,11 @@
 package com.graphite.competitionplanner.api.competition
 
-import com.graphite.competitionplanner.repositories.DrawStrategyRepository
-import com.graphite.competitionplanner.repositories.DrawTypeRepository
 import com.graphite.competitionplanner.service.*
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
 import com.graphite.competitionplanner.service.competition.CompetitionService
+import com.graphite.competitionplanner.service.draw.DrawStrategy
+import com.graphite.competitionplanner.service.draw.DrawType
+import com.graphite.competitionplanner.service.draw.Round
 import org.springframework.web.bind.annotation.*
 
 /* Handle categories in competitions */
@@ -14,20 +15,19 @@ class CompetitionCategoryApi(
     val competitionService: CompetitionService,
     val competitionCategoryService: CompetitionCategoryService
 ) {
-    // Handle categories in competitions
+
     @PostMapping("/{categoryId}")
-    fun addCategoryToCompetition(@PathVariable competitionId: Int, @PathVariable categoryId: Int): CompetitionAndCategoriesDTO {
+    fun addCategoryToCompetition(@PathVariable competitionId: Int, @PathVariable categoryId: Int): CompetitionCategoryDTO {
         // TODO: We need to guard against a user adding same category to same competition twice to avoid
         // TODO: foreign key crash in database
-        competitionCategoryService.addCompetitionCategory(
+        return competitionCategoryService.addCompetitionCategory(
             competitionId,
             categoryId
         )
-        return competitionService.getCategoriesInCompetition(competitionId);
     }
 
     @GetMapping
-    fun getCompetitionCategories(@PathVariable competitionId: Int): CompetitionAndCategoriesDTO {
+    fun getCompetitionCategories(@PathVariable competitionId: Int): List<CompetitionCategoryDTO> {
         return competitionService.getCategoriesInCompetition(competitionId)
     }
 
@@ -45,9 +45,7 @@ class CompetitionCategoryApi(
 @RestController
 @RequestMapping("/competition/{competitionId}/category/metadata")
 class CategoryMetadataApi(
-    val categoryService: CategoryService,
-    val drawTypeRepository: DrawTypeRepository,
-    val drawStrategyRepository: DrawStrategyRepository
+    val categoryService: CategoryService
 ) {
 
     @GetMapping("/{competitionCategoryId}")
@@ -78,11 +76,9 @@ class CategoryMetadataApi(
 
     @GetMapping("/possible-values")
     fun getPossibleCategoryMetadataValues(): CategoryMetadataPossibleValuesDTO {
-        val drawTypes = drawTypeRepository.getAll()
-        val drawStrategies = drawStrategyRepository.getAll()
         return CategoryMetadataPossibleValuesDTO(
-            drawTypes.map { DrawTypeDTO(it.id, it.name) },
-            drawStrategies.map { DrawStrategyDTO(it.id, it.name) }
+            DrawType.values().asList(),
+            DrawStrategy.values().asList()
         )
     }
 }
@@ -118,34 +114,26 @@ data class CategoryGameRulesApi(val categoryService: CategoryService) {
 
 data class CategoryMetadataSpec(
     val cost: Float,
-    val drawTypeId: Int?,
+    val drawType: DrawType,
     val nrPlayersPerGroup: Int,
     val nrPlayersToPlayoff: Int,
-    val poolDrawStrategyId: Int?
+    val poolDrawStrategy: DrawStrategy
 )
 
 data class CategoryGameRulesSpec(
     val nrSets: Int,
     val winScore: Int,
     val winMargin: Int,
+    val differentNumberOfGamesFromRound: Round,
     val nrSetsFinal: Int,
     val winScoreFinal: Int,
     val winMarginFinal: Int,
+    val tiebreakInFinalGame: Boolean,
     val winScoreTiebreak: Int?,
-    val winMarginTieBreak: Int?
-)
-
-data class DrawTypeDTO(
-    val id: Int,
-    val name: String
-)
-
-data class DrawStrategyDTO(
-    val id: Int,
-    val name: String
+    val winMarginTiebreak: Int?
 )
 
 data class CategoryMetadataPossibleValuesDTO(
-    val drawTypes: List<DrawTypeDTO>,
-    val drawStrategies: List<DrawStrategyDTO>
+    val drawTypes: List<DrawType>,
+    val drawStrategies: List<DrawStrategy>
 )

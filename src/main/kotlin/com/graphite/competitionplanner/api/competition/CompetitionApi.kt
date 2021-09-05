@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.service.competition.CompetitionDTO
 import com.graphite.competitionplanner.service.competition.CompetitionDays
 import com.graphite.competitionplanner.service.competition.CompetitionService
+import com.graphite.competitionplanner.service.draw.Round
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
@@ -44,6 +45,12 @@ class CompetitionApi(
     fun getDaysInCompetition(@PathVariable competitionId: Int): CompetitionDays {
         val dates = competitionService.getDaysOfCompetition(competitionId)
         return CompetitionDays(dates)
+    }
+
+    // Get possible rounds in playoff
+    @GetMapping("/rounds")
+    fun getPossibleRounds(): Array<Round> {
+        return Round.values()
     }
 }
 

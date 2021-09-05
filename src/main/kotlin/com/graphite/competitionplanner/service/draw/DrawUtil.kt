@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.service.competition
+package com.graphite.competitionplanner.service.draw
 
 import com.graphite.competitionplanner.repositories.MatchRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionDrawRepository

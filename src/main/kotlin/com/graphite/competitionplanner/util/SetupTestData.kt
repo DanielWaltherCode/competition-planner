@@ -406,109 +406,109 @@ class EventListener(
         val umePlayers = playerService.getPlayersByClubId(util.getClubIdOrDefault("Umeå IK"))
         val otherPlayers = playerService.getPlayersByClubId(util.getClubIdOrDefault("Övriga"))
         val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
-        val competitionCategories = competitionService.getCategoriesInCompetition(lugiCompetitionId).categories
+        val competitionCategories = competitionService.getCategoriesInCompetition(lugiCompetitionId)
 
         // Have "Herrar 1" in Lugi as main competition category to play around with
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 lugiPlayers[0].id,
-                competitionCategories[0].competitionCategoryId
+                competitionCategories[0].id
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 lugiPlayers[0].id,
-                competitionCategories[1].competitionCategoryId
+                competitionCategories[1].id
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 lugiPlayers[1].id,
-                competitionCategories[0].competitionCategoryId
+                competitionCategories[0].id
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 umePlayers[0].id,
-                competitionCategories[1].competitionCategoryId
+                competitionCategories[1].id
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 otherPlayers[0].id,
-                competitionCategories[1].competitionCategoryId
+                competitionCategories[1].id
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 lugiPlayers[2].id,
-                competitionCategories[0].competitionCategoryId
+                competitionCategories[0].id
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 lugiPlayers[3].id,
-                competitionCategories[0].competitionCategoryId
+                competitionCategories[0].id
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 lugiPlayers[4].id,
-                competitionCategories[0].competitionCategoryId
+                competitionCategories[0].id
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 lugiPlayers[5].id,
-                competitionCategories[0].competitionCategoryId
+                competitionCategories[0].id
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 lugiPlayers[6].id,
-                competitionCategories[0].competitionCategoryId
+                competitionCategories[0].id
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 lugiPlayers[7].id,
-                competitionCategories[0].competitionCategoryId
+                competitionCategories[0].id
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 umePlayers[0].id,
-                competitionCategories[0].competitionCategoryId
+                competitionCategories[0].id
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 umePlayers[1].id,
-                competitionCategories[0].competitionCategoryId
+                competitionCategories[0].id
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 umePlayers[2].id,
-                competitionCategories[0].competitionCategoryId
+                competitionCategories[0].id
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 umePlayers[3].id,
-                competitionCategories[0].competitionCategoryId
+                competitionCategories[0].id
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 umePlayers[4].id,
-                competitionCategories[0].competitionCategoryId
+                competitionCategories[0].id
             )
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 umePlayers[5].id,
-                competitionCategories[0].competitionCategoryId
+                competitionCategories[0].id
             )
         )
     }

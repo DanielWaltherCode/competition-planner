@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.repositories.competition
 
 import com.graphite.competitionplanner.Tables.POOL_DRAW
-import com.graphite.competitionplanner.service.competition.PoolDrawHelper
+import com.graphite.competitionplanner.service.draw.PoolDrawHelper
 import com.graphite.competitionplanner.tables.records.PoolDrawRecord
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository

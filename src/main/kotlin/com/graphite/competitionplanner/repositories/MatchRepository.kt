@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.repositories
 
 import com.graphite.competitionplanner.Tables.*
-import com.graphite.competitionplanner.service.competition.MatchSpec
-import com.graphite.competitionplanner.service.competition.MatchType
+import com.graphite.competitionplanner.service.draw.MatchSpec
+import com.graphite.competitionplanner.service.draw.MatchType
 import com.graphite.competitionplanner.tables.records.MatchRecord
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository

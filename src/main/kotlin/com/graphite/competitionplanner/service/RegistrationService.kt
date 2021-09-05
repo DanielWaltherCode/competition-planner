@@ -181,8 +181,8 @@ data class CategoryRegistrations(
 )
 
 data class CompetitionCategoryDTO(
-    val competitionCategoryId: Int,
-    val categoryName: String
+    val id: Int,
+    val name: String
 )
 
 enum class SearchType {

@@ -6,6 +6,8 @@ import com.graphite.competitionplanner.service.CategoryGameRulesDTO
 import com.graphite.competitionplanner.service.CategoryMetadataDTO
 import com.graphite.competitionplanner.service.CategoryService
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
+import com.graphite.competitionplanner.service.draw.DrawStrategy
+import com.graphite.competitionplanner.service.draw.DrawType
 import com.graphite.competitionplanner.util.TestUtil
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -48,10 +50,10 @@ class TestCategoryMetadata(
         val playersPerGroup = 5
         val categoryWithNewValues = CategoryMetadataSpec(
             15.55f,
-            3,
+            DrawType.POOL_ONLY,
             playersPerGroup,
             2,
-            1
+            DrawStrategy.NORMAL
         )
 
         val updatedCategory = categoryService.updateCategoryMetadata(

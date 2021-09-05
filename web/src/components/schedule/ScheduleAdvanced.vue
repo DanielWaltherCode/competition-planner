@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <main>
+    <h1 class="p-4">{{ $t("schedule.main.heading") }}</h1>
     <div class="container-fluid">
       <div class="row gx-5">
 
@@ -14,14 +15,14 @@
             </li>
           </ul>
         </div>
-        <div id="main" class="col-md-8 mx-auto">
-          <h1> {{ $t("schedule.advanced.heading") }}</h1>
+        <div id="main" class="col-md-9 mx-auto px-0">
           <!-- Handle pauses -->
-          <div id="pauses" class="m-auto mt-5">
+          <div id="pauses" class="blue-section p-4">
+            <h3 class="p-4"> {{ $t("schedule.advanced.heading") }}</h3>
             <h4>{{ $t("schedule.advanced.pauseHeading") }}</h4>
             <p>{{ $t("schedule.advanced.pauseHelper") }}</p>
 
-            <div class="row">
+            <div class="row d-flex align-items-end">
               <div class="col-md-4">
 
                 <label for="group-pause" class="form-label">{{ $t("schedule.advanced.pauseGroup") }}</label>
@@ -34,7 +35,6 @@
               </div>
 
               <div class="col-md-4">
-
                 <label for="playoff-pause" class="form-label">{{ $t("schedule.advanced.pausePlayoff") }}</label>
                 <select id="playoff-pause" class="form-control"
                         v-on:change="setPause" v-model="scheduleMetadata.pauseBetweenPlayoffMatches">
@@ -57,17 +57,21 @@
               </div>
             </div>
           </div>
-          <div id="available-tables" class="mt-4 pt-3 border-top border-dark w-100">
-            <h2>{{ $t("schedule.advanced.availableTables.heading") }}</h2>
-            <div>
-              <h4 class="text-lg-start fw-bolder">{{ $t("schedule.advanced.availableTables.daySelection") }}</h4>
+          <div id="available-tables" class="p-4">
+            <h4 class="text-start">{{ $t("schedule.advanced.availableTables.heading") }}</h4>
+            <p class="text-start">{{ $t("schedule.advanced.availableTables.infoText") }}</p>
+            <p></p>
+            <div class="mt-4">
+              <h5 class="text-start">{{ $t("schedule.advanced.availableTables.daySelection") }}</h5>
               <div class="d-flex mb-4">
                 <p class="d-inline-flex mx-3 days" v-for="day in competitionDays"
                    :class="selectedDay === day ? 'active' : 'none' " :key="day" @click="setDay(day)">
                   {{ day }}</p>
               </div>
             </div>
-            <div>
+            <div class="row">
+              <div class="col-md-10 mx-auto">
+
               <table class="table table-bordered">
                 <thead>
                 <tr>
@@ -96,11 +100,12 @@
                 </tbody>
               </table>
             </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script>
@@ -178,6 +183,12 @@ export default {
 </script>
 
 <style scoped>
+
+h1 {
+  background-color: var(--clr-primary-100);
+  margin-bottom: 0;
+}
+
 #pauses {
   text-align: left;
 }
