@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.domain.dto.ClubDTO
 import com.graphite.competitionplanner.domain.dto.CompetitionDTO
 import com.graphite.competitionplanner.domain.interfaces.IClubRepository
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
+import com.graphite.competitionplanner.domain.interfaces.NotFoundException
 import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -18,7 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest
 class TestCompetitionCategoryRepository(
     @Autowired val competitionRepository: CompetitionRepository,
     @Autowired val clubRepository: IClubRepository,
-    @Autowired val competitionCategoryRepository: ICompetitionCategoryRepository
+    @Autowired val repository: ICompetitionCategoryRepository
 ) {
     private val dataGenerator = DataGenerator()
     lateinit var club: ClubDTO
@@ -40,7 +41,7 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldNotReturnAnyCategories() {
         // Act
-        val categories = competitionCategoryRepository.getCompetitionCategoriesIn(competition.id)
+        val categories = repository.getAll(competition.id)
 
         // Assert
         Assertions.assertEquals(0, categories.size)
@@ -49,29 +50,29 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldBeAbleToStoreCompetitionCategory() {
         // Setup
-        val category = competitionCategoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }
+        val category = repository.getAvailableCategories().find { it.name == "Herrar 1" }
         val dto = dataGenerator.newCompetitionCategoryDTO(category = category!!)
-        val addedCompetitionCategory = competitionCategoryRepository.addCompetitionCategoryTo(competition.id, dto)
+        val addedCompetitionCategory = repository.store(competition.id, dto)
 
         // Act
-        val categories = competitionCategoryRepository.getCompetitionCategoriesIn(competition.id)
+        val categories = repository.getAll(competition.id)
         val actualCategory = categories.find { it.id == addedCompetitionCategory.id }
 
         // Assert
         Assertions.assertEquals(addedCompetitionCategory, actualCategory)
 
         // Clean up
-        competitionCategoryRepository.deleteCompetitionCategory(addedCompetitionCategory.id)
+        repository.delete(addedCompetitionCategory.id)
     }
 
     @Test
     fun shouldReturnNewlyStoredCompetitionCategory() {
         // Setup
-        val category = competitionCategoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }
+        val category = repository.getAvailableCategories().find { it.name == "Herrar 1" }
         val dto = dataGenerator.newCompetitionCategoryDTO(category = category!!)
 
         // Act
-        val competitionCategory = competitionCategoryRepository.addCompetitionCategoryTo(competition.id, dto)
+        val competitionCategory = repository.store(competition.id, dto)
 
         // Assert
         Assertions.assertTrue(competitionCategory.id > 0)
@@ -80,25 +81,63 @@ class TestCompetitionCategoryRepository(
         Assertions.assertEquals(dto.gameSettings, competitionCategory.gameSettings)
 
         // Clean up
-        competitionCategoryRepository.deleteCompetitionCategory(competitionCategory.id)
+        repository.delete(competitionCategory.id)
     }
 
     @Test
     fun shouldBeAbleToGetDrawType() {
-        competitionCategoryRepository.getDrawType("POOL_ONLY")
-        competitionCategoryRepository.getDrawType("CUP_ONLY")
-        competitionCategoryRepository.getDrawType("POOL_AND_CUP")
+        repository.getDrawType("POOL_ONLY")
+        repository.getDrawType("CUP_ONLY")
+        repository.getDrawType("POOL_AND_CUP")
     }
 
     @Test
     fun shouldBeAbleToGetPoolDrawStrategyTypes() {
-        competitionCategoryRepository.getPoolDrawStrategy("normal")
-        competitionCategoryRepository.getPoolDrawStrategy("snake")
+        repository.getPoolDrawStrategy("normal")
+        repository.getPoolDrawStrategy("snake")
+    }
+
+    @Test
+    fun shouldThrowExceptionWhenDeletingCompetitionCategoryThatDoesNotExist() {
+        Assertions.assertThrows(NotFoundException::class.java) {
+            repository.delete(-1)
+        }
+    }
+
+    @Test
+    fun shouldThrowExceptionWhenTryingToUpdateCompetitionCategoryThatDoesNotExist() {
+        Assertions.assertThrows(NotFoundException::class.java) {
+            repository.update(dataGenerator.newCompetitionCategoryDTO(id = -1))
+        }
+    }
+
+    @Test
+    fun shouldBeAbleToUpdateCompetitionCategory() {
+        // Setup
+        val category = repository.getAvailableCategories().find { it.name == "Herrar 1" }
+        val dto = dataGenerator.newCompetitionCategoryDTO(category = category!!)
+        val original = repository.store(competition.id, dto)
+        val updateDto = dataGenerator.newCompetitionCategoryDTO(
+            id = original.id,
+            settings = dataGenerator.newGeneralSettingsDTO(cost = 110f, playersToPlayOff = 1),
+            gameSettings = dataGenerator.newGameSettingsDTO(numberOfSets = 4, winScore = 8, numberOfSetsFinal = 11)
+        )
+
+        // Act
+        repository.update(updateDto)
+        val updated = repository.getAll(competition.id).filter { it.id == original.id }.first()
+
+        // Assert
+        Assertions.assertEquals(updateDto.settings, updated.settings)
+        Assertions.assertEquals(updateDto.gameSettings, updated.gameSettings)
+
+        // Clean up
+        repository.delete(updated.id)
     }
 
     @Test
     fun shouldGetAllAvailableCategories() {
-        val availableCategories = competitionCategoryRepository.getAvailableCategories()
+        val availableCategories = repository.getAvailableCategories()
 
         Assertions.assertNotNull(availableCategories.find { it.name == "Herrar 1" })
         Assertions.assertNotNull(availableCategories.find { it.name == "Herrar 2" })

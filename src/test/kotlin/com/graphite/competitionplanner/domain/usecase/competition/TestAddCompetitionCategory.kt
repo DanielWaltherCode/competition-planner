@@ -50,7 +50,7 @@ class TestAddCompetitionCategory {
         val dto = dataGenerator.newCategoryDTO(id = 0, name = "HERRDUBBEL")
         val competitionId = 1
         `when`(mockedRepository.getAvailableCategories()).thenReturn(listOf(dto))
-        `when`(mockedRepository.getCompetitionCategoriesIn(competitionId))
+        `when`(mockedRepository.getAll(competitionId))
             .thenReturn(
                 listOf(dataGenerator.newCompetitionCategoryDTO(category = dto))
             )
@@ -73,7 +73,7 @@ class TestAddCompetitionCategory {
 
         val competitionId = 1
         `when`(mockedRepository.getAvailableCategories()).thenReturn(listOf(category))
-        `when`(mockedRepository.getCompetitionCategoriesIn(competitionId)).thenReturn(emptyList())
+        `when`(mockedRepository.getAll(competitionId)).thenReturn(emptyList())
         `when`(mockedRepository.getDrawType(TestHelper.MockitoHelper.anyObject())).thenReturn(settings.drawType)
         `when`(mockedRepository.getPoolDrawStrategy(TestHelper.MockitoHelper.anyObject())).thenReturn(settings.poolDrawStrategy)
 
@@ -82,8 +82,8 @@ class TestAddCompetitionCategory {
 
         // Assert
         val expected = CompetitionCategoryDTO(0, category, settings, gameSettings)
-        verify(mockedRepository, Mockito.times(1)).addCompetitionCategoryTo(competitionId, expected)
-        verify(mockedRepository, Mockito.times(1)).addCompetitionCategoryTo(
+        verify(mockedRepository, Mockito.times(1)).store(competitionId, expected)
+        verify(mockedRepository, Mockito.times(1)).store(
             anyInt(),
             TestHelper.MockitoHelper.anyObject()
         )

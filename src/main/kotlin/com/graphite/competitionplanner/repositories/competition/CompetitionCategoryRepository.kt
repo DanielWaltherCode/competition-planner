@@ -4,11 +4,9 @@ import com.graphite.competitionplanner.Tables
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.domain.dto.*
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
+import com.graphite.competitionplanner.domain.interfaces.NotFoundException
 import com.graphite.competitionplanner.tables.Competition
-import com.graphite.competitionplanner.tables.records.CategoryRecord
-import com.graphite.competitionplanner.tables.records.CompetitionCategoryRecord
-import com.graphite.competitionplanner.tables.records.DrawTypeRecord
-import com.graphite.competitionplanner.tables.records.PoolDrawStrategyRecord
+import com.graphite.competitionplanner.tables.records.*
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.springframework.stereotype.Repository
@@ -192,7 +190,7 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
 
     fun clearTable() = dslContext.deleteFrom(COMPETITION_CATEGORY).execute()
 
-    override fun getCompetitionCategoriesIn(competitionId: Int): List<CompetitionCategoryDTO> {
+    override fun getAll(competitionId: Int): List<CompetitionCategoryDTO> {
         val records = dslContext.select()
             .from(COMPETITION_CATEGORY)
             .join(CATEGORY).on(COMPETITION_CATEGORY.CATEGORY.eq(CATEGORY.ID))
@@ -237,46 +235,55 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         }
     }
 
-    override fun addCompetitionCategoryTo(competitionId: Int, dto: CompetitionCategoryDTO): CompetitionCategoryDTO {
+    override fun store(competitionId: Int, dto: CompetitionCategoryDTO): CompetitionCategoryDTO {
         val competitionCategoryRecord = dslContext.newRecord(COMPETITION_CATEGORY)
         competitionCategoryRecord.competitionId = competitionId
         competitionCategoryRecord.category = dto.category.id
         competitionCategoryRecord.store()
 
-        val gameSettingsRecord = dslContext.newRecord(COMPETITION_CATEGORY_GAME_RULES)
-        gameSettingsRecord.competitionCategoryId = competitionCategoryRecord.id
-        gameSettingsRecord.nrSets = dto.gameSettings.numberOfSets
-        gameSettingsRecord.winScore = dto.gameSettings.winScore
-        gameSettingsRecord.winMargin = dto.gameSettings.winMargin
-        gameSettingsRecord.nrSetsFinal = dto.gameSettings.numberOfSetsFinal
-        gameSettingsRecord.winScoreFinal = dto.gameSettings.winScoreFinal
-        gameSettingsRecord.winMarginFinal = dto.gameSettings.winMarginFinal
-        gameSettingsRecord.winScoreTiebreak = dto.gameSettings.winScoreTiebreak
-        gameSettingsRecord.winMarginTieBreak = dto.gameSettings.winMarginTieBreak
-        gameSettingsRecord.store()
-
-        val generalSettingRecord = dslContext.newRecord(COMPETITION_CATEGORY_METADATA)
-        generalSettingRecord.competitionCategoryId = competitionCategoryRecord.id
-        generalSettingRecord.cost = dto.settings.cost
-        generalSettingRecord.drawTypeId = dto.settings.drawType.id
-        generalSettingRecord.nrPlayersPerGroup = dto.settings.playersPerGroup
-        generalSettingRecord.nrPlayersToPlayoff = dto.settings.playersToPlayOff
-        generalSettingRecord.poolDrawStrategyId = dto.settings.poolDrawStrategy.id
-        generalSettingRecord.store()
+        dto.gameSettings.toRecord(competitionCategoryRecord.id).store()
+        dto.settings.toRecord(competitionCategoryRecord.id).store()
 
         return CompetitionCategoryDTO(competitionCategoryRecord.id, dto)
     }
 
-    override fun deleteCompetitionCategory(competitionCategoryId: Int) {
+    @Throws(NotFoundException::class)
+    override fun delete(competitionCategoryId: Int) {
         dslContext.delete(COMPETITION_CATEGORY_METADATA)
             .where(COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
             .execute()
         dslContext.delete(COMPETITION_CATEGORY_GAME_RULES)
             .where(COMPETITION_CATEGORY_GAME_RULES.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
             .execute()
-        dslContext.deleteFrom(COMPETITION_CATEGORY)
+        val deletedRows = dslContext.deleteFrom(COMPETITION_CATEGORY)
             .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
             .execute()
+        if (deletedRows < 1) {
+            throw NotFoundException("Could not delete. Competition category with id $competitionCategoryId not found.")
+        }
+    }
+
+    @Throws(NotFoundException::class)
+    override fun update(dto: CompetitionCategoryDTO) {
+        dslContext.selectFrom(COMPETITION_CATEGORY).where(COMPETITION_CATEGORY.ID.eq(dto.id)).fetchOne()
+            ?: throw NotFoundException("Could not update. Competition category with id ${dto.id} not found.")
+
+        val gameSettingsRecord = dto.gameSettings.toRecord(dto.id)
+        gameSettingsRecord.id = dslContext.selectFrom(COMPETITION_CATEGORY_GAME_RULES).where(
+            COMPETITION_CATEGORY_GAME_RULES.COMPETITION_CATEGORY_ID.eq(dto.id)
+        ).fetchOne().get(
+            COMPETITION_CATEGORY_METADATA.ID
+        )
+
+        val settingRecord = dto.settings.toRecord(dto.id)
+        settingRecord.id = dslContext.selectFrom(COMPETITION_CATEGORY_METADATA).where(
+            COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID.eq(dto.id)
+        ).fetchOne().get(
+            COMPETITION_CATEGORY_METADATA.ID
+        )
+
+        gameSettingsRecord.update()
+        settingRecord.update()
     }
 
     override fun getAvailableCategories(): List<CategoryDTO> {
@@ -295,6 +302,35 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
     override fun getPoolDrawStrategy(name: String): PoolDrawStrategyDTO {
         val record = dslContext.selectFrom(POOL_DRAW_STRATEGY).fetch().first { it.name == name }
         return record.toDto()
+    }
+
+    private fun GameSettingsDTO.toRecord(competitionCategoryId: Int): CompetitionCategoryGameRulesRecord {
+        val record = dslContext.newRecord(COMPETITION_CATEGORY_GAME_RULES)
+        record.let {
+            it.competitionCategoryId = competitionCategoryId
+            it.nrSets = this.numberOfSets
+            it.winScore = this.winScore
+            it.winMargin = this.winMargin
+            it.nrSetsFinal = this.numberOfSetsFinal
+            it.winScoreFinal = this.winScoreFinal
+            it.winMarginFinal = this.winMarginFinal
+            it.winScoreTiebreak = this.winScoreTiebreak
+            it.winMarginTieBreak = this.winMarginTieBreak
+        }
+        return record
+    }
+
+    private fun GeneralSettingsDTO.toRecord(competitionCategoryId: Int): CompetitionCategoryMetadataRecord {
+        val record = dslContext.newRecord(COMPETITION_CATEGORY_METADATA)
+        record.let {
+            it.competitionCategoryId = competitionCategoryId
+            it.cost = this.cost
+            it.drawTypeId = this.drawType.id
+            it.nrPlayersPerGroup = this.playersPerGroup
+            it.nrPlayersToPlayoff = this.playersToPlayOff
+            it.poolDrawStrategyId = this.poolDrawStrategy.id
+        }
+        return record
     }
 
     private fun PoolDrawStrategyRecord.toDto(): PoolDrawStrategyDTO {
