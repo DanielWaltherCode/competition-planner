@@ -41,10 +41,10 @@ class AddCompetitionCategory(
     private fun getDefaultGeneralSettings(): GeneralSettings {
         return GeneralSettings(
             150f,
-            DrawType(repository.getDrawType("POOL")),
+            DrawType.POOL_ONLY,
             4,
             2,
-            PoolDrawStrategy(repository.getPoolDrawStrategy("NORMAL"))
+            PoolDrawStrategy.NORMAL
         )
     }
 

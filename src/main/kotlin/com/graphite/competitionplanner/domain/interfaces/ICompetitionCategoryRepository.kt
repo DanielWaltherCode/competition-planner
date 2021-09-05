@@ -54,20 +54,4 @@ interface ICompetitionCategoryRepository {
      * @param dto A new category to be added as part of available categories that can be used in a competition
      */
     fun addAvailableCategory(dto: CategoryDTO)
-
-    /**
-     * Returns the draw type with the given name
-     *
-     * @param name - Name of the draw type
-     * @return The draw type object with its unique id
-     */
-    fun getDrawType(name: String): DrawTypeDTO
-
-    /**
-     * Returns the pool draw type with the given name
-     *
-     * @param name - Name of the pool draw type
-     * @return The pool draw type object with its unique id
-     */
-    fun getPoolDrawStrategy(name: String): PoolDrawStrategyDTO
 }

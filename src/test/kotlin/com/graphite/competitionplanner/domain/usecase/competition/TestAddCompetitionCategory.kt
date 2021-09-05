@@ -74,8 +74,6 @@ class TestAddCompetitionCategory {
         val competitionId = 1
         `when`(mockedRepository.getAvailableCategories()).thenReturn(listOf(category))
         `when`(mockedRepository.getAll(competitionId)).thenReturn(emptyList())
-        `when`(mockedRepository.getDrawType(TestHelper.MockitoHelper.anyObject())).thenReturn(settings.drawType)
-        `when`(mockedRepository.getPoolDrawStrategy(TestHelper.MockitoHelper.anyObject())).thenReturn(settings.poolDrawStrategy)
 
         // Act
         addCompetitionCategory.execute(competitionId, category)

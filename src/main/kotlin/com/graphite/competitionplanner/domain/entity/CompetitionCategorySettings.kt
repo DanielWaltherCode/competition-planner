@@ -21,10 +21,10 @@ class GeneralSettings(
 
     constructor(dto: GeneralSettingsDTO) : this(
         dto.cost,
-        DrawType(dto.drawType),
+        DrawType.valueOf(dto.drawType.name),
         dto.playersPerGroup,
         dto.playersToPlayOff,
-        PoolDrawStrategy(dto.poolDrawStrategy)
+        PoolDrawStrategy.valueOf(dto.poolDrawStrategy.name)
     )
 }
 

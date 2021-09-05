@@ -10,6 +10,7 @@ import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategory
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.service.CategoryService
+import com.graphite.competitionplanner.service.CompetitionCategoryDTO
 import com.graphite.competitionplanner.service.ScheduleService
 import com.graphite.competitionplanner.service.draw.DrawStrategy
 import com.graphite.competitionplanner.service.draw.DrawType
