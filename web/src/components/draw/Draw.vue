@@ -131,7 +131,7 @@ export default {
   },
   mounted() {
     CategoryService.getCompetitionCategories(this.competition.id).then(res => {
-      this.competitionCategories = res.data.categories
+      this.competitionCategories = res.data
       if (this.competitionCategories.length > 0) {
         this.makeChoice(this.competitionCategories[0])
       }
