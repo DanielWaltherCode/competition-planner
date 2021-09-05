@@ -3,7 +3,6 @@
     <main>
       <!-- ======= Top section (called "hero" for some reason) ======= -->
       <section id="hero" class="hero d-flex align-items-center">
-
         <div class="container">
           <div class="row">
             <div class="col-lg-6 d-flex flex-column justify-content-center">
@@ -30,11 +29,11 @@
                 <p v-if="loginFailed" class="text-danger">{{ getString("landing.heading.loginFailed") }}</p>
               </div>
               <div v-if="isLoggedIn">
-                <!-- If logged in, either choose an existing competition or set up a new -->
+                <!-- If logged in, either choose an existing competition or set up a new one -->
                 <br>
                 <div>
-                  <div class="form-group ">
-                    <label for="competition-selection"> {{ getString("landing.heading.competitionChoice") }} </label>
+                  <div class="form-group">
+                    <label class="form-label d-flex justify-content-start ms-1" for="competition-selection"> {{ getString("landing.heading.competitionChoice") }} </label>
                     <select name="competition-selection" id="competition-selection" class="form-control"
                             v-on:change="setCompetition" v-model="selectedCompetition">
                       <option value="none"> {{ getString("landing.heading.noCompetitionSelected") }}</option>
@@ -44,15 +43,20 @@
                     </select>
                   </div>
                 </div>
-                <div>
-                  <br>
-                  <p class="new-competition">{{getString("landing.heading.newCompetition")}}</p>
+                <div class="d-flex justify-content-end">
                   <button
-                      class="btn-get-started d-inline-flex align-items-center justify-content-center align-self-center"
+                      class="btn btn-info mt-5"
                       @click="$router.push('/new-competition')">
                     <span>{{ getString("header.handle.newCompetition") }} </span>
                     <i class="bi bi-arrow-right"></i>
                   </button>
+                    <button
+                        v-if="selectedCompetition !== 'none'"
+                        class="btn btn-light ms-2 mt-5"
+                        @click="$router.push('/overview')">
+                      <span>{{ getString("landing.heading.handleSelected") }} </span>
+                      <i class="bi bi-arrow-right"></i>
+                    </button>
                 </div>
               </div>
             </div>
@@ -262,7 +266,4 @@ export default {
   max-width: 40%;
 }
 
-#bottom {
-  margin-top: 30px;
-}
 </style>

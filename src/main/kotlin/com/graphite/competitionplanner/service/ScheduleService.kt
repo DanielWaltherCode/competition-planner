@@ -212,9 +212,9 @@ class ScheduleService(
     fun getCategoryStartTimesByDay(competitionId: Int, day: LocalDate): List<CategoryStartTimeDTO> {
         val categoriesInCompetition = competitionService.getCategoriesInCompetition(competitionId)
         val startTimeRecords = mutableListOf<ScheduleCategoryRecord>()
-        for (category in categoriesInCompetition.categories) {
+        for (category in categoriesInCompetition) {
             try {
-                val startTimeRecord = scheduleRepository.getCategoryStartTimeForCategory(category.competitionCategoryId)
+                val startTimeRecord = scheduleRepository.getCategoryStartTimeForCategory(category.id)
                 if (startTimeRecord.playingDay == null) {
                     continue
                 }

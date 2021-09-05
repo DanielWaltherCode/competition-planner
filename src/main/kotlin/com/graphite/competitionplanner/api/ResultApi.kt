@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/result")
 class ResultApi(val resultService: ResultService, val resultRepository: ResultRepository) {
 
-    // Get per day in competition
-
     @PostMapping("/{matchId}")
     fun addResult(@PathVariable matchId: Int, @RequestBody resultSpec: ResultSpec): ResultDTO {
        return resultService.addResult(matchId, resultSpec)
@@ -21,9 +19,15 @@ class ResultApi(val resultService: ResultService, val resultRepository: ResultRe
         return resultService.updateGameResult(matchId, gameId, gameSpec)
     }
 
+    @PutMapping("/{matchId}/partial")
+    fun addPartialResult(@PathVariable matchId: Int, @RequestBody resultSpec: ResultSpec): ResultDTO {
+        return resultService.addPartialResult(matchId, resultSpec)
+    }
+
+    // This is a put request since it's possible that partial results have been added previously
     @PutMapping("/{matchId}")
-    fun updateFullMatchResult(@PathVariable matchId: Int, @RequestBody resultSpec: ResultSpec): ResultDTO {
-        return resultService.updateFullMatchResult(matchId, resultSpec)
+    fun addFinalMatchResult(@PathVariable matchId: Int, @RequestBody resultSpec: ResultSpec): ResultDTO {
+        return resultService.addFinalMatchResult(matchId, resultSpec)
     }
 
     @GetMapping("/{matchId}")

@@ -5,8 +5,6 @@ import com.graphite.competitionplanner.api.competition.CategoryGameRulesSpec
 import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryGameRulesRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryMetadataRecord
-import com.graphite.competitionplanner.tables.records.DrawTypeRecord
-import com.graphite.competitionplanner.tables.records.PoolDrawStrategyRecord
 import org.jooq.DSLContext
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Repository
@@ -39,10 +37,10 @@ class CategoryMetadataRepository(val dslContext: DSLContext) {
 
         categoryRecord.competitionCategoryId = competitionCategoryId
         categoryRecord.cost = categoryMetadataSpec.cost
-        categoryRecord.drawTypeId = categoryMetadataSpec.drawTypeId
+        categoryRecord.drawType = categoryMetadataSpec.drawType.toString()
         categoryRecord.nrPlayersPerGroup = categoryMetadataSpec.nrPlayersPerGroup
         categoryRecord.nrPlayersToPlayoff = categoryMetadataSpec.nrPlayersToPlayoff
-        categoryRecord.poolDrawStrategyId = categoryMetadataSpec.poolDrawStrategyId
+        categoryRecord.poolDrawStrategy = categoryMetadataSpec.poolDrawStrategy.toString()
 
         if (categoryMetadataId != null) {
             categoryRecord.id = categoryMetadataId
@@ -63,32 +61,6 @@ class CategoryMetadataRepository(val dslContext: DSLContext) {
 
 
 @Repository
-class DrawTypeRepository(val dslContext: DSLContext) {
-
-    fun addDrawType(name: String): DrawTypeRecord {
-        val record = dslContext.newRecord(DRAW_TYPE)
-        record.name = name
-        record.store()
-        return record
-    }
-
-    fun getAll(): List<DrawTypeRecord> {
-        return dslContext.selectFrom(DRAW_TYPE).fetch()
-    }
-
-    fun getById(drawTypeId: Int): DrawTypeRecord {
-       return dslContext.selectFrom(DRAW_TYPE).where(DRAW_TYPE.ID.eq(drawTypeId)).fetchOne()
-    }
-}
-
-@Repository
-class DrawStrategyRepository(val dslContext: DSLContext) {
-    fun getAll(): List<PoolDrawStrategyRecord> {
-        return dslContext.selectFrom(POOL_DRAW_STRATEGY).fetch()
-    }
-}
-
-@Repository
 class CategoryGameRulesRepository(val dslContext: DSLContext) {
 
     fun getGameRules(competitionCategoryId: Int): CompetitionCategoryGameRulesRecord {
@@ -103,11 +75,13 @@ class CategoryGameRulesRepository(val dslContext: DSLContext) {
         record.nrSets = gameRulesSpec.nrSets
         record.winScore = gameRulesSpec.winScore
         record.winMargin = gameRulesSpec.winMargin
+        record.differentNumberOfGamesFromRound = gameRulesSpec.differentNumberOfGamesFromRound.toString()
         record.nrSetsFinal = gameRulesSpec.nrSetsFinal
         record.winScoreFinal = gameRulesSpec.winScoreFinal
         record.winMarginFinal = gameRulesSpec.winMarginFinal
+        record.tieBreakInFinalGame = gameRulesSpec.tiebreakInFinalGame
         record.winScoreTiebreak = gameRulesSpec.winScoreTiebreak
-        record.winMarginTieBreak = gameRulesSpec.winMarginTieBreak
+        record.winMarginTieBreak = gameRulesSpec.winMarginTiebreak
         try {
             record.store()
         }
@@ -125,17 +99,15 @@ class CategoryGameRulesRepository(val dslContext: DSLContext) {
         record.nrSets = gameRulesSpec.nrSets
         record.winScore = gameRulesSpec.winScore
         record.winMargin = gameRulesSpec.winMargin
+        record.differentNumberOfGamesFromRound = gameRulesSpec.differentNumberOfGamesFromRound.toString()
         record.nrSetsFinal = gameRulesSpec.nrSetsFinal
         record.winScoreFinal = gameRulesSpec.winScoreFinal
         record.winMarginFinal = gameRulesSpec.winMarginFinal
+        record.tieBreakInFinalGame = gameRulesSpec.tiebreakInFinalGame
         record.winScoreTiebreak = gameRulesSpec.winScoreTiebreak
-        record.winMarginTieBreak = gameRulesSpec.winMarginTieBreak
+        record.winMarginTieBreak = gameRulesSpec.winMarginTiebreak
         record.update()
         return record
     }
 
-}
-
-enum class DrawTypes {
-    POOL_ONLY, CUP_ONLY, POOL_AND_CUP
 }

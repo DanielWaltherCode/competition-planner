@@ -19,12 +19,12 @@ export default new Router({
             {
                 path: "/new-competition",
                 name: "newCompetition",
-                component: () => import("@/components/NewCompetition"),
+                component: () => import("@/components/competition/NewCompetition"),
             },
             {
                 path: "/overview",
                 name: "overview",
-                component: () => import("@/components/CompetitionOverview"),
+                component: () => import("@/components/competition/CompetitionOverview"),
             },
             {
                 path: "/classes",

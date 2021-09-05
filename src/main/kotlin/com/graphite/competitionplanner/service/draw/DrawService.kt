@@ -1,13 +1,13 @@
-package com.graphite.competitionplanner.service.competition
+package com.graphite.competitionplanner.service.draw
 
 import com.graphite.competitionplanner.api.competition.DrawDTO
-import com.graphite.competitionplanner.repositories.DrawTypes
 import com.graphite.competitionplanner.repositories.MatchRepository
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionDrawRepository
 import com.graphite.competitionplanner.service.*
+import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
 import com.graphite.competitionplanner.tables.records.PoolDrawRecord
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -54,8 +54,8 @@ class DrawService(
         // Create draw
         createSeed(competitionCategoryId, categoryMetadata)
 
-        if (categoryMetadata.drawType.name == DrawTypes.POOL_ONLY.name ||
-            categoryMetadata.drawType.name == DrawTypes.POOL_AND_CUP.name
+        if (categoryMetadata.drawType.name == DrawType.POOL_ONLY.name ||
+            categoryMetadata.drawType.name == DrawType.POOL_AND_CUP.name
         ) {
             createPoolDraw(registrationIds, categoryMetadata, competitionCategoryId)
         } else {
@@ -221,7 +221,7 @@ class DrawService(
 
     fun getDraw(competitionCategoryId: Int): DrawDTO {
         val metadata = categoryService.getCategoryMetadata(competitionCategoryId)
-        if (metadata.drawType.id == 2) { // 2 == CUP ONLY. How is it set in database though?
+        if (metadata.drawType == DrawType.CUP_ONLY) {
             return getCupOnlyDraw(competitionCategoryId)
         }
         return DrawDTO(
@@ -363,3 +363,12 @@ data class PlayoffRound(
     val round: Round,
     val matches: List<MatchUp>
 )
+
+
+enum class DrawType {
+    POOL_ONLY, CUP_ONLY, POOL_AND_CUP
+}
+
+enum class DrawStrategy {
+    NORMAL, SNAKE
+}

@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.draw
 
-import com.graphite.competitionplanner.service.competition.DrawUtilTwoProceed
-import com.graphite.competitionplanner.service.competition.MatchUp
+import com.graphite.competitionplanner.service.draw.DrawUtilTwoProceed
+import com.graphite.competitionplanner.service.draw.MatchUp
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

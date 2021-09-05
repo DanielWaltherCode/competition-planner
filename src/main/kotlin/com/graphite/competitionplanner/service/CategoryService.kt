@@ -2,20 +2,18 @@ package com.graphite.competitionplanner.service
 
 import com.graphite.competitionplanner.api.competition.CategoryGameRulesSpec
 import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
-import com.graphite.competitionplanner.api.competition.DrawTypeDTO
 import com.graphite.competitionplanner.repositories.CategoryGameRulesRepository
 import com.graphite.competitionplanner.repositories.CategoryMetadataRepository
-import com.graphite.competitionplanner.repositories.DrawTypeRepository
+import com.graphite.competitionplanner.service.draw.DrawStrategy
+import com.graphite.competitionplanner.service.draw.DrawType
+import com.graphite.competitionplanner.service.draw.Round
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryGameRulesRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryMetadataRecord
-import com.graphite.competitionplanner.tables.records.DrawTypeRecord
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 
 @Service
 class CategoryService(val categoryMetadataRepository: CategoryMetadataRepository,
-                      val categoryGameRulesRepository: CategoryGameRulesRepository,
-val drawTypeRepository: DrawTypeRepository) {
+                      val categoryGameRulesRepository: CategoryGameRulesRepository) {
 
     fun addCategoryMetadata(
         competitionCategoryId: Int,
@@ -68,16 +66,12 @@ val drawTypeRepository: DrawTypeRepository) {
             categoryRecord.id,
             categoryRecord.competitionCategoryId,
             categoryRecord.cost,
-            drawTypeRecordToDTO(drawTypeRepository.getById(categoryRecord.drawTypeId)),
+            DrawType.valueOf(categoryRecord.drawType),
             categoryRecord.nrPlayersPerGroup,
             categoryRecord.nrPlayersToPlayoff,
-            categoryRecord.poolDrawStrategyId
+            DrawStrategy.valueOf(categoryRecord.poolDrawStrategy)
         )
     }
-}
-
-fun drawTypeRecordToDTO(drawTypeRecord: DrawTypeRecord): DrawTypeDTO {
-    return DrawTypeDTO(drawTypeRecord.id, drawTypeRecord.name)
 }
 
 fun gameRulesRecordToDTO(gameRulesRecord: CompetitionCategoryGameRulesRecord): CategoryGameRulesDTO {
@@ -87,9 +81,11 @@ fun gameRulesRecordToDTO(gameRulesRecord: CompetitionCategoryGameRulesRecord): C
         gameRulesRecord.nrSets,
         gameRulesRecord.winScore,
         gameRulesRecord.winMargin,
+        Round.valueOf(gameRulesRecord.differentNumberOfGamesFromRound),
         gameRulesRecord.nrSetsFinal,
         gameRulesRecord.winScoreFinal,
         gameRulesRecord.winMarginFinal,
+        gameRulesRecord.tieBreakInFinalGame,
         gameRulesRecord.winScoreTiebreak,
         gameRulesRecord.winMarginTieBreak
     )
@@ -99,10 +95,10 @@ data class CategoryMetadataDTO(
     val id: Int,
     val competitionCategoryId: Int,
     val cost: Float,
-    val drawType: DrawTypeDTO,
+    val drawType: DrawType,
     val nrPlayersPerGroup: Int,
     val nrPlayersToPlayoff: Int,
-    val poolDrawStrategyId: Int?
+    val poolDrawStrategy: DrawStrategy
 )
 
 data class CategoryGameRulesDTO(
@@ -111,9 +107,11 @@ data class CategoryGameRulesDTO(
     val nrSets: Int,
     val winScore: Int,
     val winMargin: Int,
+    val differentNumberOfGamesFromRound: Round,
     val nrSetsFinal: Int,
     val winScoreFinal: Int,
     val winMarginFinal: Int,
+    val tiebreakInFinalGame: Boolean,
     val winScoreTiebreak: Int?,
-    val winMarginTieBreak: Int?
+    val winMarginTiebreak: Int?
 )

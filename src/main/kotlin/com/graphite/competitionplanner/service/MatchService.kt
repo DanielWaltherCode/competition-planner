@@ -2,8 +2,8 @@ package com.graphite.competitionplanner.service
 
 import com.graphite.competitionplanner.repositories.MatchRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
-import com.graphite.competitionplanner.service.competition.MatchSpec
-import com.graphite.competitionplanner.service.competition.MatchType
+import com.graphite.competitionplanner.service.draw.MatchSpec
+import com.graphite.competitionplanner.service.draw.MatchType
 import com.graphite.competitionplanner.tables.records.MatchRecord
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
@@ -97,6 +97,11 @@ class MatchService(val matchRepository: MatchRepository,
             registrationService.getPlayersFromRegistrationId(match.winner),
             result
         )
+    }
+
+    fun getMatchWithResult(matchId: Int): MatchAndResultDTO {
+        val matchRecord = matchRepository.getMatch(matchId)
+        return recordToMatchAndResultDTO(matchRecord)
     }
 
 }

@@ -39,11 +39,9 @@ class CompetitionService(
         return competitionDTOs
     }
 
-    fun getCategoriesInCompetition(competitionId: Int): CompetitionAndCategoriesDTO {
+    fun getCategoriesInCompetition(competitionId: Int): List<CompetitionCategoryDTO> {
         val competitionCategories = competitionCategoryRepository.getCategoriesInCompetition(competitionId)
-        return CompetitionAndCategoriesDTO(
-            getById(competitionId),
-            competitionCategories.map { CompetitionCategoryDTO(it.categoryId, it.categoryName) })
+        return competitionCategories.map { CompetitionCategoryDTO(it.categoryId, it.categoryName) }
     }
 
 

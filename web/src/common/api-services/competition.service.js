@@ -15,6 +15,9 @@ const CompetitionService = {
     getDaysInCompetition(competitionId) {
         return Axios.get(`${RESOURCE_NAME}/${competitionId}/days`, {withCredentials: true})
     },
+    getPossibleRounds() {
+        return Axios.get(`${RESOURCE_NAME}/rounds`, {withCredentials: true})
+    }
 }
 
 export default CompetitionService

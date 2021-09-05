@@ -6,10 +6,9 @@ import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionDrawRepository
 import com.graphite.competitionplanner.service.MatchService
 import com.graphite.competitionplanner.service.RegistrationService
-import com.graphite.competitionplanner.service.RegistrationSinglesDTO
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
-import com.graphite.competitionplanner.service.competition.DrawService
-import com.graphite.competitionplanner.service.competition.Round
+import com.graphite.competitionplanner.service.draw.DrawService
+import com.graphite.competitionplanner.service.draw.Round
 import com.graphite.competitionplanner.util.TestUtil
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions

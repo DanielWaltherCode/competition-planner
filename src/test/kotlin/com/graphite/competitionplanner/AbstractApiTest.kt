@@ -17,9 +17,9 @@ import org.springframework.http.MediaType
 import org.springframework.web.server.ResponseStatusException
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@IfProfileValue(name="spring.profiles.active", value="api-test")
+@IfProfileValue(name = "spring.profiles.active", value = "api-test")
 @TestPropertySource(locations = ["/application.yml"])
-abstract class AbstractApiTest (
+abstract class AbstractApiTest(
     @LocalServerPort val port: Int,
     @Autowired val testRestTemplate: TestRestTemplate
 ) {
@@ -36,21 +36,21 @@ abstract class AbstractApiTest (
     }
 
     private fun login(): LoginDTO {
-        val loginDetails = UserLogin("abraham", "anders")
         // This user is created in SetupTestData.kt
-            val valueToSend = objectMapper.writeValueAsString(loginDetails)
-            val httpHeaders = HttpHeaders()
-            httpHeaders.setContentType(MediaType.APPLICATION_JSON)
-            val entityToSend = HttpEntity(valueToSend, httpHeaders)
+        val loginDetails = UserLogin("abraham", "anders")
+        val valueToSend = objectMapper.writeValueAsString(loginDetails)
+        val httpHeaders = HttpHeaders()
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON)
+        val entityToSend = HttpEntity(valueToSend, httpHeaders)
 
-            val loginResult  = testRestTemplate.postForEntity(
-                getUrlWithoutResourcePath() + "/login",
-                entityToSend, LoginDTO::class.java
-            ).body
+        val loginResult = testRestTemplate.postForEntity(
+            getUrlWithoutResourcePath() + "/login",
+            entityToSend, LoginDTO::class.java
+        ).body
 
-            return loginResult ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
+        return loginResult ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
 
-        }
+    }
 
     fun getAuthenticationHeaders(): HttpHeaders {
         val tokens = login()
