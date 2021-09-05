@@ -23,7 +23,7 @@ class AddCompetitionCategory(
             throw IllegalArgumentException("Not a valid category: $category")
         }
 
-        val addedCategories = repository.getCompetitionCategoriesIn(competitionId)
+        val addedCategories = repository.getAll(competitionId)
         if (addedCategories.any { it.category == category }) {
             throw IllegalArgumentException("The category $category has already been added")
         }
@@ -35,7 +35,7 @@ class AddCompetitionCategory(
             gameSettings = GameSettingsDTO(getDefaultGameSettings())
         )
 
-        return repository.addCompetitionCategoryTo(competitionId, dto)
+        return repository.store(competitionId, dto)
     }
 
     private fun getDefaultGeneralSettings(): GeneralSettings {
