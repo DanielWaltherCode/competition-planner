@@ -91,6 +91,7 @@ fun gameRulesRecordToDTO(gameRulesRecord: CompetitionCategoryGameRulesRecord): C
     )
 }
 
+@Deprecated("Use GeneralSettingsDTO in Domain")
 data class CategoryMetadataDTO(
     val id: Int,
     val competitionCategoryId: Int,
@@ -101,6 +102,7 @@ data class CategoryMetadataDTO(
     val poolDrawStrategy: DrawStrategy
 )
 
+@Deprecated("Use GameSettings in Domain")
 data class CategoryGameRulesDTO(
     val id: Int,
     val competitionCategoryId: Int,

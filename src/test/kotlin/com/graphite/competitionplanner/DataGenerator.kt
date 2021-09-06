@@ -100,10 +100,12 @@ class DataGenerator {
 
     internal fun newCategory(
         id: Int = categoryId++,
-        name: String = "A Test Category"
+        name: String = "A Test Category",
+        type: CategoryType = CategoryType.SINGLES
     ) = Category(
         id,
-        name
+        name,
+        type
     )
 
     fun newClubDTO(
@@ -226,10 +228,12 @@ class DataGenerator {
 
     fun newCategoryDTO(
         id: Int = 1,
-        name: String = "A Custom Category"
+        name: String = "A Custom Category",
+        type: String = "SINGLES"
     ) = CategoryDTO(
         id,
-        name
+        name,
+        type
     )
 
     fun newCompetitionCategoryDTO(

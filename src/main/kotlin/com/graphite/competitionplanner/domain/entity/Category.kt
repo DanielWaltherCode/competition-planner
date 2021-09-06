@@ -7,7 +7,8 @@ import com.graphite.competitionplanner.domain.dto.CategoryDTO
  */
 data class Category(
     val id: Int,
-    val name: String
+    val name: String,
+    val type: CategoryType
 ) {
 
     init {
@@ -17,6 +18,11 @@ data class Category(
 
     constructor(dto: CategoryDTO) : this(
         dto.id,
-        dto.name
+        dto.name,
+        CategoryType.valueOf(dto.type)
     )
+}
+
+enum class CategoryType {
+    SINGLES, DOUBLES, BYE
 }

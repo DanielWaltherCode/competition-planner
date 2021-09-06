@@ -364,11 +364,12 @@ data class PlayoffRound(
     val matches: List<MatchUp>
 )
 
-
+@Deprecated("We will use the one defined in entities instead")
 enum class DrawType {
     POOL_ONLY, CUP_ONLY, POOL_AND_CUP
 }
 
+@Deprecated("We will use the one defined in entities instead")
 enum class DrawStrategy {
     NORMAL, SNAKE
 }
