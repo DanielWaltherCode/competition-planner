@@ -125,7 +125,7 @@
                       <input class="form-check-input ms-1" type="checkbox" :value="category.name"
                              :id="category.id" v-model="selectedCategories">
                       <label class="form-check-label d-flex ps-2" :for="category.id">
-                        {{ category.name }}
+                        {{ category.category.name }}
                       </label>
                     </div>
                   </div>
@@ -283,7 +283,7 @@ export default {
       this.clearPlayer()
     },
     registerPlayer() {
-      const categoriesToRegisterIn = this.competitionCategories.filter(val => this.selectedCategories.includes(val.name))
+      const categoriesToRegisterIn = this.competitionCategories.filter(val => this.selectedCategories.includes(val.category.name))
       categoriesToRegisterIn.forEach(category => {
         const registrationSpec = {
           playerId: this.player.id,

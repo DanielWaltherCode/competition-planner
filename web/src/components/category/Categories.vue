@@ -24,7 +24,7 @@
           <ul class="list-group list-group-flush">
             <li v-for="category in competitionCategories" :key="category.id" class="list-group-item"
                 @click="chooseCategory(category)">
-              {{ category.name }}
+              {{ category.category.name }}
             </li>
           </ul>
         </div>
@@ -111,7 +111,7 @@ export default {
       this.activeCategory = category
     },
     addCategory() {
-      CategoryService.addCompetitionCategory(this.competition.id, this.newCategory.id).then(res => {
+      CategoryService.addCompetitionCategory(this.competition.id, this.newCategory).then(res => {
         const addedCategory = res.data
         this.competitionCategories.push(addedCategory)
         this.activeCategory = addedCategory
