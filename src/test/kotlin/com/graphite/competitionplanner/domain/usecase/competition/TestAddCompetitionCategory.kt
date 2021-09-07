@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.TestHelper
 import com.graphite.competitionplanner.domain.dto.CategoryDTO
 import com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
+import com.graphite.competitionplanner.service.draw.Round
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyInt
@@ -67,8 +68,15 @@ class TestAddCompetitionCategory {
         val category = dataGenerator.newCategoryDTO(id = 0, name = "HERRDUBBEL")
         val settings = dataGenerator.newGeneralSettingsDTO(cost = 150f, playersPerGroup = 4, playersToPlayOff = 2)
         val gameSettings = dataGenerator.newGameSettingsDTO(
-            numberOfSets = 5, winScore = 11, winMargin = 2, numberOfSetsFinal = 7,
-            winScoreFinal = 11, winMarginFinal = 2, winScoreTiebreak = 2, winMarginTieBreak = 2
+            numberOfSets = 5,
+            winScore = 11,
+            winMargin = 2,
+            differentNumberOfGamesFromRound = Round.UNKNOWN,
+            numberOfSetsFinal = 7,
+            winScoreFinal = 11,
+            winMarginFinal = 2,
+            winScoreTiebreak = 2,
+            winMarginTieBreak = 2
         )
 
         val competitionId = 1

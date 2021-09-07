@@ -9,6 +9,7 @@ import com.graphite.competitionplanner.domain.entity.DrawType
 import com.graphite.competitionplanner.domain.entity.GameSettings
 import com.graphite.competitionplanner.domain.entity.GeneralSettings
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
+import com.graphite.competitionplanner.service.draw.Round
 import org.springframework.stereotype.Component
 import java.lang.IllegalArgumentException
 
@@ -53,9 +54,11 @@ class AddCompetitionCategory(
             5,
             11,
             2,
+            Round.UNKNOWN,
             7,
             11,
             2,
+            false,
             2,
             2
         )

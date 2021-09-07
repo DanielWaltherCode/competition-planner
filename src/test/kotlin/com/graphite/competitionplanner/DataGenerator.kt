@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.api.NewClubSpec
 import com.graphite.competitionplanner.api.PlayerSpec
 import com.graphite.competitionplanner.domain.dto.*
 import com.graphite.competitionplanner.domain.entity.*
+import com.graphite.competitionplanner.service.draw.Round
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.random.Random
@@ -252,18 +253,22 @@ class DataGenerator {
         numberOfSets: Int = 2,
         winScore: Int = 11,
         winMargin: Int = 3,
+        differentNumberOfGamesFromRound: Round = Round.UNKNOWN,
         numberOfSetsFinal: Int = 5,
         winScoreFinal: Int = 7,
         winMarginFinal: Int = 3,
+        tiebreakInFinalGame: Boolean = false,
         winScoreTiebreak: Int = 3,
         winMarginTieBreak: Int = 3
     ) = GameSettingsDTO(
         numberOfSets,
         winScore,
         winMargin,
+        differentNumberOfGamesFromRound,
         numberOfSetsFinal,
         winScoreFinal,
         winMarginFinal,
+        tiebreakInFinalGame,
         winScoreTiebreak,
         winMarginTieBreak
     )

@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.domain.entity
 
 import com.graphite.competitionplanner.domain.dto.GameSettingsDTO
 import com.graphite.competitionplanner.domain.dto.GeneralSettingsDTO
+import com.graphite.competitionplanner.service.draw.Round
 
 sealed class CompetitionCategorySettings
 
@@ -32,9 +33,11 @@ class GameSettings(
     val numberOfSets: Int,
     val winScore: Int,
     val winMargin: Int,
+    val differentNumberOfGamesFromRound: Round,
     val numberOfSetsFinal: Int,
     val winScoreFinal: Int,
     val winMarginFinal: Int,
+    val tiebreakInFinalGame: Boolean,
     val winScoreTiebreak: Int,
     val winMarginTieBreak: Int
 ) : CompetitionCategorySettings() {
@@ -53,9 +56,11 @@ class GameSettings(
         dto.numberOfSets,
         dto.winScore,
         dto.winMargin,
+        dto.differentNumberOfGamesFromRound,
         dto.numberOfSetsFinal,
         dto.winScoreFinal,
         dto.winMarginFinal,
+        dto.tiebreakInFinalGame,
         dto.winScoreTiebreak,
         dto.winMarginTieBreak
     )

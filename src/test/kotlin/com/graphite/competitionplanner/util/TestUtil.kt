@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.util
 
+import com.graphite.competitionplanner.domain.dto.CategoryDTO
 import com.graphite.competitionplanner.repositories.ClubRepository
 import com.graphite.competitionplanner.repositories.competition.CategoryRepository
 import com.graphite.competitionplanner.service.competition.CompetitionService
@@ -19,9 +20,11 @@ class TestUtil(
         val umeaId = getClubIdOrDefault("Umeå IK")
         val umeaCompetitions = competitionService.getByClubId(umeaId)
         val umeaCompetitionId = umeaCompetitions[0].id ?: 0
+        val category = categoryRepository.getByName(name)
         return competitionCategoryService.addCompetitionCategory(
             umeaCompetitionId,
-            categoryRepository.getByName(name).id
+//            category.id
+            CategoryDTO(category.id, category.categoryName, category.categoryType)
         ).id
     }
 
