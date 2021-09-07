@@ -4,6 +4,7 @@ import com.graphite.competitionplanner.api.*
 import com.graphite.competitionplanner.api.competition.CompetitionSpec
 import com.graphite.competitionplanner.domain.dto.ClubDTO
 import com.graphite.competitionplanner.api.competition.RegistrationSinglesSpec
+import com.graphite.competitionplanner.domain.dto.CategoryDTO
 import com.graphite.competitionplanner.domain.dto.NewPlayerDTO
 import com.graphite.competitionplanner.repositories.*
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
@@ -129,7 +130,7 @@ class EventListener(
                 endDate = LocalDate.now().plusYears(10)
             )
         )
-        competitionCategoryService.addCompetitionCategory(0, 0)
+        competitionCategoryService.addCompetitionCategory(0, CategoryDTO(0, "BYE", "BYE"))
         playerRepository.addPlayerWithId(
             0,
             PlayerSpec(
@@ -368,36 +369,56 @@ class EventListener(
         val lugiId = util.getClubIdOrDefault("Lugi")
         val lugiCompetitions = competitionService.getByClubId(lugiId)
         val lugiCompetitionId = lugiCompetitions[0].id
+        val categories = categoryRepository.getCategories().map { CategoryDTO(it.id, it.categoryName, it.categoryType) }
+
         competitionCategoryService.addCompetitionCategory(
             lugiCompetitionId,
-            categoryRepository.getByName("Herrar 1").id
+            categories.find { it.name == "Herrar 1" }!!
         )
         competitionCategoryService.addCompetitionCategory(
             lugiCompetitionId,
-            categoryRepository.getByName("Herrar 2").id
+            categories.find { it.name == "Herrar 2" }!!
         )
-        competitionCategoryService.addCompetitionCategory(lugiCompetitionId, categoryRepository.getByName("Damer 1").id)
-        competitionCategoryService.addCompetitionCategory(lugiCompetitionId, categoryRepository.getByName("Damer 2").id)
         competitionCategoryService.addCompetitionCategory(
             lugiCompetitionId,
-            categoryRepository.getByName("Damjuniorer 17").id
+            categories.find { it.name == "Damer 1" }!!
         )
-        competitionCategoryService.addCompetitionCategory(lugiCompetitionId, categoryRepository.getByName("Damer 3").id)
+        competitionCategoryService.addCompetitionCategory(
+            lugiCompetitionId,
+            categories.find { it.name == "Damer 2" }!!
+        )
+        competitionCategoryService.addCompetitionCategory(
+            lugiCompetitionId,
+            categories.find { it.name == "Damjuniorer 17" }!!
+        )
+        competitionCategoryService.addCompetitionCategory(
+            lugiCompetitionId,
+            categories.find { it.name == "Damer 3" }!!
+        )
 
         val umeaId = util.getClubIdOrDefault("Umeå IK")
         val umeaCompetitions = competitionService.getByClubId(umeaId)
         val umeaCompetitionId = umeaCompetitions[0].id
         competitionCategoryService.addCompetitionCategory(
             umeaCompetitionId,
-            categoryRepository.getByName("Herrar 1").id
+            categories.find { it.name == "Herrar 1" }!!
         )
         competitionCategoryService.addCompetitionCategory(
             umeaCompetitionId,
-            categoryRepository.getByName("Herrar 2").id
+            categories.find { it.name == "Herrar 2" }!!
         )
-        competitionCategoryService.addCompetitionCategory(umeaCompetitionId, categoryRepository.getByName("Damer 1").id)
-        competitionCategoryService.addCompetitionCategory(umeaCompetitionId, categoryRepository.getByName("Damer 2").id)
-        competitionCategoryService.addCompetitionCategory(umeaCompetitionId, categoryRepository.getByName("Damer 3").id)
+        competitionCategoryService.addCompetitionCategory(
+            umeaCompetitionId,
+            categories.find { it.name == "Damer 1" }!!
+        )
+        competitionCategoryService.addCompetitionCategory(
+            umeaCompetitionId,
+            categories.find { it.name == "Damer 2" }!!
+        )
+        competitionCategoryService.addCompetitionCategory(
+            umeaCompetitionId,
+            categories.find { it.name == "Damer 3" }!!
+        )
     }
 
     fun registerPlayersSingles() {

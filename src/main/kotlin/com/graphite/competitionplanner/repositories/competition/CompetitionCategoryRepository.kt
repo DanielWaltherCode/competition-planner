@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.domain.dto.*
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.domain.interfaces.NotFoundException
+import com.graphite.competitionplanner.service.draw.Round
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.records.*
 import org.jooq.DSLContext
@@ -218,9 +219,11 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.NR_SETS),
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_SCORE),
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_MARGIN),
+                    Round.valueOf(it.getValue(COMPETITION_CATEGORY_GAME_RULES.DIFFERENT_NUMBER_OF_GAMES_FROM_ROUND)),
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.NR_SETS_FINAL),
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_SCORE_FINAL),
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_MARGIN_FINAL),
+                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.TIE_BREAK_IN_FINAL_GAME),
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_SCORE_TIEBREAK),
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_MARGIN_TIE_BREAK)
                 )
@@ -294,9 +297,11 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             it.nrSets = this.numberOfSets
             it.winScore = this.winScore
             it.winMargin = this.winMargin
+            it.differentNumberOfGamesFromRound = this.differentNumberOfGamesFromRound.name
             it.nrSetsFinal = this.numberOfSetsFinal
             it.winScoreFinal = this.winScoreFinal
             it.winMarginFinal = this.winMarginFinal
+            it.tieBreakInFinalGame = this.tiebreakInFinalGame
             it.winScoreTiebreak = this.winScoreTiebreak
             it.winMarginTieBreak = this.winMarginTieBreak
         }

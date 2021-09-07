@@ -2,6 +2,8 @@ package com.graphite.competitionplanner.api
 
 import com.graphite.competitionplanner.AbstractApiTest
 import com.graphite.competitionplanner.DataGenerator
+import com.graphite.competitionplanner.api.competition.CategorySpec
+import com.graphite.competitionplanner.api.competition.CompetitionCategorySpec
 import com.graphite.competitionplanner.domain.dto.CategoryDTO
 import com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
@@ -36,7 +38,7 @@ class CompetitionCategory(
     fun canCreateCompetitionCategory() {
         // Setup
         val category = repository.getAvailableCategories().find { it.name == "Herrar 1" }!!
-        val categorySpec = CategoryDTO(category.id, category.name, category.type)
+        val categorySpec = CategorySpec(category.id, category.name, category.type)
         val club = addClub.execute(dataGenerator.newClubDTO(id = 0, name = "Svenska Klubben"))
         val competition = addCompetition.execute(dataGenerator.newNewCompetitionDTO(organizingClubId = club.id))
 
@@ -44,7 +46,7 @@ class CompetitionCategory(
         val competitionCategory = testRestTemplate.postForObject(
             getUrl() + "/${competition.id}/category",
             HttpEntity(categorySpec, getAuthenticationHeaders()),
-            CompetitionCategoryDTO::class.java
+            CompetitionCategorySpec::class.java
         )
 
         // Clean up

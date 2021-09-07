@@ -56,9 +56,16 @@ class CompetitionCategoryApi(
                     spec.settings.nrPlayersToPlayoff, PoolDrawStrategyDTO(spec.settings.poolDrawStrategy.name)
                 ),
                 GameSettingsDTO(
-                    spec.gameRules.nrSets, spec.gameRules.winScore, spec.gameRules.winMargin,
-                    spec.gameRules.nrSetsFinal, spec.gameRules.winScoreFinal, spec.gameRules.winMarginFinal,
-                    spec.gameRules.winScoreTiebreak ?: 0, spec.gameRules.winMarginTiebreak ?: 0
+                    spec.gameRules.nrSets,
+                    spec.gameRules.winScore,
+                    spec.gameRules.winMargin,
+                    spec.gameRules.differentNumberOfGamesFromRound,
+                    spec.gameRules.nrSetsFinal,
+                    spec.gameRules.winScoreFinal,
+                    spec.gameRules.winMarginFinal,
+                    spec.gameRules.tiebreakInFinalGame,
+                    spec.gameRules.winScoreTiebreak ?: 0,
+                    spec.gameRules.winMarginTiebreak ?: 0
                 )
             )
         )
@@ -197,11 +204,11 @@ data class CategoryGameRulesSpec(
         dto.numberOfSets,
         dto.winScore,
         dto.winMargin,
-        Round.ROUND_OF_16, // TODO: Add support in domain,
+        dto.differentNumberOfGamesFromRound,
         dto.numberOfSetsFinal,
         dto.winScoreFinal,
         dto.winMarginFinal,
-        false, // TODO: Add support in domain
+        dto.tiebreakInFinalGame,
         dto.winScoreTiebreak,
         dto.winMarginTieBreak
     )
