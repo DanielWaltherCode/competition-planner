@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.service.competition.CompetitionDTO
 import com.graphite.competitionplanner.service.competition.CompetitionDays
 import com.graphite.competitionplanner.service.competition.CompetitionService
-import com.graphite.competitionplanner.service.draw.Round
+import com.graphite.competitionplanner.domain.entity.Round
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 

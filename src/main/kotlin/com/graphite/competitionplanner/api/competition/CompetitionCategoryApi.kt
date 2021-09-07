@@ -7,7 +7,7 @@ import com.graphite.competitionplanner.service.competition.CompetitionCategorySe
 import com.graphite.competitionplanner.service.competition.CompetitionService
 import com.graphite.competitionplanner.service.draw.DrawStrategy
 import com.graphite.competitionplanner.service.draw.DrawType
-import com.graphite.competitionplanner.service.draw.Round
+import com.graphite.competitionplanner.domain.entity.Round
 import org.springframework.web.bind.annotation.*
 
 /* Handle categories in competitions */

@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.service.draw
 
 import com.graphite.competitionplanner.api.competition.DrawDTO
+import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.repositories.MatchRepository
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
