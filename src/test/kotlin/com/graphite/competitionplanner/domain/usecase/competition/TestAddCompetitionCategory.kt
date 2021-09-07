@@ -24,7 +24,7 @@ class TestAddCompetitionCategory {
     @Test
     fun shouldThrowExceptionIfCategoryDoesNotExist() {
         // Setup
-        val dto = CategoryDTO(1, "HERRAR-13") // Does not exist
+        val dto = CategoryDTO(1, "HERRAR-13", "SINGLES") // Does not exist
         val competitionId = 0
         `when`(mockedRepository.getAvailableCategories())
             .thenReturn(

@@ -14,7 +14,7 @@
             :class="{active: category.id === activeCategory.id}">
         <a @click="selectingAClass(category.id)"
            href="#" :class="{active: category.id === activeCategory.id}"
-           class="list-group-item list-group-item-action">{{ category.name }}</a>
+           class="list-group-item list-group-item-action">{{ category.category.name }}</a>
       </span>
     </div>
   </div>

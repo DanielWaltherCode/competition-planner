@@ -31,7 +31,6 @@ class TestDrawCupOnlyMatchOrder(
     @Autowired val clubApi: ClubApi,
     @Autowired val competitionApi: CompetitionApi,
     @Autowired val playerApi: PlayerApi,
-    @Autowired val competitionCategoryApi: CompetitionCategoryApi,
     @Autowired val categoryApi: CategoryApi
 ) {
     lateinit var club: ClubSpec
@@ -59,7 +58,7 @@ class TestDrawCupOnlyMatchOrder(
     private fun addCompetitionCategoryTo(competition: CompetitionDTO, categoryName: String): CompetitionCategoryDTO {
         val categories = categoryApi.getCategories()
         val category = categories.filter { it.name == categoryName }[0]
-        return competitionCategoryApi.addCategoryToCompetition(
+        return competitionCategoryService.addCompetitionCategory(
             competition.id,
             category.id
         )

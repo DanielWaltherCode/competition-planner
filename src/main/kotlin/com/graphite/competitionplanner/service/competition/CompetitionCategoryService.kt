@@ -5,6 +5,8 @@ import com.graphite.competitionplanner.api.competition.CategoryGameRulesSpec
 import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
 import com.graphite.competitionplanner.domain.dto.CategoryDTO
 import com.graphite.competitionplanner.domain.usecase.competition.AddCompetitionCategory
+import com.graphite.competitionplanner.domain.usecase.competition.GetCompetitionCategories
+import com.graphite.competitionplanner.domain.usecase.competition.UpdateCompetitionCategory
 import com.graphite.competitionplanner.repositories.ClubRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategory
@@ -27,7 +29,9 @@ class CompetitionCategoryService(
     @Lazy val scheduleService: ScheduleService,
     val categoryService: CategoryService,
     val registrationRepository: RegistrationRepository,
-    val addCompetitionCategory: AddCompetitionCategory
+    val addCompetitionCategory: AddCompetitionCategory,
+    val getCompetitionCategories: GetCompetitionCategories,
+    val updateCompetitionCategory: UpdateCompetitionCategory
 ) {
     /**
      * Cancel competition category. This is used when players have already
@@ -54,6 +58,13 @@ class CompetitionCategoryService(
         competitionCategoryRepository.deleteCategoryInCompetition(categoryId)
     }
 
+    @Deprecated(
+        "We are replacing this with addCompetitionCategory",
+        replaceWith = ReplaceWith(
+            expression = "addCompetitionCategory(competitionId, category)",
+            imports = ["com.graphite.competitionplanner.domain.usecase.competition.AddCompetitionCategory"]
+        )
+    )
     fun addCompetitionCategory(competitionId: Int, categoryId: Int): CompetitionCategoryDTO {
         val competitionCategoryId = competitionCategoryRepository.addCompetitionCategory(
             competitionId,
@@ -65,7 +76,7 @@ class CompetitionCategoryService(
         return CompetitionCategoryDTO(addedCategory.categoryId, addedCategory.categoryName)
     }
 
-    fun setUpDefaultCategoryData(competitionCategoryId: Int) {
+    private fun setUpDefaultCategoryData(competitionCategoryId: Int) {
         // Also set up default metadata and game rules that can later be modified
         categoryService.addCategoryMetadata(
             competitionCategoryId,
@@ -106,6 +117,16 @@ class CompetitionCategoryService(
         competitionId: Int,
         category: CategoryDTO
     ): com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO {
-        return addCompetitionCategory.execute(competitionId, category)
+        val competitionCategory = addCompetitionCategory.execute(competitionId, category)
+        scheduleService.addCategoryStartTime(competitionCategory.id, CategoryStartTimeSpec(null, null, null))
+        return competitionCategory
+    }
+
+    fun getCompetitionCategoriesFor(competitionId: Int): List<com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO> {
+        return getCompetitionCategories.execute(competitionId)
+    }
+
+    fun updateCompetitionCategory(dto: com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO) {
+        updateCompetitionCategory.execute(dto)
     }
 }

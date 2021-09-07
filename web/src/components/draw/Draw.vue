@@ -16,8 +16,8 @@
           <ul class="list-group list-group-flush">
             <li v-for="category in competitionCategories" class="list-group-item" :key="category.id"
                 @click="makeChoice(category)"
-                :class="category.name === chosenCategory.name ? 'active' : ''">
-              {{ category.name }}
+                :class="category.category.name === chosenCategory.category.name ? 'active' : ''">
+              {{ category.category.name }}
             </li>
           </ul>
         </div>
@@ -26,7 +26,7 @@
         <div class="col-md-9 ps-0" v-if="chosenCategory !== null">
           <div class="blue-section row">
             <div class="top-content col-md-10 mx-auto">
-              <h3 class="p-4">{{ chosenCategory.name }}</h3>
+              <h3 class="p-4">{{ chosenCategory.category.name }}</h3>
               <!-- If class is not drawn yet -->
               <div v-if="!isChosenCategoryDrawn " class="pb-4">
                 <div v-if="registeredPlayersLists.length > 0">

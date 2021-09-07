@@ -204,7 +204,8 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
                 it.getValue(COMPETITION_CATEGORY.ID),
                 CategoryDTO(
                     it.getValue(CATEGORY.ID),
-                    it.getValue(CATEGORY.CATEGORY_NAME)
+                    it.getValue(CATEGORY.CATEGORY_NAME),
+                    it.getValue(CATEGORY.CATEGORY_TYPE)
                 ),
                 GeneralSettingsDTO(
                     it.getValue(COMPETITION_CATEGORY_METADATA.COST),
@@ -316,7 +317,7 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
     }
 
     private fun CategoryRecord.toDto(): CategoryDTO {
-        return CategoryDTO(this.id, this.categoryName)
+        return CategoryDTO(this.id, this.categoryName, this.categoryType)
     }
 }
 
