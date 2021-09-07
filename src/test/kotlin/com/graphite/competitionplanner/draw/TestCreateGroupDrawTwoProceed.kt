@@ -8,7 +8,7 @@ import com.graphite.competitionplanner.service.MatchService
 import com.graphite.competitionplanner.service.RegistrationService
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
 import com.graphite.competitionplanner.service.draw.DrawService
-import com.graphite.competitionplanner.service.draw.Round
+import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.util.TestUtil
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions

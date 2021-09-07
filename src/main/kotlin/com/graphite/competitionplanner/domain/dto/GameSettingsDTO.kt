@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.domain.dto
 
 import com.graphite.competitionplanner.domain.entity.GameSettings
-import com.graphite.competitionplanner.service.draw.Round
+import com.graphite.competitionplanner.domain.entity.Round
 
 data class GameSettingsDTO(
     val numberOfSets: Int,

@@ -6,7 +6,7 @@ import com.graphite.competitionplanner.repositories.CategoryGameRulesRepository
 import com.graphite.competitionplanner.repositories.CategoryMetadataRepository
 import com.graphite.competitionplanner.service.draw.DrawStrategy
 import com.graphite.competitionplanner.service.draw.DrawType
-import com.graphite.competitionplanner.service.draw.Round
+import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryGameRulesRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryMetadataRecord
 import org.springframework.stereotype.Service

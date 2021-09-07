@@ -12,7 +12,7 @@ import com.graphite.competitionplanner.service.RegistrationService
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
 import com.graphite.competitionplanner.service.draw.DrawService
 import com.graphite.competitionplanner.service.draw.DrawType
-import com.graphite.competitionplanner.service.draw.Round
+import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.util.TestUtil
 import org.junit.jupiter.api.*
 import org.junit.jupiter.params.ParameterizedTest

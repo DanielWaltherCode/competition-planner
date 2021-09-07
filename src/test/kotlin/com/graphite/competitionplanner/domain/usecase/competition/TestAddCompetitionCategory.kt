@@ -5,7 +5,7 @@ import com.graphite.competitionplanner.TestHelper
 import com.graphite.competitionplanner.domain.dto.CategoryDTO
 import com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
-import com.graphite.competitionplanner.service.draw.Round
+import com.graphite.competitionplanner.domain.entity.Round
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyInt

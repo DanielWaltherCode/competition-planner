@@ -1,13 +1,15 @@
 package com.graphite.competitionplanner.repositories.competition
 
-import com.graphite.competitionplanner.Tables
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.domain.dto.*
+import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.domain.interfaces.NotFoundException
-import com.graphite.competitionplanner.service.draw.Round
 import com.graphite.competitionplanner.tables.Competition
-import com.graphite.competitionplanner.tables.records.*
+import com.graphite.competitionplanner.tables.records.CategoryRecord
+import com.graphite.competitionplanner.tables.records.CompetitionCategoryGameRulesRecord
+import com.graphite.competitionplanner.tables.records.CompetitionCategoryMetadataRecord
+import com.graphite.competitionplanner.tables.records.CompetitionCategoryRecord
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.springframework.stereotype.Repository
@@ -39,12 +41,6 @@ class CategoryRepository(val dslContext: DSLContext) {
 
     fun getCategories(): List<CategoryRecord> {
         return dslContext.selectFrom(CATEGORY).fetch()
-    }
-
-
-    fun getByIds(ids: List<Int>): List<CategoryRecord> {
-        return dslContext.select().from(CATEGORY).where(CATEGORY.ID.`in`(ids))
-            .fetchInto(CATEGORY)
     }
 
     fun clearTable() = dslContext.deleteFrom(CATEGORY).execute()
@@ -116,26 +112,33 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
 
     fun getCategoriesAndPlayers(competitionId: Int): List<CategoriesAndPlayers> {
         val records: List<Record> =
-            dslContext.select(COMPETITION_CATEGORY.ID, CATEGORY.CATEGORY_NAME, Tables.PLAYER.ID)
+            dslContext.select(COMPETITION_CATEGORY.ID, CATEGORY.CATEGORY_NAME, PLAYER.ID)
                 .from(Competition.COMPETITION)
                 .join(COMPETITION_CATEGORY).on(
                     COMPETITION_CATEGORY.COMPETITION_ID.eq(
-                        Competition.COMPETITION.ID))
+                        Competition.COMPETITION.ID
+                    )
+                )
                 .join(CATEGORY).on(
                     CATEGORY.ID.eq(
-                        COMPETITION_CATEGORY.CATEGORY))
+                        COMPETITION_CATEGORY.CATEGORY
+                    )
+                )
                 .join(COMPETITION_CATEGORY_REGISTRATION).on(
                     COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(
-                        COMPETITION_CATEGORY.ID))
-                .join(Tables.PLAYER_REGISTRATION).on(Tables.PLAYER_REGISTRATION.REGISTRATION_ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
-                .join(Tables.PLAYER).on(Tables.PLAYER.ID.eq(Tables.PLAYER_REGISTRATION.PLAYER_ID))
+                        COMPETITION_CATEGORY.ID
+                    )
+                )
+                .join(PLAYER_REGISTRATION)
+                .on(PLAYER_REGISTRATION.REGISTRATION_ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+                .join(PLAYER).on(PLAYER.ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
                 .where(Competition.COMPETITION.ID.eq(competitionId))
                 .fetch()
 
         return records.stream().map {
             CategoriesAndPlayers(
                 it.getValue(COMPETITION_CATEGORY.ID),
-                it.getValue(CATEGORY.CATEGORY_NAME), it.getValue(Tables.PLAYER.ID)
+                it.getValue(CATEGORY.CATEGORY_NAME), it.getValue(PLAYER.ID)
             )
         }.toList()
 

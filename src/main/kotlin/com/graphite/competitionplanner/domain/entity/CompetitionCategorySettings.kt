@@ -2,7 +2,6 @@ package com.graphite.competitionplanner.domain.entity
 
 import com.graphite.competitionplanner.domain.dto.GameSettingsDTO
 import com.graphite.competitionplanner.domain.dto.GeneralSettingsDTO
-import com.graphite.competitionplanner.service.draw.Round
 
 sealed class CompetitionCategorySettings
 

@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.service.draw
 
+import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.repositories.MatchRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionDrawRepository
 import org.springframework.stereotype.Service
@@ -442,8 +443,3 @@ data class PoolDrawHelper(
     val groupName: String,
     val playerNumber: Int
 )
-
-// TODO: Move this to domain/entities
-enum class Round {
-    FINAL, SEMI_FINAL, QUARTER_FINAL, ROUND_OF_16, ROUND_OF_32, ROUND_OF_64, UNKNOWN
-}

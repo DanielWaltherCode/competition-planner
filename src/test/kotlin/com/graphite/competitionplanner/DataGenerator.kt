@@ -5,7 +5,7 @@ import com.graphite.competitionplanner.api.NewClubSpec
 import com.graphite.competitionplanner.api.PlayerSpec
 import com.graphite.competitionplanner.domain.dto.*
 import com.graphite.competitionplanner.domain.entity.*
-import com.graphite.competitionplanner.service.draw.Round
+import com.graphite.competitionplanner.domain.entity.Round
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.random.Random
