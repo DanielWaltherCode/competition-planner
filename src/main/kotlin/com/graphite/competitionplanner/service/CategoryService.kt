@@ -2,18 +2,28 @@ package com.graphite.competitionplanner.service
 
 import com.graphite.competitionplanner.api.competition.CategoryGameRulesSpec
 import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
+import com.graphite.competitionplanner.domain.dto.CategoryDTO
 import com.graphite.competitionplanner.repositories.CategoryGameRulesRepository
 import com.graphite.competitionplanner.repositories.CategoryMetadataRepository
 import com.graphite.competitionplanner.service.draw.DrawStrategy
 import com.graphite.competitionplanner.service.draw.DrawType
 import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.domain.usecase.category.GetCategories
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryGameRulesRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryMetadataRecord
 import org.springframework.stereotype.Service
 
 @Service
-class CategoryService(val categoryMetadataRepository: CategoryMetadataRepository,
-                      val categoryGameRulesRepository: CategoryGameRulesRepository) {
+class CategoryService(
+    val categoryMetadataRepository: CategoryMetadataRepository,
+    val categoryGameRulesRepository: CategoryGameRulesRepository,
+    val getCategories: GetCategories
+) {
+
+    fun getCategories(): List<CategoryDTO> {
+        return getCategories.execute()
+    }
+
 
     fun addCategoryMetadata(
         competitionCategoryId: Int,

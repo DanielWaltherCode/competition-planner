@@ -2,10 +2,8 @@ package com.graphite.competitionplanner.api
 
 import com.graphite.competitionplanner.AbstractApiTest
 import com.graphite.competitionplanner.DataGenerator
-import com.graphite.competitionplanner.api.competition.CategorySpec
 import com.graphite.competitionplanner.api.competition.CompetitionCategorySpec
-import com.graphite.competitionplanner.domain.dto.CategoryDTO
-import com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO
+import com.graphite.competitionplanner.domain.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.domain.usecase.club.CreateClub
 import com.graphite.competitionplanner.domain.usecase.club.DeleteClub
@@ -26,7 +24,8 @@ class CompetitionCategory(
     @Autowired val addClub: CreateClub,
     @Autowired val deleteClub: DeleteClub,
     @Autowired val addCompetition: CreateCompetition,
-    @Autowired val competitionRepository: CompetitionRepository
+    @Autowired val competitionRepository: CompetitionRepository,
+    @Autowired val categoryRepository: ICategoryRepository
 ) : AbstractApiTest(
     port,
     testRestTemplate
@@ -37,7 +36,7 @@ class CompetitionCategory(
     @Test
     fun canCreateCompetitionCategory() {
         // Setup
-        val category = repository.getAvailableCategories().find { it.name == "Herrar 1" }!!
+        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
         val categorySpec = CategorySpec(category.id, category.name, category.type)
         val club = addClub.execute(dataGenerator.newClubDTO(id = 0, name = "Svenska Klubben"))
         val competition = addCompetition.execute(dataGenerator.newNewCompetitionDTO(organizingClubId = club.id))

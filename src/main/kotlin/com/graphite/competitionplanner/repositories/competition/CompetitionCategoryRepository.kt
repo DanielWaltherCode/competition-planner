@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.repositories.competition
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.domain.dto.*
 import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.domain.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.domain.interfaces.NotFoundException
 import com.graphite.competitionplanner.tables.Competition
@@ -50,7 +51,7 @@ class CategoryRepository(val dslContext: DSLContext) {
  * N..N table for categories at a given competition
  */
 @Repository
-class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCategoryRepository {
+class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCategoryRepository, ICategoryRepository {
 
     fun addCompetitionCategory(competitionId: Int, categoryId: Int): Int {
         val record = dslContext.newRecord(COMPETITION_CATEGORY)
