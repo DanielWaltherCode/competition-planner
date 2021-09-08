@@ -14,31 +14,17 @@ const CategoryService = {
         return Axios.put(`/competition/${competitionId}/category/${competitionCategory.id}`, competitionCategory, {withCredentials: true})
     },
 
-    // Category settings/metadata
-    addMetaData(competitionId, competitionCategoryId, categoryMetaDataSpec) {
-        return Axios.post(`/competition/${competitionId}/category/metadata/${competitionCategoryId}`, categoryMetaDataSpec, {withCredentials: true})
-    },
+    // Category general settings
     getCategoryMetadata(competitionId, categoryId) {
-        return Axios.get(`/competition/${competitionId}/category/metadata/${categoryId}/`, {withCredentials: true})
-    },
-    updateMetaData(competitionId,competitionCategoryId, categoryMetadataId, categoryMetaDataSpec) {
-    return Axios.put(`/competition/${competitionId}/category/metadata/${competitionCategoryId}/${categoryMetadataId}`, categoryMetaDataSpec, {withCredentials: true})
+        return Axios.get(`/competition/${competitionId}/category/${categoryId}/metadata/`, {withCredentials: true})
     },
     getPossibleMetaDataValues(competitionId) {
         return Axios.get(`/competition/${competitionId}/category/metadata/possible-values`, {withCredentials: true})
     },
 
-
-
     // Category game rules
     getCategoryGameRules(categoryId) {
-        return Axios.get(`/category/game-rules/${categoryId}/`, {withCredentials: true})
-    },
-    addGameRules(competitionCategoryId, categoryGameRulesSpec) {
-        return Axios.post(`/category/game-rules/${competitionCategoryId}`, categoryGameRulesSpec, {withCredentials: true})
-    },
-    updateGameRules(competitionCategoryId, gameRulesId, categoryGameRulesSpec) {
-        return Axios.put(`/category/game-rules/${competitionCategoryId}/${gameRulesId}`, categoryGameRulesSpec, {withCredentials: true})
+        return Axios.get(`/competition/0/category/${categoryId}/game-rules/`, {withCredentials: true})
     }
 }
 

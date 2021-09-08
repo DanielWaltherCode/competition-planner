@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.service.draw
 
 import com.graphite.competitionplanner.api.competition.DrawDTO
+import com.graphite.competitionplanner.domain.entity.DrawType
 import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.repositories.MatchRepository
 import com.graphite.competitionplanner.repositories.PlayerRepository
@@ -364,13 +365,3 @@ data class PlayoffRound(
     val round: Round,
     val matches: List<MatchUp>
 )
-
-@Deprecated("We will use the one defined in entities instead")
-enum class DrawType {
-    POOL_ONLY, CUP_ONLY, POOL_AND_CUP
-}
-
-@Deprecated("We will use the one defined in entities instead")
-enum class DrawStrategy {
-    NORMAL, SNAKE
-}

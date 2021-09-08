@@ -4,13 +4,13 @@ import com.graphite.competitionplanner.api.*
 import com.graphite.competitionplanner.api.competition.*
 import com.graphite.competitionplanner.domain.dto.CategoryDTO
 import com.graphite.competitionplanner.domain.dto.PlayerWithClubDTO
+import com.graphite.competitionplanner.domain.entity.DrawType
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.service.*
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
 import com.graphite.competitionplanner.service.competition.CompetitionDTO
 import com.graphite.competitionplanner.service.draw.DrawService
-import com.graphite.competitionplanner.service.draw.DrawType
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach

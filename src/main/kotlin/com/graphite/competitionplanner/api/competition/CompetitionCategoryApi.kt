@@ -3,11 +3,11 @@ package com.graphite.competitionplanner.api.competition
 import com.graphite.competitionplanner.api.CategorySpec
 import com.graphite.competitionplanner.domain.dto.*
 import com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO
+import com.graphite.competitionplanner.domain.entity.DrawType
+import com.graphite.competitionplanner.domain.entity.PoolDrawStrategy
 import com.graphite.competitionplanner.service.*
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
 import com.graphite.competitionplanner.service.competition.CompetitionService
-import com.graphite.competitionplanner.service.draw.DrawStrategy
-import com.graphite.competitionplanner.service.draw.DrawType
 import com.graphite.competitionplanner.domain.entity.Round
 import org.springframework.web.bind.annotation.*
 
@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/competition/{competitionId}/category")
 class CompetitionCategoryApi(
     val competitionService: CompetitionService,
-    val competitionCategoryService: CompetitionCategoryService
+    val competitionCategoryService: CompetitionCategoryService,
+    val categoryService: CategoryService
 ) {
 
     @PostMapping()
@@ -72,78 +73,22 @@ class CompetitionCategoryApi(
         )
     }
 
-    @PutMapping("/{competitionCategoryId}/draw")
-    fun setUpDraw() {
-
-    }
-}
-
-@RestController
-@RequestMapping("/competition/{competitionId}/category/metadata")
-class CategoryMetadataApi(
-    val categoryService: CategoryService
-) {
-
-    @GetMapping("/{competitionCategoryId}")
+    @GetMapping("/{competitionCategoryId}/metadata")
     fun getCategoryMetadata(@PathVariable competitionCategoryId: Int): CategoryMetadataDTO {
         return categoryService.getCategoryMetadata(competitionCategoryId)
     }
 
-    @PostMapping("/{competitionCategoryId}")
-    fun addCategoryMetadata(
-        @PathVariable competitionCategoryId: Int,
-        @RequestBody categoryMetadataSpec: CategoryMetadataSpec
-    ): CategoryMetadataDTO {
-        return categoryService.addCategoryMetadata(competitionCategoryId, categoryMetadataSpec)
-    }
-
-    @PutMapping("/{competitionCategoryId}/{categoryMetadataId}")
-    fun updateCategoryMetadata(
-        @PathVariable competitionCategoryId: Int,
-        @PathVariable categoryMetadataId: Int,
-        @RequestBody categoryMetadataSpec: CategoryMetadataSpec
-    ): CategoryMetadataDTO {
-        return categoryService.updateCategoryMetadata(
-            competitionCategoryId,
-            categoryMetadataId,
-            categoryMetadataSpec
-        )
-    }
-
-    @GetMapping("/possible-values")
+    @GetMapping("/metadata/possible-values")
     fun getPossibleCategoryMetadataValues(): CategoryMetadataPossibleValuesDTO {
         return CategoryMetadataPossibleValuesDTO(
             DrawType.values().asList(),
-            DrawStrategy.values().asList()
+            PoolDrawStrategy.values().asList()
         )
     }
-}
 
-
-@RestController
-@RequestMapping("/category/game-rules")
-data class CategoryGameRulesApi(val categoryService: CategoryService) {
-
-    @GetMapping("/{competitionCategoryId}")
+    @GetMapping("/{competitionCategoryId}/game-rules")
     fun getCategoryGameRules(@PathVariable competitionCategoryId: Int): CategoryGameRulesDTO {
         return categoryService.getCategoryGameRules(competitionCategoryId)
-    }
-
-    @PostMapping("/{competitionCategoryId}")
-    fun addCategoryGameRules(
-        @PathVariable competitionCategoryId: Int,
-        @RequestBody gameRulesSpec: CategoryGameRulesSpec
-    ): CategoryGameRulesDTO {
-        return categoryService.addCategoryGameRules(competitionCategoryId, gameRulesSpec)
-    }
-
-    @PutMapping("/{competitionCategoryId}/{categoryGameRulesId}")
-    fun updateCategoryGameRules(
-        @PathVariable categoryGameRulesId: Int,
-        @PathVariable competitionCategoryId: Int,
-        @RequestBody gameRulesSpec: CategoryGameRulesSpec
-    ): CategoryGameRulesDTO {
-        return categoryService.updateCategoryGameRules(categoryGameRulesId, competitionCategoryId, gameRulesSpec)
     }
 }
 
@@ -153,7 +98,7 @@ data class CompetitionCategorySpec(
     val settings: CategoryMetadataSpec,
     val gameRules: CategoryGameRulesSpec
 ) {
-    constructor(dto: com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO) : this(
+    constructor(dto: CompetitionCategoryDTO) : this(
         dto.id,
         CategorySpec(dto.category),
         CategoryMetadataSpec(dto.settings),
@@ -166,14 +111,14 @@ data class CategoryMetadataSpec(
     val drawType: DrawType,
     val nrPlayersPerGroup: Int,
     val nrPlayersToPlayoff: Int,
-    val poolDrawStrategy: DrawStrategy
+    val poolDrawStrategy: PoolDrawStrategy
 ) {
     constructor(dto: GeneralSettingsDTO) : this(
         dto.cost,
         DrawType.valueOf(dto.drawType.name),
         dto.playersPerGroup,
         dto.playersToPlayOff,
-        DrawStrategy.valueOf(dto.poolDrawStrategy.name)
+        PoolDrawStrategy.valueOf(dto.poolDrawStrategy.name)
     )
 }
 
@@ -205,5 +150,5 @@ data class CategoryGameRulesSpec(
 
 data class CategoryMetadataPossibleValuesDTO(
     val drawTypes: List<DrawType>,
-    val drawStrategies: List<DrawStrategy>
+    val drawStrategies: List<PoolDrawStrategy>
 )

@@ -1,13 +1,11 @@
 package com.graphite.competitionplanner.category
 
-import com.graphite.competitionplanner.api.competition.CategoryMetadataApi
 import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
-import com.graphite.competitionplanner.service.CategoryGameRulesDTO
+import com.graphite.competitionplanner.domain.entity.DrawType
+import com.graphite.competitionplanner.domain.entity.PoolDrawStrategy
 import com.graphite.competitionplanner.service.CategoryMetadataDTO
 import com.graphite.competitionplanner.service.CategoryService
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
-import com.graphite.competitionplanner.service.draw.DrawStrategy
-import com.graphite.competitionplanner.service.draw.DrawType
 import com.graphite.competitionplanner.util.TestUtil
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -15,12 +13,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import java.time.LocalDateTime
 
 @SpringBootTest
 class TestCategoryMetadata(
     @Autowired val categoryService: CategoryService,
-    @Autowired val categoryMetadataApi: CategoryMetadataApi,
     @Autowired val testUtil: TestUtil,
     @Autowired val competitionCategoryService: CompetitionCategoryService
 ) {
@@ -53,7 +49,7 @@ class TestCategoryMetadata(
             DrawType.POOL_ONLY,
             playersPerGroup,
             2,
-            DrawStrategy.NORMAL
+            PoolDrawStrategy.NORMAL
         )
 
         val updatedCategory = categoryService.updateCategoryMetadata(
@@ -63,12 +59,5 @@ class TestCategoryMetadata(
 
         Assertions.assertEquals(categoryMetadataDTO.id, updatedCategory.id)
         Assertions.assertEquals(updatedCategory.nrPlayersPerGroup, playersPerGroup)
-    }
-
-    @Test
-    fun testgetPossibleValues() {
-        val result = categoryMetadataApi.getPossibleCategoryMetadataValues()
-        Assertions.assertTrue(result.drawStrategies.isNotEmpty())
-        Assertions.assertTrue(result.drawTypes.isNotEmpty())
     }
 }
