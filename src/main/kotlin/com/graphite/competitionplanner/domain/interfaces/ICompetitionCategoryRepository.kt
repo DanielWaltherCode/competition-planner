@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.domain.interfaces
 
 import com.graphite.competitionplanner.domain.dto.*
+import com.graphite.competitionplanner.domain.entity.CompetitionCategoryStatus
 
 // TODO: Split this
 interface ICompetitionCategoryRepository {
@@ -47,4 +48,9 @@ interface ICompetitionCategoryRepository {
      * @param dto A new category to be added as part of available categories that can be used in a competition
      */
     fun addAvailableCategory(dto: CategoryDTO)
+
+    /**
+     * Set the state of the competition category
+     */
+    fun setStatus(competitionCategoryId: Int, status: CompetitionCategoryStatus)
 }

@@ -2,14 +2,10 @@ package com.graphite.competitionplanner.service.competition
 
 import com.graphite.competitionplanner.api.CategoryStartTimeSpec
 import com.graphite.competitionplanner.domain.dto.CategoryDTO
-import com.graphite.competitionplanner.domain.usecase.competition.AddCompetitionCategory
-import com.graphite.competitionplanner.domain.usecase.competition.GetCompetitionCategories
-import com.graphite.competitionplanner.domain.usecase.competition.UpdateCompetitionCategory
-import com.graphite.competitionplanner.repositories.ClubRepository
+import com.graphite.competitionplanner.domain.usecase.competition.*
 import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategory
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
-import com.graphite.competitionplanner.service.CategoryService
 import com.graphite.competitionplanner.service.ScheduleService
 import org.springframework.context.annotation.Lazy
 import org.springframework.http.HttpStatus
@@ -18,22 +14,22 @@ import org.springframework.web.server.ResponseStatusException
 
 @Service
 class CompetitionCategoryService(
-    val clubRepository: ClubRepository,
     val competitionCategoryRepository: CompetitionCategoryRepository,
     @Lazy val scheduleService: ScheduleService,
-    val categoryService: CategoryService,
     val registrationRepository: RegistrationRepository,
     val addCompetitionCategory: AddCompetitionCategory,
     val getCompetitionCategories: GetCompetitionCategories,
-    val updateCompetitionCategory: UpdateCompetitionCategory
+    val updateCompetitionCategory: UpdateCompetitionCategory,
+    val deleteCompetitionCategory: DeleteCompetitionCategory,
+    val cancelCompetitionCategory: CancelCompetitionCategory
 ) {
     /**
      * Cancel competition category. This is used when players have already
      * signed up for category. Then we shouldn't delete data but just the category to
      * cancelled
      */
-    fun cancelCategoryInCompetition(categoryId: Int) {
-        competitionCategoryRepository.cancelCategoryInCompetition(categoryId)
+    fun cancelCategoryInCompetition(competitionCategoryId: Int) {
+        cancelCompetitionCategory.execute(competitionCategoryId)
     }
 
     /**
@@ -49,7 +45,7 @@ class CompetitionCategoryService(
                 "A category with registered players should not be deleted"
             )
         }
-        competitionCategoryRepository.deleteCategoryInCompetition(categoryId)
+        deleteCompetitionCategory.execute(categoryId)
     }
 
     fun getByCompetitionCategoryId(competitionCategoryId: Int): CompetitionCategory {
