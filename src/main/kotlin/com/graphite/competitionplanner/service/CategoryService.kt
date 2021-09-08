@@ -3,10 +3,10 @@ package com.graphite.competitionplanner.service
 import com.graphite.competitionplanner.api.competition.CategoryGameRulesSpec
 import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
 import com.graphite.competitionplanner.domain.dto.CategoryDTO
+import com.graphite.competitionplanner.domain.entity.DrawType
+import com.graphite.competitionplanner.domain.entity.PoolDrawStrategy
 import com.graphite.competitionplanner.repositories.CategoryGameRulesRepository
 import com.graphite.competitionplanner.repositories.CategoryMetadataRepository
-import com.graphite.competitionplanner.service.draw.DrawStrategy
-import com.graphite.competitionplanner.service.draw.DrawType
 import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.domain.usecase.category.GetCategories
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryGameRulesRecord
@@ -79,7 +79,7 @@ class CategoryService(
             DrawType.valueOf(categoryRecord.drawType),
             categoryRecord.nrPlayersPerGroup,
             categoryRecord.nrPlayersToPlayoff,
-            DrawStrategy.valueOf(categoryRecord.poolDrawStrategy)
+            PoolDrawStrategy.valueOf(categoryRecord.poolDrawStrategy)
         )
     }
 }
@@ -109,7 +109,7 @@ data class CategoryMetadataDTO(
     val drawType: DrawType,
     val nrPlayersPerGroup: Int,
     val nrPlayersToPlayoff: Int,
-    val poolDrawStrategy: DrawStrategy
+    val poolDrawStrategy: PoolDrawStrategy
 )
 
 @Deprecated("Use GameSettings in Domain")

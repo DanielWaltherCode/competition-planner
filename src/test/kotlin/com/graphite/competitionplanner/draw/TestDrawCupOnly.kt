@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.draw
 import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
 import com.graphite.competitionplanner.api.competition.DrawDTO
 import com.graphite.competitionplanner.api.competition.RegistrationSinglesSpec
+import com.graphite.competitionplanner.domain.entity.DrawType
 import com.graphite.competitionplanner.repositories.PlayerRepository
 import com.graphite.competitionplanner.repositories.RegistrationRepository
 import com.graphite.competitionplanner.repositories.competition.CompetitionDrawRepository
@@ -11,7 +12,6 @@ import com.graphite.competitionplanner.service.MatchService
 import com.graphite.competitionplanner.service.RegistrationService
 import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
 import com.graphite.competitionplanner.service.draw.DrawService
-import com.graphite.competitionplanner.service.draw.DrawType
 import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.util.TestUtil
 import org.junit.jupiter.api.*

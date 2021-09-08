@@ -265,6 +265,8 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
 
     @Throws(NotFoundException::class)
     override fun update(dto: CompetitionCategoryDTO) {
+        // Note: Does not update the category as that is prohibited. User will have to delete and create new instead.
+
         dslContext.selectFrom(COMPETITION_CATEGORY).where(COMPETITION_CATEGORY.ID.eq(dto.id)).fetchOne()
             ?: throw NotFoundException("Could not update. Competition category with id ${dto.id} not found.")
 
