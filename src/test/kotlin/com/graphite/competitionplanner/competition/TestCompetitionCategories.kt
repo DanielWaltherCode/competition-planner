@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.competition
 
 import com.graphite.competitionplanner.api.competition.RegistrationSinglesSpec
+import com.graphite.competitionplanner.domain.entity.CompetitionCategoryStatus
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.repositories.competition.CategoryRepository
 import com.graphite.competitionplanner.service.competition.CompetitionService
@@ -75,7 +76,7 @@ class TestCompetitionCategories(
         competitionCategoryService.cancelCategoryInCompetition(newCategoryId)
 
         val competitionCategory = competitionCategoryRepository.getById(newCategoryId)
-        Assertions.assertEquals("CANCELLED", competitionCategory.status)
+        Assertions.assertEquals(CompetitionCategoryStatus.CANCELLED.name, competitionCategory.status)
 
     }
 

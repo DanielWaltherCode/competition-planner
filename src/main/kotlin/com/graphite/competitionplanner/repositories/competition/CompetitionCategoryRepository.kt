@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.repositories.competition
 
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.domain.dto.*
+import com.graphite.competitionplanner.domain.entity.CompetitionCategoryStatus
 import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.domain.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
@@ -180,19 +181,6 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         }.toList()
     }
 
-    fun cancelCategoryInCompetition(categoryId: Int) {
-        dslContext.update(COMPETITION_CATEGORY)
-            .set(COMPETITION_CATEGORY.STATUS, "CANCELLED")
-            .where(COMPETITION_CATEGORY.ID.eq(categoryId))
-            .execute()
-    }
-
-    fun deleteCategoryInCompetition(categoryId: Int) {
-        dslContext.deleteFrom(COMPETITION_CATEGORY)
-            .where(COMPETITION_CATEGORY.ID.eq(categoryId))
-            .execute()
-    }
-
     fun clearTable() = dslContext.deleteFrom(COMPETITION_CATEGORY).execute()
 
     override fun getAll(competitionId: Int): List<CompetitionCategoryDTO> {
@@ -294,6 +282,13 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
 
     override fun addAvailableCategory(dto: CategoryDTO) {
         TODO("Not yet implemented")
+    }
+
+    override fun setStatus(competitionCategoryId: Int, status: CompetitionCategoryStatus) {
+        dslContext.update(COMPETITION_CATEGORY)
+            .set(COMPETITION_CATEGORY.STATUS, status.name)
+            .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
+            .execute()
     }
 
     private fun GameSettingsDTO.toRecord(competitionCategoryId: Int): CompetitionCategoryGameRulesRecord {
