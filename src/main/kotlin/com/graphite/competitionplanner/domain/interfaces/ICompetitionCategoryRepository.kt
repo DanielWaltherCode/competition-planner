@@ -41,13 +41,6 @@ interface ICompetitionCategoryRepository {
     fun update(dto: CompetitionCategoryDTO)
 
     /**
-     * Return a list of available categories
-     *
-     * @return A list of categories that can be added to a competition
-     */
-    fun getAvailableCategories(): List<CategoryDTO>
-
-    /**
      * Add a competition category to the list of available categories. If one tries to add a category with a name that
      * is identical to one that already exist, then this function does nothing.
      *

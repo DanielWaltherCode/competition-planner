@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.api.competition
 
+import com.graphite.competitionplanner.api.CategorySpec
 import com.graphite.competitionplanner.domain.dto.*
 import com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO
 import com.graphite.competitionplanner.service.*
@@ -157,18 +158,6 @@ data class CompetitionCategorySpec(
         CategorySpec(dto.category),
         CategoryMetadataSpec(dto.settings),
         CategoryGameRulesSpec(dto.gameSettings)
-    )
-}
-
-data class CategorySpec(
-    val id: Int,
-    val name: String,
-    val type: String
-) {
-    constructor(dto: CategoryDTO) : this(
-        dto.id,
-        dto.name,
-        dto.type
     )
 }
 

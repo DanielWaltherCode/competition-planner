@@ -6,6 +6,7 @@ import com.graphite.competitionplanner.domain.dto.CategoryDTO
 import com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.domain.interfaces.ICategoryRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyInt
@@ -19,7 +20,8 @@ import java.lang.IllegalArgumentException
 class TestAddCompetitionCategory {
 
     private final val mockedRepository = Mockito.mock(ICompetitionCategoryRepository::class.java)
-    val addCompetitionCategory = AddCompetitionCategory(mockedRepository)
+    private final val mockedCategoryRepository = Mockito.mock(ICategoryRepository::class.java)
+    val addCompetitionCategory = AddCompetitionCategory(mockedRepository, mockedCategoryRepository)
     val dataGenerator = DataGenerator()
 
     @Test
@@ -27,7 +29,7 @@ class TestAddCompetitionCategory {
         // Setup
         val dto = CategoryDTO(1, "HERRAR-13", "SINGLES") // Does not exist
         val competitionId = 0
-        `when`(mockedRepository.getAvailableCategories())
+        `when`(mockedCategoryRepository.getAvailableCategories())
             .thenReturn(
                 listOf(
                     dataGenerator.newCategoryDTO(id = 0, name = "DAMER 1"),
@@ -50,7 +52,7 @@ class TestAddCompetitionCategory {
         // Setup
         val dto = dataGenerator.newCategoryDTO(id = 0, name = "HERRDUBBEL")
         val competitionId = 1
-        `when`(mockedRepository.getAvailableCategories()).thenReturn(listOf(dto))
+        `when`(mockedCategoryRepository.getAvailableCategories()).thenReturn(listOf(dto))
         `when`(mockedRepository.getAll(competitionId))
             .thenReturn(
                 listOf(dataGenerator.newCompetitionCategoryDTO(category = dto))
@@ -80,7 +82,7 @@ class TestAddCompetitionCategory {
         )
 
         val competitionId = 1
-        `when`(mockedRepository.getAvailableCategories()).thenReturn(listOf(category))
+        `when`(mockedCategoryRepository.getAvailableCategories()).thenReturn(listOf(category))
         `when`(mockedRepository.getAll(competitionId)).thenReturn(emptyList())
 
         // Act

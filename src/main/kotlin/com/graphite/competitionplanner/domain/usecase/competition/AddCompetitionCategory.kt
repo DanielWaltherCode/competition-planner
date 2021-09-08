@@ -10,16 +10,18 @@ import com.graphite.competitionplanner.domain.entity.GameSettings
 import com.graphite.competitionplanner.domain.entity.GeneralSettings
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.domain.interfaces.ICategoryRepository
 import org.springframework.stereotype.Component
 import java.lang.IllegalArgumentException
 
 @Component
 class AddCompetitionCategory(
-    val repository: ICompetitionCategoryRepository
+    val repository: ICompetitionCategoryRepository,
+    val categoryRepository: ICategoryRepository
 ) {
 
     fun execute(competitionId: Int, category: CategoryDTO): CompetitionCategoryDTO {
-        val availableCategories = repository.getAvailableCategories()
+        val availableCategories = categoryRepository.getAvailableCategories()
         if (availableCategories.none { it == category }) {
             throw IllegalArgumentException("Not a valid category: $category")
         }
