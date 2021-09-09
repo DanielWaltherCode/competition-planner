@@ -3,8 +3,15 @@ package com.graphite.competitionplanner.domain.interfaces
 import com.graphite.competitionplanner.domain.dto.*
 import com.graphite.competitionplanner.domain.entity.CompetitionCategoryStatus
 
-// TODO: Split this
 interface ICompetitionCategoryRepository {
+
+    /**
+     * Return the competition category with the given ID
+     *
+     * @throws NotFoundException If a competition category with the given id cannot be found
+     */
+    @Throws(NotFoundException::class)
+    fun get(competitionCategoryID: Int): CompetitionCategoryDTO
 
     /**
      * Return already registered categories for a given competition
@@ -27,7 +34,7 @@ interface ICompetitionCategoryRepository {
      * Delete the given competition category, as well as all associated general- and game settings
      *
      * @param competitionCategoryId Id of the competition category to delete
-     * @throws NotFoundException - If a given competition with the given id cannot be found
+     * @throws NotFoundException - If a competition category with the given id cannot be found
      */
     @Throws(NotFoundException::class)
     fun delete(competitionCategoryId: Int)
@@ -39,7 +46,7 @@ interface ICompetitionCategoryRepository {
      * @throws NotFoundException If a competition category that matches the dto's id cannot be found
      */
     @Throws(NotFoundException::class)
-    fun update(dto: CompetitionCategoryDTO)
+    fun update(dto: CompetitionCategoryUpdateDTO)
 
     /**
      * Add a competition category to the list of available categories. If one tries to add a category with a name that

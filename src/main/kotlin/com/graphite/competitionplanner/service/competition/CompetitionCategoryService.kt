@@ -2,9 +2,10 @@ package com.graphite.competitionplanner.service.competition
 
 import com.graphite.competitionplanner.api.CategoryStartTimeSpec
 import com.graphite.competitionplanner.domain.dto.CategoryDTO
+import com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO
+import com.graphite.competitionplanner.domain.dto.CompetitionCategoryUpdateDTO
 import com.graphite.competitionplanner.domain.usecase.competition.*
 import com.graphite.competitionplanner.repositories.RegistrationRepository
-import com.graphite.competitionplanner.repositories.competition.CompetitionCategory
 import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
 import com.graphite.competitionplanner.service.ScheduleService
 import org.springframework.context.annotation.Lazy
@@ -18,6 +19,7 @@ class CompetitionCategoryService(
     @Lazy val scheduleService: ScheduleService,
     val registrationRepository: RegistrationRepository,
     val addCompetitionCategory: AddCompetitionCategory,
+    val getCompetitionCategory: GetCompetitionCategory,
     val getCompetitionCategories: GetCompetitionCategories,
     val updateCompetitionCategory: UpdateCompetitionCategory,
     val deleteCompetitionCategory: DeleteCompetitionCategory,
@@ -48,24 +50,24 @@ class CompetitionCategoryService(
         deleteCompetitionCategory.execute(categoryId)
     }
 
-    fun getByCompetitionCategoryId(competitionCategoryId: Int): CompetitionCategory {
-        return competitionCategoryRepository.getById(competitionCategoryId)
+    fun getByCompetitionCategoryId(competitionCategoryId: Int): CompetitionCategoryDTO {
+        return getCompetitionCategory.execute(competitionCategoryId)
     }
 
     fun addCompetitionCategory(
         competitionId: Int,
         category: CategoryDTO
-    ): com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO {
+    ): CompetitionCategoryDTO {
         val competitionCategory = addCompetitionCategory.execute(competitionId, category)
         scheduleService.addCategoryStartTime(competitionCategory.id, CategoryStartTimeSpec(null, null, null))
         return competitionCategory
     }
 
-    fun getCompetitionCategoriesFor(competitionId: Int): List<com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO> {
+    fun getCompetitionCategoriesFor(competitionId: Int): List<CompetitionCategoryDTO> {
         return getCompetitionCategories.execute(competitionId)
     }
 
-    fun updateCompetitionCategory(dto: com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO) {
+    fun updateCompetitionCategory(dto: CompetitionCategoryUpdateDTO) {
         updateCompetitionCategory.execute(dto)
     }
 }

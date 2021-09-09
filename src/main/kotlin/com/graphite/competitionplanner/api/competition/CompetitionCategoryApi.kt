@@ -50,9 +50,8 @@ class CompetitionCategoryApi(
         @RequestBody spec: CompetitionCategorySpec
     ) {
         competitionCategoryService.updateCompetitionCategory(
-            CompetitionCategoryDTO(
+            CompetitionCategoryUpdateDTO(
                 spec.id,
-                CategoryDTO(spec.category.id, spec.category.name, spec.category.type),
                 GeneralSettingsDTO(
                     spec.settings.cost, DrawTypeDTO(spec.settings.drawType.name), spec.settings.nrPlayersPerGroup,
                     spec.settings.nrPlayersToPlayoff, PoolDrawStrategyDTO(spec.settings.poolDrawStrategy.name)

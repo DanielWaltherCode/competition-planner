@@ -233,7 +233,6 @@ class DrawService(
     }
 
     fun getCupOnlyDraw(competitionCategoryId: Int): DrawDTO {
-        val competitionCategory = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
         val groups = mutableListOf<SingleGroupDTO>()
 
         val playoffRound = mutableListOf<PlayoffRound>()

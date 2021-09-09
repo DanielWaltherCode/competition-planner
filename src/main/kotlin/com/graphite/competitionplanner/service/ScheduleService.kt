@@ -317,9 +317,11 @@ class ScheduleService(
         } else {
             StartInterval.valueOf(scheduleCategoryRecord.startInterval)
         }
+        val competitionCategory =
+            competitionCategoryService.getByCompetitionCategoryId(scheduleCategoryRecord.competitonCategoryId)
         return CategoryStartTimeDTO(
             scheduleCategoryRecord.id,
-            competitionCategoryService.getByCompetitionCategoryId(scheduleCategoryRecord.competitonCategoryId),
+            CompetitionCategory(competitionCategory.id, competitionCategory.category.name, competitionCategory.status),
             scheduleCategoryRecord.playingDay,
             startInterval,
             scheduleCategoryRecord.exactStartTime
