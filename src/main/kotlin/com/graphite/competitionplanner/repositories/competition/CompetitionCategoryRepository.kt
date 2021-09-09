@@ -14,6 +14,7 @@ import com.graphite.competitionplanner.tables.records.CompetitionCategoryMetadat
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryRecord
 import org.jooq.DSLContext
 import org.jooq.Record
+import org.jooq.SelectConditionStep
 import org.springframework.stereotype.Repository
 import kotlin.streams.toList
 
@@ -173,15 +174,35 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             .fetch()
 
        return records.stream().map {
-            CompetitionAndCategories(
-                it.getValue(COMPETITION_CATEGORY.COMPETITION_ID), it.getValue(
-                    COMPETITION_CATEGORY.ID),
-                it.getValue(CATEGORY.CATEGORY_NAME)
-            )
-        }.toList()
+           CompetitionAndCategories(
+               it.getValue(COMPETITION_CATEGORY.COMPETITION_ID), it.getValue(
+                   COMPETITION_CATEGORY.ID
+               ),
+               it.getValue(CATEGORY.CATEGORY_NAME)
+           )
+       }.toList()
     }
 
     fun clearTable() = dslContext.deleteFrom(COMPETITION_CATEGORY).execute()
+
+    @Throws(NotFoundException::class)
+    override fun get(competitionCategoryID: Int): CompetitionCategoryDTO {
+        val records = dslContext.select()
+            .from(COMPETITION_CATEGORY)
+            .join(CATEGORY).on(COMPETITION_CATEGORY.CATEGORY.eq(CATEGORY.ID))
+            .join(COMPETITION_CATEGORY_METADATA)
+            .on(COMPETITION_CATEGORY.ID.eq(COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID))
+            .join(COMPETITION_CATEGORY_GAME_RULES)
+            .on(COMPETITION_CATEGORY.ID.eq(COMPETITION_CATEGORY_GAME_RULES.COMPETITION_CATEGORY_ID))
+            .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryID))
+
+        val result = toCompetitionCategoryDto(records)
+        if (result.isEmpty()) {
+            throw NotFoundException("Competition category with $competitionCategoryID not found.")
+        } else {
+            return result.first()
+        }
+    }
 
     override fun getAll(competitionId: Int): List<CompetitionCategoryDTO> {
         val records = dslContext.select()
@@ -192,35 +213,7 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             .join(COMPETITION_CATEGORY_GAME_RULES)
             .on(COMPETITION_CATEGORY.ID.eq(COMPETITION_CATEGORY_GAME_RULES.COMPETITION_CATEGORY_ID))
             .where(COMPETITION_CATEGORY.COMPETITION_ID.eq(competitionId))
-        return records.map {
-            CompetitionCategoryDTO(
-                it.getValue(COMPETITION_CATEGORY.ID),
-                CategoryDTO(
-                    it.getValue(CATEGORY.ID),
-                    it.getValue(CATEGORY.CATEGORY_NAME),
-                    it.getValue(CATEGORY.CATEGORY_TYPE)
-                ),
-                GeneralSettingsDTO(
-                    it.getValue(COMPETITION_CATEGORY_METADATA.COST),
-                    DrawTypeDTO(it.getValue(COMPETITION_CATEGORY_METADATA.DRAW_TYPE)),
-                    it.getValue(COMPETITION_CATEGORY_METADATA.NR_PLAYERS_PER_GROUP),
-                    it.getValue(COMPETITION_CATEGORY_METADATA.NR_PLAYERS_TO_PLAYOFF),
-                    PoolDrawStrategyDTO(it.getValue(COMPETITION_CATEGORY_METADATA.POOL_DRAW_STRATEGY))
-                ),
-                GameSettingsDTO(
-                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.NR_SETS),
-                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_SCORE),
-                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_MARGIN),
-                    Round.valueOf(it.getValue(COMPETITION_CATEGORY_GAME_RULES.DIFFERENT_NUMBER_OF_GAMES_FROM_ROUND)),
-                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.NR_SETS_FINAL),
-                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_SCORE_FINAL),
-                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_MARGIN_FINAL),
-                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.TIE_BREAK_IN_FINAL_GAME),
-                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_SCORE_TIEBREAK),
-                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_MARGIN_TIE_BREAK)
-                )
-            )
-        }
+        return toCompetitionCategoryDto(records)
     }
 
     override fun store(competitionId: Int, dto: CompetitionCategoryDTO): CompetitionCategoryDTO {
@@ -252,9 +245,7 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
     }
 
     @Throws(NotFoundException::class)
-    override fun update(dto: CompetitionCategoryDTO) {
-        // Note: Does not update the category as that is prohibited. User will have to delete and create new instead.
-
+    override fun update(dto: CompetitionCategoryUpdateDTO) {
         dslContext.selectFrom(COMPETITION_CATEGORY).where(COMPETITION_CATEGORY.ID.eq(dto.id)).fetchOne()
             ?: throw NotFoundException("Could not update. Competition category with id ${dto.id} not found.")
 
@@ -289,6 +280,39 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             .set(COMPETITION_CATEGORY.STATUS, status.name)
             .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
             .execute()
+    }
+
+    private fun toCompetitionCategoryDto(records: SelectConditionStep<Record>): List<CompetitionCategoryDTO> {
+        return records.map {
+            CompetitionCategoryDTO(
+                it.getValue(COMPETITION_CATEGORY.ID),
+                it.getValue(COMPETITION_CATEGORY.STATUS),
+                CategoryDTO(
+                    it.getValue(CATEGORY.ID),
+                    it.getValue(CATEGORY.CATEGORY_NAME),
+                    it.getValue(CATEGORY.CATEGORY_TYPE)
+                ),
+                GeneralSettingsDTO(
+                    it.getValue(COMPETITION_CATEGORY_METADATA.COST),
+                    DrawTypeDTO(it.getValue(COMPETITION_CATEGORY_METADATA.DRAW_TYPE)),
+                    it.getValue(COMPETITION_CATEGORY_METADATA.NR_PLAYERS_PER_GROUP),
+                    it.getValue(COMPETITION_CATEGORY_METADATA.NR_PLAYERS_TO_PLAYOFF),
+                    PoolDrawStrategyDTO(it.getValue(COMPETITION_CATEGORY_METADATA.POOL_DRAW_STRATEGY))
+                ),
+                GameSettingsDTO(
+                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.NR_SETS),
+                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_SCORE),
+                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_MARGIN),
+                    Round.valueOf(it.getValue(COMPETITION_CATEGORY_GAME_RULES.DIFFERENT_NUMBER_OF_GAMES_FROM_ROUND)),
+                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.NR_SETS_FINAL),
+                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_SCORE_FINAL),
+                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_MARGIN_FINAL),
+                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.TIE_BREAK_IN_FINAL_GAME),
+                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_SCORE_TIEBREAK),
+                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_MARGIN_TIE_BREAK)
+                )
+            )
+        }
     }
 
     private fun GameSettingsDTO.toRecord(competitionCategoryId: Int): CompetitionCategoryGameRulesRecord {

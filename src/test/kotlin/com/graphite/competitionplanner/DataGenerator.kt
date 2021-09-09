@@ -239,12 +239,24 @@ class DataGenerator {
 
     fun newCompetitionCategoryDTO(
         id: Int = 1,
+        status: String = CompetitionCategoryStatus.ACTIVE.name,
         category: CategoryDTO = newCategoryDTO(),
         settings: GeneralSettingsDTO = newGeneralSettingsDTO(),
         gameSettings: GameSettingsDTO = newGameSettingsDTO()
     ) = CompetitionCategoryDTO(
         id,
+        status,
         category,
+        settings,
+        gameSettings
+    )
+
+    fun newCompetitionCategoryUpdateDTO(
+        id: Int = 1,
+        settings: GeneralSettingsDTO = newGeneralSettingsDTO(),
+        gameSettings: GameSettingsDTO = newGameSettingsDTO()
+    ) = CompetitionCategoryUpdateDTO(
+        id,
         settings,
         gameSettings
     )

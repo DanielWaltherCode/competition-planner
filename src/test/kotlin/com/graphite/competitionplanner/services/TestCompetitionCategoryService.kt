@@ -20,6 +20,8 @@ class TestCompetitionCategoryService {
     private final val mockedScheduledService: ScheduleService = mock(ScheduleService::class.java)
     private final val mockedRegistrationRepository: RegistrationRepository = mock(RegistrationRepository::class.java)
     private final val mockedAddCompetition: AddCompetitionCategory = mock(AddCompetitionCategory::class.java)
+    private final val mockedGetCompetitionCategory: GetCompetitionCategory =
+        mock(GetCompetitionCategory::class.java)
     private final val mockedGetCompetitionCategories: GetCompetitionCategories =
         mock(GetCompetitionCategories::class.java)
     private final val mockedUpdateCompetitionCategories: UpdateCompetitionCategory =
@@ -34,6 +36,7 @@ class TestCompetitionCategoryService {
         mockedScheduledService,
         mockedRegistrationRepository,
         mockedAddCompetition,
+        mockedGetCompetitionCategory,
         mockedGetCompetitionCategories,
         mockedUpdateCompetitionCategories,
         mockedDeleteCompetitionCategory,

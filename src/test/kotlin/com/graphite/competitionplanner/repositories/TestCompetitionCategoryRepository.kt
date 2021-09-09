@@ -93,7 +93,7 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldThrowExceptionWhenTryingToUpdateCompetitionCategoryThatDoesNotExist() {
         Assertions.assertThrows(NotFoundException::class.java) {
-            repository.update(dataGenerator.newCompetitionCategoryDTO(id = -1))
+            repository.update(dataGenerator.newCompetitionCategoryUpdateDTO(id = -1))
         }
     }
 
@@ -103,7 +103,7 @@ class TestCompetitionCategoryRepository(
         val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }
         val dto = dataGenerator.newCompetitionCategoryDTO(category = category!!)
         val original = repository.store(competition.id, dto)
-        val updateDto = dataGenerator.newCompetitionCategoryDTO(
+        val updateDto = dataGenerator.newCompetitionCategoryUpdateDTO(
             id = original.id,
             settings = dataGenerator.newGeneralSettingsDTO(cost = 110f, playersToPlayOff = 1),
             gameSettings = dataGenerator.newGameSettingsDTO(numberOfSets = 4, winScore = 8, numberOfSetsFinal = 11)

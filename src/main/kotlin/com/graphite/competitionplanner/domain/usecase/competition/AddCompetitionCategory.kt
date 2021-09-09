@@ -4,12 +4,8 @@ import com.graphite.competitionplanner.domain.dto.GeneralSettingsDTO
 import com.graphite.competitionplanner.domain.dto.CategoryDTO
 import com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO
 import com.graphite.competitionplanner.domain.dto.GameSettingsDTO
-import com.graphite.competitionplanner.domain.entity.PoolDrawStrategy
-import com.graphite.competitionplanner.domain.entity.DrawType
-import com.graphite.competitionplanner.domain.entity.GameSettings
-import com.graphite.competitionplanner.domain.entity.GeneralSettings
+import com.graphite.competitionplanner.domain.entity.*
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
-import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.domain.interfaces.ICategoryRepository
 import org.springframework.stereotype.Component
 import java.lang.IllegalArgumentException
@@ -33,6 +29,7 @@ class AddCompetitionCategory(
 
         val dto = CompetitionCategoryDTO(
             id = 0,
+            status = CompetitionCategoryStatus.ACTIVE.name,
             category = category,
             settings = GeneralSettingsDTO(getDefaultGeneralSettings()),
             gameSettings = GameSettingsDTO(getDefaultGameSettings())

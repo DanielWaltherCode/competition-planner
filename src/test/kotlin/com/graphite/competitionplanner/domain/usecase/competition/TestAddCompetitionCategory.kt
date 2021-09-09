@@ -4,6 +4,7 @@ import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.TestHelper
 import com.graphite.competitionplanner.domain.dto.CategoryDTO
 import com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO
+import com.graphite.competitionplanner.domain.entity.CompetitionCategoryStatus
 import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.domain.interfaces.ICategoryRepository
@@ -89,7 +90,8 @@ class TestAddCompetitionCategory {
         addCompetitionCategory.execute(competitionId, category)
 
         // Assert
-        val expected = CompetitionCategoryDTO(0, category, settings, gameSettings)
+        val expected =
+            CompetitionCategoryDTO(0, CompetitionCategoryStatus.ACTIVE.name, category, settings, gameSettings)
         verify(mockedRepository, Mockito.times(1)).store(competitionId, expected)
         verify(mockedRepository, Mockito.times(1)).store(
             anyInt(),

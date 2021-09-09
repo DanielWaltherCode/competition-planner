@@ -20,7 +20,7 @@ class TestUpdateCompetitionCategory {
     @Test
     fun shouldThrowExceptionIfDtoHasInvalidSettings() {
         // Setup
-        val dto = dataGenerator.newCompetitionCategoryDTO(
+        val dto = dataGenerator.newCompetitionCategoryUpdateDTO(
             settings = dataGenerator.newGeneralSettingsDTO(
                 playersPerGroup = 2,
                 playersToPlayOff = 3
@@ -38,7 +38,7 @@ class TestUpdateCompetitionCategory {
     @Test
     fun shouldCallRepositoryUpdateOnce() {
         // Setup
-        val dto = dataGenerator.newCompetitionCategoryDTO()
+        val dto = dataGenerator.newCompetitionCategoryUpdateDTO()
 
         // Act
         updateCompetitionCategory.execute(dto)
@@ -51,7 +51,7 @@ class TestUpdateCompetitionCategory {
     @Test
     fun shouldNotCatchExceptionFromRepository() {
         // Setup
-        val dto = dataGenerator.newCompetitionCategoryDTO()
+        val dto = dataGenerator.newCompetitionCategoryUpdateDTO()
         `when`(mockedRepository.update(dto)).thenThrow(NotFoundException::class.java)
 
         // Act & Assert
