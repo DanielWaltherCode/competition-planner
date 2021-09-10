@@ -1,8 +1,10 @@
 package com.graphite.competitionplanner.domain.mapping
 
-import com.graphite.competitionplanner.DataGenerator
+import com.graphite.competitionplanner.domain.entity.Match
+import com.graphite.competitionplanner.domain.entity.MatchType
+import com.graphite.competitionplanner.domain.entity.Player
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
-import com.graphite.competitionplanner.domain.entity.*
+import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
