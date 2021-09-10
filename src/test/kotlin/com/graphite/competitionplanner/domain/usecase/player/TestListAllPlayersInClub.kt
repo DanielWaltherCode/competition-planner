@@ -2,9 +2,10 @@ package com.graphite.competitionplanner.domain.usecase.player
 
 import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.TestHelper
-import com.graphite.competitionplanner.domain.interfaces.IPlayerRepository
+import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.domain.interfaces.NotFoundException
-import com.graphite.competitionplanner.domain.usecase.club.FindClub
+import com.graphite.competitionplanner.club.domain.FindClub
+import com.graphite.competitionplanner.player.domain.ListAllPlayersInClub
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*

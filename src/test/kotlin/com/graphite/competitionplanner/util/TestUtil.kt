@@ -1,10 +1,10 @@
 package com.graphite.competitionplanner.util
 
 import com.graphite.competitionplanner.domain.dto.CategoryDTO
-import com.graphite.competitionplanner.repositories.ClubRepository
-import com.graphite.competitionplanner.repositories.competition.CategoryRepository
-import com.graphite.competitionplanner.service.competition.CompetitionService
-import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
+import com.graphite.competitionplanner.club.repository.ClubRepository
+import com.graphite.competitionplanner.category.repository.CategoryRepository
+import com.graphite.competitionplanner.competition.service.CompetitionService
+import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

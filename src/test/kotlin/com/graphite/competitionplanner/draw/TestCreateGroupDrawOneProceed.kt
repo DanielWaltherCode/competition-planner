@@ -1,15 +1,15 @@
 package com.graphite.competitionplanner.draw
 
 import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
-import com.graphite.competitionplanner.api.competition.RegistrationSinglesSpec
-import com.graphite.competitionplanner.repositories.PlayerRepository
-import com.graphite.competitionplanner.repositories.RegistrationRepository
-import com.graphite.competitionplanner.repositories.competition.CompetitionDrawRepository
+import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
+import com.graphite.competitionplanner.player.repository.PlayerRepository
+import com.graphite.competitionplanner.registration.repository.RegistrationRepository
+import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.service.CategoryService
-import com.graphite.competitionplanner.service.MatchService
-import com.graphite.competitionplanner.service.RegistrationService
-import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
-import com.graphite.competitionplanner.service.draw.DrawService
+import com.graphite.competitionplanner.match.service.MatchService
+import com.graphite.competitionplanner.registration.service.RegistrationService
+import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
+import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.util.TestUtil
 import org.junit.jupiter.api.AfterEach

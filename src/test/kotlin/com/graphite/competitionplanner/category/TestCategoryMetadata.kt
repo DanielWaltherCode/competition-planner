@@ -5,7 +5,7 @@ import com.graphite.competitionplanner.domain.entity.DrawType
 import com.graphite.competitionplanner.domain.entity.PoolDrawStrategy
 import com.graphite.competitionplanner.service.CategoryMetadataDTO
 import com.graphite.competitionplanner.service.CategoryService
-import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
+import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.util.TestUtil
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions

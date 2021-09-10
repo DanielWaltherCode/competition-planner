@@ -1,19 +1,27 @@
 package com.graphite.competitionplanner.util
 
 import com.graphite.competitionplanner.api.*
-import com.graphite.competitionplanner.api.competition.CompetitionSpec
+import com.graphite.competitionplanner.competition.api.CompetitionSpec
 import com.graphite.competitionplanner.domain.dto.ClubDTO
-import com.graphite.competitionplanner.api.competition.RegistrationSinglesSpec
+import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
+import com.graphite.competitionplanner.club.repository.ClubRepository
+import com.graphite.competitionplanner.club.service.ClubService
 import com.graphite.competitionplanner.domain.dto.CategoryDTO
 import com.graphite.competitionplanner.domain.dto.NewPlayerDTO
-import com.graphite.competitionplanner.repositories.*
-import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
-import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
-import com.graphite.competitionplanner.repositories.competition.CategoryRepository
-import com.graphite.competitionplanner.repositories.competition.CompetitionDrawRepository
-import com.graphite.competitionplanner.service.*
-import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
-import com.graphite.competitionplanner.service.competition.CompetitionService
+import com.graphite.competitionplanner.player.repository.PlayerRepository
+import com.graphite.competitionplanner.player.service.PlayerService
+import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
+import com.graphite.competitionplanner.competition.repository.CompetitionRepository
+import com.graphite.competitionplanner.category.repository.CategoryRepository
+import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
+import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
+import com.graphite.competitionplanner.competition.service.CompetitionService
+import com.graphite.competitionplanner.match.repository.MatchRepository
+import com.graphite.competitionplanner.registration.repository.RegistrationRepository
+import com.graphite.competitionplanner.registration.service.RegistrationService
+import com.graphite.competitionplanner.user.api.UserSpec
+import com.graphite.competitionplanner.user.repository.UserRepository
+import com.graphite.competitionplanner.user.service.UserService
 import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
@@ -62,16 +70,20 @@ class EventListener(
     }
 
     fun registerUsers() {
-        userService.addUser(UserSpec(
-           username = "abraham",
-           password = "anders",
-            clubId = util.getClubIdOrDefault("Lugi")
-        ))
-        userService.addUser(UserSpec(
-            username = "jasmine",
-            password = "presto!",
-            clubId = util.getClubIdOrDefault("Lugi")
-        ))
+        userService.addUser(
+            UserSpec(
+                username = "abraham",
+                password = "anders",
+                clubId = util.getClubIdOrDefault("Lugi")
+            )
+        )
+        userService.addUser(
+            UserSpec(
+                username = "jasmine",
+                password = "presto!",
+                clubId = util.getClubIdOrDefault("Lugi")
+            )
+        )
     }
 
     fun setUpClub() {

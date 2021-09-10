@@ -1,17 +1,15 @@
 package com.graphite.competitionplanner.player
 
 import com.graphite.competitionplanner.AbstractApiTest
-import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.api.PlayerApi
 import com.graphite.competitionplanner.api.PlayerSpec
-import com.graphite.competitionplanner.service.PlayerDTO
+import com.graphite.competitionplanner.player.service.PlayerDTO
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.test.web.client.exchange
 import org.springframework.boot.web.server.LocalServerPort
@@ -19,7 +17,6 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import java.time.LocalDate
-import java.util.*
 
 class TestPlayerApi(
     @LocalServerPort port: Int,

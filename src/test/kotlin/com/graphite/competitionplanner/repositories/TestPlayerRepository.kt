@@ -3,8 +3,8 @@ package com.graphite.competitionplanner.repositories
 import com.graphite.competitionplanner.domain.dto.ClubDTO
 import com.graphite.competitionplanner.domain.dto.NewPlayerDTO
 import com.graphite.competitionplanner.domain.dto.PlayerDTO
-import com.graphite.competitionplanner.domain.interfaces.IClubRepository
-import com.graphite.competitionplanner.domain.interfaces.IPlayerRepository
+import com.graphite.competitionplanner.club.domain.interfaces.IClubRepository
+import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.domain.interfaces.NotFoundException
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired

@@ -1,7 +1,8 @@
 package com.graphite.competitionplanner.domain.usecase.category
 
 import com.graphite.competitionplanner.DataGenerator
-import com.graphite.competitionplanner.domain.interfaces.ICategoryRepository
+import com.graphite.competitionplanner.category.domain.GetCategories
+import com.graphite.competitionplanner.category.domain.interfaces.ICategoryRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*

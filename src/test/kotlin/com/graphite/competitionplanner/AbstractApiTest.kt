@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.graphite.competitionplanner.api.LoginDTO
+import com.graphite.competitionplanner.user.api.LoginDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate

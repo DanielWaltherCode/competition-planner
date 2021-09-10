@@ -1,14 +1,12 @@
 package com.graphite.competitionplanner.competition
 
-import com.graphite.competitionplanner.api.competition.RegistrationSinglesSpec
+import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
 import com.graphite.competitionplanner.domain.entity.CompetitionCategoryStatus
-import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
-import com.graphite.competitionplanner.repositories.competition.CategoryRepository
-import com.graphite.competitionplanner.service.competition.CompetitionService
-import com.graphite.competitionplanner.service.PlayerService
-import com.graphite.competitionplanner.service.RegistrationService
-import com.graphite.competitionplanner.service.RegistrationSinglesDTO
-import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
+import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
+import com.graphite.competitionplanner.competition.service.CompetitionService
+import com.graphite.competitionplanner.player.service.PlayerService
+import com.graphite.competitionplanner.registration.service.RegistrationService
+import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.util.TestUtil
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.Assertions

@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.repositories
 
+import com.graphite.competitionplanner.club.repository.ClubRepository
 import com.graphite.competitionplanner.domain.dto.ClubDTO
 import com.graphite.competitionplanner.domain.interfaces.NotFoundException
 import org.junit.jupiter.api.Assertions

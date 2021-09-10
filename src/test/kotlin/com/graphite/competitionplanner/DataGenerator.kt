@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner
 
-import com.graphite.competitionplanner.api.ClubNoAddressDTO
-import com.graphite.competitionplanner.api.NewClubSpec
+import com.graphite.competitionplanner.club.api.ClubNoAddressDTO
+import com.graphite.competitionplanner.club.api.NewClubSpec
 import com.graphite.competitionplanner.api.PlayerSpec
 import com.graphite.competitionplanner.domain.dto.*
 import com.graphite.competitionplanner.domain.entity.*

@@ -1,11 +1,11 @@
 package com.graphite.competitionplanner.schedule
 
-import com.graphite.competitionplanner.api.ScheduleMetadataSpec
-import com.graphite.competitionplanner.api.competition.CompetitionSpec
-import com.graphite.competitionplanner.repositories.ScheduleRepository
-import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
-import com.graphite.competitionplanner.service.ScheduleService
-import com.graphite.competitionplanner.service.competition.CompetitionService
+import com.graphite.competitionplanner.schedule.api.ScheduleMetadataSpec
+import com.graphite.competitionplanner.competition.api.CompetitionSpec
+import com.graphite.competitionplanner.schedule.repository.ScheduleRepository
+import com.graphite.competitionplanner.competition.repository.CompetitionRepository
+import com.graphite.competitionplanner.schedule.service.ScheduleService
+import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -37,7 +37,8 @@ class TestScheduleMetadata(
                 organizingClubId = util.getClubIdOrDefault("Lugi"),
                 startDate = LocalDate.now(),
                 endDate = LocalDate.now().plusDays(10)
-            )).id
+            )
+        ).id
     }
 
     @AfterEach

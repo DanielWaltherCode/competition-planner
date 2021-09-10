@@ -1,9 +1,7 @@
 package com.graphite.competitionplanner.player
 
-import com.graphite.competitionplanner.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.api.PlayerSpec
-import com.graphite.competitionplanner.repositories.PlayerRepository
-import com.graphite.competitionplanner.service.PlayerDTO
+import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

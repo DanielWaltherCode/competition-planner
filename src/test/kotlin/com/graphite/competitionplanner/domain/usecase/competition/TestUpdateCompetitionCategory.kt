@@ -2,7 +2,8 @@ package com.graphite.competitionplanner.domain.usecase.competition
 
 import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.TestHelper
-import com.graphite.competitionplanner.domain.interfaces.ICompetitionCategoryRepository
+import com.graphite.competitionplanner.competitioncategory.domain.UpdateCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.domain.interfaces.NotFoundException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
