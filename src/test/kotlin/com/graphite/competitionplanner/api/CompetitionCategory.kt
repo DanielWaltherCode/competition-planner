@@ -2,7 +2,8 @@ package com.graphite.competitionplanner.api
 
 import com.graphite.competitionplanner.AbstractApiTest
 import com.graphite.competitionplanner.DataGenerator
-import com.graphite.competitionplanner.api.competition.CompetitionCategorySpec
+import com.graphite.competitionplanner.competitioncategory.api.CompetitionCategorySpec
+import com.graphite.competitionplanner.category.api.CategorySpec
 import com.graphite.competitionplanner.category.domain.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.club.domain.CreateClub

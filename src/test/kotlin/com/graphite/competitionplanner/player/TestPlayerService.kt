@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.player
 
-import com.graphite.competitionplanner.api.PlayerSpec
+import com.graphite.competitionplanner.player.api.PlayerSpec
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.Assertions
@@ -31,19 +31,23 @@ class TestPlayerService(@Autowired val playerRepository: PlayerRepository,
         // Add three players with similar names
         val clubId = util.getClubIdOrDefault("Lugi")
 
-        playerRepository.addPlayer(PlayerSpec(
+        playerRepository.addPlayer(
+            PlayerSpec(
                 "Aanders", "Hansson",
-                clubId,  LocalDate.now().minusMonths(170)
-        ))
-        playerRepository.addPlayer(PlayerSpec(
+                clubId, LocalDate.now().minusMonths(170)
+            )
+        )
+        playerRepository.addPlayer(
+            PlayerSpec(
                 "Hasse", "Andersson",
-                clubId,  LocalDate.now().minusMonths(170)
-        ))
+                clubId, LocalDate.now().minusMonths(170)
+            )
+        )
         playerRepository.addPlayer(
             PlayerSpec(
                 "Aaa", "Haf",
-                clubId,  LocalDate.now().minusMonths(170)
-        )
+                clubId, LocalDate.now().minusMonths(170)
+            )
         )
         val playersWithTwoAs = playerRepository.findPlayersByPartOfName("aa")
         Assertions.assertEquals(2, playersWithTwoAs?.size)

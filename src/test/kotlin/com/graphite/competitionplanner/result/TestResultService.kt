@@ -2,14 +2,14 @@ package com.graphite.competitionplanner.result
 
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
-import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
+import com.graphite.competitionplanner.competitioncategory.api.CategoryMetadataSpec
+import com.graphite.competitionplanner.category.service.CategoryService
 import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.player.service.PlayerService
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.result.repository.ResultRepository
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
-import com.graphite.competitionplanner.service.*
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.service.MatchDTO

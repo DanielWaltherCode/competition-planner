@@ -1,6 +1,8 @@
 package com.graphite.competitionplanner.draw.service
 
 import com.graphite.competitionplanner.api.competition.DrawDTO
+import com.graphite.competitionplanner.category.service.CategoryMetadataDTO
+import com.graphite.competitionplanner.category.service.CategoryService
 import com.graphite.competitionplanner.domain.entity.DrawType
 import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.match.repository.MatchRepository
@@ -9,7 +11,6 @@ import com.graphite.competitionplanner.player.service.PlayerDTO
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
-import com.graphite.competitionplanner.service.*
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService

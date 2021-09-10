@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.category
 
-import com.graphite.competitionplanner.api.competition.CategoryGameRulesSpec
-import com.graphite.competitionplanner.service.CategoryGameRulesDTO
-import com.graphite.competitionplanner.service.CategoryService
+import com.graphite.competitionplanner.competitioncategory.api.CategoryGameRulesSpec
+import com.graphite.competitionplanner.category.service.CategoryGameRulesDTO
+import com.graphite.competitionplanner.category.service.CategoryService
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.util.TestUtil
 import org.junit.jupiter.api.AfterEach
