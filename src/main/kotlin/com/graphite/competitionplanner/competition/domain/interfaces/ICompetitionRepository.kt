@@ -1,8 +1,5 @@
 package com.graphite.competitionplanner.competition.domain.interfaces
 
-import com.graphite.competitionplanner.domain.dto.CompetitionDTO
-import com.graphite.competitionplanner.domain.dto.NewCompetitionDTO
-
 interface ICompetitionRepository {
 
     /**

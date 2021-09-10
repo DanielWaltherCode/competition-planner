@@ -2,8 +2,8 @@ package com.graphite.competitionplanner.player.service
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.club.api.ClubNoAddressDTO
-import com.graphite.competitionplanner.domain.dto.NewPlayerDTO
-import com.graphite.competitionplanner.domain.dto.PlayerWithClubDTO
+import com.graphite.competitionplanner.player.domain.interfaces.NewPlayerDTO
+import com.graphite.competitionplanner.player.domain.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.player.domain.*
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.tables.Club.CLUB
@@ -33,7 +33,7 @@ class PlayerService(
         return createPlayer.execute(player)
     }
 
-    fun updatePlayer(player: com.graphite.competitionplanner.domain.dto.PlayerDTO): PlayerWithClubDTO {
+    fun updatePlayer(player: com.graphite.competitionplanner.player.domain.interfaces.PlayerDTO): PlayerWithClubDTO {
         return updatePlayer.execute(player)
     }
 
@@ -46,7 +46,15 @@ class PlayerService(
     }
 
     fun deletePlayer(playerId: Int): Boolean {
-        deletePlayer.execute(com.graphite.competitionplanner.domain.dto.PlayerDTO(playerId, "", "", 0, LocalDate.now()))
+        deletePlayer.execute(
+            com.graphite.competitionplanner.player.domain.interfaces.PlayerDTO(
+                playerId,
+                "",
+                "",
+                0,
+                LocalDate.now()
+            )
+        )
         return true
     }
 

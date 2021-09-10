@@ -1,7 +1,7 @@
-package com.graphite.competitionplanner.api
+package com.graphite.competitionplanner.category.api
 
-import com.graphite.competitionplanner.domain.dto.CategoryDTO
-import com.graphite.competitionplanner.service.CategoryService
+import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
+import com.graphite.competitionplanner.category.service.CategoryService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController

@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.util
 
-import com.graphite.competitionplanner.domain.dto.CategoryDTO
+import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
 import com.graphite.competitionplanner.club.repository.ClubRepository
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.competition.service.CompetitionService

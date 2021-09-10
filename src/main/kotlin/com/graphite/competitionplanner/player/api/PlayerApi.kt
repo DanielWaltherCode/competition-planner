@@ -1,7 +1,8 @@
-package com.graphite.competitionplanner.api
+package com.graphite.competitionplanner.player.api
 
-import com.graphite.competitionplanner.domain.dto.NewPlayerDTO
-import com.graphite.competitionplanner.domain.dto.PlayerWithClubDTO
+import com.graphite.competitionplanner.player.domain.interfaces.NewPlayerDTO
+import com.graphite.competitionplanner.player.domain.interfaces.PlayerDTO
+import com.graphite.competitionplanner.player.domain.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.player.service.PlayerService
 import com.graphite.competitionplanner.registration.service.PlayerCompetitionDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
@@ -27,7 +28,7 @@ class PlayerApi(
 
     @PutMapping("/{playerId}")
     fun updatePlayer(@PathVariable playerId: Int, @Valid @RequestBody playerSpec: PlayerSpec): PlayerWithClubDTO {
-        val playerDto = com.graphite.competitionplanner.domain.dto.PlayerDTO(
+        val playerDto = PlayerDTO(
             playerId,
             playerSpec.firstName,
             playerSpec.lastName,

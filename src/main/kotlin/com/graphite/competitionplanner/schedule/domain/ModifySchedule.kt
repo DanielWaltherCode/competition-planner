@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.schedule.domain
 
-import com.graphite.competitionplanner.domain.dto.ScheduleDTO
-import com.graphite.competitionplanner.domain.dto.ScheduleSettingsDTO
+import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleDTO
+import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import org.springframework.stereotype.Component
 
 @Component

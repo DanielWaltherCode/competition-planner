@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.competitioncategory.domain
 
-import com.graphite.competitionplanner.domain.dto.CompetitionCategoryUpdateDTO
+import com.graphite.competitionplanner.competitioncategory.domain.interfaces.CompetitionCategoryUpdateDTO
 import com.graphite.competitionplanner.domain.entity.GameSettings
 import com.graphite.competitionplanner.domain.entity.GeneralSettings
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.ICompetitionCategoryRepository

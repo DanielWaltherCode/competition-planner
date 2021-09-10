@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.club.api
 
-import com.graphite.competitionplanner.domain.dto.ClubDTO
+import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.service.ClubService
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid

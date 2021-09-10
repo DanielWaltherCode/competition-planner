@@ -2,10 +2,20 @@ package com.graphite.competitionplanner
 
 import com.graphite.competitionplanner.club.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.club.api.NewClubSpec
-import com.graphite.competitionplanner.api.PlayerSpec
-import com.graphite.competitionplanner.domain.dto.*
+import com.graphite.competitionplanner.player.api.PlayerSpec
+import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
+import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
+import com.graphite.competitionplanner.competition.domain.interfaces.CompetitionDTO
+import com.graphite.competitionplanner.competition.domain.interfaces.LocationDTO
+import com.graphite.competitionplanner.competition.domain.interfaces.NewCompetitionDTO
+import com.graphite.competitionplanner.competitioncategory.domain.interfaces.*
 import com.graphite.competitionplanner.domain.entity.*
 import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.player.domain.interfaces.NewPlayerDTO
+import com.graphite.competitionplanner.player.domain.interfaces.PlayerDTO
+import com.graphite.competitionplanner.player.domain.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
+import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.random.Random

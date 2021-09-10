@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.domain.interfaces
+package com.graphite.competitionplanner.common.exception
 
 /**
  * Repositories may throw this exception when the requested item

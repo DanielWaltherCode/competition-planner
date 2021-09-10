@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.domain.usecase.club
 
 import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.club.domain.DeleteClub
-import com.graphite.competitionplanner.domain.dto.ClubDTO
+import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.domain.interfaces.IClubRepository
 import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
 import org.junit.jupiter.api.Assertions

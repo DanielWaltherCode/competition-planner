@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.common.api
 
-import com.graphite.competitionplanner.domain.interfaces.NotFoundException
+import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.util.exception.GameValidationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

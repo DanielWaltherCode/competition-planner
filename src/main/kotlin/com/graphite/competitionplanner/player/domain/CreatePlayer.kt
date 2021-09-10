@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.player.domain
 
-import com.graphite.competitionplanner.domain.dto.NewPlayerDTO
-import com.graphite.competitionplanner.domain.dto.PlayerWithClubDTO
+import com.graphite.competitionplanner.player.domain.interfaces.NewPlayerDTO
+import com.graphite.competitionplanner.player.domain.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.domain.entity.Player
 import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.club.domain.FindClub

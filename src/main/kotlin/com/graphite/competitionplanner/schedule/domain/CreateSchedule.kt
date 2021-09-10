@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.schedule.domain
 
-import com.graphite.competitionplanner.domain.dto.MatchDTO
-import com.graphite.competitionplanner.domain.dto.ScheduleDTO
-import com.graphite.competitionplanner.domain.dto.ScheduleSettingsDTO
+import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
+import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleDTO
+import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.domain.entity.Match
 import com.graphite.competitionplanner.domain.entity.Schedule
 import com.graphite.competitionplanner.domain.entity.ScheduleSettings

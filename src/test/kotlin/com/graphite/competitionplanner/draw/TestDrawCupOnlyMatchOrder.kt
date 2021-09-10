@@ -1,22 +1,25 @@
 package com.graphite.competitionplanner.draw
 
-import com.graphite.competitionplanner.api.*
-import com.graphite.competitionplanner.api.competition.*
+import com.graphite.competitionplanner.category.api.CategoryApi
 import com.graphite.competitionplanner.club.api.ClubApi
 import com.graphite.competitionplanner.club.api.ClubSpec
 import com.graphite.competitionplanner.club.api.NewClubSpec
 import com.graphite.competitionplanner.competition.api.CompetitionApi
 import com.graphite.competitionplanner.competition.api.CompetitionSpec
-import com.graphite.competitionplanner.domain.dto.CategoryDTO
-import com.graphite.competitionplanner.domain.dto.PlayerWithClubDTO
+import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
+import com.graphite.competitionplanner.category.service.CategoryService
+import com.graphite.competitionplanner.player.domain.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.domain.entity.DrawType
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
-import com.graphite.competitionplanner.service.*
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.competition.service.CompetitionDTO
+import com.graphite.competitionplanner.competitioncategory.api.CategoryMetadataSpec
+import com.graphite.competitionplanner.competitioncategory.domain.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.service.MatchService
+import com.graphite.competitionplanner.player.api.PlayerApi
+import com.graphite.competitionplanner.player.api.PlayerSpec
 import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import org.junit.jupiter.api.AfterEach
@@ -44,7 +47,7 @@ class TestDrawCupOnlyMatchOrder(
 ) {
     lateinit var club: ClubSpec
     lateinit var competition: CompetitionDTO
-    lateinit var competitionCategory: com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO
+    lateinit var competitionCategory: CompetitionCategoryDTO
     var players = mutableListOf<PlayerWithClubDTO>()
 
     @BeforeEach
@@ -65,7 +68,7 @@ class TestDrawCupOnlyMatchOrder(
     }
 
     private fun addCompetitionCategoryTo(competition: CompetitionDTO, categoryName: String):
-            com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO {
+            CompetitionCategoryDTO {
         val categories = categoryApi.getCategories()
         val category = categories.filter { it.name == categoryName }[0]
         return competitionCategoryService.addCompetitionCategory(

@@ -1,7 +1,5 @@
 package com.graphite.competitionplanner.category.domain.interfaces
 
-import com.graphite.competitionplanner.domain.dto.CategoryDTO
-
 interface ICategoryRepository {
     /**
      * Return a list of available categories

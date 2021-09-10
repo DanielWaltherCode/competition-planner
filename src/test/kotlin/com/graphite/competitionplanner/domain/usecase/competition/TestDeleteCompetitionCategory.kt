@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.domain.usecase.competition
 
 import com.graphite.competitionplanner.competitioncategory.domain.DeleteCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.ICompetitionCategoryRepository
-import com.graphite.competitionplanner.domain.interfaces.NotFoundException
+import com.graphite.competitionplanner.common.exception.NotFoundException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*

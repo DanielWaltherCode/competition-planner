@@ -5,7 +5,8 @@ import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.club.api.ClubApi
 import com.graphite.competitionplanner.club.api.ClubNoAddressDTO
 import com.graphite.competitionplanner.club.api.ClubSpec
-import com.graphite.competitionplanner.domain.dto.PlayerWithClubDTO
+import com.graphite.competitionplanner.player.api.PlayerSpec
+import com.graphite.competitionplanner.player.domain.interfaces.PlayerWithClubDTO
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

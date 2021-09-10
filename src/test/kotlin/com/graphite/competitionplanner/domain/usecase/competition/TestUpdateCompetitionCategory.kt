@@ -4,7 +4,7 @@ import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.TestHelper
 import com.graphite.competitionplanner.competitioncategory.domain.UpdateCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.ICompetitionCategoryRepository
-import com.graphite.competitionplanner.domain.interfaces.NotFoundException
+import com.graphite.competitionplanner.common.exception.NotFoundException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*

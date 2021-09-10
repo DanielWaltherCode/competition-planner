@@ -2,9 +2,9 @@ package com.graphite.competitionplanner.domain.usecase.player
 
 import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.TestHelper
-import com.graphite.competitionplanner.domain.dto.ClubDTO
+import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
 import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
-import com.graphite.competitionplanner.domain.interfaces.NotFoundException
+import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.club.domain.FindClub
 import com.graphite.competitionplanner.player.domain.UpdatePlayer
 import org.junit.jupiter.api.Assertions

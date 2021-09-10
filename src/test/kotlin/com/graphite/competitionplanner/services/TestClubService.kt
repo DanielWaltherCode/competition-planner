@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.services
 
 import com.graphite.competitionplanner.club.domain.*
-import com.graphite.competitionplanner.domain.dto.ClubDTO
+import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.service.ClubService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

@@ -1,12 +1,12 @@
 package com.graphite.competitionplanner.repositories
 
 import com.graphite.competitionplanner.DataGenerator
-import com.graphite.competitionplanner.domain.dto.ClubDTO
-import com.graphite.competitionplanner.domain.dto.CompetitionDTO
+import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
+import com.graphite.competitionplanner.competition.domain.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.category.domain.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.domain.interfaces.IClubRepository
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.ICompetitionCategoryRepository
-import com.graphite.competitionplanner.domain.interfaces.NotFoundException
+import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired

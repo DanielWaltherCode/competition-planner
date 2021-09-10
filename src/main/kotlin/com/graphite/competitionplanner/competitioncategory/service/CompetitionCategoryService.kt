@@ -2,9 +2,9 @@ package com.graphite.competitionplanner.competitioncategory.service
 
 import com.graphite.competitionplanner.schedule.api.CategoryStartTimeSpec
 import com.graphite.competitionplanner.competitioncategory.domain.*
-import com.graphite.competitionplanner.domain.dto.CategoryDTO
-import com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO
-import com.graphite.competitionplanner.domain.dto.CompetitionCategoryUpdateDTO
+import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
+import com.graphite.competitionplanner.competitioncategory.domain.interfaces.CompetitionCategoryDTO
+import com.graphite.competitionplanner.competitioncategory.domain.interfaces.CompetitionCategoryUpdateDTO
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.schedule.service.ScheduleService

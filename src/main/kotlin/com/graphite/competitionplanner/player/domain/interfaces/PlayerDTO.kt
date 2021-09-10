@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.domain.dto
+package com.graphite.competitionplanner.player.domain.interfaces
 
 import com.graphite.competitionplanner.domain.entity.Player
 import java.time.LocalDate

@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.player.domain
 
-import com.graphite.competitionplanner.domain.dto.PlayerDTO
+import com.graphite.competitionplanner.player.domain.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
 import org.springframework.stereotype.Component
 

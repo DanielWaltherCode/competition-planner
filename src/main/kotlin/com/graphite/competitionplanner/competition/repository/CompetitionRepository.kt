@@ -2,11 +2,11 @@ package com.graphite.competitionplanner.competition.repository
 
 import com.graphite.competitionplanner.Tables.COMPETITION
 import com.graphite.competitionplanner.competition.api.CompetitionSpec
-import com.graphite.competitionplanner.domain.dto.CompetitionDTO
-import com.graphite.competitionplanner.domain.dto.LocationDTO
-import com.graphite.competitionplanner.domain.dto.NewCompetitionDTO
+import com.graphite.competitionplanner.competition.domain.interfaces.CompetitionDTO
+import com.graphite.competitionplanner.competition.domain.interfaces.LocationDTO
+import com.graphite.competitionplanner.competition.domain.interfaces.NewCompetitionDTO
 import com.graphite.competitionplanner.competition.domain.interfaces.ICompetitionRepository
-import com.graphite.competitionplanner.domain.interfaces.NotFoundException
+import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.tables.Club
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.records.CompetitionRecord

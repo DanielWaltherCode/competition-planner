@@ -3,8 +3,8 @@ package com.graphite.competitionplanner.domain.usecase.competition
 import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.TestHelper
 import com.graphite.competitionplanner.competitioncategory.domain.AddCompetitionCategory
-import com.graphite.competitionplanner.domain.dto.CategoryDTO
-import com.graphite.competitionplanner.domain.dto.CompetitionCategoryDTO
+import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
+import com.graphite.competitionplanner.competitioncategory.domain.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.domain.entity.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.domain.entity.Round

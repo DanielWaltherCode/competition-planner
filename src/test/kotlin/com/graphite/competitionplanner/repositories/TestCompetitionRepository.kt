@@ -1,9 +1,9 @@
 package com.graphite.competitionplanner.repositories
 
 import com.graphite.competitionplanner.DataGenerator
-import com.graphite.competitionplanner.domain.dto.ClubDTO
+import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.domain.interfaces.IClubRepository
-import com.graphite.competitionplanner.domain.interfaces.NotFoundException
+import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions

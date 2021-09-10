@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.category.repository
 
 import com.graphite.competitionplanner.Tables
 import com.graphite.competitionplanner.category.domain.interfaces.ICategoryRepository
-import com.graphite.competitionplanner.domain.dto.CategoryDTO
+import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
 import com.graphite.competitionplanner.tables.records.CategoryRecord
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository

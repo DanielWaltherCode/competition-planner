@@ -1,7 +1,6 @@
 package com.graphite.competitionplanner.club.domain.interfaces
 
-import com.graphite.competitionplanner.domain.dto.ClubDTO
-import com.graphite.competitionplanner.domain.interfaces.NotFoundException
+import com.graphite.competitionplanner.common.exception.NotFoundException
 
 interface IClubRepository {
 

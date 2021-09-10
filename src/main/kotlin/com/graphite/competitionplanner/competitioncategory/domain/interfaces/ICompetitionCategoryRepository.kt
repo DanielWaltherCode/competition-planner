@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.competitioncategory.domain.interfaces
 
-import com.graphite.competitionplanner.domain.dto.*
+import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
 import com.graphite.competitionplanner.domain.entity.CompetitionCategoryStatus
-import com.graphite.competitionplanner.domain.interfaces.NotFoundException
+import com.graphite.competitionplanner.common.exception.NotFoundException
 
 interface ICompetitionCategoryRepository {
 

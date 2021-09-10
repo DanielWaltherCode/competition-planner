@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.domain.dto
+package com.graphite.competitionplanner.competitioncategory.domain.interfaces
 
 data class CompetitionCategoryUpdateDTO(
     val id: Int,

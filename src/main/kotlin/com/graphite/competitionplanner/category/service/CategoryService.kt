@@ -1,8 +1,8 @@
-package com.graphite.competitionplanner.service
+package com.graphite.competitionplanner.category.service
 
-import com.graphite.competitionplanner.api.competition.CategoryGameRulesSpec
-import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
-import com.graphite.competitionplanner.domain.dto.CategoryDTO
+import com.graphite.competitionplanner.competitioncategory.api.CategoryGameRulesSpec
+import com.graphite.competitionplanner.competitioncategory.api.CategoryMetadataSpec
+import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
 import com.graphite.competitionplanner.domain.entity.DrawType
 import com.graphite.competitionplanner.domain.entity.PoolDrawStrategy
 import com.graphite.competitionplanner.repositories.CategoryGameRulesRepository

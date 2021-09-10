@@ -2,13 +2,13 @@ package com.graphite.competitionplanner.player.repository
 
 import com.graphite.competitionplanner.Tables.CLUB
 import com.graphite.competitionplanner.Tables.PLAYER_RANKING
-import com.graphite.competitionplanner.api.PlayerSpec
-import com.graphite.competitionplanner.domain.dto.ClubDTO
-import com.graphite.competitionplanner.domain.dto.NewPlayerDTO
-import com.graphite.competitionplanner.domain.dto.PlayerDTO
-import com.graphite.competitionplanner.domain.dto.PlayerWithClubDTO
+import com.graphite.competitionplanner.player.api.PlayerSpec
+import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
+import com.graphite.competitionplanner.player.domain.interfaces.NewPlayerDTO
+import com.graphite.competitionplanner.player.domain.interfaces.PlayerDTO
+import com.graphite.competitionplanner.player.domain.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
-import com.graphite.competitionplanner.domain.interfaces.NotFoundException
+import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.club.repository.ClubRepository
 import com.graphite.competitionplanner.tables.Club
 import com.graphite.competitionplanner.tables.Player.PLAYER

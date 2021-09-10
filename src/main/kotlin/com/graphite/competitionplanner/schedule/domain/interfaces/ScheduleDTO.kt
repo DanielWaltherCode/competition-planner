@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.domain.dto
+package com.graphite.competitionplanner.schedule.domain.interfaces
 
 import com.graphite.competitionplanner.domain.entity.Schedule
 
