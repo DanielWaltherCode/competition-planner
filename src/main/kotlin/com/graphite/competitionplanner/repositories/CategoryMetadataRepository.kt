@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.repositories
 
 import com.graphite.competitionplanner.Tables.*
-import com.graphite.competitionplanner.api.competition.CategoryGameRulesSpec
-import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
+import com.graphite.competitionplanner.competitioncategory.api.CategoryGameRulesSpec
+import com.graphite.competitionplanner.competitioncategory.api.CategoryMetadataSpec
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryGameRulesRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryMetadataRecord
 import org.jooq.DSLContext
@@ -24,15 +24,19 @@ class CategoryMetadataRepository(val dslContext: DSLContext) {
         return storeCategoryMetadata(competitionCategoryId, null, categoryMetadataSpec)
     }
 
-    fun updateCategoryMetadata(categoryId: Int,
-                               categoryMetadataId: Int,
-                               categoryMetadataSpec: CategoryMetadataSpec): CompetitionCategoryMetadataRecord {
+    fun updateCategoryMetadata(
+        categoryId: Int,
+        categoryMetadataId: Int,
+        categoryMetadataSpec: CategoryMetadataSpec
+    ): CompetitionCategoryMetadataRecord {
         return storeCategoryMetadata(categoryId, categoryMetadataId, categoryMetadataSpec)
     }
 
-    private fun storeCategoryMetadata(competitionCategoryId: Int,
-                                      categoryMetadataId: Int?,
-                                      categoryMetadataSpec: CategoryMetadataSpec): CompetitionCategoryMetadataRecord {
+    private fun storeCategoryMetadata(
+        competitionCategoryId: Int,
+        categoryMetadataId: Int?,
+        categoryMetadataSpec: CategoryMetadataSpec
+    ): CompetitionCategoryMetadataRecord {
         var categoryRecord = dslContext.newRecord(COMPETITION_CATEGORY_METADATA)
 
         categoryRecord.competitionCategoryId = competitionCategoryId

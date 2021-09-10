@@ -1,10 +1,10 @@
 package com.graphite.competitionplanner.category
 
-import com.graphite.competitionplanner.api.competition.CategoryMetadataSpec
+import com.graphite.competitionplanner.competitioncategory.api.CategoryMetadataSpec
 import com.graphite.competitionplanner.domain.entity.DrawType
 import com.graphite.competitionplanner.domain.entity.PoolDrawStrategy
-import com.graphite.competitionplanner.service.CategoryMetadataDTO
-import com.graphite.competitionplanner.service.CategoryService
+import com.graphite.competitionplanner.category.service.CategoryMetadataDTO
+import com.graphite.competitionplanner.category.service.CategoryService
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.util.TestUtil
 import org.junit.jupiter.api.AfterEach

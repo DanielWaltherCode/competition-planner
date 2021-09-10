@@ -5,8 +5,8 @@ import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.result.repository.ResultRepository
-import com.graphite.competitionplanner.service.CategoryGameRulesDTO
-import com.graphite.competitionplanner.service.CategoryService
+import com.graphite.competitionplanner.category.service.CategoryGameRulesDTO
+import com.graphite.competitionplanner.category.service.CategoryService
 import com.graphite.competitionplanner.tables.records.GameRecord
 import com.graphite.competitionplanner.util.exception.GameValidationException
 import org.slf4j.LoggerFactory
