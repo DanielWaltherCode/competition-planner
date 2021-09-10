@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.domain.entity
 
-import com.graphite.competitionplanner.domain.dto.PlayerDTO
+import com.graphite.competitionplanner.player.domain.interfaces.PlayerDTO
 import java.time.LocalDate
 
 data class Player(

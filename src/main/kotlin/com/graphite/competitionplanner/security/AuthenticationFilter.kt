@@ -2,18 +2,16 @@ package com.graphite.competitionplanner.security
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.graphite.competitionplanner.SpringApplicationContext
-import com.graphite.competitionplanner.api.LoginDTO
-import com.graphite.competitionplanner.service.UserService
+import com.graphite.competitionplanner.user.api.LoginDTO
+import com.graphite.competitionplanner.user.service.UserService
 import com.graphite.competitionplanner.util.UserLogin
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
-import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import java.io.IOException
-import java.io.PrintWriter
 import java.util.ArrayList
 import javax.servlet.FilterChain
 import javax.servlet.ServletException

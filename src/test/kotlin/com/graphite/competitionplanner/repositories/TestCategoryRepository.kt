@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.repositories
 
-import com.graphite.competitionplanner.domain.interfaces.ICategoryRepository
+import com.graphite.competitionplanner.category.domain.interfaces.ICategoryRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

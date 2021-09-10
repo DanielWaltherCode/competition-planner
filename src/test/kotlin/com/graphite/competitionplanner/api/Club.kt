@@ -1,6 +1,8 @@
 package com.graphite.competitionplanner.api
 
 import com.graphite.competitionplanner.AbstractApiTest
+import com.graphite.competitionplanner.club.api.ClubSpec
+import com.graphite.competitionplanner.club.api.NewClubSpec
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

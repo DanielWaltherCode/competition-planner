@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.security
 
-import com.graphite.competitionplanner.service.UserService
+import com.graphite.competitionplanner.user.service.UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod

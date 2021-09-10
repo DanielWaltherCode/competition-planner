@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.competition
 
-import com.graphite.competitionplanner.api.competition.CompetitionSpec
-import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
-import com.graphite.competitionplanner.service.competition.CompetitionService
+import com.graphite.competitionplanner.competition.api.CompetitionSpec
+import com.graphite.competitionplanner.competition.repository.CompetitionRepository
+import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

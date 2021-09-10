@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.domain.mapping
 
-import com.graphite.competitionplanner.domain.dto.ClubDTO
+import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
 import com.graphite.competitionplanner.domain.entity.Club
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

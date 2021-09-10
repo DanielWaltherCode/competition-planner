@@ -1,7 +1,8 @@
 package com.graphite.competitionplanner.domain.usecase.schedule
 
 import com.graphite.competitionplanner.DataGenerator
-import com.graphite.competitionplanner.domain.dto.MatchDTO
+import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
+import com.graphite.competitionplanner.schedule.domain.CreateSchedule
 import com.graphite.competitionplanner.util.plusDuration
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

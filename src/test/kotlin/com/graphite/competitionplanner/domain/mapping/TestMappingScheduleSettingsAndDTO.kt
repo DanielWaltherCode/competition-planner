@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.domain.mapping
 
 import com.graphite.competitionplanner.DataGenerator
-import com.graphite.competitionplanner.domain.dto.ScheduleSettingsDTO
+import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.domain.entity.ScheduleSettings
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

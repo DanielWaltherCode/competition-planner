@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.draw
 
-import com.graphite.competitionplanner.service.draw.DrawUtil
+import com.graphite.competitionplanner.draw.service.DrawUtil
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

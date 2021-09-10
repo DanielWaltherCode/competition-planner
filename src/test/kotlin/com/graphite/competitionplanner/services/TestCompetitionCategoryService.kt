@@ -2,11 +2,11 @@ package com.graphite.competitionplanner.services
 
 import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.TestHelper
-import com.graphite.competitionplanner.domain.usecase.competition.*
-import com.graphite.competitionplanner.repositories.RegistrationRepository
-import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
-import com.graphite.competitionplanner.service.ScheduleService
-import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
+import com.graphite.competitionplanner.competitioncategory.domain.*
+import com.graphite.competitionplanner.registration.repository.RegistrationRepository
+import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
+import com.graphite.competitionplanner.schedule.service.ScheduleService
+import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*

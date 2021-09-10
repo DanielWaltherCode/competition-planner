@@ -2,7 +2,8 @@ package com.graphite.competitionplanner.domain.usecase.competition
 
 import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.TestHelper
-import com.graphite.competitionplanner.domain.interfaces.ICompetitionRepository
+import com.graphite.competitionplanner.competition.domain.UpdateCompetition
+import com.graphite.competitionplanner.competition.domain.interfaces.ICompetitionRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito

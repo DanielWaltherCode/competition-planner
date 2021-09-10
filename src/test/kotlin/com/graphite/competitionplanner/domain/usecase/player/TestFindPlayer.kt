@@ -1,9 +1,10 @@
 package com.graphite.competitionplanner.domain.usecase.player
 
 import com.graphite.competitionplanner.DataGenerator
-import com.graphite.competitionplanner.domain.dto.ClubDTO
-import com.graphite.competitionplanner.domain.interfaces.IPlayerRepository
-import com.graphite.competitionplanner.domain.usecase.club.FindClub
+import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
+import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
+import com.graphite.competitionplanner.club.domain.FindClub
+import com.graphite.competitionplanner.player.domain.FindPlayer
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import org.springframework.boot.test.context.SpringBootTest

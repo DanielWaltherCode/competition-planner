@@ -1,18 +1,16 @@
 package com.graphite.competitionplanner.schedule
 
-import com.graphite.competitionplanner.api.CategoryStartTimeSpec
-import com.graphite.competitionplanner.api.competition.CompetitionSpec
-import com.graphite.competitionplanner.domain.dto.CategoryDTO
-import com.graphite.competitionplanner.domain.usecase.competition.GetCompetitionCategories
-import com.graphite.competitionplanner.repositories.ScheduleRepository
-import com.graphite.competitionplanner.repositories.competition.CategoryRepository
-import com.graphite.competitionplanner.repositories.competition.CompetitionCategoryRepository
-import com.graphite.competitionplanner.repositories.competition.CompetitionRepository
-import com.graphite.competitionplanner.service.CategoryStartTimesWithOptionsDTO
-import com.graphite.competitionplanner.service.ScheduleService
-import com.graphite.competitionplanner.service.StartInterval
-import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
-import com.graphite.competitionplanner.service.competition.CompetitionService
+import com.graphite.competitionplanner.schedule.api.CategoryStartTimeSpec
+import com.graphite.competitionplanner.competition.api.CompetitionSpec
+import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
+import com.graphite.competitionplanner.schedule.repository.ScheduleRepository
+import com.graphite.competitionplanner.category.repository.CategoryRepository
+import com.graphite.competitionplanner.competition.repository.CompetitionRepository
+import com.graphite.competitionplanner.schedule.service.CategoryStartTimesWithOptionsDTO
+import com.graphite.competitionplanner.schedule.service.ScheduleService
+import com.graphite.competitionplanner.schedule.service.StartInterval
+import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
+import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -21,7 +19,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @SpringBootTest
 class TestScheduleCategoryStartTime(
@@ -87,9 +84,11 @@ class TestScheduleCategoryStartTime(
         val startTimeOne = categoryStartTimes.categoryStartTimeList[0]
 
         // Update one category to take place today
-        scheduleService.updateCategoryStartTime(startTimeOne.id, competitionCategory1, CategoryStartTimeSpec(
-            LocalDate.now(), null, null
-        ))
+        scheduleService.updateCategoryStartTime(
+            startTimeOne.id, competitionCategory1, CategoryStartTimeSpec(
+                LocalDate.now(), null, null
+            )
+        )
 
         val updatedStartTimesToday = scheduleService.getCategoryStartTimesByDay(competitionId, LocalDate.now())
         Assertions.assertNotNull(updatedStartTimesToday)
@@ -102,12 +101,16 @@ class TestScheduleCategoryStartTime(
         val startTimeTwo = categoryStartTimes.categoryStartTimeList[1]
 
         // Add categories
-        scheduleService.updateCategoryStartTime(startTimeOne.id, competitionCategory1, CategoryStartTimeSpec(
-            LocalDate.now(), StartInterval.EARLY_MORNING, null
-        ))
-        scheduleService.updateCategoryStartTime(startTimeTwo.id, competitionCategory2, CategoryStartTimeSpec(
-            LocalDate.now().plusDays(1),null, null
-        ))
+        scheduleService.updateCategoryStartTime(
+            startTimeOne.id, competitionCategory1, CategoryStartTimeSpec(
+                LocalDate.now(), StartInterval.EARLY_MORNING, null
+            )
+        )
+        scheduleService.updateCategoryStartTime(
+            startTimeTwo.id, competitionCategory2, CategoryStartTimeSpec(
+                LocalDate.now().plusDays(1), null, null
+            )
+        )
 
         val categoryStartTimes = scheduleService.getCategoryStartTimesForCompetition(competitionId)
         Assertions.assertEquals(2, categoryStartTimes.categoryStartTimeList.size)

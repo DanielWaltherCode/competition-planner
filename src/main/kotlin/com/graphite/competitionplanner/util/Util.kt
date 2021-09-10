@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.util
 
-import com.graphite.competitionplanner.repositories.ClubRepository
+import com.graphite.competitionplanner.club.repository.ClubRepository
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
@@ -8,7 +8,7 @@ import kotlin.time.Duration
 
 @Component
 class Util(val clubRepository: ClubRepository,
-val env: Environment
+           val env: Environment
 ) {
 
     fun getClubIdOrDefault(clubName: String): Int {

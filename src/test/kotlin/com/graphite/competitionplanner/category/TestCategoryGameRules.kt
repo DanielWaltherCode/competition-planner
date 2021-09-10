@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.category
 import com.graphite.competitionplanner.api.competition.CategoryGameRulesSpec
 import com.graphite.competitionplanner.service.CategoryGameRulesDTO
 import com.graphite.competitionplanner.service.CategoryService
-import com.graphite.competitionplanner.service.competition.CompetitionCategoryService
+import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.util.TestUtil
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -13,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TestCategoryGameRules(@Autowired val testUtil: TestUtil,
-                            @Autowired val competitionCategoryService: CompetitionCategoryService,
-@Autowired val categoryService: CategoryService) {
+class TestCategoryGameRules(
+    @Autowired val testUtil: TestUtil,
+    @Autowired val competitionCategoryService: CompetitionCategoryService,
+    @Autowired val categoryService: CategoryService
+) {
 
     var categoryId: Int = 0
     lateinit var categoryGameRulesDTO: CategoryGameRulesDTO;

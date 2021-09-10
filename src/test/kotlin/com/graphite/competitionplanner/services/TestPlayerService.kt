@@ -2,9 +2,9 @@ package com.graphite.competitionplanner.services
 
 import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.TestHelper
-import com.graphite.competitionplanner.domain.usecase.player.*
-import com.graphite.competitionplanner.repositories.PlayerRepository
-import com.graphite.competitionplanner.service.PlayerService
+import com.graphite.competitionplanner.player.domain.*
+import com.graphite.competitionplanner.player.repository.PlayerRepository
+import com.graphite.competitionplanner.player.service.PlayerService
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
