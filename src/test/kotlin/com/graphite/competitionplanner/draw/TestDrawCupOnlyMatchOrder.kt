@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.draw
 
+import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.category.api.CategoryApi
 import com.graphite.competitionplanner.club.api.ClubApi
 import com.graphite.competitionplanner.club.api.ClubSpec
@@ -14,8 +15,8 @@ import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.competition.service.CompetitionDTO
-import com.graphite.competitionplanner.competitioncategory.api.CategoryMetadataSpec
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.CompetitionCategoryDTO
+import com.graphite.competitionplanner.competitioncategory.domain.interfaces.DrawTypeDTO
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.api.PlayerApi
@@ -49,6 +50,7 @@ class TestDrawCupOnlyMatchOrder(
     lateinit var competition: CompetitionDTO
     lateinit var competitionCategory: CompetitionCategoryDTO
     var players = mutableListOf<PlayerWithClubDTO>()
+    val dataGenerator = DataGenerator()
 
     @BeforeEach
     fun setUp() {
@@ -78,20 +80,21 @@ class TestDrawCupOnlyMatchOrder(
     }
 
     private fun setModeToCupOnlyFor(competitionCategoryId: Int) {
-        val categoryMetadata = categoryService.getCategoryMetadata(competitionCategoryId)
-        val categoryMetadataSpec = CategoryMetadataSpec(
-            cost = categoryMetadata.cost,
-            drawType = DrawType.CUP_ONLY,
-            nrPlayersPerGroup = categoryMetadata.nrPlayersPerGroup,
-            nrPlayersToPlayoff = categoryMetadata.nrPlayersToPlayoff,
-            poolDrawStrategy = categoryMetadata.poolDrawStrategy
+        val original = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
+
+        val updatedSettings = dataGenerator.newCompetitionCategoryUpdateDTO(
+            original.id,
+            settings = dataGenerator.newGeneralSettingsDTO(
+                cost = original.settings.cost,
+                drawType = DrawTypeDTO(DrawType.CUP_ONLY.name),
+                playersPerGroup = original.settings.playersPerGroup,
+                playersToPlayOff = original.settings.playersToPlayOff,
+                poolDrawStrategy = original.settings.poolDrawStrategy
+            ),
+            gameSettings = original.gameSettings
         )
 
-        categoryService.updateCategoryMetadata(
-            competitionCategoryId,
-            categoryMetadata.id,
-            categoryMetadataSpec
-        )
+        competitionCategoryService.updateCompetitionCategory(updatedSettings)
     }
 
     private fun registerPlayerTo(player: PlayerWithClubDTO, competitionCategoryId: Int) {
@@ -121,7 +124,7 @@ class TestDrawCupOnlyMatchOrder(
             PlayerSpec(
                 firstName,
                 "Testsson",
-                club.id!!,
+                club.id,
                 LocalDate.of(2000, 3, 3)
             )
         )

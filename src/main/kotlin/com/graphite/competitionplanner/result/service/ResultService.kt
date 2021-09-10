@@ -5,10 +5,10 @@ import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.result.repository.ResultRepository
-import com.graphite.competitionplanner.category.service.CategoryGameRulesDTO
-import com.graphite.competitionplanner.category.service.CategoryService
 import com.graphite.competitionplanner.tables.records.GameRecord
-import com.graphite.competitionplanner.util.exception.GameValidationException
+import com.graphite.competitionplanner.common.exception.GameValidationException
+import com.graphite.competitionplanner.competitioncategory.domain.interfaces.GameSettingsDTO
+import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service
 @Service
 class ResultService(
     val resultRepository: ResultRepository,
-    val categoryService: CategoryService,
+    val competitionCategoryService: CompetitionCategoryService,
     val matchService: MatchService,
     val matchRepository: MatchRepository
 ) {
@@ -35,7 +35,7 @@ class ResultService(
         }
         // Winner of last game must be winner
         val finalGame = resultList.last()
-        var winnerId = 0
+        var winnerId: Int
         if (finalGame.firstRegistrationResult > finalGame.secondRegistrationResult) {
             winnerId = match.firstRegistrationId
         }
@@ -54,7 +54,7 @@ class ResultService(
 
     fun updateGameResult(matchId: Int, gameId: Int, gameSpec: GameSpec): ResultDTO {
         val match = matchService.getMatch(matchId)
-        val gameRules = categoryService.getCategoryGameRules(match.competitionCategory.id)
+        val gameRules = competitionCategoryService.getByCompetitionCategoryId(match.competitionCategory.id).gameSettings
         validateGame(gameRules, gameSpec)
         resultRepository.updateGameResult(gameId, matchId, gameSpec)
         return getResult(matchId)
@@ -81,12 +81,12 @@ class ResultService(
     }
 
     private fun validateResult(categoryId: Int, resultSpec: ResultSpec) {
-        val gameRules = categoryService.getCategoryGameRules(categoryId)
+        val gameRules = competitionCategoryService.getByCompetitionCategoryId(categoryId).gameSettings
         // TODO -- add specific checks for group stage and playoff stage
         for (game in resultSpec.gameList) {
             validateGame(gameRules, game)
         }
-        if ((resultSpec.gameList.size) < (gameRules.nrSets / 2.0)) {
+        if ((resultSpec.gameList.size) < (gameRules.numberOfSets / 2.0)) {
             // Too few sets
             throw GameValidationException(HttpStatus.BAD_REQUEST, "1")
         }
@@ -94,7 +94,7 @@ class ResultService(
         // Todo -- add special validation for tie breaks or final matches with more sets
     }
 
-    private fun validateGame(gameRules: CategoryGameRulesDTO, game: GameSpec) {
+    private fun validateGame(gameRules: GameSettingsDTO, game: GameSpec) {
         if (game.firstRegistrationResult < gameRules.winScore
             && game.secondRegistrationResult < gameRules.winScore
         ) {

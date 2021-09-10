@@ -2,8 +2,6 @@ package com.graphite.competitionplanner.competitioncategory.api
 
 import com.graphite.competitionplanner.category.api.CategorySpec
 import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
-import com.graphite.competitionplanner.category.service.CategoryGameRulesDTO
-import com.graphite.competitionplanner.category.service.CategoryMetadataDTO
 import com.graphite.competitionplanner.category.service.CategoryService
 import com.graphite.competitionplanner.domain.entity.DrawType
 import com.graphite.competitionplanner.domain.entity.PoolDrawStrategy
@@ -75,8 +73,8 @@ class CompetitionCategoryApi(
     }
 
     @GetMapping("/{competitionCategoryId}/metadata")
-    fun getCategoryMetadata(@PathVariable competitionCategoryId: Int): CategoryMetadataDTO {
-        return categoryService.getCategoryMetadata(competitionCategoryId)
+    fun getCategoryMetadata(@PathVariable competitionCategoryId: Int): GeneralSettingsDTO {
+        return competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId).settings
     }
 
     @GetMapping("/metadata/possible-values")
@@ -88,8 +86,8 @@ class CompetitionCategoryApi(
     }
 
     @GetMapping("/{competitionCategoryId}/game-rules")
-    fun getCategoryGameRules(@PathVariable competitionCategoryId: Int): CategoryGameRulesDTO {
-        return categoryService.getCategoryGameRules(competitionCategoryId)
+    fun getCategoryGameRules(@PathVariable competitionCategoryId: Int): GameSettingsDTO {
+        return competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId).gameSettings
     }
 }
 

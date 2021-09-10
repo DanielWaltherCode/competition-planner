@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.util.exception
+package com.graphite.competitionplanner.common.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
