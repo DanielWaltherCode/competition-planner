@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.util
 
 import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
-import com.graphite.competitionplanner.club.repository.ClubRepository
 import com.graphite.competitionplanner.category.repository.CategoryRepository
+import com.graphite.competitionplanner.club.repository.ClubRepository
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,7 +23,6 @@ class TestUtil(
         val category = categoryRepository.getByName(name)
         return competitionCategoryService.addCompetitionCategory(
             umeaCompetitionId,
-//            category.id
             CategoryDTO(category.id, category.categoryName, category.categoryType)
         ).id
     }

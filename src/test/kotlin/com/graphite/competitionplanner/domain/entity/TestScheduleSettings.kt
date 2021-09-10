@@ -1,10 +1,9 @@
 package com.graphite.competitionplanner.domain.entity
 
-import com.graphite.competitionplanner.DataGenerator
+import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
-import java.lang.IllegalArgumentException
 import java.time.LocalDateTime
 import kotlin.time.minutes
 
