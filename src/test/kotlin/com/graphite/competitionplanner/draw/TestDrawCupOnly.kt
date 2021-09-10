@@ -1,20 +1,22 @@
 package com.graphite.competitionplanner.draw
 
-import com.graphite.competitionplanner.competitioncategory.api.CategoryMetadataSpec
+import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.api.competition.DrawDTO
-import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
-import com.graphite.competitionplanner.domain.entity.DrawType
-import com.graphite.competitionplanner.player.repository.PlayerRepository
-import com.graphite.competitionplanner.registration.repository.RegistrationRepository
-import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
-import com.graphite.competitionplanner.category.service.CategoryService
-import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.registration.service.RegistrationService
+import com.graphite.competitionplanner.competitioncategory.domain.interfaces.DrawTypeDTO
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
-import com.graphite.competitionplanner.draw.service.DrawService
+import com.graphite.competitionplanner.domain.entity.DrawType
 import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
+import com.graphite.competitionplanner.draw.service.DrawService
+import com.graphite.competitionplanner.match.service.MatchService
+import com.graphite.competitionplanner.player.repository.PlayerRepository
+import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
+import com.graphite.competitionplanner.registration.repository.RegistrationRepository
+import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.util.TestUtil
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -31,29 +33,33 @@ class TestDrawCupOnly(
     @Autowired val competitionCategoryService: CompetitionCategoryService,
     @Autowired val registrationRepository: RegistrationRepository,
     @Autowired val competitionDrawRepository: CompetitionDrawRepository,
-    @Autowired val drawService: DrawService,
-    @Autowired val categoryService: CategoryService
+    @Autowired val drawService: DrawService
 ) {
     var competitionCategoryId = 0
     lateinit var draw : DrawDTO
 
+    val dataGenerator = DataGenerator()
 
     @BeforeEach
-    fun setupCompetition(){
+    fun setupCompetition() {
 
         competitionCategoryId = testUtil.addCompetitionCategory("Flickor 13")
 
-        val categoryMetadata = categoryService.getCategoryMetadata(competitionCategoryId)
-        val categoryMetadataSpec = CategoryMetadataSpec(
-            cost = categoryMetadata.cost,
-            drawType = DrawType.CUP_ONLY,
-            nrPlayersPerGroup = categoryMetadata.nrPlayersPerGroup,
-            nrPlayersToPlayoff = categoryMetadata.nrPlayersToPlayoff,
-            poolDrawStrategy = categoryMetadata.poolDrawStrategy
+        val original = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
+
+        val updatedSettings = dataGenerator.newCompetitionCategoryUpdateDTO(
+            original.id,
+            settings = dataGenerator.newGeneralSettingsDTO(
+                cost = original.settings.cost,
+                drawType = DrawTypeDTO(DrawType.CUP_ONLY.name),
+                playersPerGroup = original.settings.playersPerGroup,
+                playersToPlayOff = original.settings.playersToPlayOff,
+                poolDrawStrategy = original.settings.poolDrawStrategy
+            ),
+            gameSettings = original.gameSettings
         )
 
-        categoryService.updateCategoryMetadata(competitionCategoryId, categoryMetadata.id, categoryMetadataSpec)
-        //registrationService.registerPlayerSingles(RegistrationSinglesDTO(null, 0, competitionCategoryId))
+        competitionCategoryService.updateCompetitionCategory(updatedSettings)
     }
 
     @AfterEach

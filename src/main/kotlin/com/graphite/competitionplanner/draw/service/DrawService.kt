@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.draw.service
 
 import com.graphite.competitionplanner.api.competition.DrawDTO
-import com.graphite.competitionplanner.category.service.CategoryMetadataDTO
 import com.graphite.competitionplanner.category.service.CategoryService
+import com.graphite.competitionplanner.competitioncategory.domain.interfaces.GeneralSettingsDTO
 import com.graphite.competitionplanner.domain.entity.DrawType
 import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.match.repository.MatchRepository
@@ -46,9 +46,9 @@ class DrawService(
         // players after the draw is made
 
         val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
-        val categoryMetadata: CategoryMetadataDTO
+        val categoryMetadata: GeneralSettingsDTO
         try {
-            categoryMetadata = categoryService.getCategoryMetadata(competitionCategoryId)
+            categoryMetadata = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId).settings
         } catch (ex: IllegalStateException) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Category metadata not found for that id")
         }
@@ -73,7 +73,7 @@ class DrawService(
         return getDraw(competitionCategoryId)
     }
 
-    private fun createSeed(competitionCategoryId: Int, categoryMetadata: CategoryMetadataDTO) {
+    private fun createSeed(competitionCategoryId: Int, categoryMetadata: GeneralSettingsDTO) {
         val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
         val playerList = mutableMapOf<Int, List<PlayerDTO>>()
         for (id in registrationIds) {
@@ -102,7 +102,7 @@ class DrawService(
             .sortedBy { (key, value) -> -value }
             .toMap()
 
-        val numberOfSeeds = drawUtil.getNumberOfSeeds(categoryMetadata.nrPlayersPerGroup, sortedRankings.size)
+        val numberOfSeeds = drawUtil.getNumberOfSeeds(categoryMetadata.playersPerGroup, sortedRankings.size)
         var seed = 1
         for ((registrationId, _) in sortedRankings) {
             registrationRepository.setSeed(registrationId, competitionCategoryId, seed)
@@ -127,7 +127,7 @@ class DrawService(
 
     fun createPoolDraw(
         registrationIds: List<Int>,
-        categoryMetadata: CategoryMetadataDTO,
+        categoryMetadata: GeneralSettingsDTO,
         competitionCategoryId: Int
     ) {
         // If draw has already been made, first remove old matches
@@ -138,12 +138,12 @@ class DrawService(
         val playerGroups = mutableMapOf<Int, MutableList<PlayerDTO>>()
         val numberOfPlayers = registrationIds.size
 
-        val remainder = numberOfPlayers.rem(categoryMetadata.nrPlayersPerGroup)
-        var nrGroups = numberOfPlayers / categoryMetadata.nrPlayersPerGroup
+        val remainder = numberOfPlayers.rem(categoryMetadata.playersPerGroup)
+        var nrGroups = numberOfPlayers / categoryMetadata.playersPerGroup
 
         // If remainder is zero, number of registered players fits perfectly with
         // group size. Otherwise add one more group if it's groups of 4
-        if (remainder != 0 && categoryMetadata.nrPlayersPerGroup == 4) {
+        if (remainder != 0 && categoryMetadata.playersPerGroup == 4) {
             nrGroups += 1
         }
 
@@ -227,8 +227,8 @@ class DrawService(
     }
 
     fun getDraw(competitionCategoryId: Int): DrawDTO {
-        val metadata = categoryService.getCategoryMetadata(competitionCategoryId)
-        if (metadata.drawType == DrawType.CUP_ONLY) {
+        val metadata = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId).settings
+        if (DrawType.valueOf(metadata.drawType.name) == DrawType.CUP_ONLY) {
             return getCupOnlyDraw(competitionCategoryId)
         }
         return DrawDTO(
@@ -285,7 +285,7 @@ class DrawService(
      * stage actual players name will be entered.
      */
     fun getPlayoffForGroups(competitionCategoryId: Int): PlayoffDTO {
-        val categoryMetadata = categoryService.getCategoryMetadata(competitionCategoryId)
+        val categoryMetadata = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId).settings
         val groupMatches = matchService.getGroupMatchesInCategory(competitionCategoryId)
         if (groupMatches.isEmpty()) {
             logger.error("No group matches found before attempt to make playoff draw")
@@ -296,9 +296,9 @@ class DrawService(
         val distinctGroups = groupMatches.map { it.groupOrRound }.distinct()
 
         val playoffMatches: List<MatchUp>
-        if (categoryMetadata.nrPlayersToPlayoff == 1) {
+        if (categoryMetadata.playersToPlayOff == 1) {
             playoffMatches = drawUtil.playoffForGroupsWhereOneProceeds(distinctGroups)
-        } else if (categoryMetadata.nrPlayersToPlayoff == 2) {
+        } else if (categoryMetadata.playersToPlayOff == 2) {
             playoffMatches = drawUtilTwoProceed.playoffDrawWhereTwoProceed(distinctGroups)
         } else {
             logger.error("Unclear number of players continued from group: $categoryMetadata.nrPlayersToPlayoff")

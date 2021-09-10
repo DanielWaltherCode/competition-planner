@@ -1,16 +1,15 @@
 package com.graphite.competitionplanner.draw
 
-import com.graphite.competitionplanner.competitioncategory.api.CategoryMetadataSpec
-import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
-import com.graphite.competitionplanner.player.repository.PlayerRepository
-import com.graphite.competitionplanner.registration.repository.RegistrationRepository
-import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
-import com.graphite.competitionplanner.category.service.CategoryService
-import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.registration.service.RegistrationService
+import com.graphite.competitionplanner.DataGenerator
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
-import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
+import com.graphite.competitionplanner.draw.service.DrawService
+import com.graphite.competitionplanner.match.service.MatchService
+import com.graphite.competitionplanner.player.repository.PlayerRepository
+import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
+import com.graphite.competitionplanner.registration.repository.RegistrationRepository
+import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.util.TestUtil
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -27,26 +26,31 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
                                     @Autowired val playerRepository: PlayerRepository,
                                     @Autowired val competitionDrawRepository: CompetitionDrawRepository,
                                     @Autowired val drawService: DrawService,
-                                    @Autowired val categoryService: CategoryService,
                                     @Autowired val competitionCategoryService: CompetitionCategoryService
 ) {
     var competitionCategoryId = 0
+    val dataGenerator = DataGenerator()
 
     @BeforeEach
     fun addPlayersToCategory() {
         competitionCategoryId = testUtil.addCompetitionCategory("Flickor 13")
 
         // Update competition category so that it's groups of 3 instead with one proceeding
-        val categoryMetadata = categoryService.getCategoryMetadata(competitionCategoryId)
-        val categoryMetadataSpec = CategoryMetadataSpec(
-            cost = categoryMetadata.cost,
-            drawType = categoryMetadata.drawType,
-            nrPlayersPerGroup = 3,
-            nrPlayersToPlayoff = 1,
-            poolDrawStrategy = categoryMetadata.poolDrawStrategy
+        val original = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
+
+        val updatedSettings = dataGenerator.newCompetitionCategoryUpdateDTO(
+            original.id,
+            settings = dataGenerator.newGeneralSettingsDTO(
+                cost = original.settings.cost,
+                drawType = original.settings.drawType,
+                playersPerGroup = 3,
+                playersToPlayOff = 1,
+                poolDrawStrategy = original.settings.poolDrawStrategy
+            ),
+            gameSettings = original.gameSettings
         )
 
-        categoryService.updateCategoryMetadata(competitionCategoryId, categoryMetadata.id, categoryMetadataSpec)
+        competitionCategoryService.updateCompetitionCategory(updatedSettings)
     }
 
     @AfterEach

@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.common.api
 
 import com.graphite.competitionplanner.common.exception.NotFoundException
-import com.graphite.competitionplanner.util.exception.GameValidationException
+import com.graphite.competitionplanner.common.exception.GameValidationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice

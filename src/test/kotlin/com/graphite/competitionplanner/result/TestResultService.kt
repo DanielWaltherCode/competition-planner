@@ -1,25 +1,23 @@
 package com.graphite.competitionplanner.result
 
-import com.graphite.competitionplanner.result.api.GameSpec
-import com.graphite.competitionplanner.result.api.ResultSpec
-import com.graphite.competitionplanner.competitioncategory.api.CategoryMetadataSpec
-import com.graphite.competitionplanner.category.service.CategoryService
-import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
-import com.graphite.competitionplanner.player.repository.PlayerRepository
-import com.graphite.competitionplanner.player.service.PlayerService
-import com.graphite.competitionplanner.registration.repository.RegistrationRepository
-import com.graphite.competitionplanner.result.repository.ResultRepository
-import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
+import com.graphite.competitionplanner.DataGenerator
+import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
+import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.service.MatchDTO
 import com.graphite.competitionplanner.match.service.MatchService
+import com.graphite.competitionplanner.player.repository.PlayerRepository
+import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
+import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.registration.service.RegistrationService
+import com.graphite.competitionplanner.result.api.GameSpec
+import com.graphite.competitionplanner.result.api.ResultSpec
+import com.graphite.competitionplanner.result.repository.ResultRepository
 import com.graphite.competitionplanner.result.service.ResultDTO
 import com.graphite.competitionplanner.result.service.ResultService
 import com.graphite.competitionplanner.util.TestUtil
 import com.graphite.competitionplanner.util.Util
-import com.graphite.competitionplanner.util.exception.GameValidationException
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -29,12 +27,10 @@ import org.springframework.boot.test.context.SpringBootTest
 class TestResultService(
     @Autowired val testUtil: TestUtil,
     @Autowired val matchService: MatchService,
-    @Autowired val playerService: PlayerService,
     @Autowired val competitionCategoryService: CompetitionCategoryService,
     @Autowired val registrationService: RegistrationService,
     @Autowired val competitionDrawRepository: CompetitionDrawRepository,
     @Autowired val registrationRepository: RegistrationRepository,
-    @Autowired val categoryService: CategoryService,
     @Autowired val resultService: ResultService,
     @Autowired val playerRepository: PlayerRepository,
     @Autowired val drawService: DrawService,
@@ -45,6 +41,7 @@ class TestResultService(
     var competitionCategoryId = 0
     lateinit var result: ResultDTO
     lateinit var match: MatchDTO
+    val dataGenerator = DataGenerator()
 
     @BeforeAll
     fun setUpClassData() {
@@ -54,16 +51,21 @@ class TestResultService(
     @BeforeEach
     fun setUpDataForEachTest() {
         // Update competition category so that it's groups of 3 instead with one proceeding
-        val categoryMetadata = categoryService.getCategoryMetadata(competitionCategoryId)
-        val categoryMetadataSpec = CategoryMetadataSpec(
-            cost = categoryMetadata.cost,
-            drawType = categoryMetadata.drawType,
-            nrPlayersPerGroup = 3,
-            nrPlayersToPlayoff = 1,
-            poolDrawStrategy = categoryMetadata.poolDrawStrategy
+        val original = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
+
+        val updatedSettings = dataGenerator.newCompetitionCategoryUpdateDTO(
+            original.id,
+            settings = dataGenerator.newGeneralSettingsDTO(
+                cost = original.settings.cost,
+                drawType = original.settings.drawType,
+                playersPerGroup = 3,
+                playersToPlayOff = 1,
+                poolDrawStrategy = original.settings.poolDrawStrategy
+            ),
+            gameSettings = original.gameSettings
         )
 
-        categoryService.updateCategoryMetadata(competitionCategoryId, categoryMetadata.id, categoryMetadataSpec)
+        competitionCategoryService.updateCompetitionCategory(updatedSettings)
 
         // Add players
         val allPlayers = playerRepository.getAll()
