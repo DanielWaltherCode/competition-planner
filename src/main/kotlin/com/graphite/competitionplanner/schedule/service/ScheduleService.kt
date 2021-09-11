@@ -1,11 +1,11 @@
 package com.graphite.competitionplanner.schedule.service
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.graphite.competitionplanner.schedule.repository.ScheduleRepository
+import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
-import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.schedule.api.*
+import com.graphite.competitionplanner.schedule.repository.ScheduleRepository
 import com.graphite.competitionplanner.tables.records.ScheduleAvailableTablesRecord
 import com.graphite.competitionplanner.tables.records.ScheduleCategoryRecord
 import com.graphite.competitionplanner.tables.records.ScheduleDailyTimesRecord
@@ -210,7 +210,7 @@ class ScheduleService(
     }
 
     fun getCategoryStartTimesByDay(competitionId: Int, day: LocalDate): List<CategoryStartTimeDTO> {
-        val categoriesInCompetition = competitionService.getCategoriesInCompetition(competitionId)
+        val categoriesInCompetition = competitionCategoryService.getCompetitionCategoriesFor(competitionId)
         val startTimeRecords = mutableListOf<ScheduleCategoryRecord>()
         for (category in categoriesInCompetition) {
             try {
@@ -244,13 +244,10 @@ class ScheduleService(
         competitionId: Int
     ) {
         val competition = competitionService.getById(competitionId)
-        if (competition.startDate == null || competition.endDate == null) {
-            return
-        }
 
         if (ChronoUnit.DAYS.between(competition.startDate, competition.endDate) < 30) {
             var currentDate = competition.startDate
-            while (currentDate!! <= competition.endDate) {
+            while (currentDate <= competition.endDate) {
 
                 scheduleRepository.addDailyStartAndEnd(
                     competitionId, DailyStartAndEndSpec(

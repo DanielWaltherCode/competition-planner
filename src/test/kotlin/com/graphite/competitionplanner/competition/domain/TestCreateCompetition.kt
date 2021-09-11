@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.competition.domain
 
 import com.graphite.competitionplanner.club.domain.FindClub
 import com.graphite.competitionplanner.common.exception.NotFoundException
-import com.graphite.competitionplanner.competition.domain.interfaces.ICompetitionRepository
+import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
@@ -21,7 +21,7 @@ class TestCreateCompetition {
     @Test
     fun shouldStoreCompetitionIfEntityIsOk() {
         // Setup
-        val dto = dataGenerator.newNewCompetitionDTO()
+        val dto = dataGenerator.newCompetitionSpec()
         `when`(mockedFindClub.byId(dto.organizingClubId))
             .thenReturn(dataGenerator.newClubDTO(id = dto.organizingClubId))
         `when`(mockedRepository.store(TestHelper.MockitoHelper.anyObject())).thenReturn(
@@ -36,21 +36,9 @@ class TestCreateCompetition {
     }
 
     @Test
-    fun shouldNotStoreEntityIfItIsInvalid() {
-        // Setup
-        val dto = dataGenerator.newNewCompetitionDTO(name = "")
-
-        // Act
-        Assertions.assertThrows(IllegalArgumentException::class.java) { createCompetition.execute(dto) }
-
-        // Assert
-        verify(mockedRepository, never()).store(TestHelper.MockitoHelper.anyObject())
-    }
-
-    @Test
     fun shouldAssertThatClubExist() {
         // Setup
-        val dto = dataGenerator.newNewCompetitionDTO()
+        val dto = dataGenerator.newCompetitionSpec()
         `when`(mockedFindClub.byId(dto.organizingClubId))
             .thenReturn(dataGenerator.newClubDTO(id = dto.organizingClubId))
         `when`(mockedRepository.store(TestHelper.MockitoHelper.anyObject())).thenReturn(
@@ -67,7 +55,7 @@ class TestCreateCompetition {
     @Test
     fun shouldNotStoreCompetitionIfClubDoesNotExist() {
         // Setup
-        val dto = dataGenerator.newNewCompetitionDTO()
+        val dto = dataGenerator.newCompetitionSpec()
         `when`(mockedFindClub.byId(dto.organizingClubId)).thenThrow(NotFoundException(""))
 
         // Act

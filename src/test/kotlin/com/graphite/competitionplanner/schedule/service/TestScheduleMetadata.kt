@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.schedule.service
 
-import com.graphite.competitionplanner.competition.api.CompetitionSpec
+import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
+import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.schedule.api.ScheduleMetadataSpec
@@ -28,7 +29,7 @@ class TestScheduleMetadata(
     fun addCompetition() {
         competitionId = competitionService.addCompetition(
             CompetitionSpec(
-                location = "Lund",
+                location = LocationSpec("Lund"),
                 name = "Eurofinans 2021",
                 welcomeText = "Välkomna till Eurofinans",
                 organizingClubId = util.getClubIdOrDefault("Lugi"),

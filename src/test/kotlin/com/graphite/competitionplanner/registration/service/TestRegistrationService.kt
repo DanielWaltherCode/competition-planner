@@ -24,11 +24,6 @@ class TestRegistrationService(
 ) {
 
     @Test
-    fun getRegistrationsInCompetition() {
-        val competitions = competitionService.getCompetitions(null, null)
-    }
-
-    @Test
     @Disabled
     fun getRegistrationsByPlayerId() {
         val playerId = playerRepository.getAll().stream().findFirst().map { it.id }.get()
@@ -49,7 +44,7 @@ class TestRegistrationService(
         val numberOfRegistrations = originalRegistrations.competitionsAndCategories.size
 
         val competitions = competitionService.getByClubId(umeId)
-        val categoriesInCompetitionOne = competitionCategoryRepository.getCategoriesInCompetition(competitions[0].id?: 0)
+        val categoriesInCompetitionOne = competitionCategoryRepository.getCategoriesInCompetition(competitions[0].id)
         // Register in same competition different category
         registrationService.registerPlayerSingles(RegistrationSinglesSpec( idToRegister, categoriesInCompetitionOne[2].categoryId))
 

@@ -4,7 +4,7 @@ import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.common.exception.NotFoundException
-import com.graphite.competitionplanner.competition.domain.interfaces.CompetitionDTO
+import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.util.DataGenerator
@@ -31,7 +31,7 @@ class TestCompetitionCategoryRepository(
     fun saveAClub() {
         val dto = dataGenerator.newClubSpec()
         club = clubRepository.store(dto)
-        competition = competitionRepository.store(dataGenerator.newNewCompetitionDTO(organizingClubId = club.id))
+        competition = competitionRepository.store(dataGenerator.newCompetitionSpec(organizingClubId = club.id))
     }
 
     @AfterEach

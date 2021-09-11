@@ -5,7 +5,8 @@ import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.club.repository.ClubRepository
 import com.graphite.competitionplanner.club.service.ClubService
-import com.graphite.competitionplanner.competition.api.CompetitionSpec
+import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
+import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
@@ -134,7 +135,7 @@ class EventListener(
         competitionRepository.addCompetitionWithId(
             0,
             CompetitionSpec(
-                location = "BYE",
+                location = LocationSpec("BYE"),
                 name = "BYE",
                 welcomeText = "BYE",
                 organizingClubId = util.getClubIdOrDefault("Övriga"),
@@ -347,7 +348,7 @@ class EventListener(
     fun competitionSetup() {
         competitionService.addCompetition(
             CompetitionSpec(
-                location = "Lund",
+                location = LocationSpec("Lund"),
                 name = "Eurofinans 2021",
                 welcomeText = "Välkomna till Eurofinans",
                 organizingClubId = util.getClubIdOrDefault("Lugi"),
@@ -357,7 +358,7 @@ class EventListener(
         )
         competitionService.addCompetition(
             CompetitionSpec(
-                location = "Umeå",
+                location = LocationSpec("Umeå"),
                 name = "Bollstadion Cup",
                 welcomeText = "Umeå, kallt, öde, men vi har badminton!",
                 organizingClubId = util.getClubIdOrDefault("Umeå IK"),
@@ -367,7 +368,7 @@ class EventListener(
         )
         competitionService.addCompetition(
             CompetitionSpec(
-                location = "Svedala",
+                location = LocationSpec("Svedala"),
                 name = "Svedala Open",
                 welcomeText = "Bonustävling!",
                 organizingClubId = util.getClubIdOrDefault("Övriga"),
@@ -439,7 +440,7 @@ class EventListener(
         val umePlayers = playerService.getPlayersByClubId(util.getClubIdOrDefault("Umeå IK"))
         val otherPlayers = playerService.getPlayersByClubId(util.getClubIdOrDefault("Övriga"))
         val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
-        val competitionCategories = competitionService.getCategoriesInCompetition(lugiCompetitionId)
+        val competitionCategories = competitionCategoryService.getCompetitionCategoriesFor(lugiCompetitionId)
 
         // Have "Herrar 1" in Lugi as main competition category to play around with
         registrationService.registerPlayerSingles(

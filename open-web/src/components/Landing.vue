@@ -35,7 +35,7 @@
                 <!-- Smaller font size -->
                 <div class="d-flex justify-content-center">
 
-                  <p class="fs-6 mb-0 me-4">{{ competition.organizingClub.name }}</p>
+                  <p class="fs-6 mb-0 me-4">{{ competition.organizerClub.name }}</p>
                   <p class="fs-6 mb-0"> {{ competition.startDate }} - {{ competition.endDate }}</p>
                 </div>
               </li>

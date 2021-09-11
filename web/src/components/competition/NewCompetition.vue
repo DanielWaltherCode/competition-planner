@@ -78,7 +78,9 @@ export default {
     },
     save() {
       const objectToSave = {
-        "location": this.competitionLocation,
+        "location": {
+          "name": this.competitionLocation
+        },
         "name": this.competitionName,
         "welcomeText": this.info,
         "organizingClubId": this.user.clubNoAddressDTO.id,
