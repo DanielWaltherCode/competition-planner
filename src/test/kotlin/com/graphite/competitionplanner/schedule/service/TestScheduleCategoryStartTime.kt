@@ -1,6 +1,5 @@
 package com.graphite.competitionplanner.schedule.service
 
-import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.competition.api.CompetitionSpec
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
@@ -46,18 +45,18 @@ class TestScheduleCategoryStartTime(
             )
         ).id
 
-        val categories = categoryRepository.getCategories()
-        val herrar1 = categories.find { it.categoryName == "Herrar 1" }!!
-        val herrar2 = categories.find { it.categoryName == "Herrar 2" }!!
+        val categories = categoryRepository.getAvailableCategories()
+        val herrar1 = categories.find { it.name == "Herrar 1" }!!
+        val herrar2 = categories.find { it.name == "Herrar 2" }!!
 
         // Categories to competition
         competitionCategory1 = competitionCategoryService.addCompetitionCategory(
             competitionId,
-            CategoryDTO(herrar1.id, herrar1.categoryName, herrar1.categoryType)
+            herrar1
         ).id
         competitionCategory2 = competitionCategoryService.addCompetitionCategory(
             competitionId,
-            CategoryDTO(herrar2.id, herrar2.categoryName, herrar2.categoryType)
+            herrar2
         ).id
 
         // Competition start times are set up automatically now so fetch the two ones just added
