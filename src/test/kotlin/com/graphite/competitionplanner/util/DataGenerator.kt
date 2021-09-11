@@ -2,15 +2,13 @@ package com.graphite.competitionplanner.util
 
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
-import com.graphite.competitionplanner.club.interfaces.ClubNoAddressDTO
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.competition.interfaces.*
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.*
 import com.graphite.competitionplanner.domain.entity.*
-import com.graphite.competitionplanner.player.api.PlayerSpec
-import com.graphite.competitionplanner.player.domain.interfaces.NewPlayerDTO
-import com.graphite.competitionplanner.player.domain.interfaces.PlayerDTO
-import com.graphite.competitionplanner.player.domain.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerSpec
+import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import java.time.LocalDate
@@ -25,26 +23,14 @@ class DataGenerator {
     private var clubId = 0
     private var matchId = 0
 
-    internal fun newPlayer(
-        id: Int = playerId++,
-        firstName: String = "Ida",
-        lastName: String = "Larsson",
-        dateOfBirth: LocalDate = LocalDate.of(1999, 1, 1)
-    ) = Player(
-        id,
-        firstName,
-        lastName,
-        dateOfBirth
-    )
-
     internal fun newMatch(
         id: Int = matchId++,
         competitionCategoryId: Int = 0,
         startTime: LocalDateTime = LocalDateTime.now(),
         endTime: LocalDateTime = LocalDateTime.now().plusMinutes(15),
         matchType: MatchType = MatchType("POOL"),
-        firstPlayer: List<Int> = listOf(newPlayer(firstName = "Lars", lastName = "Åkesson").id),
-        secondPlayer: List<Int> = listOf(newPlayer(firstName = "Lars", lastName = "Åkesson").id),
+        firstPlayer: List<Int> = listOf(playerId++),
+        secondPlayer: List<Int> = listOf(playerId++),
         orderNumber: Int = 0,
         groupOrRound: String = "GROUP A"
     ) = Match(
@@ -95,18 +81,6 @@ class DataGenerator {
         dateOfBirth: LocalDate = LocalDate.of(1999, 1, 1)
     ) = PlayerDTO(
         id,
-        firstName,
-        lastName,
-        clubId,
-        dateOfBirth
-    )
-
-    fun newNewPlayerDTO(
-        firstName: String = "Lars",
-        lastName: String = "Larsson",
-        clubId: Int = 1,
-        dateOfBirth: LocalDate = LocalDate.of(1999, 1, 1)
-    ) = NewPlayerDTO(
         firstName,
         lastName,
         clubId,
@@ -290,9 +264,17 @@ class DataGenerator {
         endDate
     )
 
-    fun newPlayerSpec(club: ClubNoAddressDTO): PlayerSpec {
-        return PlayerSpec("Lasse", "Larrson", club.id, LocalDate.now().minusYears(20))
-    }
+    fun newPlayerSpec(
+        firstName: String = "Lasse",
+        lastName: String = "Larsson",
+        clubId: Int = this.clubId++,
+        dateOfBirth: LocalDate = LocalDate.now().minusYears(20)
+    ) = PlayerSpec(
+        firstName,
+        lastName,
+        clubId,
+        dateOfBirth
+    )
 
     /**
      * Generates a set of matches for a pool with the given amount of players. The generated matches
@@ -307,7 +289,7 @@ class DataGenerator {
 
         val postFixes = ('A'..'J').toList()
         val players =
-            (0..numberOfPlayers).map { newPlayer(firstName = "Player" + postFixes[it], lastName = "LastName") }
+            (0..numberOfPlayers).map { newPlayerDTO(firstName = "Player" + postFixes[it], lastName = "LastName") }
 
         val matches = mutableListOf<MatchDTO>()
         for (i in 0..numberOfPlayers) {

@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.player.domain
 import com.graphite.competitionplanner.club.domain.FindClub
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
-import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
+import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
@@ -20,38 +20,13 @@ class TestUpdatePlayer {
     val updatePlayer = UpdatePlayer(mockedPlayerRepository, mockedFindClub)
 
     @Test
-    fun shouldCallStoreWhenEntityIsOk() {
-        // Setup
-        val dto = dataGenerator.newPlayerDTO()
-        `when`(mockedFindClub.byId(dto.clubId)).thenReturn(ClubDTO(dto.clubId, "ClubName", "ClubAddress"))
-
-        // Act
-        updatePlayer.execute(dto)
-
-        // Assert
-        verify(mockedPlayerRepository, times(1)).update(TestHelper.MockitoHelper.anyObject())
-    }
-
-    @Test
-    fun shouldNotCallStoreWhenEntityIsInvalid() {
-        // Setup
-        val dto = dataGenerator.newPlayerDTO(firstName = "Per123")
-
-        // Act
-        Assertions.assertThrows(IllegalArgumentException::class.java) { updatePlayer.execute(dto) }
-
-        // Assert
-        verify(mockedPlayerRepository, never()).store(TestHelper.MockitoHelper.anyObject())
-    }
-
-    @Test
     fun shouldNotCallStoreWhenIfClubDoesNotExist() {
         // Setup
-        val dto = dataGenerator.newPlayerDTO()
-        `when`(mockedFindClub.byId(dto.clubId)).thenThrow(NotFoundException(""))
+        val spec = dataGenerator.newPlayerSpec()
+        `when`(mockedFindClub.byId(spec.clubId)).thenThrow(NotFoundException(""))
 
         // Act
-        Assertions.assertThrows(NotFoundException::class.java) { updatePlayer.execute(dto) }
+        Assertions.assertThrows(NotFoundException::class.java) { updatePlayer.execute(1, spec) }
 
         // Assert
         verify(mockedPlayerRepository, never()).store(TestHelper.MockitoHelper.anyObject())
@@ -60,13 +35,13 @@ class TestUpdatePlayer {
     @Test
     fun shouldAssertThatClubExist() {
         // Setup
-        val dto = dataGenerator.newPlayerDTO()
-        `when`(mockedFindClub.byId(dto.clubId)).thenReturn(ClubDTO(dto.clubId, "ClubName", "ClubAddress"))
+        val spec = dataGenerator.newPlayerSpec()
+        `when`(mockedFindClub.byId(spec.clubId)).thenReturn(ClubDTO(spec.clubId, "ClubName", "ClubAddress"))
 
         // Act
-        updatePlayer.execute(dto)
+        updatePlayer.execute(1, spec)
 
         // Assert
-        verify(mockedFindClub, atLeastOnce()).byId(dto.clubId)
+        verify(mockedFindClub, atLeastOnce()).byId(spec.clubId)
     }
 }

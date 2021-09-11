@@ -1,8 +1,7 @@
 package com.graphite.competitionplanner.player.domain
 
-import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
+import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.util.DataGenerator
-import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
@@ -17,24 +16,24 @@ class TestDeletePlayer {
     @Test
     fun shouldCallRepository() {
         // Setup
-        val dto = DataGenerator().newPlayerDTO()
+        val playerId = 10
 
         // Act
-        deletePlayer.execute(dto)
+        deletePlayer.execute(playerId)
 
         // Verify
-        verify(mockedPlayerRepository, times(1)).delete(dto)
-        verify(mockedPlayerRepository, times(1)).delete(TestHelper.MockitoHelper.anyObject())
+        verify(mockedPlayerRepository, times(1)).delete(playerId)
+        verify(mockedPlayerRepository, times(1)).delete(anyInt())
     }
 
     @Test
     fun shouldReturnTheDeletedPlayer() {
         // Setup
         val dto = DataGenerator().newPlayerDTO()
-        `when`(mockedPlayerRepository.delete(dto)).thenReturn(dto)
+        `when`(mockedPlayerRepository.delete(dto.id)).thenReturn(dto)
 
         // Act
-        val deletedPlayer = deletePlayer.execute(dto)
+        val deletedPlayer = deletePlayer.execute(dto.id)
 
         // Assert
         Assertions.assertEquals(dto, deletedPlayer)

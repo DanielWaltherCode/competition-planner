@@ -13,8 +13,7 @@ import com.graphite.competitionplanner.competitioncategory.repository.Competitio
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
-import com.graphite.competitionplanner.player.api.PlayerSpec
-import com.graphite.competitionplanner.player.domain.interfaces.NewPlayerDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.player.service.PlayerService
 import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
@@ -148,7 +147,7 @@ class EventListener(
             0,
             PlayerSpec(
                 firstName = "BYE",
-                lastName = "",
+                lastName = "BYE",
                 clubId = util.getClubIdOrDefault("Övriga"),
                 dateOfBirth = LocalDate.now().minus(18, ChronoUnit.YEARS)
             )
@@ -159,7 +158,7 @@ class EventListener(
 
     fun playerSetup() {
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Oscar",
                 lastName = "Hansson",
                 clubId = util.getClubIdOrDefault("Lugi"),
@@ -168,7 +167,7 @@ class EventListener(
         )
 
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Nils",
                 lastName = "Hansson",
                 clubId = util.getClubIdOrDefault("Lugi"),
@@ -176,7 +175,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Lennart",
                 lastName = "Eriksson",
                 clubId = util.getClubIdOrDefault("Umeå IK"),
@@ -184,7 +183,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Kajsa",
                 lastName = "Säfsten",
                 clubId = util.getClubIdOrDefault("Övriga"),
@@ -192,7 +191,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Lennart",
                 lastName = "Eriksson",
                 clubId = util.getClubIdOrDefault("Lugi"),
@@ -200,7 +199,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Lennart",
                 lastName = "Eriksson",
                 clubId = util.getClubIdOrDefault("Malmö"),
@@ -208,7 +207,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Lennart",
                 lastName = "Eriksson",
                 clubId = util.getClubIdOrDefault("Landskrona"),
@@ -216,7 +215,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Mona",
                 lastName = "Nilsson",
                 clubId = util.getClubIdOrDefault("Umeå IK"),
@@ -224,7 +223,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Anders",
                 lastName = "And",
                 clubId = util.getClubIdOrDefault("Malmö"),
@@ -232,7 +231,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Lukas",
                 lastName = "Eriksson",
                 clubId = util.getClubIdOrDefault("Lugi"),
@@ -240,7 +239,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Nina",
                 lastName = "Persson",
                 clubId = util.getClubIdOrDefault("Umeå IK"),
@@ -248,7 +247,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Ola",
                 lastName = "Salo",
                 clubId = util.getClubIdOrDefault("Landskrona"),
@@ -256,7 +255,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Ola",
                 lastName = "Larsson",
                 clubId = util.getClubIdOrDefault("Lugi"),
@@ -264,7 +263,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Anna",
                 lastName = "Lindh",
                 clubId = util.getClubIdOrDefault("Lugi"),
@@ -272,7 +271,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Oscar",
                 lastName = "Lilja",
                 clubId = util.getClubIdOrDefault("Landskrona"),
@@ -280,7 +279,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Sam",
                 lastName = "Axén",
                 clubId = util.getClubIdOrDefault("Umeå IK"),
@@ -288,7 +287,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Nils",
                 lastName = "Sundling",
                 clubId = util.getClubIdOrDefault("Landskrona"),
@@ -296,7 +295,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Amanda",
                 lastName = "Skiffer",
                 clubId = util.getClubIdOrDefault("Lugi"),
@@ -304,7 +303,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Eskil",
                 lastName = "Erlandsson",
                 clubId = util.getClubIdOrDefault("Lugi"),
@@ -312,7 +311,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Erna",
                 lastName = "Solberg",
                 clubId = util.getClubIdOrDefault("Umeå IK"),
@@ -320,7 +319,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Dwight",
                 lastName = "Johnson",
                 clubId = util.getClubIdOrDefault("Landskrona"),
@@ -328,7 +327,7 @@ class EventListener(
             )
         )
         playerRepository.store(
-            NewPlayerDTO(
+            PlayerSpec(
                 firstName = "Simon",
                 lastName = "Knutsson",
                 clubId = util.getClubIdOrDefault("Umeå IK"),

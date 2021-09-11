@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.player.domain.interfaces
+package com.graphite.competitionplanner.player.interfaces
 
 import com.graphite.competitionplanner.common.exception.NotFoundException
 
@@ -7,9 +7,10 @@ interface IPlayerRepository {
     /**
      * Saves the Player
      *
-     * @param dto Player to be stored
+     * @param spec Player to be stored
+     * @return Newly stored player
      */
-    fun store(dto: NewPlayerDTO): PlayerDTO
+    fun store(spec: PlayerSpec): PlayerDTO
 
     /**
      * Return all players for the given club
@@ -30,7 +31,7 @@ interface IPlayerRepository {
      * Return a list of players where the first name or last name
      * starts with the given search string
      *
-     * @param partName: Search string
+     * @param startOfName: Search string
      * @Return List of Players
      */
     fun findByName(startOfName: String): List<PlayerWithClubDTO>
@@ -38,20 +39,21 @@ interface IPlayerRepository {
     /**
      * Updates the Player with the given id
      *
-     * @param dto: Player to update
+     * @param id: Id of the player to update
+     * @param spec: Specification that will be used to update the player
      * @return The updated player
      * @throws NotFoundException If the Player to updated cannot be found
      */
     @Throws(NotFoundException::class)
-    fun update(dto: PlayerDTO): PlayerDTO
+    fun update(id: Int, spec: PlayerSpec): PlayerDTO
 
     /**
      * Deletes the Player
      *
-     * @param dto: Player to delete
+     * @param id: Id of the player to delete
      * @return The deleted player
      * @throws NotFoundException If the Player to delete cannot be found
      */
     @Throws(NotFoundException::class)
-    fun delete(dto: PlayerDTO): PlayerDTO
+    fun delete(id: Int): PlayerDTO
 }

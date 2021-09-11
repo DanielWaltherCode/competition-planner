@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.registration.api
 
-import com.graphite.competitionplanner.player.service.PlayerDTO
 import com.graphite.competitionplanner.competition.service.CompetitionService
+import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
 import com.graphite.competitionplanner.registration.service.RegistrationDoublesDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
@@ -50,11 +50,5 @@ class CompetitionRegistrationApi(
 
 data class RegistrationSinglesSpec(
     val playerId: Int,
-    val competitionCategoryId: Int
-)
-
-data class RegistrationDoublesSpec(
-    val firstPlayerId: Int,
-    val secondPlayerId: Int,
     val competitionCategoryId: Int
 )

@@ -3,9 +3,7 @@ package com.graphite.competitionplanner.player.repository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.common.exception.NotFoundException
-import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
-import com.graphite.competitionplanner.player.domain.interfaces.NewPlayerDTO
-import com.graphite.competitionplanner.player.domain.interfaces.PlayerDTO
+import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -13,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import java.time.LocalDate
 
 @SpringBootTest
 class TestPlayerRepository(
@@ -36,21 +33,21 @@ class TestPlayerRepository(
 
     @Test
     fun shouldSetIdWhenSaving() {
-        val dto = NewPlayerDTO("Lasse", "Nilsson", club.id, LocalDate.now())
-        val player = playerRepository.store(dto)
+        val spec = dataGenerator.newPlayerSpec(clubId = club.id)
+        val player = playerRepository.store(spec)
 
         Assertions.assertTrue(player.id != 0)
 
-        playerRepository.delete(player)
+        playerRepository.delete(player.id)
     }
 
     @Test
     fun shouldGetCorrectNumberOfPlayersPerClub() {
         // Setup
         val players = listOf(
-            NewPlayerDTO("Lasse", "Nilsson", club.id, LocalDate.now()),
-            NewPlayerDTO("Nils", "Nilsson", club.id, LocalDate.now()),
-            NewPlayerDTO("Simon", "Nilsson", club.id, LocalDate.now())
+            dataGenerator.newPlayerSpec("Lasse", "Nilsson", club.id),
+            dataGenerator.newPlayerSpec("Nils", "Nilsson", club.id),
+            dataGenerator.newPlayerSpec("Simon", "Nilsson", club.id)
         )
 
         val storedPlayers = players.map { playerRepository.store(it) }
@@ -61,16 +58,16 @@ class TestPlayerRepository(
         Assertions.assertEquals(players.size, playersInClub.size)
 
         // Clean up
-        storedPlayers.map { playerRepository.delete(it) }
+        storedPlayers.map { playerRepository.delete(it.id) }
     }
 
     @Test
     fun shouldGetBackTheCorrectClub() {
         // Setup
         val players = listOf(
-            NewPlayerDTO("Lasse", "Nilsson", club.id, LocalDate.now()),
-            NewPlayerDTO("Nils", "Nilsson", club.id, LocalDate.now()),
-            NewPlayerDTO("Simon", "Nilsson", club.id, LocalDate.now())
+            dataGenerator.newPlayerSpec("Lasse", "Nilsson", club.id),
+            dataGenerator.newPlayerSpec("Nils", "Nilsson", club.id),
+            dataGenerator.newPlayerSpec("Simon", "Nilsson", club.id)
         )
 
         val storedPlayers = players.map { playerRepository.store(it) }
@@ -83,30 +80,34 @@ class TestPlayerRepository(
         }
 
         // Clean up
-        storedPlayers.map { playerRepository.delete(it) }
+        storedPlayers.map { playerRepository.delete(it.id) }
     }
 
     @Test
     fun shouldThrowNotFoundExceptionWhenUpdatingPlayerThatCannotBeFound() {
-        val dto = PlayerDTO(-1, "Lasse", "Nilsson", club.id, LocalDate.now())
-        Assertions.assertThrows(NotFoundException::class.java) { playerRepository.update(dto) }
+        val spec = dataGenerator.newPlayerSpec()
+        Assertions.assertThrows(NotFoundException::class.java) { playerRepository.update(-1, spec) }
     }
 
     @Test
     fun shouldUpdatePlayerDto() {
         // Setup
-        val dto = NewPlayerDTO("Lasse", "Nilsson", club.id, LocalDate.now())
-        val saved = playerRepository.store(dto)
-        val dtoWithNewName = PlayerDTO(saved.id, "MyNewName", saved.lastName, club.id, saved.dateOfBirth)
+        val spec = dataGenerator.newPlayerSpec("Lasse", "Nilsson", club.id)
+        val player = playerRepository.store(spec)
+        val updateSpec = dataGenerator.newPlayerSpec("MyNewName", player.lastName, club.id, player.dateOfBirth)
 
         // Act
-        val updated = playerRepository.update(dtoWithNewName)
+        val updated = playerRepository.update(player.id, updateSpec)
 
         // Assert
-        Assertions.assertEquals(dtoWithNewName, updated)
+        Assertions.assertEquals(updateSpec.firstName, updated.firstName)
+        Assertions.assertEquals(updateSpec.lastName, updated.lastName)
+        Assertions.assertEquals(updateSpec.clubId, updated.clubId)
+        Assertions.assertEquals(updateSpec.dateOfBirth, updated.dateOfBirth)
+        Assertions.assertEquals(player.id, updated.id)
 
         // Clean up
-        playerRepository.delete(updated)
+        playerRepository.delete(updated.id)
     }
 
     @Test
@@ -117,8 +118,8 @@ class TestPlayerRepository(
     @Test
     fun shouldReturnPlayerFound() {
         // Setup
-        val dto = NewPlayerDTO("Lasse", "Nilsson", club.id, LocalDate.now())
-        val player = playerRepository.store(dto)
+        val spec = dataGenerator.newPlayerSpec("Lasse", "Nilsson", club.id)
+        val player = playerRepository.store(spec)
 
         // Act
         val found = playerRepository.findById(player.id)
@@ -131,24 +132,24 @@ class TestPlayerRepository(
         Assertions.assertEquals(player.dateOfBirth, found.dateOfBirth)
 
         // Clean up
-        playerRepository.delete(player)
+        playerRepository.delete(player.id)
     }
 
     @Test
     fun shouldThrowNotFoundExceptionWhenDeletingPlayerThatCannotBeFound() {
         Assertions.assertThrows(NotFoundException::class.java) {
-            playerRepository.delete(PlayerDTO(-10, "firstname", "Lastname", 12, LocalDate.now()))
+            playerRepository.delete(-10)
         }
     }
 
     @Test
     fun shouldReturnTheDeletedDto() {
         // Setup
-        val dto = NewPlayerDTO("Lasse", "Nilsson", club.id, LocalDate.now())
-        val player = playerRepository.store(dto)
+        val spec = dataGenerator.newPlayerSpec("Lasse", "Nilsson", club.id)
+        val player = playerRepository.store(spec)
 
         // Act
-        val deletedPlayer = playerRepository.delete(player)
+        val deletedPlayer = playerRepository.delete(player.id)
 
         // Assertions
         Assertions.assertEquals(player, deletedPlayer)
@@ -157,11 +158,11 @@ class TestPlayerRepository(
     @Test
     fun shouldNotBeAbleToFindDeletedPlayer() {
         // Setup
-        val dto = NewPlayerDTO("Lasse", "Nilsson", club.id, LocalDate.now())
-        val player = playerRepository.store(dto)
+        val spec = dataGenerator.newPlayerSpec("Lasse", "Nilsson", club.id)
+        val player = playerRepository.store(spec)
 
         // Act
-        val deletedPlayer = playerRepository.delete(player)
+        val deletedPlayer = playerRepository.delete(player.id)
 
         // Assertions
         Assertions.assertThrows(NotFoundException::class.java) { playerRepository.findById(deletedPlayer.id) }
@@ -170,16 +171,16 @@ class TestPlayerRepository(
     @Test
     fun shouldReturnPlayerThatStartWithName() {
         // Setup
-        val lasseDto = NewPlayerDTO("Lasse", "Nilsson", club.id, LocalDate.now())
-        val lasse = playerRepository.store(lasseDto)
+        val lasseSpec = dataGenerator.newPlayerSpec("Lasse", "Nilsson", club.id)
+        val lasse = playerRepository.store(lasseSpec)
 
-        val lassDto = NewPlayerDTO("Lass", "Nilsson", club.id, LocalDate.now())
-        val lass = playerRepository.store(lassDto)
+        val lassSpec = dataGenerator.newPlayerSpec("Lass", "Nilsson", club.id)
+        val lass = playerRepository.store(lassSpec)
 
-        val lassonDto = NewPlayerDTO("Karl", "Lasson", club.id, LocalDate.now())
-        val lasson = playerRepository.store(lassonDto)
+        val lassonSpec = dataGenerator.newPlayerSpec("Karl", "Lasson", club.id)
+        val lasson = playerRepository.store(lassonSpec)
 
-        val klasDto = NewPlayerDTO("Klas", "Klasson", club.id, LocalDate.now())
+        val klasDto = dataGenerator.newPlayerSpec("Klas", "Klasson", club.id)
         val klas = playerRepository.store(klasDto)
 
         // Act
@@ -193,10 +194,10 @@ class TestPlayerRepository(
         Assertions.assertFalse(matchingPlayerIds.contains(klas.id))
 
         // Clean up
-        playerRepository.delete(lasse)
-        playerRepository.delete(lass)
-        playerRepository.delete(lasson)
-        playerRepository.delete(klas)
+        playerRepository.delete(lasse.id)
+        playerRepository.delete(lass.id)
+        playerRepository.delete(lasson.id)
+        playerRepository.delete(klas.id)
     }
 
 }

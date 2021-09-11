@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.domain.entity
+package com.graphite.competitionplanner.player.domain
 
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 
 @SpringBootTest
-class TestPlayer() {
+class TestPlayerSpec() {
 
     private final val dataGenerator = DataGenerator()
     val club = dataGenerator.newClubDTO()
@@ -15,42 +15,42 @@ class TestPlayer() {
     @Test
     fun firstNameCannotBeEmpty() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            dataGenerator.newPlayer(firstName = "")
+            dataGenerator.newPlayerSpec(firstName = "")
         }
     }
 
     @Test
     fun firstNameCannotContainNumbers() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            dataGenerator.newPlayer(firstName = "Lennart1")
+            dataGenerator.newPlayerSpec(firstName = "Lennart1")
         }
     }
 
     @Test
     fun firstNameCanContainNonEnglishLetters() {
         Assertions.assertDoesNotThrow {
-            dataGenerator.newPlayer(firstName = "ÅÄÖГ敗")
+            dataGenerator.newPlayerSpec(firstName = "ÅÄÖГ敗")
         }
     }
 
     @Test
     fun lastNameCannotBeEmpty() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            dataGenerator.newPlayer(lastName = "")
+            dataGenerator.newPlayerSpec(lastName = "")
         }
     }
 
     @Test
     fun lastNameCannotContainLetters() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            dataGenerator.newPlayer(lastName = "lastname123")
+            dataGenerator.newPlayerSpec(lastName = "lastname123")
         }
     }
 
     @Test
     fun lastNameCanContainNonEnglishLetters() {
         Assertions.assertDoesNotThrow {
-            dataGenerator.newPlayer(lastName = "ÅÄÖГ敗")
+            dataGenerator.newPlayerSpec(lastName = "ÅÄÖГ敗")
         }
     }
 
@@ -58,7 +58,7 @@ class TestPlayer() {
     fun dateOfBirthCannotBeInTheFuture() {
         val future = LocalDate.now().plusDays(100)
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            dataGenerator.newPlayer(dateOfBirth = future)
+            dataGenerator.newPlayerSpec(dateOfBirth = future)
         }
     }
 }

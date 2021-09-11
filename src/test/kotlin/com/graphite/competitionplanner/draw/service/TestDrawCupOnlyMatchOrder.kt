@@ -14,8 +14,8 @@ import com.graphite.competitionplanner.competitioncategory.service.CompetitionCa
 import com.graphite.competitionplanner.domain.entity.DrawType
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.api.PlayerApi
-import com.graphite.competitionplanner.player.api.PlayerSpec
-import com.graphite.competitionplanner.player.domain.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerSpec
+import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository

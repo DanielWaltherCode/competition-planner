@@ -1,9 +1,8 @@
 package com.graphite.competitionplanner.player.api
 
 import com.graphite.competitionplanner.club.api.ClubApi
-import com.graphite.competitionplanner.club.interfaces.ClubDTO
-import com.graphite.competitionplanner.club.interfaces.ClubNoAddressDTO
-import com.graphite.competitionplanner.player.domain.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerSpec
+import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.util.AbstractApiTest
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
@@ -35,7 +34,7 @@ class Player(
     fun canCreateUpdateFindDeletePlayer() {
         // Setup create
         val club = clubApi.addClub(dataGenerator.newClubSpec())
-        val playerSpec = dataGenerator.newPlayerSpec(club.toNoAddressDTO())
+        val playerSpec = dataGenerator.newPlayerSpec(clubId = club.id)
 
         // Act
         val player = testRestTemplate.postForObject(
@@ -94,7 +93,7 @@ class Player(
     fun canFindPlayerByNameSearch() {
         // Setup
         val club = clubApi.addClub(dataGenerator.newClubSpec())
-        val playerSpec = dataGenerator.newPlayerSpec(club.toNoAddressDTO())
+        val playerSpec = dataGenerator.newPlayerSpec(clubId = club.id)
 
         val player = testRestTemplate.postForObject(
             getUrl(),
@@ -119,7 +118,7 @@ class Player(
     fun canGetPlayerByClub() {
         // Setup
         val club = clubApi.addClub(dataGenerator.newClubSpec())
-        val playerSpec = dataGenerator.newPlayerSpec(club.toNoAddressDTO())
+        val playerSpec = dataGenerator.newPlayerSpec(clubId = club.id)
 
         val player = testRestTemplate.postForObject(
             getUrl(),
@@ -156,7 +155,7 @@ class Player(
     fun shouldGetHttpNotFoundWhenUpdatingPlayerThatDoesNotExist() {
         // Setup
         val club = clubApi.addClub(dataGenerator.newClubSpec())
-        val updateSpec = dataGenerator.newPlayerSpec(club.toNoAddressDTO())
+        val updateSpec = dataGenerator.newPlayerSpec(clubId = club.id)
         val request = HttpEntity(updateSpec, getAuthenticationHeaders())
 
         // Act
@@ -170,7 +169,7 @@ class Player(
     fun shouldGetHttpNotFoundWhenChangingToNonExistingClub() {
         // Setup Player
         val club = clubApi.addClub(dataGenerator.newClubSpec())
-        val playerSpec = dataGenerator.newPlayerSpec(club.toNoAddressDTO())
+        val playerSpec = dataGenerator.newPlayerSpec(clubId = club.id)
         val player = testRestTemplate.postForObject(
             getUrl(),
             HttpEntity(playerSpec, getAuthenticationHeaders()),
@@ -220,7 +219,7 @@ class Player(
     fun shouldGetHttpBadRequestWhenPlayerSpecFailsValidation() {
         // Setup
         val club = clubApi.addClub(dataGenerator.newClubSpec())
-        val playerSpec = PlayerSpec("", "lastName", club.id, LocalDate.now().minusYears(10))
+        val playerSpec = PlayerSpecForTesting("", "lastName", club.id, LocalDate.now().minusYears(10))
         val request = HttpEntity(playerSpec, getAuthenticationHeaders())
 
         // Act
@@ -229,11 +228,14 @@ class Player(
         // Assertion
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
     }
-
-    private fun ClubDTO.toNoAddressDTO(): ClubNoAddressDTO {
-        return ClubNoAddressDTO(this.id, this.name)
-    }
 }
+
+data class PlayerSpecForTesting(
+    val firstName: String,
+    val lastName: String,
+    val clubId: Int,
+    val dateOfBirth: LocalDate
+)
 
 data class PlayerSpecWithMissingFields(
     val lastName: String

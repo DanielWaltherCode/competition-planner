@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.player.domain
 
-import com.graphite.competitionplanner.player.domain.interfaces.PlayerWithClubDTO
-import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.club.domain.FindClub
+import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
+import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import org.springframework.stereotype.Component
 
 @Component

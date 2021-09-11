@@ -1,18 +1,14 @@
 package com.graphite.competitionplanner.player.service
 
 import com.graphite.competitionplanner.player.domain.*
-import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TestPlayerService(
-    @Autowired val playerRepository: PlayerRepository
-) {
+class TestPlayerService() {
 
     private val dataGenerator = DataGenerator()
 
@@ -23,7 +19,6 @@ class TestPlayerService(
     private final val findPlayer = mock(FindPlayer::class.java)
 
     val playerService = PlayerService(
-        playerRepository,
         createPlayer,
         updatePlayer,
         listAllPlayersInClub,
@@ -44,27 +39,27 @@ class TestPlayerService(
     @Test
     fun shouldDelegateToCreatePlayerUseCase() {
         // Setup
-        val player = dataGenerator.newNewPlayerDTO()
+        val spec = dataGenerator.newPlayerSpec()
 
         // Act
-        playerService.addPlayer(player)
+        playerService.addPlayer(spec)
 
         // Assert
-        verify(createPlayer, times(1)).execute(player)
+        verify(createPlayer, times(1)).execute(spec)
         verify(createPlayer, times(1)).execute(TestHelper.MockitoHelper.anyObject())
     }
 
     @Test
     fun shouldDelegateToUpdatePlayerUseCase() {
         // Setup
-        val player = dataGenerator.newPlayerDTO()
+        val spec = dataGenerator.newPlayerSpec()
 
         // ACt
-        playerService.updatePlayer(player)
+        playerService.updatePlayer(1, spec)
 
         // Assert
-        verify(updatePlayer, times(1)).execute(player)
-        verify(updatePlayer, times(1)).execute(TestHelper.MockitoHelper.anyObject())
+        verify(updatePlayer, times(1)).execute(1, spec)
+        verify(updatePlayer, times(1)).execute(anyInt(), TestHelper.MockitoHelper.anyObject())
     }
 
     @Test
@@ -96,7 +91,7 @@ class TestPlayerService(
         playerService.deletePlayer(19)
 
         // Assert
-        verify(deletePlayer, times(1)).execute(TestHelper.MockitoHelper.anyObject())
+        verify(deletePlayer, times(1)).execute(anyInt())
     }
 
 }
