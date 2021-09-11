@@ -1,22 +1,22 @@
 package com.graphite.competitionplanner.util
 
-import com.graphite.competitionplanner.competition.api.CompetitionSpec
+import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
+import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
-import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
 import com.graphite.competitionplanner.club.repository.ClubRepository
 import com.graphite.competitionplanner.club.service.ClubService
-import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
+import com.graphite.competitionplanner.competition.api.CompetitionSpec
+import com.graphite.competitionplanner.competition.repository.CompetitionRepository
+import com.graphite.competitionplanner.competition.service.CompetitionService
+import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
+import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
+import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
+import com.graphite.competitionplanner.match.repository.MatchRepository
+import com.graphite.competitionplanner.player.api.PlayerSpec
 import com.graphite.competitionplanner.player.domain.interfaces.NewPlayerDTO
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.player.service.PlayerService
-import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
-import com.graphite.competitionplanner.competition.repository.CompetitionRepository
-import com.graphite.competitionplanner.category.repository.CategoryRepository
-import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
-import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
-import com.graphite.competitionplanner.competition.service.CompetitionService
-import com.graphite.competitionplanner.match.repository.MatchRepository
-import com.graphite.competitionplanner.player.api.PlayerSpec
+import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.user.api.UserSpec
@@ -381,7 +381,7 @@ class EventListener(
         val lugiId = util.getClubIdOrDefault("Lugi")
         val lugiCompetitions = competitionService.getByClubId(lugiId)
         val lugiCompetitionId = lugiCompetitions[0].id
-        val categories = categoryRepository.getCategories().map { CategoryDTO(it.id, it.categoryName, it.categoryType) }
+        val categories = categoryRepository.getAvailableCategories()
 
         competitionCategoryService.addCompetitionCategory(
             lugiCompetitionId,

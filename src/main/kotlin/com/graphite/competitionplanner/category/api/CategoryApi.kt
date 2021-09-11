@@ -13,8 +13,8 @@ class CategoryApi(
 ) {
 
     @GetMapping
-    fun getCategories(): List<CategorySpec> {
-        return categoryService.getCategories().map { CategorySpec(it.id, it.name, it.type) }
+    fun getCategories(): List<CategoryDTO> {
+        return categoryService.getCategories()
     }
 
 }
