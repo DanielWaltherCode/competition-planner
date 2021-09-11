@@ -1,10 +1,10 @@
 package com.graphite.competitionplanner.match.service
 
-import com.graphite.competitionplanner.player.service.PlayerDTO
-import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.service.MatchSpec
 import com.graphite.competitionplanner.draw.service.MatchType
+import com.graphite.competitionplanner.match.repository.MatchRepository
+import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.registration.service.CompetitionCategoryDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.result.service.ResultDTO

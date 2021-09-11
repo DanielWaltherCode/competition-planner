@@ -18,6 +18,7 @@ class TestCategoryApi {
     fun shouldDelegateToService() {
         // Setup
         val expectedCategories =
+
             listOf(dataGenerator.newCategoryDTO(name = "Class1"), dataGenerator.newCategoryDTO(name = "class2"))
         `when`(service.getCategories()).thenReturn(expectedCategories)
 

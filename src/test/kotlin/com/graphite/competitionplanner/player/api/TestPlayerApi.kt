@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.player.api
 
-import com.graphite.competitionplanner.player.service.PlayerDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.util.AbstractApiTest
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.AfterEach

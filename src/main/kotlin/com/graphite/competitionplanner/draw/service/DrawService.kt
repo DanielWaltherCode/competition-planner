@@ -3,24 +3,23 @@ package com.graphite.competitionplanner.draw.service
 import com.graphite.competitionplanner.api.competition.DrawDTO
 import com.graphite.competitionplanner.category.service.CategoryService
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.GeneralSettingsDTO
+import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
+import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.domain.entity.DrawType
 import com.graphite.competitionplanner.domain.entity.Round
-import com.graphite.competitionplanner.match.repository.MatchRepository
-import com.graphite.competitionplanner.player.repository.PlayerRepository
-import com.graphite.competitionplanner.player.service.PlayerDTO
-import com.graphite.competitionplanner.registration.repository.RegistrationRepository
-import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
-import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
+import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService
+import com.graphite.competitionplanner.player.interfaces.PlayerDTO
+import com.graphite.competitionplanner.player.repository.PlayerRepository
+import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.tables.records.PoolDrawRecord
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
-import java.lang.IllegalStateException
 import java.time.LocalDateTime
 
 @Service

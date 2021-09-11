@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.player.domain
 
-import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
+import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 class TestMatch {
 
     private final val dataGenerator = DataGenerator()
-    private final val p2 = dataGenerator.newPlayer()
+    private final val p2 = dataGenerator.newPlayerDTO()
 
     @Test
     fun playerCannotBelongToBothTeamsInSameMatch() {

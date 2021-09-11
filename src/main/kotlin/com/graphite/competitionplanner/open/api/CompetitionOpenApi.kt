@@ -10,7 +10,7 @@ import com.graphite.competitionplanner.competitioncategory.service.CompetitionCa
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.player.service.PlayerDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import io.swagger.annotations.ApiModelProperty

@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.club.domain
 
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
-import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
+import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

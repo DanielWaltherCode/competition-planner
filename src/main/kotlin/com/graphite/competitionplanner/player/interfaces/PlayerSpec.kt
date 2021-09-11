@@ -1,12 +1,11 @@
-package com.graphite.competitionplanner.domain.entity
+package com.graphite.competitionplanner.player.interfaces
 
-import com.graphite.competitionplanner.player.domain.interfaces.PlayerDTO
 import java.time.LocalDate
 
-data class Player(
-    val id: Int,
+data class PlayerSpec(
     val firstName: String,
     val lastName: String,
+    val clubId: Int,
     val dateOfBirth: LocalDate
 ) {
     init {
@@ -16,6 +15,4 @@ data class Player(
         require(lastName.map { it.isLetter() }.all { it }) { "Player's last name <$lastName> contains non-letters" }
         require(dateOfBirth.isBefore(LocalDate.now())) { "Player's date of birth <$dateOfBirth> cannot be in the future" }
     }
-
-    constructor(dto: PlayerDTO) : this(dto.id, dto.firstName, dto.lastName, dto.dateOfBirth)
 }

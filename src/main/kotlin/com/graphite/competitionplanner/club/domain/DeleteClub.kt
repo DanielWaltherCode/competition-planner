@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.club.domain
 
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
-import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
+import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
 import org.springframework.stereotype.Component
 
 @Component
@@ -13,7 +13,7 @@ class DeleteClub(
     /**
      * Deletes the club
      *
-     * @param dto Club to delete
+     * @param clubId: Id of the club to delete
      * @return Club that was deleted
      */
     fun execute(clubId: Int): Boolean {
