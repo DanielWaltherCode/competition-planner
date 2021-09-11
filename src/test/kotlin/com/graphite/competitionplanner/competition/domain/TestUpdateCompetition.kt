@@ -20,13 +20,13 @@ class TestUpdateCompetition {
     fun shouldDelegateToRepository() {
         // Setup
         val competitionId = 1334
-        val dto = dataGenerator.newCompetitionSpec()
+        val spec = dataGenerator.newCompetitionUpdateSpec()
 
         // Act
-        updateCompetition.execute(competitionId, dto)
+        updateCompetition.execute(competitionId, spec)
 
         // Assert
-        Mockito.verify(mockedRepository, times(1)).update(competitionId, dto)
+        Mockito.verify(mockedRepository, times(1)).update(competitionId, spec)
         Mockito.verify(mockedRepository, times(1)).update(anyInt(), TestHelper.MockitoHelper.anyObject())
     }
 }

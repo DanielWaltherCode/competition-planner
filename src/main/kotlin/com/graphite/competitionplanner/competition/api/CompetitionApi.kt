@@ -1,9 +1,6 @@
 package com.graphite.competitionplanner.competition.api
 
-import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
-import com.graphite.competitionplanner.competition.interfaces.CompetitionDays
-import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
-import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
+import com.graphite.competitionplanner.competition.interfaces.*
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.domain.entity.Round
 import org.springframework.web.bind.annotation.*
@@ -24,7 +21,7 @@ class CompetitionApi(
     @PutMapping("/{competitionId}")
     fun updateCompetition(
         @PathVariable competitionId: Int,
-        @RequestBody competitionSpec: CompetitionSpec
+        @RequestBody competitionSpec: CompetitionUpdateSpec
     ): CompetitionDTO {
         return competitionService.updateCompetition(competitionId, competitionSpec)
     }

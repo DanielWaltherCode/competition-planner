@@ -4,10 +4,7 @@ import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.ClubNoAddressDTO
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
-import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
-import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
-import com.graphite.competitionplanner.competition.interfaces.LocationDTO
-import com.graphite.competitionplanner.competition.interfaces.LocationSpec
+import com.graphite.competitionplanner.competition.interfaces.*
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.*
 import com.graphite.competitionplanner.domain.entity.*
 import com.graphite.competitionplanner.player.api.PlayerSpec
@@ -275,6 +272,20 @@ class DataGenerator {
         name,
         welcomeText,
         organizingClubId,
+        startDate,
+        endDate
+    )
+
+    fun newCompetitionUpdateSpec(
+        name: String = "TestCompetition",
+        location: LocationSpec = LocationSpec("Arena IK"),
+        welcomeText: String = "Välkommna till TestCompetition",
+        startDate: LocalDate = LocalDate.now(),
+        endDate: LocalDate = LocalDate.now().plusDays(3)
+    ) = CompetitionUpdateSpec(
+        location,
+        name,
+        welcomeText,
         startDate,
         endDate
     )

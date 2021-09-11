@@ -16,7 +16,7 @@
                   getString("newCompetition.location")
                 }}</label>
             </div>
-            <input type="text" class="form-control" id="competition-location" v-model="competition.location">
+            <input type="text" class="form-control" id="competition-location" v-model="competition.location.name">
           </div>
           <div class="mb-4">
             <div class="d-flex align-items-center mb-2">
@@ -80,10 +80,11 @@ export default {
     },
     save() {
       const objectToSave = {
-        "location": this.competition.location,
+        "location": {
+          "name": this.competition.location.name,
+        },
         "name": this.competition.name,
         "welcomeText": this.competition.welcomeText,
-        "organizingClubId": this.competition.organizingClub.id,
         "startDate": this.competition.startDate,
         "endDate": this.competition.endDate,
       }

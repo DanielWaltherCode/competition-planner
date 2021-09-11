@@ -97,11 +97,10 @@ class TestCompetitionRepository(
         val competition = competitionRepository.store(spec)
 
         // Act
-        val updateSpec = dataGenerator.newCompetitionSpec(
+        val updateSpec = dataGenerator.newCompetitionUpdateSpec(
             location = LocationSpec(competition.location.name),
             name = "NewName",
             welcomeText = "New text",
-            organizingClubId = competition.organizerId,
             startDate = competition.startDate,
             endDate = competition.endDate
         )
@@ -114,6 +113,8 @@ class TestCompetitionRepository(
         Assertions.assertEquals(updateSpec.welcomeText, updatedCompetition.welcomeText)
         Assertions.assertEquals(updateSpec.startDate, updatedCompetition.startDate)
         Assertions.assertEquals(updateSpec.endDate, updatedCompetition.endDate)
+        Assertions.assertEquals(competition.organizerId, updatedCompetition.organizerId)
+        Assertions.assertEquals(competition.id, updatedCompetition.id)
 
         // Clean up
         competitionRepository.delete(competition.id)
@@ -121,7 +122,7 @@ class TestCompetitionRepository(
 
     @Test
     fun shouldThrowNotFoundExceptionIfClubCannotBeFoundWhenUpdating() {
-        val spec = dataGenerator.newCompetitionSpec(organizingClubId = club.id)
+        val spec = dataGenerator.newCompetitionUpdateSpec()
         Assertions.assertThrows(NotFoundException::class.java) { competitionRepository.update(-1, spec) }
     }
 }

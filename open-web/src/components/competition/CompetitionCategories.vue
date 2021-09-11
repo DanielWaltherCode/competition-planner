@@ -7,9 +7,9 @@
         </div>
         <ul class="list-group list-group-flush">
           <li class="list-group-item" v-for="category in categories"
-              @click="chooseCategory(category.competitionCategoryId)" :key="category.competitionCategoryId"
-              :class="chosenCategoryId === category.competitionCategoryId ? 'active' : ''">
-            {{ category.categoryName }}
+              @click="chooseCategory(category.id)" :key="category.id"
+              :class="chosenCategoryId === category.id ? 'active' : ''">
+            {{ category.name }}
           </li>
         </ul>
       </div>
@@ -37,7 +37,7 @@ export default {
     ApiService.getCompetitionCategories(competitionId).then(res => {
       this.categories = res.data.categories
       if(this.categories.length > 0) {
-        this.chooseCategory(this.categories[0].competitionCategoryId)
+        this.chooseCategory(this.categories[0].id)
       }
     })
   },

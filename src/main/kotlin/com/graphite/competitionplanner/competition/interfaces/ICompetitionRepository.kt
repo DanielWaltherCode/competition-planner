@@ -53,5 +53,5 @@ interface ICompetitionRepository {
      * @param spec: The new specification
      * @Throws NotFoundException When the competition cannot be found
      */
-    fun update(id: Int, spec: CompetitionSpec): CompetitionDTO
+    fun update(id: Int, spec: CompetitionUpdateSpec): CompetitionDTO
 }

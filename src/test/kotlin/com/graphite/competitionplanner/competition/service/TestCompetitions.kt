@@ -95,7 +95,7 @@ class TestCompetitionsService() {
     @Test
     fun shouldCallUpdateUseCase() {
         // Setup
-        val spec = dataGenerator.newCompetitionSpec()
+        val spec = dataGenerator.newCompetitionUpdateSpec()
 
         // Act
         service.updateCompetition(1, spec)

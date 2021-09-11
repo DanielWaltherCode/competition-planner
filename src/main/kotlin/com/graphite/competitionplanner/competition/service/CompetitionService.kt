@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.domain.UpdateCompetition
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
+import com.graphite.competitionplanner.competition.interfaces.CompetitionUpdateSpec
 import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
 import com.graphite.competitionplanner.schedule.api.AvailableTablesWholeCompetitionSpec
 import com.graphite.competitionplanner.schedule.service.ScheduleService
@@ -33,7 +34,7 @@ class CompetitionService(
         return competition
     }
 
-    fun updateCompetition(competitionId: Int, competitionSpec: CompetitionSpec): CompetitionDTO {
+    fun updateCompetition(competitionId: Int, competitionSpec: CompetitionUpdateSpec): CompetitionDTO {
         return updateCompetition.execute(competitionId, competitionSpec)
     }
 
