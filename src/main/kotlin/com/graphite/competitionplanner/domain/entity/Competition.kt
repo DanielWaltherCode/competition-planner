@@ -11,7 +11,6 @@ internal data class Competition(
     val startDate: LocalDate,
     val endDate: LocalDate
 ) {
-    lateinit var organizer: Club
 
     init {
         require(name.isNotEmpty())

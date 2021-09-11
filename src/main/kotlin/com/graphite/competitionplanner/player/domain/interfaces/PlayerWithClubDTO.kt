@@ -1,7 +1,6 @@
 package com.graphite.competitionplanner.player.domain.interfaces
 
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
-import com.graphite.competitionplanner.domain.entity.Player
 import java.time.LocalDate
 
 /**
@@ -14,13 +13,6 @@ data class PlayerWithClubDTO(
     val club: ClubDTO,
     val dateOfBirth: LocalDate
 ) {
-    constructor(player: Player) : this(
-        player.id,
-        player.firstName,
-        player.lastName,
-        ClubDTO(player.club),
-        player.dateOfBirth
-    )
 
     constructor(player: PlayerDTO, club: ClubDTO) : this(
         player.id,

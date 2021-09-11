@@ -10,7 +10,7 @@ import java.time.LocalDate
 class TestPlayer() {
 
     private final val dataGenerator = DataGenerator()
-    val club = dataGenerator.newClub()
+    val club = dataGenerator.newClubDTO()
 
     @Test
     fun firstNameCannotBeEmpty() {
