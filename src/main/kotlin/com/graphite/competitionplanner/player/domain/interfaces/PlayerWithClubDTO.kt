@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.player.domain.interfaces
 
-import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
+import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.domain.entity.Player
 import java.time.LocalDate
 

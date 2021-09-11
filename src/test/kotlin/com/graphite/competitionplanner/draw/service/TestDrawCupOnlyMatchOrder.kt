@@ -1,11 +1,9 @@
 package com.graphite.competitionplanner.draw.service
 
 import com.graphite.competitionplanner.category.api.CategoryApi
-import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
-import com.graphite.competitionplanner.category.service.CategoryService
-import com.graphite.competitionplanner.club.api.ClubApi
-import com.graphite.competitionplanner.club.api.ClubSpec
-import com.graphite.competitionplanner.club.api.NewClubSpec
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
+import com.graphite.competitionplanner.club.interfaces.ClubDTO
+import com.graphite.competitionplanner.club.service.ClubService
 import com.graphite.competitionplanner.competition.api.CompetitionApi
 import com.graphite.competitionplanner.competition.api.CompetitionSpec
 import com.graphite.competitionplanner.competition.service.CompetitionDTO
@@ -29,7 +27,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
-import kotlin.random.Random
 
 @SpringBootTest
 class TestDrawCupOnlyMatchOrder(
@@ -39,13 +36,12 @@ class TestDrawCupOnlyMatchOrder(
     @Autowired val competitionCategoryService: CompetitionCategoryService,
     @Autowired val registrationRepository: RegistrationRepository,
     @Autowired val drawService: DrawService,
-    @Autowired val categoryService: CategoryService,
-    @Autowired val clubApi: ClubApi,
     @Autowired val competitionApi: CompetitionApi,
     @Autowired val playerApi: PlayerApi,
-    @Autowired val categoryApi: CategoryApi
+    @Autowired val categoryApi: CategoryApi,
+    @Autowired val clubService: ClubService
 ) {
-    lateinit var club: ClubSpec
+    lateinit var club: ClubDTO
     lateinit var competition: CompetitionDTO
     lateinit var competitionCategory: CompetitionCategoryDTO
     var players = mutableListOf<PlayerWithClubDTO>()
@@ -53,7 +49,7 @@ class TestDrawCupOnlyMatchOrder(
 
     @BeforeEach
     fun setUp() {
-        club = createClub()
+        club = clubService.addClub(dataGenerator.newClubSpec())
         competition = setupCompetitionFor(club.id)
         competitionCategory = addCompetitionCategoryTo(competition, "Flickor 12")
         setModeToCupOnlyFor(competitionCategory.id)
@@ -109,16 +105,7 @@ class TestDrawCupOnlyMatchOrder(
         playerRepository.addPlayerRanking(player.id, value, "SINGLES")
     }
 
-    private fun createClub(): ClubSpec {
-        return clubApi.addClub(
-            NewClubSpec(
-                "TestClub" + Random.nextLong().toString(),
-                "Testroad 12B"
-            )
-        )
-    }
-
-    private fun addPlayer(firstName: String, club: ClubSpec): PlayerWithClubDTO {
+    private fun addPlayer(firstName: String, club: ClubDTO): PlayerWithClubDTO {
         return playerApi.addPlayer(
             PlayerSpec(
                 firstName,

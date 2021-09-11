@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.competitioncategory.domain.interfaces
 
-import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 
 data class CompetitionCategoryDTO(
     val id: Int,

@@ -1,7 +1,9 @@
 package com.graphite.competitionplanner.club.domain
 
-import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
-import com.graphite.competitionplanner.club.domain.interfaces.IClubRepository
+import com.graphite.competitionplanner.club.interfaces.ClubDTO
+import com.graphite.competitionplanner.club.interfaces.IClubRepository
+import com.graphite.competitionplanner.util.DataGenerator
+import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
@@ -9,42 +11,43 @@ import org.springframework.boot.test.context.SpringBootTest
 
 
 @SpringBootTest
-class TestCreateClub() {
+class TestCreateClub {
+
+    private final val mockedClubRepository = mock(IClubRepository::class.java)
+    private final val createClub = CreateClub(mockedClubRepository)
+    val dataGenerator = DataGenerator()
 
     @Test
-    fun shouldCallSaveWhenEntityIsOk() {
-        val mockedClubRepository = mock(IClubRepository::class.java)
-        val create = CreateClub(mockedClubRepository)
-        val dto = ClubDTO(0, "ClubA", "Address1")
+    fun shouldCreateClubIfNameIsAvailable() {
+        // Setup
+        val spec = dataGenerator.newClubSpec("ClubA", "Address1")
+        val otherClubs = listOf(
+            dataGenerator.newClubDTO(name = "ClubB"),
+            dataGenerator.newClubDTO(name = "ClubC"),
+            dataGenerator.newClubDTO(name = "cluba")
+        )
+        `when`(mockedClubRepository.getAll()).thenReturn(otherClubs)
 
-        create.execute(dto)
+        // Act
+        createClub.execute(spec)
 
-        verify(mockedClubRepository).store(dto)
-    }
-
-    @Test
-    fun shouldNotSaveWhenEntityIsInvalid() {
-        val mockedClubRepository = mock(IClubRepository::class.java)
-        val create = CreateClub(mockedClubRepository)
-        val invalidDto = ClubDTO(0, "", "Address1")
-
-        Assertions.assertThrows(Exception::class.java) { create.execute(invalidDto) }
-
-        verify(mockedClubRepository, never()).store(invalidDto)
+        // Assert
+        verify(mockedClubRepository, times(1)).store(spec)
+        verify(mockedClubRepository, times(1)).store(TestHelper.MockitoHelper.anyObject())
     }
 
     @Test
     fun shouldNotSaveWhenClubWithSameNameAlreadyExist() {
-        val mockedClubRepository = mock(IClubRepository::class.java)
-        val create = CreateClub(mockedClubRepository)
-        val dto = ClubDTO(0, "ClubA", "Address1")
-        val clubWithSameName = ClubDTO(123, dto.name, "Address2")
-
+        // Setup
+        val spec = dataGenerator.newClubSpec("ClubA", "Address1")
+        val clubWithSameName = ClubDTO(123, spec.name, "Address2")
         `when`(mockedClubRepository.getAll()).thenReturn(listOf(clubWithSameName))
 
-        create.execute(dto)
-
-        verify(mockedClubRepository, never()).store(dto)
+        // Act & Assert
+        Assertions.assertThrows(IllegalArgumentException::class.java) {
+            createClub.execute(spec)
+        }
+        verify(mockedClubRepository, never()).store(spec)
     }
 
 }

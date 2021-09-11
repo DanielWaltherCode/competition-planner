@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.category.service
 
-import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.domain.GetCategories
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import org.springframework.stereotype.Service
 
 @Service

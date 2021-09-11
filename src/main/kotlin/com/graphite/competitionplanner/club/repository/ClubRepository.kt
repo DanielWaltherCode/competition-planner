@@ -1,7 +1,8 @@
 package com.graphite.competitionplanner.club.repository
 
-import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
-import com.graphite.competitionplanner.club.domain.interfaces.IClubRepository
+import com.graphite.competitionplanner.club.interfaces.ClubDTO
+import com.graphite.competitionplanner.club.interfaces.ClubSpec
+import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.tables.Club.CLUB
 import com.graphite.competitionplanner.tables.records.ClubRecord
@@ -11,22 +12,17 @@ import org.springframework.stereotype.Repository
 @Repository
 class ClubRepository(val dslContext: DSLContext) : IClubRepository {
 
-    @Deprecated("Will be replaced by findById")
-    fun getById(id: Int): ClubRecord? {
-        return dslContext.selectFrom(CLUB).where(CLUB.ID.eq(id)).fetchOne()
-    }
-
     override fun getAll(): List<ClubDTO> {
         val records = dslContext.select().from(CLUB).fetchInto(CLUB)
         return records.map { ClubDTO(it.id, it.name, it.address) }
     }
 
-    override fun store(dto: ClubDTO): ClubDTO {
-        val clubRecord: ClubRecord = dslContext.newRecord(CLUB)
-        clubRecord.name = dto.name
-        clubRecord.address = dto.address
-        clubRecord.store()
-        return ClubDTO(clubRecord.id, dto)
+    override fun store(spec: ClubSpec): ClubDTO {
+        val record: ClubRecord = dslContext.newRecord(CLUB)
+        record.name = spec.name
+        record.address = spec.address
+        record.store()
+        return record.toDto()
     }
 
     @Throws(NotFoundException::class)
@@ -50,30 +46,34 @@ class ClubRepository(val dslContext: DSLContext) : IClubRepository {
     }
 
     @Throws(NotFoundException::class)
-    override fun delete(dto: ClubDTO): ClubDTO {
-        val deletedRows = dslContext.deleteFrom(CLUB).where(CLUB.ID.eq(dto.id)).execute()
+    override fun delete(clubId: Int): Boolean {
+        val deletedRows = dslContext.deleteFrom(CLUB).where(CLUB.ID.eq(clubId)).execute()
         if (deletedRows >= 1) {
-            return dto
+            return true
         } else {
-            throw NotFoundException("Could not delete. Club with id ${dto.id} not found.")
+            throw NotFoundException("Could not delete. Club with id $clubId not found.")
         }
     }
 
     @Throws(NotFoundException::class)
-    override fun update(dto: ClubDTO): ClubDTO {
+    override fun update(clubId: Int, spec: ClubSpec): ClubDTO {
         val record: ClubRecord = dslContext.newRecord(CLUB)
-        record.id = dto.id
-        record.name = dto.name
-        record.address = dto.address
+        record.id = clubId
+        record.name = spec.name
+        record.address = spec.address
         val rowsUpdated = record.update()
         if (rowsUpdated < 1) {
-            throw NotFoundException("Could not update. Club with id ${dto.id} not found.")
+            throw NotFoundException("Could not update. Club with id $clubId not found.")
         }
-        return dto
+        return record.toDto()
+    }
+
+    private fun ClubRecord.toDto(): ClubDTO {
+        return ClubDTO(this.id, this.name, this.address)
     }
 
     /**
      * WARNING: Only use this in test code
      */
-    fun clearClubTable() = dslContext.deleteFrom(CLUB).execute()
+    internal fun clearClubTable() = dslContext.deleteFrom(CLUB).execute()
 }

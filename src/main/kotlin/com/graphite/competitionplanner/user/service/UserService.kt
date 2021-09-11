@@ -1,12 +1,12 @@
 package com.graphite.competitionplanner.user.service
 
-import com.graphite.competitionplanner.club.api.ClubNoAddressDTO
-import com.graphite.competitionplanner.user.api.LoginDTO
-import com.graphite.competitionplanner.user.api.UserSpec
+import com.graphite.competitionplanner.club.interfaces.ClubNoAddressDTO
 import com.graphite.competitionplanner.club.service.ClubService
-import com.graphite.competitionplanner.user.repository.UserRepository
 import com.graphite.competitionplanner.security.SecurityHelper
 import com.graphite.competitionplanner.tables.records.UserTableRecord
+import com.graphite.competitionplanner.user.api.LoginDTO
+import com.graphite.competitionplanner.user.api.UserSpec
+import com.graphite.competitionplanner.user.repository.UserRepository
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails

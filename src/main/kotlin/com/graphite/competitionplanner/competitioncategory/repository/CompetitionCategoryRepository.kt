@@ -1,11 +1,11 @@
 package com.graphite.competitionplanner.competitioncategory.repository
 
 import com.graphite.competitionplanner.Tables.*
-import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
-import com.graphite.competitionplanner.domain.entity.CompetitionCategoryStatus
-import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.*
+import com.graphite.competitionplanner.domain.entity.CompetitionCategoryStatus
+import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.records.CategoryRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryGameRulesRecord

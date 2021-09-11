@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.domain.mapping
 
-import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.domain.entity.Category
 import com.graphite.competitionplanner.domain.entity.CategoryType
 import org.junit.jupiter.api.Assertions

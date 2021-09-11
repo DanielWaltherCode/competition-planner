@@ -1,10 +1,10 @@
 package com.graphite.competitionplanner.player.service
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.graphite.competitionplanner.club.api.ClubNoAddressDTO
+import com.graphite.competitionplanner.club.interfaces.ClubNoAddressDTO
+import com.graphite.competitionplanner.player.domain.*
 import com.graphite.competitionplanner.player.domain.interfaces.NewPlayerDTO
 import com.graphite.competitionplanner.player.domain.interfaces.PlayerWithClubDTO
-import com.graphite.competitionplanner.player.domain.*
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.tables.Club.CLUB
 import com.graphite.competitionplanner.tables.Player.PLAYER

@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.player.domain
 
 import com.graphite.competitionplanner.club.domain.FindClub
-import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
+import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.util.DataGenerator

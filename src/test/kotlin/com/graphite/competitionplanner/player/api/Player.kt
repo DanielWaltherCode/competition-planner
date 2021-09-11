@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.player.api
 
 import com.graphite.competitionplanner.club.api.ClubApi
-import com.graphite.competitionplanner.club.api.ClubNoAddressDTO
-import com.graphite.competitionplanner.club.api.ClubSpec
+import com.graphite.competitionplanner.club.interfaces.ClubDTO
+import com.graphite.competitionplanner.club.interfaces.ClubNoAddressDTO
 import com.graphite.competitionplanner.player.domain.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.util.AbstractApiTest
 import com.graphite.competitionplanner.util.DataGenerator
@@ -230,7 +230,7 @@ class Player(
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
     }
 
-    private fun ClubSpec.toNoAddressDTO(): ClubNoAddressDTO {
+    private fun ClubDTO.toNoAddressDTO(): ClubNoAddressDTO {
         return ClubNoAddressDTO(this.id, this.name)
     }
 }

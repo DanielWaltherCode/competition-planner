@@ -2,27 +2,27 @@ package com.graphite.competitionplanner.competition.service
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.Tables.COMPETITION
-import com.graphite.competitionplanner.schedule.api.AvailableTablesWholeCompetitionSpec
-import com.graphite.competitionplanner.club.api.ClubNoAddressDTO
-import com.graphite.competitionplanner.competition.api.CompetitionSpec
+import com.graphite.competitionplanner.club.interfaces.ClubDTO
+import com.graphite.competitionplanner.club.interfaces.ClubNoAddressDTO
 import com.graphite.competitionplanner.club.repository.ClubRepository
-import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
+import com.graphite.competitionplanner.club.service.ClubService
+import com.graphite.competitionplanner.competition.api.CompetitionSpec
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
+import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.registration.service.CompetitionCategoryDTO
+import com.graphite.competitionplanner.schedule.api.AvailableTablesWholeCompetitionSpec
 import com.graphite.competitionplanner.schedule.service.ScheduleService
 import com.graphite.competitionplanner.tables.Club.CLUB
-import com.graphite.competitionplanner.tables.records.ClubRecord
 import com.graphite.competitionplanner.tables.records.CompetitionRecord
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
-import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
 
 @Service
 class CompetitionService(
     val competitionRepository: CompetitionRepository, val clubRepository: ClubRepository,
     val competitionCategoryRepository: CompetitionCategoryRepository,
-    val scheduleService: ScheduleService
+    val scheduleService: ScheduleService,
+    val clubService: ClubService
 ) {
 
     fun getCompetitions(weekStartDate: LocalDate?, weekEndDate: LocalDate?): List<CompetitionDTO> {
@@ -30,8 +30,8 @@ class CompetitionService(
         val competitionDTOs = mutableListOf<CompetitionDTO>()
         for (entry in competitionsAndClubs) {
             val competitionRecord = entry.into(COMPETITION)
-            val clubRecord = entry.into(CLUB)
-            competitionDTOs.add(recordsToDto(competitionRecord, clubRecord))
+            val club = entry.into(CLUB)
+            competitionDTOs.add(recordsToDto(competitionRecord, ClubDTO(club.id, club.name, club.address)))
         }
         return competitionDTOs
     }
@@ -47,20 +47,14 @@ class CompetitionService(
         // Add default competition schedule metadata
         scheduleService.addDefaultScheduleMetadata(competition.id)
         scheduleService.addDailyStartAndEndForWholeCompetition(competition.id)
-        val club = clubRepository.getById(competition.organizingClub) ?: throw ResponseStatusException(
-            HttpStatus.NOT_FOUND,
-            "No club with id ${competition.organizingClub} found"
-        )
+        val club = clubService.findById(competition.organizingClub)
         scheduleService.registerTablesAvailableForWholeCompetition(competition.id, AvailableTablesWholeCompetitionSpec(0))
         return recordsToDto(competition, club)
     }
 
     fun updateCompetition(competitionId: Int, competitionSpec: CompetitionSpec): CompetitionDTO {
         val competition = competitionRepository.updateCompetition(competitionId, competitionSpec)
-        val club = clubRepository.getById(competition.organizingClub) ?: throw ResponseStatusException(
-            HttpStatus.NOT_FOUND,
-            "No club with id ${competition.organizingClub} found"
-        )
+        val club = clubService.findById(competition.organizingClub)
         return recordsToDto(competition, club)
     }
 
@@ -68,7 +62,7 @@ class CompetitionService(
         val record = competitionRepository.getById(competitionId)
         val competition = record.into(COMPETITION)
         val club = record.into(CLUB)
-        return recordsToDto(competition, club)
+        return recordsToDto(competition, ClubDTO(club.id, club.name, club.address))
     }
 
     fun getByClubId(clubId: Int): List<CompetitionDTO> {
@@ -78,7 +72,7 @@ class CompetitionService(
         for (record in competitionRecords) {
             val competition = record.into(COMPETITION)
             val club = record.into(CLUB)
-            competitionDTOs.add(recordsToDto(competition, club))
+            competitionDTOs.add(recordsToDto(competition, ClubDTO(club.id, club.name, club.address)))
         }
         return competitionDTOs
     }
@@ -101,7 +95,7 @@ class CompetitionService(
 }
 
 
-fun recordsToDto(competition: CompetitionRecord, club: ClubRecord): CompetitionDTO {
+fun recordsToDto(competition: CompetitionRecord, club: ClubDTO): CompetitionDTO {
     return CompetitionDTO(
         competition.id, competition.name, competition.location, competition.welcomeText,
         ClubNoAddressDTO(club.id, club.name), competition.startDate, competition.endDate

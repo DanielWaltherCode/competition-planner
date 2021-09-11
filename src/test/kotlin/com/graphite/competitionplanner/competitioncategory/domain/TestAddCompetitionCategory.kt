@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.competitioncategory.domain
 
-import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
-import com.graphite.competitionplanner.category.domain.interfaces.ICategoryRepository
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
+import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.domain.entity.CompetitionCategoryStatus
