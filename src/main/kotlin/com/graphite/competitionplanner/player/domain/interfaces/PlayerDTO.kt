@@ -1,6 +1,5 @@
 package com.graphite.competitionplanner.player.domain.interfaces
 
-import com.graphite.competitionplanner.domain.entity.Player
 import java.time.LocalDate
 
 /**
@@ -22,11 +21,11 @@ data class PlayerDTO(
         dto.dateOfBirth
     )
 
-    constructor(player: Player) : this(
-        player.id,
-        player.firstName,
-        player.lastName,
-        player.club.id,
-        player.dateOfBirth
-    )
+//    constructor(player: Player) : this(
+//        player.id,
+//        player.firstName,
+//        player.lastName,
+//        player.club.id,
+//        player.dateOfBirth
+//    )
 }

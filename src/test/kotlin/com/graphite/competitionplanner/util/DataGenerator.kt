@@ -26,19 +26,6 @@ class DataGenerator {
     private var playerId = 0
     private var clubId = 0
     private var matchId = 0
-    private var competitionId = 0
-    private var competitionCategoryId = 0
-    private var categoryId = 0
-
-    internal fun newClub(
-        id: Int = clubId++,
-        name: String = "Lule IK",
-        address: String = "Sjögatan"
-    ) = Club(
-        id,
-        name,
-        address
-    )
 
     internal fun newPlayer(
         id: Int = playerId++,
@@ -90,32 +77,6 @@ class DataGenerator {
         name: String = "Svedala Arena"
     ) = Location(
         name
-    )
-
-    internal fun newCompetition(
-        id: Int = competitionId++,
-        location: Location = newLocation(),
-        name: String = "TestCompetition",
-        welcomeText: String = "Welcome to Test Competition",
-        startDate: LocalDate = LocalDate.now(),
-        endDate: LocalDate = LocalDate.now().plusDays(1)
-    ) = Competition(
-        id,
-        location,
-        name,
-        welcomeText,
-        startDate,
-        endDate
-    )
-
-    internal fun newCategory(
-        id: Int = categoryId++,
-        name: String = "A Test Category",
-        type: CategoryType = CategoryType.SINGLES
-    ) = Category(
-        id,
-        name,
-        type
     )
 
     fun newClubDTO(
@@ -206,7 +167,7 @@ class DataGenerator {
         name: String = "TestCompetition",
         location: String = "Arena IK",
         welcomeText: String = "Välkommna till TestCompetition",
-        organizingClubId: Int = newClub().id,
+        organizingClubId: Int = newClubDTO().id,
         startDate: LocalDate = LocalDate.now(),
         endDate: LocalDate = LocalDate.now().plusDays(3)
     ) = NewCompetitionDTO(
@@ -223,7 +184,7 @@ class DataGenerator {
         location: LocationDTO = LocationDTO("Arena IK"),
         name: String = "Test Competition",
         welcomeText: String = "Välkommna till TestCompetition",
-        organizingClubId: Int = newClub().id,
+        organizingClubId: Int = newClubDTO().id,
         startDate: LocalDate = LocalDate.now(),
         endDate: LocalDate = LocalDate.now().plusDays(3)
     ) = CompetitionDTO(

@@ -9,7 +9,6 @@ data class Player(
     val lastName: String,
     val dateOfBirth: LocalDate
 ) {
-    lateinit var club: Club
     init {
         require(firstName.isNotEmpty()) { "Player's first name cannot be empty" }
         require(firstName.map { it.isLetter() }.all { it }) { "Player's first name <$firstName>  contains non-letters" }
