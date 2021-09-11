@@ -1,24 +1,24 @@
-package com.graphite.competitionplanner.domain.entity
+package com.graphite.competitionplanner.competition.domain
 
+import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
-import java.lang.IllegalArgumentException
 
 @SpringBootTest
-class TestLocation {
+class TestLocationSpec {
 
     @Test
     fun nameCannotBeEmpty() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            Location("")
+            LocationSpec("")
         }
     }
 
     @Test
     fun nameCannotBeBlank() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            Location(" ")
+            LocationSpec(" ")
         }
     }
 }

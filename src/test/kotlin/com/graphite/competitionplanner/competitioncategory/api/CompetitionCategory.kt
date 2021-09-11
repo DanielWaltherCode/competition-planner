@@ -39,7 +39,7 @@ class CompetitionCategory(
         val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
         val categorySpec = CategorySpec(category.id, category.name, category.type)
         val club = addClub.execute(dataGenerator.newClubSpec(name = "Svenska Klubben"))
-        val competition = addCompetition.execute(dataGenerator.newNewCompetitionDTO(organizingClubId = club.id))
+        val competition = addCompetition.execute(dataGenerator.newCompetitionSpec(organizingClubId = club.id))
 
         // Act
         val competitionCategory = testRestTemplate.postForObject(

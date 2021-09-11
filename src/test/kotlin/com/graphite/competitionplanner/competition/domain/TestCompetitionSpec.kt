@@ -1,5 +1,6 @@
-package com.graphite.competitionplanner.domain.entity
+package com.graphite.competitionplanner.competition.domain
 
+import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -7,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 
 @SpringBootTest
-class TestCompetition {
+class TestCompetitionSpec {
 
     val dataGenerator = DataGenerator()
 
@@ -16,11 +17,11 @@ class TestCompetition {
         val startDate = LocalDate.now()
         val endDate = startDate.minusDays(1)
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            Competition(
-                0,
-                dataGenerator.newLocation(),
+            CompetitionSpec(
+                dataGenerator.newLocationSpec(),
                 "Svedala",
                 "Välkommen",
+                0,
                 startDate,
                 endDate
             )
@@ -31,11 +32,11 @@ class TestCompetition {
     fun startDateCanBeSameAsEndDate() {
         val startDate = LocalDate.now()
         Assertions.assertDoesNotThrow {
-            Competition(
-                0,
-                dataGenerator.newLocation(),
+            CompetitionSpec(
+                dataGenerator.newLocationSpec(),
                 "Svedala",
                 "Välkommen",
+                0,
                 startDate,
                 startDate
             )
@@ -45,11 +46,11 @@ class TestCompetition {
     @Test
     fun nameCannotBeEmpty() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            Competition(
-                0,
-                dataGenerator.newLocation(),
+            CompetitionSpec(
+                dataGenerator.newLocationSpec(),
                 "",
                 "Välkommen",
+                0,
                 LocalDate.of(1999, 10, 18),
                 LocalDate.of(1999, 10, 19)
             )
@@ -59,11 +60,11 @@ class TestCompetition {
     @Test
     fun nameCannotBeBlank() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            Competition(
-                0,
-                dataGenerator.newLocation(),
+            CompetitionSpec(
+                dataGenerator.newLocationSpec(),
                 "   ",
                 "Välkommen",
+                0,
                 LocalDate.of(1999, 10, 18),
                 LocalDate.of(1999, 10, 19)
             )

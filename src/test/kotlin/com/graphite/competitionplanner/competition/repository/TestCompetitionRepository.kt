@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.competition.repository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -34,7 +35,7 @@ class TestCompetitionRepository(
     @Test
     fun shouldSetIdWhenStoring() {
         // Setup
-        val newCompetition = dataGenerator.newNewCompetitionDTO(organizingClubId = club.id)
+        val newCompetition = dataGenerator.newCompetitionSpec(organizingClubId = club.id)
 
         // Act
         val competition = competitionRepository.store(newCompetition)
@@ -54,9 +55,9 @@ class TestCompetitionRepository(
     @Test
     fun shouldReturnAllCompetitionsForTheGivenClub() {
         // Setup
-        val newCompetition1 = dataGenerator.newNewCompetitionDTO(organizingClubId = club.id)
+        val newCompetition1 = dataGenerator.newCompetitionSpec(organizingClubId = club.id)
         val competition1 = competitionRepository.store(newCompetition1)
-        val newCompetition2 = dataGenerator.newNewCompetitionDTO(organizingClubId = club.id)
+        val newCompetition2 = dataGenerator.newCompetitionSpec(organizingClubId = club.id)
         val competition2 = competitionRepository.store(newCompetition2)
 
         // Act
@@ -92,27 +93,27 @@ class TestCompetitionRepository(
     @Test
     fun shouldUpdateValues() {
         // Setup
-        val newCompetition = dataGenerator.newNewCompetitionDTO(organizingClubId = club.id)
-        val competition = competitionRepository.store(newCompetition)
+        val spec = dataGenerator.newCompetitionSpec(organizingClubId = club.id)
+        val competition = competitionRepository.store(spec)
 
         // Act
-        val updateDto = dataGenerator.newCompetitionDTO(
-            id = competition.id,
-            location = competition.location,
+        val updateSpec = dataGenerator.newCompetitionSpec(
+            location = LocationSpec(competition.location.name),
             name = "NewName",
             welcomeText = "New text",
             organizingClubId = competition.organizerId,
             startDate = competition.startDate,
             endDate = competition.endDate
         )
-        val updatedCompetition = competitionRepository.update(updateDto)
+
+        val updatedCompetition = competitionRepository.update(competition.id, updateSpec)
 
         // Assert
-        Assertions.assertEquals(updateDto.name, updatedCompetition.name)
-        Assertions.assertEquals(updateDto.location, updatedCompetition.location)
-        Assertions.assertEquals(updateDto.welcomeText, updatedCompetition.welcomeText)
-        Assertions.assertEquals(updateDto.startDate, updatedCompetition.startDate)
-        Assertions.assertEquals(updateDto.endDate, updatedCompetition.endDate)
+        Assertions.assertEquals(updateSpec.name, updatedCompetition.name)
+        Assertions.assertEquals(updateSpec.location.name, updatedCompetition.location.name)
+        Assertions.assertEquals(updateSpec.welcomeText, updatedCompetition.welcomeText)
+        Assertions.assertEquals(updateSpec.startDate, updatedCompetition.startDate)
+        Assertions.assertEquals(updateSpec.endDate, updatedCompetition.endDate)
 
         // Clean up
         competitionRepository.delete(competition.id)
@@ -120,7 +121,7 @@ class TestCompetitionRepository(
 
     @Test
     fun shouldThrowNotFoundExceptionIfClubCannotBeFoundWhenUpdating() {
-        val dto = dataGenerator.newCompetitionDTO(id = -1, organizingClubId = club.id)
-        Assertions.assertThrows(NotFoundException::class.java) { competitionRepository.update(dto) }
+        val spec = dataGenerator.newCompetitionSpec(organizingClubId = club.id)
+        Assertions.assertThrows(NotFoundException::class.java) { competitionRepository.update(-1, spec) }
     }
 }

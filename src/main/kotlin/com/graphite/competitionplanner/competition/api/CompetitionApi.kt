@@ -1,9 +1,9 @@
 package com.graphite.competitionplanner.competition.api
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect
-import com.fasterxml.jackson.annotation.JsonFormat
-import com.graphite.competitionplanner.competition.service.CompetitionDTO
-import com.graphite.competitionplanner.competition.service.CompetitionDays
+import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
+import com.graphite.competitionplanner.competition.interfaces.CompetitionDays
+import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
+import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.domain.entity.Round
 import org.springframework.web.bind.annotation.*
@@ -22,8 +22,9 @@ class CompetitionApi(
     }
 
     @PutMapping("/{competitionId}")
-    fun updateCompetition(@PathVariable competitionId: Int,
-                          @RequestBody competitionSpec: CompetitionSpec
+    fun updateCompetition(
+        @PathVariable competitionId: Int,
+        @RequestBody competitionSpec: CompetitionSpec
     ): CompetitionDTO {
         return competitionService.updateCompetition(competitionId, competitionSpec)
     }
@@ -37,8 +38,8 @@ class CompetitionApi(
     fun getAll(
         @RequestParam(required = false) weekStartDate: LocalDate?,
         @RequestParam(required = false) weekEndDate: LocalDate?
-    ): List<CompetitionDTO> {
-        return competitionService.getCompetitions(weekStartDate, weekEndDate)
+    ): List<CompetitionWithClubDTO> {
+        return competitionService.getByDate(weekStartDate, weekEndDate)
     }
 
     @GetMapping("/{competitionId}/days")
@@ -54,14 +55,3 @@ class CompetitionApi(
     }
 }
 
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-data class CompetitionSpec(
-    val location: String,
-    val name: String,
-    val welcomeText: String?,
-    val organizingClubId: Int,
-    @JsonFormat(pattern="yyyy-MM-dd")
-    val startDate: LocalDate?,
-    @JsonFormat(pattern="yyyy-MM-dd")
-    val endDate: LocalDate?
-)

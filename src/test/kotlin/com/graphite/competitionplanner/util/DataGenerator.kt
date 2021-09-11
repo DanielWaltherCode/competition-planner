@@ -4,9 +4,10 @@ import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.ClubNoAddressDTO
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
-import com.graphite.competitionplanner.competition.domain.interfaces.CompetitionDTO
-import com.graphite.competitionplanner.competition.domain.interfaces.LocationDTO
-import com.graphite.competitionplanner.competition.domain.interfaces.NewCompetitionDTO
+import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
+import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
+import com.graphite.competitionplanner.competition.interfaces.LocationDTO
+import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.*
 import com.graphite.competitionplanner.domain.entity.*
 import com.graphite.competitionplanner.player.api.PlayerSpec
@@ -73,9 +74,9 @@ class DataGenerator {
         endTime
     )
 
-    internal fun newLocation(
+    internal fun newLocationSpec(
         name: String = "Svedala Arena"
-    ) = Location(
+    ) = LocationSpec(
         name
     )
 
@@ -161,22 +162,6 @@ class DataGenerator {
         numberOfTables,
         startTime,
         endTime
-    )
-
-    fun newNewCompetitionDTO(
-        name: String = "TestCompetition",
-        location: String = "Arena IK",
-        welcomeText: String = "Välkommna till TestCompetition",
-        organizingClubId: Int = newClubDTO().id,
-        startDate: LocalDate = LocalDate.now(),
-        endDate: LocalDate = LocalDate.now().plusDays(3)
-    ) = NewCompetitionDTO(
-        name,
-        location,
-        welcomeText,
-        organizingClubId,
-        startDate,
-        endDate
     )
 
     fun newCompetitionDTO(
@@ -269,13 +254,29 @@ class DataGenerator {
         poolDrawStrategy
     )
 
-
     fun newClubSpec(
         name: String = "Club" + Random.nextLong().toString(),
         address: String = "Address" + Random.nextLong().toString()
     ) = ClubSpec(
         name,
         address
+    )
+
+
+    fun newCompetitionSpec(
+        name: String = "TestCompetition",
+        location: LocationSpec = LocationSpec("Arena IK"),
+        welcomeText: String = "Välkommna till TestCompetition",
+        organizingClubId: Int = newClubDTO().id,
+        startDate: LocalDate = LocalDate.now(),
+        endDate: LocalDate = LocalDate.now().plusDays(3)
+    ) = CompetitionSpec(
+        location,
+        name,
+        welcomeText,
+        organizingClubId,
+        startDate,
+        endDate
     )
 
     fun newPlayerSpec(club: ClubNoAddressDTO): PlayerSpec {

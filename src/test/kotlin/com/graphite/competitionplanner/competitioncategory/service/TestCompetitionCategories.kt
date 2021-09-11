@@ -32,7 +32,7 @@ class TestCompetitionCategories(
 
         val umeaId = util.getClubIdOrDefault("Umeå IK")
         val competitions = competitionService.getByClubId(umeaId)
-        val competitionCategories = competitionService.getCategoriesInCompetition(competitions[0].id ?: 0)
+        val competitionCategories = competitionCategoryService.getCompetitionCategoriesFor(competitions[0].id)
         Assertions.assertTrue(competitionCategories.isNotEmpty())
     }
 
@@ -54,7 +54,7 @@ class TestCompetitionCategories(
 
         // Register players
         val umePlayers = playerService.getPlayersByClubId(util.getClubIdOrDefault("Umeå IK"))
-        registrationService.registerPlayerSingles( RegistrationSinglesSpec(umePlayers[0].id ?: 0, newCategoryId))
+        registrationService.registerPlayerSingles(RegistrationSinglesSpec(umePlayers[0].id, newCategoryId))
 
         // Try deleting after players have registered, should fail
         Assertions.assertThrows(ResponseStatusException::class.java) {

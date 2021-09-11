@@ -1,13 +1,12 @@
 package com.graphite.competitionplanner.registration.service
 
-import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
+import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
+import com.graphite.competitionplanner.competition.service.CompetitionService
+import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.player.service.PlayerDTO
 import com.graphite.competitionplanner.player.service.PlayerService
+import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
-import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
-import com.graphite.competitionplanner.category.repository.CategoryRepository
-import com.graphite.competitionplanner.competition.service.CompetitionDTO
-import com.graphite.competitionplanner.competition.service.CompetitionService
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
@@ -18,7 +17,6 @@ import kotlin.random.Random
 class RegistrationService(
     val registrationRepository: RegistrationRepository,
     val competitionService: CompetitionService,
-    val categoryRepository: CategoryRepository,
     val playerService: PlayerService,
     val competitionCategoryRepository: CompetitionCategoryRepository
 ) {

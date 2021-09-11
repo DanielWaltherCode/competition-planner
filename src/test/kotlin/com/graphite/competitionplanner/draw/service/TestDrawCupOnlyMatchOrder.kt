@@ -5,8 +5,9 @@ import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.service.ClubService
 import com.graphite.competitionplanner.competition.api.CompetitionApi
-import com.graphite.competitionplanner.competition.api.CompetitionSpec
-import com.graphite.competitionplanner.competition.service.CompetitionDTO
+import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
+import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
+import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.DrawTypeDTO
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
@@ -119,7 +120,7 @@ class TestDrawCupOnlyMatchOrder(
     private fun setupCompetitionFor(clubId: Int): CompetitionDTO {
         return competitionApi.addCompetition(
             CompetitionSpec(
-                "LocationA",
+                LocationSpec("LocationA"),
                 "Monkey cup",
                 "Welcome to competition A",
                 clubId,

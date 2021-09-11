@@ -1,16 +1,15 @@
 package com.graphite.competitionplanner.competition.domain
 
-import com.graphite.competitionplanner.competition.domain.interfaces.CompetitionDTO
-import com.graphite.competitionplanner.domain.entity.Competition
-import com.graphite.competitionplanner.competition.domain.interfaces.ICompetitionRepository
+import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
+import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
+import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
 import org.springframework.stereotype.Component
 
 @Component
 class UpdateCompetition(
     val repository: ICompetitionRepository
 ) {
-    fun execute(dto: CompetitionDTO): CompetitionDTO {
-        Competition(dto)
-        return repository.update(dto)
+    fun execute(id: Int, spec: CompetitionSpec): CompetitionDTO {
+        return repository.update(id, spec)
     }
 }

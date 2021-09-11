@@ -1,6 +1,7 @@
-package com.graphite.competitionplanner.schedule.service;
+package com.graphite.competitionplanner.schedule.service
 
-import com.graphite.competitionplanner.competition.api.CompetitionSpec
+import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
+import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.schedule.api.AvailableTablesFullDaySpec
@@ -28,7 +29,7 @@ class TestScheduleAvailableTables(
     fun addCompetition() {
         competitionId = competitionService.addCompetition(
             CompetitionSpec(
-                location = "Lund",
+                location = LocationSpec("Lund"),
                 name = "Ein Testturnament",
                 welcomeText = "Välkomna till Eurofinans",
                 organizingClubId = util.getClubIdOrDefault("Lugi"),

@@ -1,123 +1,44 @@
 package com.graphite.competitionplanner.competition.repository
 
+import com.graphite.competitionplanner.Tables.CLUB
 import com.graphite.competitionplanner.Tables.COMPETITION
-import com.graphite.competitionplanner.competition.api.CompetitionSpec
-import com.graphite.competitionplanner.competition.domain.interfaces.CompetitionDTO
-import com.graphite.competitionplanner.competition.domain.interfaces.LocationDTO
-import com.graphite.competitionplanner.competition.domain.interfaces.NewCompetitionDTO
-import com.graphite.competitionplanner.competition.domain.interfaces.ICompetitionRepository
+import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.competition.interfaces.*
 import com.graphite.competitionplanner.tables.Club
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.records.CompetitionRecord
 import org.jooq.DSLContext
-import org.jooq.Record
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 @Repository
 class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository {
 
-    fun addCompetition(competitionSpec: CompetitionSpec): CompetitionRecord {
-        val competitionRecord = dslContext.newRecord(Competition.COMPETITION)
-        competitionRecord.location = competitionSpec.location
-        competitionRecord.name = competitionSpec.name
-        competitionRecord.welcomeText = competitionSpec.welcomeText
-        competitionRecord.organizingClub = competitionSpec.organizingClubId
-        competitionRecord.startDate = competitionSpec.startDate
-        competitionRecord.endDate = competitionSpec.endDate
-        competitionRecord.store()
-        return competitionRecord
-    }
-
-    fun addCompetitionWithId(competitionId: Int, competitionSpec: CompetitionSpec): CompetitionRecord {
-        val competitionRecord = dslContext.newRecord(Competition.COMPETITION)
+    internal fun addCompetitionWithId(competitionId: Int, competitionSpec: CompetitionSpec): CompetitionRecord {
+        val competitionRecord = competitionSpec.toRecord()
         competitionRecord.id = competitionId
-        competitionRecord.name = competitionSpec.name
-        competitionRecord.location = competitionSpec.location
-        competitionRecord.welcomeText = competitionSpec.welcomeText
-        competitionRecord.organizingClub = competitionSpec.organizingClubId
-        competitionRecord.startDate = competitionSpec.startDate
-        competitionRecord.endDate = competitionSpec.endDate
         competitionRecord.store()
         return competitionRecord
     }
 
-        // Returns a join of competition and club
-    fun getCompetitions(weekStartDate: LocalDate?, weekEndDate: LocalDate?): List<Record> {
-        if (weekStartDate == null) {
-            return dslContext
-                .select()
-                .from(Competition.COMPETITION)
-                .join(Club.CLUB)
-                .on(Competition.COMPETITION.ORGANIZING_CLUB.eq(Club.CLUB.ID))
-                .limit(10)
-                .fetch()
-        } else {
-            return dslContext
-                .select()
-                .from(Competition.COMPETITION)
-                .join(Club.CLUB)
-                .on(Competition.COMPETITION.ORGANIZING_CLUB.eq(Club.CLUB.ID))
-                .where(
-                    Competition.COMPETITION.START_DATE.between(weekStartDate, weekEndDate)
-                        .or(Competition.COMPETITION.END_DATE.between(weekStartDate, weekEndDate))
-                )
-                .fetch()
-        }
-    }
-
-    fun deleteCompetition(competitionId: Int): Boolean {
-        val deletedRows = dslContext.deleteFrom(Competition.COMPETITION).where(Competition.COMPETITION.ID.eq(competitionId)).execute()
+    internal fun deleteCompetition(competitionId: Int): Boolean {
+        val deletedRows =
+            dslContext.deleteFrom(Competition.COMPETITION).where(Competition.COMPETITION.ID.eq(competitionId)).execute()
         return deletedRows >= 1
     }
 
-    fun getById(competitionId: Int): Record {
-        return dslContext.select().from(Competition.COMPETITION).join(Club.CLUB).on(
-            Competition.COMPETITION.ORGANIZING_CLUB.eq(
-                Club.CLUB.ID))
-            .where(Competition.COMPETITION.ID.eq(competitionId)).fetchOne()
-    }
-
-    fun getByClubId(clubId: Int): List<Record> {
-        return dslContext.select().from(Competition.COMPETITION).join(Club.CLUB).on(
-            Competition.COMPETITION.ORGANIZING_CLUB.eq(
-                Club.CLUB.ID))
-            .where(Club.CLUB.ID.eq(clubId)).fetch()
-    }
-
-    fun getByLocation(location: String): List<CompetitionRecord> {
+    internal fun getByLocation(location: String): List<CompetitionRecord> {
         return dslContext.select()
             .from(COMPETITION)
             .where(COMPETITION.LOCATION.eq(location))
             .fetchInto(COMPETITION)
     }
 
-    fun updateCompetition(competitionId: Int, competitionSpec: CompetitionSpec): CompetitionRecord {
-        val competitionRecord = dslContext.newRecord(Competition.COMPETITION)
-        competitionRecord.id = competitionId
-        competitionRecord.name = competitionSpec.name
-        competitionRecord.location = competitionSpec.location
-        competitionRecord.welcomeText = competitionSpec.welcomeText
-        competitionRecord.organizingClub = competitionSpec.organizingClubId
-        competitionRecord.startDate = competitionSpec.startDate
-        competitionRecord.endDate = competitionSpec.endDate
-        competitionRecord.update()
-        return competitionRecord
-    }
+    internal fun clearTable() = dslContext.deleteFrom(Competition.COMPETITION).execute()
 
-    fun clearTable() = dslContext.deleteFrom(Competition.COMPETITION).execute()
-
-    fun getAll(): List<Record> {
-        return dslContext.select().from(Competition.COMPETITION).join(Club.CLUB).on(
-            Competition.COMPETITION.ORGANIZING_CLUB.eq(
-                Club.CLUB.ID
-            )
-        ).fetch()
-    }
-
-    override fun store(dto: NewCompetitionDTO): CompetitionDTO {
-        val record = dto.toRecord()
+    override fun store(spec: CompetitionSpec): CompetitionDTO {
+        val record = spec.toRecord()
         record.store()
         return record.toDto()
     }
@@ -125,6 +46,43 @@ class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository
     override fun findCompetitionsFor(clubId: Int): List<CompetitionDTO> {
         val records = dslContext.selectFrom(COMPETITION).where(COMPETITION.ORGANIZING_CLUB.eq(clubId)).fetch()
         return records.map { it.toDto() }
+    }
+
+    override fun findCompetitions(start: LocalDate, end: LocalDate): List<CompetitionWithClubDTO> {
+        val records = dslContext.select()
+            .from(Competition.COMPETITION)
+            .join(Club.CLUB)
+            .on(Competition.COMPETITION.ORGANIZING_CLUB.eq(Club.CLUB.ID))
+            .where(
+                Competition.COMPETITION.START_DATE.between(start, end)
+                    .or(Competition.COMPETITION.END_DATE.between(start, end))
+            )
+            .fetch()
+
+        val result = mutableListOf<CompetitionWithClubDTO>()
+        for (record in records) {
+            val competition = record.into(COMPETITION)
+            val club = record.into(CLUB)
+            result.add(
+                CompetitionWithClubDTO(
+                    competition.id,
+                    LocationDTO(competition.location),
+                    competition.name,
+                    competition.welcomeText,
+                    ClubDTO(club.id, club.name, club.address),
+                    competition.startDate,
+                    competition.endDate
+                )
+            )
+        }
+        return result
+    }
+
+    @Throws(NotFoundException::class)
+    override fun findById(competitionId: Int): CompetitionDTO {
+        val record = dslContext.selectFrom(COMPETITION).where(COMPETITION.ID.eq(competitionId)).fetchOne()
+            ?: throw NotFoundException("Competition with id $competitionId was not found.")
+        return record.toDto()
     }
 
     @Throws(NotFoundException::class)
@@ -139,11 +97,12 @@ class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository
     }
 
     @Throws(NotFoundException::class)
-    override fun update(dto: CompetitionDTO): CompetitionDTO {
-        val record = dto.toRecord()
+    override fun update(id: Int, spec: CompetitionSpec): CompetitionDTO {
+        val record = spec.toRecord()
+        record.id = id
         val rowsUpdated = record.update()
         if (rowsUpdated < 1) {
-            throw NotFoundException("Could not update. Competition with id ${dto.id} not found.")
+            throw NotFoundException("Could not update. Competition with id $id not found.")
         }
         return record.toDto()
     }
@@ -152,21 +111,9 @@ class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository
         return dslContext.selectFrom(COMPETITION).where(COMPETITION.ID.eq(id)).fetchOne()
     }
 
-    private fun CompetitionDTO.toRecord(): CompetitionRecord {
+    private fun CompetitionSpec.toRecord(): CompetitionRecord {
         val record = dslContext.newRecord(Competition.COMPETITION)
-        record.id = this.id
         record.location = this.location.name
-        record.name = this.name
-        record.welcomeText = this.welcomeText
-        record.organizingClub = this.organizerId
-        record.startDate = this.startDate
-        record.endDate = this.endDate
-        return record
-    }
-
-    private fun NewCompetitionDTO.toRecord(): CompetitionRecord {
-        val record = dslContext.newRecord(Competition.COMPETITION)
-        record.location = this.location
         record.name = this.name
         record.welcomeText = this.welcomeText
         record.organizingClub = this.organizingClubId

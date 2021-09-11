@@ -18,7 +18,7 @@ class TestUtil(
     fun addCompetitionCategory(name: String): Int {
         val umeaId = getClubIdOrDefault("Umeå IK")
         val umeaCompetitions = competitionService.getByClubId(umeaId)
-        val umeaCompetitionId = umeaCompetitions[0].id ?: 0
+        val umeaCompetitionId = umeaCompetitions[0].id
         val category = categoryRepository.getAvailableCategories().first { it.name == name }
         return competitionCategoryService.addCompetitionCategory(
             umeaCompetitionId,

@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.competition.domain
 
-import com.graphite.competitionplanner.competition.domain.interfaces.ICompetitionRepository
+import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*

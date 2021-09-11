@@ -1,15 +1,16 @@
 package com.graphite.competitionplanner.open.api
 
 import com.graphite.competitionplanner.api.competition.DrawDTO
-import com.graphite.competitionplanner.player.service.PlayerDTO
+import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
+import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
+import com.graphite.competitionplanner.competition.service.CompetitionService
+import com.graphite.competitionplanner.competitioncategory.domain.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
-import com.graphite.competitionplanner.competition.service.CompetitionDTO
-import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.registration.service.CompetitionCategoryDTO
+import com.graphite.competitionplanner.player.service.PlayerDTO
 import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import io.swagger.annotations.ApiModelProperty
@@ -30,8 +31,8 @@ class CompetitionOpenApi(
     fun getAll(
         @RequestParam(required = false) weekStartDate: LocalDate?,
         @RequestParam(required = false) weekEndDate: LocalDate?
-    ): List<CompetitionDTO> {
-        return competitionService.getCompetitions(weekStartDate, weekEndDate)
+    ): List<CompetitionWithClubDTO> {
+        return competitionService.getByDate(weekStartDate, weekEndDate)
     }
 
     @GetMapping("/{competitionId}")
@@ -41,7 +42,7 @@ class CompetitionOpenApi(
 
     @GetMapping("/{competitionId}/categories")
     fun getCompetitionCategories(@PathVariable competitionId: Int): List<CompetitionCategoryDTO> {
-        return competitionService.getCategoriesInCompetition(competitionId)
+        return competitionCategoryService.getCompetitionCategoriesFor(competitionId)
     }
 
     @GetMapping("/{competitionId}/draw/{competitionCategoryId}")
