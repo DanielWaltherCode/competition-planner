@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.category.domain
 
-import com.graphite.competitionplanner.category.domain.interfaces.ICategoryRepository
+import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

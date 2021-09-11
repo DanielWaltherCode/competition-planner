@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.category.domain.interfaces
+package com.graphite.competitionplanner.category.interfaces
 
 import com.graphite.competitionplanner.domain.entity.Category
 

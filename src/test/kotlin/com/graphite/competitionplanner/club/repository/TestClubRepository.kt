@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.club.repository
 
-import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,85 +12,83 @@ class TestClubRepository(
     @Autowired val clubRepository: ClubRepository
 ) {
 
+    val dataGenerator = DataGenerator()
+
     @Test
     fun shouldSetIdWhenSaving() {
         // Setup
-        val dto = ClubDTO(0, "Luleå IK", "Stormarvägen 123")
+        val spec = dataGenerator.newClubSpec("Luleå IK", "Stormarvägen 123")
 
         // Act
-        val savedDto = clubRepository.store(dto)
+        val savedDto = clubRepository.store(spec)
 
         // Assert
         Assertions.assertTrue(savedDto.id != 0)
 
         // Clean up
-        clubRepository.delete(savedDto)
+        clubRepository.delete(savedDto.id)
     }
 
     @Test
     fun shouldThrowNotFoundExceptionWhenDeletingClubThatDoesNotExist() {
-        // Setup
-        val dto = ClubDTO(10, "", "")
-
-        // Act
-        Assertions.assertThrows(NotFoundException::class.java) { clubRepository.delete(dto) }
+        Assertions.assertThrows(NotFoundException::class.java) { clubRepository.delete(10) }
     }
 
     @Test
     fun shouldUpdate() {
         // Setup
-        val original = ClubDTO(0, "Ilskan IF", "Smilevägen 3A")
-        val savedDto = clubRepository.store(original)
-        val dto = ClubDTO(savedDto.id, "Nile IF", "Norrgränd")
+        val spec = dataGenerator.newClubSpec("Ilskan IF", "Smilevägen 3A")
+        val original = clubRepository.store(spec)
+        val updateSpec = dataGenerator.newClubSpec("Nile IF", "Norrgränd")
 
         // Act
-        val updated = clubRepository.update(dto)
+        val updated = clubRepository.update(original.id, updateSpec)
+
+        // Assertions
+        Assertions.assertEquals(updateSpec.name, updated.name)
+        Assertions.assertEquals(updateSpec.address, updated.address)
 
         // Clean up
-        clubRepository.delete(updated)
+        clubRepository.delete(updated.id)
     }
 
     @Test
     fun shouldThrowNotFoundExceptionWhenUpdatingClubThatDoesNotExist() {
-        // Setup
-        val dto = ClubDTO(123, "Illeå IF", "Smaragdvägen 1A")
-
-        // Act
-        Assertions.assertThrows(NotFoundException::class.java) { clubRepository.update(dto) }
+        Assertions.assertThrows(NotFoundException::class.java) {
+            clubRepository.update(123, dataGenerator.newClubSpec())
+        }
     }
 
     @Test
     fun shouldThrowNotFoundExceptionWhenNotFindingClubWithGivenName() {
-        // Act & Assert
         Assertions.assertThrows(NotFoundException::class.java) { clubRepository.findByName("NameThatDoesNotExist") }
     }
 
     @Test
     fun shouldThrowNotFoundExceptionWhenNotFindingClubWithGivenId() {
-        // Act & Assert
         Assertions.assertThrows(NotFoundException::class.java) { clubRepository.findById(-19) }
     }
 
     @Test
     fun shouldReturnDtoWhenSearchingForClubWithGiven() {
         // Setup
-        val dto = ClubDTO(0, "Svalnäs IK", "Address 123")
-        val saved = clubRepository.store(dto)
+        val spec = dataGenerator.newClubSpec("Svalnäs IK", "Address 123")
+        val dto = clubRepository.store(spec)
 
         // Act
-        val found = clubRepository.findByName(dto.name)
+        val found = clubRepository.findByName(spec.name)
 
         // Assert
-        Assertions.assertEquals(saved, found)
+        Assertions.assertEquals(dto, found)
     }
 
     @Test
     fun shouldGetAllClubs() {
         // Setup
-        val club1 = ClubDTO(0, "ClubA", "AddressA")
-        val club2 = ClubDTO(0, "ClubB", "AddressB")
-        val club3 = ClubDTO(0, "ClubC", "AddressC")
-        val club4 = ClubDTO(0, "ClubD", "AddressD")
+        val club1 = dataGenerator.newClubSpec("ClubA", "AddressA")
+        val club2 = dataGenerator.newClubSpec("ClubB", "AddressB")
+        val club3 = dataGenerator.newClubSpec("ClubC", "AddressC")
+        val club4 = dataGenerator.newClubSpec("ClubD", "AddressD")
         val clubs = listOf(club1, club2, club3, club4)
         for (club in clubs) {
             clubRepository.store(club)
@@ -108,7 +106,7 @@ class TestClubRepository(
         // Clean up
         val createdClubs = foundClubs.filter { clubs.map { c -> c.name }.contains(it.name) }
         for (club in createdClubs) {
-            clubRepository.delete(club)
+            clubRepository.delete(club.id)
         }
     }
 }

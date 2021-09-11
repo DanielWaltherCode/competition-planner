@@ -1,11 +1,12 @@
 package com.graphite.competitionplanner.player.repository
 
-import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
-import com.graphite.competitionplanner.club.domain.interfaces.IClubRepository
+import com.graphite.competitionplanner.club.interfaces.ClubDTO
+import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.player.domain.interfaces.NewPlayerDTO
 import com.graphite.competitionplanner.player.domain.interfaces.PlayerDTO
+import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -20,16 +21,17 @@ class TestPlayerRepository(
     @Autowired val clubRepository: IClubRepository
 ) {
     lateinit var club: ClubDTO
+    val dataGenerator = DataGenerator()
 
     @BeforeEach
     fun saveAClub() {
-        val dto = ClubDTO(0, "Fake Club", "Fake Address")
-        club = clubRepository.store(dto)
+        val spec = dataGenerator.newClubSpec("Fake Club", "Fake Address")
+        club = clubRepository.store(spec)
     }
 
     @AfterEach
     fun deleteClub() {
-        clubRepository.delete(club)
+        clubRepository.delete(club.id)
     }
 
     @Test
@@ -54,7 +56,7 @@ class TestPlayerRepository(
         val storedPlayers = players.map { playerRepository.store(it) }
 
         // Act
-        val playersInClub = playerRepository.playersInClub(club)
+        val playersInClub = playerRepository.playersInClub(club.id)
 
         Assertions.assertEquals(players.size, playersInClub.size)
 
@@ -74,7 +76,7 @@ class TestPlayerRepository(
         val storedPlayers = players.map { playerRepository.store(it) }
 
         // Act
-        val playersInClub = playerRepository.playersInClub(club)
+        val playersInClub = playerRepository.playersInClub(club.id)
 
         for (player in playersInClub) {
             Assertions.assertEquals(player.club, club)

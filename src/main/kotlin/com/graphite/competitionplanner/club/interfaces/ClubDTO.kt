@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.club.domain.interfaces
+package com.graphite.competitionplanner.club.interfaces
 
 import com.graphite.competitionplanner.domain.entity.Club
 

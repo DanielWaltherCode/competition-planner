@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.club.domain
 
-import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
-import com.graphite.competitionplanner.club.domain.interfaces.IClubRepository
+import com.graphite.competitionplanner.club.interfaces.ClubDTO
+import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
@@ -23,15 +23,16 @@ class TestDeleteClub {
         // Setup
         val dto = ClubDTO(133, "Silken IK", "Travgatan 37")
 
-        `when`(mockedPlayerRepository.playersInClub(dto)).thenReturn(emptyList())
-        `when`(mockedClubRepository.delete(dto)).thenReturn(dto)
+        `when`(mockedPlayerRepository.playersInClub(dto.id)).thenReturn(emptyList())
+        `when`(mockedClubRepository.delete(dto.id)).thenReturn(true)
 
         // Act
-        val deleted = deleteClub.execute(dto)
+        val deleted = deleteClub.execute(dto.id)
 
         // Assert
-        Assertions.assertEquals(dto.id, deleted.id)
-        verify(mockedClubRepository, atLeastOnce()).delete(dto)
+        Assertions.assertEquals(true, deleted)
+        verify(mockedClubRepository, times(1)).delete(dto.id)
+        verify(mockedClubRepository, times(1)).delete(anyInt())
     }
 
     @Test
@@ -39,10 +40,16 @@ class TestDeleteClub {
         // Setup
         val dto = ClubDTO(133, "Silken IK", "Travgatan 37")
 
-        `when`(mockedPlayerRepository.playersInClub(dto)).thenReturn(listOf(dataGenerator.newPlayerWithClubDTO(clubDTO = dto)))
+        `when`(mockedPlayerRepository.playersInClub(dto.id)).thenReturn(
+            listOf(
+                dataGenerator.newPlayerWithClubDTO(
+                    clubDTO = dto
+                )
+            )
+        )
 
         // Act
-        Assertions.assertThrows(Exception::class.java) { deleteClub.execute(dto) }
-        verify(mockedClubRepository, never()).delete(dto)
+        Assertions.assertThrows(Exception::class.java) { deleteClub.execute(dto.id) }
+        verify(mockedClubRepository, never()).delete(dto.id)
     }
 }

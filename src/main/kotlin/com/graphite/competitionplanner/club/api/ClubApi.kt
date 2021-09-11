@@ -1,9 +1,9 @@
 package com.graphite.competitionplanner.club.api
 
-import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
+import com.graphite.competitionplanner.club.interfaces.ClubDTO
+import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.club.service.ClubService
 import org.springframework.web.bind.annotation.*
-import javax.validation.Valid
 
 @RestController
 @RequestMapping("/club")
@@ -12,29 +12,18 @@ class ClubApi(
 ) {
 
     @PostMapping
-    fun addClub(@Valid @RequestBody clubSpec: NewClubSpec): ClubSpec {
-        val dto = clubService.addClub(ClubDTO(0, clubSpec.name, clubSpec.address))
-        return ClubSpec(dto)
+    fun addClub(@RequestBody clubSpec: ClubSpec): ClubDTO {
+        return clubService.addClub(clubSpec)
     }
 
-    @PutMapping
-    fun updateClub(@Valid @RequestBody clubSpec: ClubSpec): ClubSpec {
-        val dtoUpdate = ClubDTO(clubSpec.id, clubSpec.name, clubSpec.address)
-        val updatedDto = clubService.updateClub(dtoUpdate)
-        return ClubSpec(updatedDto)
+    @PutMapping("/{clubId}")
+    fun updateClub(@PathVariable clubId: Int, @RequestBody clubSpec: ClubSpec): ClubDTO {
+        return clubService.updateClub(clubId, clubSpec)
     }
-
-    // TODO: These two GetMappings (clubname, and clubId) are ambiguous. Server does not know how to route requests
-//    @GetMapping("/{clubName}")
-//    fun findByName(@PathVariable clubName: String): ClubSpec {
-//        val dto = clubService.findByName(clubName)
-//        return ClubSpec(dto)
-//    }
 
     @GetMapping("/{clubId}")
-    fun findById(@PathVariable clubId: Int): ClubSpec {
-        val dto = clubService.findById(clubId)
-        return ClubSpec(dto)
+    fun findById(@PathVariable clubId: Int): ClubDTO {
+        return clubService.findById(clubId)
     }
 
     @GetMapping
@@ -47,21 +36,3 @@ class ClubApi(
         return clubService.delete(clubId)
     }
 }
-
-data class NewClubSpec(
-    val name: String,
-    val address: String
-)
-
-data class ClubSpec(
-    val id: Int,
-    val name: String,
-    val address: String
-) {
-    constructor(dto: ClubDTO) : this(dto.id, dto.name, dto.address)
-}
-
-data class ClubNoAddressDTO(
-    val id: Int,
-    val name: String?
-)

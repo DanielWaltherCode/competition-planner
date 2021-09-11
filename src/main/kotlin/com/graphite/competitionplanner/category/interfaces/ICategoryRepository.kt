@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.category.domain.interfaces
+package com.graphite.competitionplanner.category.interfaces
 
 interface ICategoryRepository {
     /**

@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.club.domain
 
-import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
-import com.graphite.competitionplanner.club.domain.interfaces.IClubRepository
+import com.graphite.competitionplanner.club.interfaces.ClubDTO
+import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import org.springframework.stereotype.Component
 
 @Component

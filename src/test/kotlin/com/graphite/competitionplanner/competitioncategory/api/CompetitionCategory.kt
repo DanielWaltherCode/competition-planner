@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.competitioncategory.api
 
-import com.graphite.competitionplanner.category.api.CategorySpec
-import com.graphite.competitionplanner.category.domain.interfaces.ICategoryRepository
+import com.graphite.competitionplanner.category.interfaces.CategorySpec
+import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.domain.CreateClub
 import com.graphite.competitionplanner.club.domain.DeleteClub
 import com.graphite.competitionplanner.competition.domain.CreateCompetition
@@ -38,7 +38,7 @@ class CompetitionCategory(
         // Setup
         val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
         val categorySpec = CategorySpec(category.id, category.name, category.type)
-        val club = addClub.execute(dataGenerator.newClubDTO(id = 0, name = "Svenska Klubben"))
+        val club = addClub.execute(dataGenerator.newClubSpec(name = "Svenska Klubben"))
         val competition = addCompetition.execute(dataGenerator.newNewCompetitionDTO(organizingClubId = club.id))
 
         // Act
@@ -51,6 +51,6 @@ class CompetitionCategory(
         // Clean up
         repository.delete(competitionCategory.id)
         competitionRepository.deleteCompetition(competition.id)
-        deleteClub.execute(club)
+        deleteClub.execute(club.id)
     }
 }

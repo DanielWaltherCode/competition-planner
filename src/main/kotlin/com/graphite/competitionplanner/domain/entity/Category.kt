@@ -1,10 +1,11 @@
 package com.graphite.competitionplanner.domain.entity
 
-import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 
 /**
  * The Category represents a unique category. Two categories cannot have the same name.
  */
+@Deprecated("Use CategorySpec")
 data class Category(
     val id: Int,
     val name: String,

@@ -1,13 +1,13 @@
 package com.graphite.competitionplanner.competitioncategory.api
 
-import com.graphite.competitionplanner.category.api.CategorySpec
-import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
+import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.service.CategoryService
-import com.graphite.competitionplanner.domain.entity.DrawType
-import com.graphite.competitionplanner.domain.entity.PoolDrawStrategy
-import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.domain.interfaces.*
+import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
+import com.graphite.competitionplanner.domain.entity.DrawType
+import com.graphite.competitionplanner.domain.entity.PoolDrawStrategy
 import com.graphite.competitionplanner.domain.entity.Round
 import org.springframework.web.bind.annotation.*
 

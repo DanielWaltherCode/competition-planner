@@ -1,5 +1,7 @@
 package com.graphite.competitionplanner.club.api
 
+import com.graphite.competitionplanner.club.interfaces.ClubDTO
+import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.util.AbstractApiTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -25,13 +27,13 @@ class Club(
     @Test
     fun weCanCreateUpdateFindAndDeleteClub() {
         // Setup creation
-        val clubSpec = NewClubSpec("SuperClub", "SuperAddress")
+        val clubSpec = ClubSpec("SuperClub", "SuperAddress")
 
         // Act
         val club = testRestTemplate.postForObject(
             getUrl(),
             HttpEntity(clubSpec, getAuthenticationHeaders()),
-            ClubSpec::class.java
+            ClubDTO::class.java
         )
 
         // Assert creation
@@ -40,31 +42,31 @@ class Club(
         Assertions.assertEquals(clubSpec.address, club.address)
 
         // Setup update
-        val updateSpec = ClubSpec(club.id, "SuperClub2", "SuperAddress2")
+        val updateSpec = ClubSpec("SuperClub2", "SuperAddress2")
         val updateRequest = HttpEntity(updateSpec, getAuthenticationHeaders())
 
         // Act
-        val updateResponse = testRestTemplate.exchange<ClubSpec>(getUrl(), HttpMethod.PUT, updateRequest)
+        val updateResponse = testRestTemplate.exchange<ClubDTO>(getUrl() + "/${club.id}", HttpMethod.PUT, updateRequest)
         val updatedClub = updateResponse.body
 
         // Assert update
-        Assertions.assertEquals(updateSpec.id, updatedClub!!.id)
+        Assertions.assertEquals(club.id, updatedClub!!.id)
         Assertions.assertEquals(updateSpec.name, updatedClub.name)
         Assertions.assertEquals(updateSpec.address, updatedClub.address)
 
         // Setup find by id
-        val findByIdRequest = HttpEntity(ClubSpec::class.java, getAuthenticationHeaders())
+        val findByIdRequest = HttpEntity(ClubDTO::class.java, getAuthenticationHeaders())
         val foundResponse =
-            testRestTemplate.exchange<ClubSpec>(getUrl() + "/${club.id}", HttpMethod.GET, findByIdRequest)
+            testRestTemplate.exchange<ClubDTO>(getUrl() + "/${club.id}", HttpMethod.GET, findByIdRequest)
         val foundClub = foundResponse.body
 
-        Assertions.assertEquals(updateSpec.id, foundClub!!.id)
+        Assertions.assertEquals(club.id, foundClub!!.id)
         Assertions.assertEquals(updateSpec.name, foundClub.name)
         Assertions.assertEquals(updateSpec.address, foundClub.address)
 
         // Setup get all
-        val getAllRequest = HttpEntity<List<ClubSpec>>(getAuthenticationHeaders())
-        val getAllResponse = testRestTemplate.exchange<List<ClubSpec>>(getUrl(), HttpMethod.GET, getAllRequest)
+        val getAllRequest = HttpEntity<List<ClubDTO>>(getAuthenticationHeaders())
+        val getAllResponse = testRestTemplate.exchange<List<ClubDTO>>(getUrl(), HttpMethod.GET, getAllRequest)
         val clubs = getAllResponse.body
 
         // Assert that our newly created club is part of the collection
@@ -88,9 +90,9 @@ class Club(
 
     @Test
     fun shouldGetHttpNotFoundWhenUpdatingClubThatDoesNotExist() {
-        val updateSpec = ClubSpec(-1, "SuperClub2", "SuperAddress2")
+        val updateSpec = ClubSpec("SuperClub2", "SuperAddress2")
         val request = HttpEntity(updateSpec, getAuthenticationHeaders())
-        val response = testRestTemplate.exchange<Any>(getUrl(), HttpMethod.PUT, request)
+        val response = testRestTemplate.exchange<Any>(getUrl() + "/${-13}", HttpMethod.PUT, request)
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.statusCode)
     }
 

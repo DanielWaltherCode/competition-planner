@@ -1,7 +1,8 @@
 package com.graphite.competitionplanner.club.service
 
 import com.graphite.competitionplanner.club.domain.*
-import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
+import com.graphite.competitionplanner.club.interfaces.ClubDTO
+import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import org.springframework.stereotype.Service
 
 @Service
@@ -22,19 +23,18 @@ class ClubService(
     }
 
     fun delete(clubId: Int): Boolean {
-        deleteClub.execute(ClubDTO(clubId, "", ""))
-        return true
+        return deleteClub.execute(clubId)
     }
 
     fun getAll(): List<ClubDTO> {
         return listAllClubs.execute()
     }
 
-    fun updateClub(clubDTO: ClubDTO): ClubDTO {
-        return updateClub.execute(clubDTO)
+    fun updateClub(clubId: Int, spec: ClubSpec): ClubDTO {
+        return updateClub.execute(clubId, spec)
     }
 
-    fun addClub(clubDTO: ClubDTO): ClubDTO {
-        return createClub.execute(clubDTO)
+    fun addClub(spec: ClubSpec): ClubDTO {
+        return createClub.execute(spec)
     }
 }

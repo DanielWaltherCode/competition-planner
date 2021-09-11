@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.competitioncategory.repository
 
-import com.graphite.competitionplanner.category.domain.interfaces.ICategoryRepository
-import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
-import com.graphite.competitionplanner.club.domain.interfaces.IClubRepository
+import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
+import com.graphite.competitionplanner.club.interfaces.ClubDTO
+import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competition.domain.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
@@ -29,7 +29,7 @@ class TestCompetitionCategoryRepository(
 
     @BeforeEach
     fun saveAClub() {
-        val dto = dataGenerator.newClubDTO()
+        val dto = dataGenerator.newClubSpec()
         club = clubRepository.store(dto)
         competition = competitionRepository.store(dataGenerator.newNewCompetitionDTO(organizingClubId = club.id))
     }
@@ -37,7 +37,7 @@ class TestCompetitionCategoryRepository(
     @AfterEach
     fun deleteClub() {
         competitionRepository.delete(competition.id)
-        clubRepository.delete(club)
+        clubRepository.delete(club.id)
     }
 
     @Test
@@ -114,7 +114,7 @@ class TestCompetitionCategoryRepository(
 
         // Act
         repository.update(updateDto)
-        val updated = repository.getAll(competition.id).filter { it.id == original.id }.first()
+        val updated = repository.getAll(competition.id).first { it.id == original.id }
 
         // Assert
         Assertions.assertEquals(updateDto.settings, updated.settings)

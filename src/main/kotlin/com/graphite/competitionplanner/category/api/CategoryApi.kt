@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.category.api
 
-import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.service.CategoryService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -17,16 +17,4 @@ class CategoryApi(
         return categoryService.getCategories()
     }
 
-}
-
-data class CategorySpec(
-    val id: Int,
-    val name: String,
-    val type: String
-) {
-    constructor(dto: CategoryDTO) : this(
-        dto.id,
-        dto.name,
-        dto.type
-    )
 }

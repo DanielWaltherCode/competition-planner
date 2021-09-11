@@ -1,6 +1,5 @@
 package com.graphite.competitionplanner.player.domain.interfaces
 
-import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
 
 interface IPlayerRepository {
@@ -15,7 +14,7 @@ interface IPlayerRepository {
     /**
      * Return all players for the given club
      */
-    fun playersInClub(dto: ClubDTO): List<PlayerWithClubDTO>
+    fun playersInClub(clubId: Int): List<PlayerWithClubDTO>
 
     /**
      * Return the Player with the given Id

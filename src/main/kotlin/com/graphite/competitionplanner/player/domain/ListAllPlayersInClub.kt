@@ -1,17 +1,14 @@
 package com.graphite.competitionplanner.player.domain
 
-import com.graphite.competitionplanner.player.domain.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.player.domain.interfaces.IPlayerRepository
-import com.graphite.competitionplanner.club.domain.FindClub
+import com.graphite.competitionplanner.player.domain.interfaces.PlayerWithClubDTO
 import org.springframework.stereotype.Component
 
 @Component
 class ListAllPlayersInClub(
-    val playerRepository: IPlayerRepository,
-    val findClub: FindClub
+    val playerRepository: IPlayerRepository
 ) {
     fun execute(clubId: Int): List<PlayerWithClubDTO> {
-        val club = findClub.byId(clubId)
-        return playerRepository.playersInClub(club)
+        return playerRepository.playersInClub(clubId)
     }
 }

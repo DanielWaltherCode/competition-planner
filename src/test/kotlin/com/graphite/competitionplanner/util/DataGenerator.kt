@@ -1,9 +1,9 @@
 package com.graphite.competitionplanner.util
 
-import com.graphite.competitionplanner.category.domain.interfaces.CategoryDTO
-import com.graphite.competitionplanner.club.api.ClubNoAddressDTO
-import com.graphite.competitionplanner.club.api.NewClubSpec
-import com.graphite.competitionplanner.club.domain.interfaces.ClubDTO
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
+import com.graphite.competitionplanner.club.interfaces.ClubDTO
+import com.graphite.competitionplanner.club.interfaces.ClubNoAddressDTO
+import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.competition.domain.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.domain.interfaces.LocationDTO
 import com.graphite.competitionplanner.competition.domain.interfaces.NewCompetitionDTO
@@ -309,9 +309,13 @@ class DataGenerator {
     )
 
 
-    fun newClubSpec(): NewClubSpec {
-        return NewClubSpec("Club" + Random.nextLong().toString(), "Address" + Random.nextLong().toString())
-    }
+    fun newClubSpec(
+        name: String = "Club" + Random.nextLong().toString(),
+        address: String = "Address" + Random.nextLong().toString()
+    ) = ClubSpec(
+        name,
+        address
+    )
 
     fun newPlayerSpec(club: ClubNoAddressDTO): PlayerSpec {
         return PlayerSpec("Lasse", "Larrson", club.id, LocalDate.now().minusYears(20))
