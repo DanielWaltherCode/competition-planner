@@ -6,7 +6,6 @@ import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
@@ -14,7 +13,7 @@ import java.time.LocalDate
 @SpringBootTest
 class TestCompetitionApi {
 
-    private final val service = Mockito.mock(CompetitionService::class.java)
+    private final val service = mock(CompetitionService::class.java)
     private final val api = CompetitionApi(service)
     val dataGenerator = DataGenerator()
 
