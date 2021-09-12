@@ -11,8 +11,8 @@ data class CompetitionSpec(
     val endDate: LocalDate?
 ) {
     init {
-        require(name.isNotEmpty())
-        require(name.isNotBlank())
-        require(startDate.isBefore(endDate) || startDate == endDate)
+        require(name.isNotEmpty()) { "Name cannot be empty." }
+        require(name.isNotBlank()) { "Name cannot be blank." }
+        require(startDate.isBefore(endDate) || startDate == endDate) { "Start date has to be before or on the same day as end date." }
     }
 }
