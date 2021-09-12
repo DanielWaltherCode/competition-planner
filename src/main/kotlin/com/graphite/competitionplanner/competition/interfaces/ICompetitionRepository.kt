@@ -19,7 +19,7 @@ interface ICompetitionRepository {
      * @param clubId: A club's id
      * @return A list of all competitions that belongs to the given id
      */
-    fun findCompetitionsFor(clubId: Int): List<CompetitionDTO>
+    fun findCompetitionsThatBelongsTo(clubId: Int): List<CompetitionDTO>
 
     /***
      * Return all competitions that are within the given dates

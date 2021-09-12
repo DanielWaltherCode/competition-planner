@@ -43,7 +43,7 @@ class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository
         return record.toDto()
     }
 
-    override fun findCompetitionsFor(clubId: Int): List<CompetitionDTO> {
+    override fun findCompetitionsThatBelongsTo(clubId: Int): List<CompetitionDTO> {
         val records = dslContext.selectFrom(COMPETITION).where(COMPETITION.ORGANIZING_CLUB.eq(clubId)).fetch()
         return records.map { it.toDto() }
     }
