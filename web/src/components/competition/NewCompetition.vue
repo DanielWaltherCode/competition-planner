@@ -90,6 +90,7 @@ export default {
 
       console.log("Sending data: ", objectToSave)
       CompetitionService.addCompetition(objectToSave).then(res => {
+        this.$store.commit("set_competition", res.data)
         this.competition = res.data
         this.competitionAdded = true
         this.$toasted.show("newCompetition.competitionUpdated").goAway(3000)
