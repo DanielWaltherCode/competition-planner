@@ -61,7 +61,7 @@ class TestCompetitionRepository(
         val competition2 = competitionRepository.store(newCompetition2)
 
         // Act
-        val competitions = competitionRepository.findCompetitionsFor(club.id)
+        val competitions = competitionRepository.findCompetitionsThatBelongsTo(club.id)
 
         // Assert
         Assertions.assertTrue(competitions.contains(competition1), "Expected to find competition 1")
@@ -75,7 +75,7 @@ class TestCompetitionRepository(
     @Test
     fun shouldGetEmptyListIfClubDoesNotExist() {
         // Act
-        val competitions = competitionRepository.findCompetitionsFor(-10)
+        val competitions = competitionRepository.findCompetitionsThatBelongsTo(-10)
 
         // Assert
         Assertions.assertTrue(competitions.isEmpty())
@@ -84,7 +84,7 @@ class TestCompetitionRepository(
     @Test
     fun shouldGetEmptyListIfClubDoesNotHaveAnyCompetitions() {
         // Act
-        val competitions = competitionRepository.findCompetitionsFor(club.id)
+        val competitions = competitionRepository.findCompetitionsThatBelongsTo(club.id)
 
         // Assert
         Assertions.assertTrue(competitions.isEmpty())

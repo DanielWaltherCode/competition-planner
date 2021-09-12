@@ -157,6 +157,24 @@ class DataGenerator {
         endDate
     )
 
+    fun newCompetitionWithClubDTO(
+        id: Int = 1,
+        location: LocationDTO = LocationDTO("Arena IK"),
+        name: String = "Test Competition",
+        welcomeText: String = "Välkommna till TestCompetition",
+        club: ClubDTO = newClubDTO(),
+        startDate: LocalDate = LocalDate.now(),
+        endDate: LocalDate = LocalDate.now().plusDays(3)
+    ) = CompetitionWithClubDTO(
+        id,
+        location,
+        name,
+        welcomeText,
+        club,
+        startDate,
+        endDate
+    )
+
     fun newCategoryDTO(
         id: Int = 1,
         name: String = "A Custom Category",
