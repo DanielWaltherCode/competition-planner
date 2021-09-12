@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.competition.interfaces
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDate
 
 /**
@@ -12,6 +13,8 @@ data class CompetitionDTO(
     val name: String,
     val welcomeText: String,
     val organizerId: Int,
+    @JsonFormat(pattern = "yyyy-MM-dd")
     val startDate: LocalDate,
+    @JsonFormat(pattern = "yyyy-MM-dd")
     val endDate: LocalDate
 )
