@@ -48,19 +48,20 @@ class TestCompetitionCategoryService {
     fun addingCompetitionCategoryShouldDelegateToUseCase() {
         // Setup
         val competitionId = 1
-        val competitionCategory = dataGenerator.newCompetitionCategoryDTO()
+        val spec = dataGenerator.newCategorySpec()
+        val competitionCategory = dataGenerator.newCompetitionCategoryDTO(category = spec)
         // Simulate that we created a competition category and return it
-        `when`(mockedAddCompetition.execute(1, competitionCategory.category)).thenReturn(competitionCategory)
+        `when`(mockedAddCompetition.execute(competitionId, spec)).thenReturn(competitionCategory)
 
         // Act
-        val actual = service.addCompetitionCategory(competitionId, competitionCategory.category)
+        val actual = service.addCompetitionCategory(competitionId, spec)
 
         // Assert
         Assertions.assertEquals(
             competitionCategory, actual,
             "Expected the service to return the newly created competition category."
         )
-        verify(mockedAddCompetition, times(1)).execute(competitionId, competitionCategory.category)
+        verify(mockedAddCompetition, times(1)).execute(competitionId, spec)
         verify(mockedAddCompetition, times(1)).execute(anyInt(), TestHelper.MockitoHelper.anyObject())
     }
 }

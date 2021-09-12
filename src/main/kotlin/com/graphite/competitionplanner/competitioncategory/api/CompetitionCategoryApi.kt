@@ -1,14 +1,10 @@
 package com.graphite.competitionplanner.competitioncategory.api
 
-import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.service.CategoryService
 import com.graphite.competitionplanner.competition.service.CompetitionService
-import com.graphite.competitionplanner.competitioncategory.domain.interfaces.*
+import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
-import com.graphite.competitionplanner.domain.entity.DrawType
-import com.graphite.competitionplanner.domain.entity.PoolDrawStrategy
-import com.graphite.competitionplanner.domain.entity.Round
 import org.springframework.web.bind.annotation.*
 
 /* Handle categories in competitions */
@@ -20,26 +16,21 @@ class CompetitionCategoryApi(
     val categoryService: CategoryService
 ) {
 
-    @PostMapping()
+    @PostMapping
     fun addCategoryToCompetition(
         @PathVariable competitionId: Int,
-        @RequestBody category: CategorySpec
-    ): CompetitionCategorySpec {
-        val result = competitionCategoryService.addCompetitionCategory(
-            competitionId,
-            CategoryDTO(category.id, category.name, category.type)
-        )
-
-        return CompetitionCategorySpec(result)
+        @RequestBody spec: CategorySpec
+    ): CompetitionCategoryDTO {
+        return competitionCategoryService.addCompetitionCategory(competitionId, spec)
     }
 
     @GetMapping
-    fun getCompetitionCategories(@PathVariable competitionId: Int): List<CompetitionCategorySpec> {
-        return competitionCategoryService.getCompetitionCategoriesFor(competitionId).map { CompetitionCategorySpec(it) }
+    fun getCompetitionCategories(@PathVariable competitionId: Int): List<CompetitionCategoryDTO> {
+        return competitionCategoryService.getCompetitionCategoriesFor(competitionId)
     }
 
     @DeleteMapping("/{competitionCategoryId}")
-    fun deleteCompetitionCategory(@PathVariable competitionId: Int, @PathVariable competitionCategoryId: Int) {
+    fun cancelCompetitionCategory(@PathVariable competitionId: Int, @PathVariable competitionCategoryId: Int) {
         return competitionCategoryService.cancelCategoryInCompetition(competitionCategoryId)
     }
 
@@ -47,33 +38,13 @@ class CompetitionCategoryApi(
     fun updateCompetitionCategory(
         @PathVariable competitionId: Int,
         @PathVariable competitionCategoryId: Int,
-        @RequestBody spec: CompetitionCategorySpec
+        @RequestBody spec: CompetitionCategoryUpdateSpec
     ) {
-        competitionCategoryService.updateCompetitionCategory(
-            CompetitionCategoryUpdateDTO(
-                spec.id,
-                GeneralSettingsDTO(
-                    spec.settings.cost, DrawTypeDTO(spec.settings.drawType.name), spec.settings.nrPlayersPerGroup,
-                    spec.settings.nrPlayersToPlayoff, PoolDrawStrategyDTO(spec.settings.poolDrawStrategy.name)
-                ),
-                GameSettingsDTO(
-                    spec.gameRules.nrSets,
-                    spec.gameRules.winScore,
-                    spec.gameRules.winMargin,
-                    spec.gameRules.differentNumberOfGamesFromRound,
-                    spec.gameRules.nrSetsFinal,
-                    spec.gameRules.winScoreFinal,
-                    spec.gameRules.winMarginFinal,
-                    spec.gameRules.tiebreakInFinalGame,
-                    spec.gameRules.winScoreTiebreak ?: 0,
-                    spec.gameRules.winMarginTiebreak ?: 0
-                )
-            )
-        )
+        competitionCategoryService.updateCompetitionCategory(competitionCategoryId, spec)
     }
 
     @GetMapping("/{competitionCategoryId}/metadata")
-    fun getCategoryMetadata(@PathVariable competitionCategoryId: Int): GeneralSettingsDTO {
+    fun getCategoryGeneralSettings(@PathVariable competitionCategoryId: Int): GeneralSettingsSpec {
         return competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId).settings
     }
 
@@ -86,68 +57,7 @@ class CompetitionCategoryApi(
     }
 
     @GetMapping("/{competitionCategoryId}/game-rules")
-    fun getCategoryGameRules(@PathVariable competitionCategoryId: Int): GameSettingsDTO {
+    fun getCategoryGameSettings(@PathVariable competitionCategoryId: Int): GameSettingsSpec {
         return competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId).gameSettings
     }
 }
-
-data class CompetitionCategorySpec(
-    val id: Int,
-    val category: CategorySpec,
-    val settings: CategoryMetadataSpec,
-    val gameRules: CategoryGameRulesSpec
-) {
-    constructor(dto: CompetitionCategoryDTO) : this(
-        dto.id,
-        CategorySpec(dto.category),
-        CategoryMetadataSpec(dto.settings),
-        CategoryGameRulesSpec(dto.gameSettings)
-    )
-}
-
-data class CategoryMetadataSpec(
-    val cost: Float,
-    val drawType: DrawType,
-    val nrPlayersPerGroup: Int,
-    val nrPlayersToPlayoff: Int,
-    val poolDrawStrategy: PoolDrawStrategy
-) {
-    constructor(dto: GeneralSettingsDTO) : this(
-        dto.cost,
-        DrawType.valueOf(dto.drawType.name),
-        dto.playersPerGroup,
-        dto.playersToPlayOff,
-        PoolDrawStrategy.valueOf(dto.poolDrawStrategy.name)
-    )
-}
-
-data class CategoryGameRulesSpec(
-    val nrSets: Int,
-    val winScore: Int,
-    val winMargin: Int,
-    val differentNumberOfGamesFromRound: Round,
-    val nrSetsFinal: Int,
-    val winScoreFinal: Int,
-    val winMarginFinal: Int,
-    val tiebreakInFinalGame: Boolean,
-    val winScoreTiebreak: Int?,
-    val winMarginTiebreak: Int?
-) {
-    constructor(dto: GameSettingsDTO) : this(
-        dto.numberOfSets,
-        dto.winScore,
-        dto.winMargin,
-        dto.differentNumberOfGamesFromRound,
-        dto.numberOfSetsFinal,
-        dto.winScoreFinal,
-        dto.winMarginFinal,
-        dto.tiebreakInFinalGame,
-        dto.winScoreTiebreak,
-        dto.winMarginTieBreak
-    )
-}
-
-data class CategoryMetadataPossibleValuesDTO(
-    val drawTypes: List<DrawType>,
-    val drawStrategies: List<PoolDrawStrategy>
-)

@@ -1,11 +1,15 @@
 package com.graphite.competitionplanner.util
 
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
+import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.competition.interfaces.*
-import com.graphite.competitionplanner.competitioncategory.domain.interfaces.*
-import com.graphite.competitionplanner.domain.entity.*
+import com.graphite.competitionplanner.competitioncategory.interfaces.*
+import com.graphite.competitionplanner.domain.entity.Match
+import com.graphite.competitionplanner.domain.entity.MatchType
+import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.domain.entity.ScheduleSettings
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
@@ -166,9 +170,9 @@ class DataGenerator {
     fun newCompetitionCategoryDTO(
         id: Int = 1,
         status: String = CompetitionCategoryStatus.ACTIVE.name,
-        category: CategoryDTO = newCategoryDTO(),
-        settings: GeneralSettingsDTO = newGeneralSettingsDTO(),
-        gameSettings: GameSettingsDTO = newGameSettingsDTO()
+        category: CategorySpec = newCategorySpec(),
+        settings: GeneralSettingsSpec = newGeneralSettingsSpec(),
+        gameSettings: GameSettingsSpec = newGameSettingsSpec()
     ) = CompetitionCategoryDTO(
         id,
         status,
@@ -177,17 +181,41 @@ class DataGenerator {
         gameSettings
     )
 
-    fun newCompetitionCategoryUpdateDTO(
-        id: Int = 1,
-        settings: GeneralSettingsDTO = newGeneralSettingsDTO(),
-        gameSettings: GameSettingsDTO = newGameSettingsDTO()
-    ) = CompetitionCategoryUpdateDTO(
-        id,
+    fun newCompetitionCategoryUpdateSpec(
+        settings: GeneralSettingsSpec = newGeneralSettingsSpec(),
+        gameSettings: GameSettingsSpec = newGameSettingsSpec()
+    ) = CompetitionCategoryUpdateSpec(
         settings,
         gameSettings
     )
 
-    fun newGameSettingsDTO(
+    fun newCompetitionCategorySpec(
+        status: CompetitionCategoryStatus = CompetitionCategoryStatus.ACTIVE,
+        category: CategorySpec = newCategorySpec(),
+        settings: GeneralSettingsSpec = newGeneralSettingsSpec(),
+        gameSettings: GameSettingsSpec = newGameSettingsSpec()
+    ) = CompetitionCategorySpec(
+        status,
+        category,
+        settings,
+        gameSettings
+    )
+
+    fun newGeneralSettingsSpec(
+        cost: Float = 150f,
+        drawType: DrawType = DrawType.POOL_ONLY,
+        playersPerGroup: Int = 4,
+        playersToPlayOff: Int = 2,
+        poolDrawStrategy: PoolDrawStrategy = PoolDrawStrategy.NORMAL
+    ) = GeneralSettingsSpec(
+        cost,
+        drawType,
+        playersPerGroup,
+        playersToPlayOff,
+        poolDrawStrategy
+    )
+
+    fun newGameSettingsSpec(
         numberOfSets: Int = 2,
         winScore: Int = 11,
         winMargin: Int = 3,
@@ -198,7 +226,7 @@ class DataGenerator {
         tiebreakInFinalGame: Boolean = false,
         winScoreTiebreak: Int = 3,
         winMarginTieBreak: Int = 3
-    ) = GameSettingsDTO(
+    ) = GameSettingsSpec(
         numberOfSets,
         winScore,
         winMargin,
@@ -211,19 +239,16 @@ class DataGenerator {
         winMarginTieBreak
     )
 
-    fun newGeneralSettingsDTO(
-        cost: Float = 150f,
-        drawType: DrawTypeDTO = DrawTypeDTO(DrawType.POOL_ONLY),
-        playersPerGroup: Int = 4,
-        playersToPlayOff: Int = 2,
-        poolDrawStrategy: PoolDrawStrategyDTO = PoolDrawStrategyDTO(PoolDrawStrategy.NORMAL)
-    ) = GeneralSettingsDTO(
-        cost,
-        drawType,
-        playersPerGroup,
-        playersToPlayOff,
-        poolDrawStrategy
+    fun newCategorySpec(
+        id: Int = 1,
+        name: String = "Herrar 1",
+        type: String = "SINGLES"
+    ) = CategorySpec(
+        id,
+        name,
+        type
     )
+
 
     fun newClubSpec(
         name: String = "Club" + Random.nextLong().toString(),
@@ -232,7 +257,6 @@ class DataGenerator {
         name,
         address
     )
-
 
     fun newCompetitionSpec(
         name: String = "TestCompetition",
@@ -312,6 +336,7 @@ class DataGenerator {
         return matches
     }
 
+
     /**
      * Pool with 4 players i.e. 6 matches
      */
@@ -330,7 +355,6 @@ class DataGenerator {
             )
         }
     }
-
 
     /**
      * Pool with 4 players i.e. 6 matches

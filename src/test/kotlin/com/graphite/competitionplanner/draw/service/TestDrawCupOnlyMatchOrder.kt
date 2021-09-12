@@ -1,17 +1,16 @@
 package com.graphite.competitionplanner.draw.service
 
 import com.graphite.competitionplanner.category.api.CategoryApi
-import com.graphite.competitionplanner.category.interfaces.CategoryDTO
+import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.service.ClubService
 import com.graphite.competitionplanner.competition.api.CompetitionApi
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
 import com.graphite.competitionplanner.competition.interfaces.LocationSpec
-import com.graphite.competitionplanner.competitioncategory.domain.interfaces.CompetitionCategoryDTO
-import com.graphite.competitionplanner.competitioncategory.domain.interfaces.DrawTypeDTO
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
+import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
-import com.graphite.competitionplanner.domain.entity.DrawType
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.api.PlayerApi
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
@@ -52,7 +51,7 @@ class TestDrawCupOnlyMatchOrder(
     fun setUp() {
         club = clubService.addClub(dataGenerator.newClubSpec())
         competition = setupCompetitionFor(club.id)
-        competitionCategory = addCompetitionCategoryTo(competition, "Flickor 12")
+        competitionCategory = addCompetitionCategoryTo(competition)
         setModeToCupOnlyFor(competitionCategory.id)
 
         for ((index, i) in listOf("A", "B", "C", "D", "F", "G", "H", "I").withIndex()) {
@@ -65,32 +64,42 @@ class TestDrawCupOnlyMatchOrder(
         drawService.createDraw(competitionCategory.id)
     }
 
-    private fun addCompetitionCategoryTo(competition: CompetitionDTO, categoryName: String):
+    private fun addCompetitionCategoryTo(competition: CompetitionDTO):
             CompetitionCategoryDTO {
         val categories = categoryApi.getCategories()
-        val category = categories.filter { it.name == categoryName }[0]
+        val category = categories.filter { it.name == "Flickor 12" }[0]
         return competitionCategoryService.addCompetitionCategory(
             competition.id,
-            CategoryDTO(category.id, category.name, category.type)
+            CategorySpec(category.id, category.name, category.type)
         )
     }
 
     private fun setModeToCupOnlyFor(competitionCategoryId: Int) {
         val original = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
 
-        val updatedSettings = dataGenerator.newCompetitionCategoryUpdateDTO(
-            original.id,
-            settings = dataGenerator.newGeneralSettingsDTO(
+        val updatedSettings = dataGenerator.newCompetitionCategoryUpdateSpec(
+            settings = dataGenerator.newGeneralSettingsSpec(
                 cost = original.settings.cost,
-                drawType = DrawTypeDTO(DrawType.CUP_ONLY.name),
+                drawType = DrawType.CUP_ONLY,
                 playersPerGroup = original.settings.playersPerGroup,
                 playersToPlayOff = original.settings.playersToPlayOff,
                 poolDrawStrategy = original.settings.poolDrawStrategy
             ),
-            gameSettings = original.gameSettings
+            gameSettings = dataGenerator.newGameSettingsSpec(
+                original.gameSettings.numberOfSets,
+                original.gameSettings.winScore,
+                original.gameSettings.winMargin,
+                original.gameSettings.differentNumberOfGamesFromRound,
+                original.gameSettings.numberOfSetsFinal,
+                original.gameSettings.winScoreFinal,
+                original.gameSettings.winMarginFinal,
+                original.gameSettings.tiebreakInFinalGame,
+                original.gameSettings.winScoreTiebreak,
+                original.gameSettings.winMarginTieBreak
+            )
         )
 
-        competitionCategoryService.updateCompetitionCategory(updatedSettings)
+        competitionCategoryService.updateCompetitionCategory(original.id, updatedSettings)
     }
 
     private fun registerPlayerTo(player: PlayerWithClubDTO, competitionCategoryId: Int) {

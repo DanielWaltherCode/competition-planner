@@ -1,12 +1,13 @@
 package com.graphite.competitionplanner.competitioncategory.repository
 
+import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
-import com.graphite.competitionplanner.competitioncategory.domain.interfaces.ICompetitionCategoryRepository
+import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -52,8 +53,9 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldBeAbleToStoreCompetitionCategory() {
         // Setup
-        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }
-        val dto = dataGenerator.newCompetitionCategoryDTO(category = category!!)
+        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
+        val dto =
+            dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, category.type))
         val addedCompetitionCategory = repository.store(competition.id, dto)
 
         // Act
@@ -70,17 +72,18 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldReturnNewlyStoredCompetitionCategory() {
         // Setup
-        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }
-        val dto = dataGenerator.newCompetitionCategoryDTO(category = category!!)
+        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
+        val spec =
+            dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, category.type))
 
         // Act
-        val competitionCategory = repository.store(competition.id, dto)
+        val competitionCategory = repository.store(competition.id, spec)
 
         // Assert
         Assertions.assertTrue(competitionCategory.id > 0)
-        Assertions.assertEquals(dto.category, competitionCategory.category)
-        Assertions.assertEquals(dto.settings, competitionCategory.settings)
-        Assertions.assertEquals(dto.gameSettings, competitionCategory.gameSettings)
+        Assertions.assertEquals(spec.category, competitionCategory.category)
+        Assertions.assertEquals(spec.settings, competitionCategory.settings)
+        Assertions.assertEquals(spec.gameSettings, competitionCategory.gameSettings)
 
         // Clean up
         repository.delete(competitionCategory.id)
@@ -96,29 +99,44 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldThrowExceptionWhenTryingToUpdateCompetitionCategoryThatDoesNotExist() {
         Assertions.assertThrows(NotFoundException::class.java) {
-            repository.update(dataGenerator.newCompetitionCategoryUpdateDTO(id = -1))
+            repository.update(-1, dataGenerator.newCompetitionCategoryUpdateSpec())
         }
     }
 
     @Test
     fun shouldBeAbleToUpdateCompetitionCategory() {
         // Setup
-        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }
-        val dto = dataGenerator.newCompetitionCategoryDTO(category = category!!)
-        val original = repository.store(competition.id, dto)
-        val updateDto = dataGenerator.newCompetitionCategoryUpdateDTO(
-            id = original.id,
-            settings = dataGenerator.newGeneralSettingsDTO(cost = 110f, playersToPlayOff = 1),
-            gameSettings = dataGenerator.newGameSettingsDTO(numberOfSets = 4, winScore = 8, numberOfSetsFinal = 11)
+        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
+        val spec =
+            dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, category.type))
+        val original = repository.store(competition.id, spec)
+        val updateSpec = dataGenerator.newCompetitionCategoryUpdateSpec(
+            settings = dataGenerator.newGeneralSettingsSpec(cost = 110f, playersToPlayOff = 1),
+            gameSettings = dataGenerator.newGameSettingsSpec(numberOfSets = 4, winScore = 8, numberOfSetsFinal = 11)
         )
 
         // Act
-        repository.update(updateDto)
+        repository.update(original.id, updateSpec)
         val updated = repository.getAll(competition.id).first { it.id == original.id }
 
         // Assert
-        Assertions.assertEquals(updateDto.settings, updated.settings)
-        Assertions.assertEquals(updateDto.gameSettings, updated.gameSettings)
+        Assertions.assertEquals(updateSpec.settings.cost, updated.settings.cost)
+        Assertions.assertEquals(updateSpec.settings.drawType, updated.settings.drawType)
+        Assertions.assertEquals(updateSpec.settings.playersPerGroup, updated.settings.playersPerGroup)
+        Assertions.assertEquals(updateSpec.settings.playersToPlayOff, updated.settings.playersToPlayOff)
+        Assertions.assertEquals(updateSpec.settings.poolDrawStrategy, updated.settings.poolDrawStrategy)
+
+        Assertions.assertEquals(updateSpec.gameSettings.numberOfSets, updated.gameSettings.numberOfSets)
+        Assertions.assertEquals(updateSpec.gameSettings.winScore, updated.gameSettings.winScore)
+        Assertions.assertEquals(updateSpec.gameSettings.winMargin, updated.gameSettings.winMargin)
+        Assertions.assertEquals(updateSpec.gameSettings.differentNumberOfGamesFromRound,
+            updated.gameSettings.differentNumberOfGamesFromRound)
+        Assertions.assertEquals(updateSpec.gameSettings.numberOfSetsFinal, updated.gameSettings.numberOfSetsFinal)
+        Assertions.assertEquals(updateSpec.gameSettings.winScoreFinal, updated.gameSettings.winScoreFinal)
+        Assertions.assertEquals(updateSpec.gameSettings.winMarginFinal, updated.gameSettings.winMarginFinal)
+        Assertions.assertEquals(updateSpec.gameSettings.tiebreakInFinalGame, updated.gameSettings.tiebreakInFinalGame)
+        Assertions.assertEquals(updateSpec.gameSettings.winScoreTiebreak, updated.gameSettings.winScoreTiebreak)
+        Assertions.assertEquals(updateSpec.gameSettings.winMarginTieBreak, updated.gameSettings.winMarginTieBreak)
 
         // Clean up
         repository.delete(updated.id)

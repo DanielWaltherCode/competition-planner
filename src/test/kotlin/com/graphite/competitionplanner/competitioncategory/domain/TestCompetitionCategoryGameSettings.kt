@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.domain.entity
+package com.graphite.competitionplanner.competitioncategory.domain
 
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
@@ -13,63 +13,63 @@ class TestCompetitionCategoryGameSettings {
     @Test
     fun numberOfSetsMustBeGreaterThanZero() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            GameSettings(dataGenerator.newGameSettingsDTO(numberOfSets = 0))
+            dataGenerator.newGameSettingsSpec(numberOfSets = 0)
         }
     }
 
     @Test
     fun winScoreMustBeGreaterThanZero() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            GameSettings(dataGenerator.newGameSettingsDTO(winScore = 0))
+            dataGenerator.newGameSettingsSpec(winScore = 0)
         }
     }
 
     @Test
     fun winMarginMustBeGreaterThanZero() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            GameSettings(dataGenerator.newGameSettingsDTO(winMargin = 0))
+            dataGenerator.newGameSettingsSpec(winMargin = 0)
         }
     }
 
     @Test
     fun numberOfSetsInFinalMustBeGreaterThanZero() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            GameSettings(dataGenerator.newGameSettingsDTO(numberOfSetsFinal = 0))
+            dataGenerator.newGameSettingsSpec(numberOfSetsFinal = 0)
         }
     }
 
     @Test
     fun winScoreFinalMustBeGreaterThanZero() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            GameSettings(dataGenerator.newGameSettingsDTO(winScoreFinal = 0))
+            dataGenerator.newGameSettingsSpec(winScoreFinal = 0)
         }
     }
 
     @Test
     fun winMarginInFinalMustBeGreaterThanZero() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            GameSettings(dataGenerator.newGameSettingsDTO(winMarginFinal = 0))
+            dataGenerator.newGameSettingsSpec(winMarginFinal = 0)
         }
     }
 
     @Test
     fun winScoreTieBreakMustBeGreaterThanZero() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            GameSettings(dataGenerator.newGameSettingsDTO(winScoreTiebreak = 0))
+            dataGenerator.newGameSettingsSpec(winScoreTiebreak = 0)
         }
     }
 
     @Test
     fun winMarginInTieBreakMustBeGreaterThanZero() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            GameSettings(dataGenerator.newGameSettingsDTO(winMarginTieBreak = 0))
+            dataGenerator.newGameSettingsSpec(winMarginTieBreak = 0)
         }
     }
 
     @Test
     fun shouldNotThrowException() {
         Assertions.assertDoesNotThrow {
-            GameSettings(dataGenerator.newGameSettingsDTO())
+            dataGenerator.newGameSettingsSpec()
         }
     }
 

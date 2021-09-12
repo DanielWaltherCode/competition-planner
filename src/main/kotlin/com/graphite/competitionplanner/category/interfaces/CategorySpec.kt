@@ -16,3 +16,7 @@ data class CategorySpec(
         dto.type
     )
 }
+
+enum class CategoryType {
+    SINGLES, DOUBLES, BYE
+}

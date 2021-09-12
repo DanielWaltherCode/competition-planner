@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.schedule.service
 
+import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
 import com.graphite.competitionplanner.competition.interfaces.LocationSpec
@@ -53,11 +54,11 @@ class TestScheduleCategoryStartTime(
         // Categories to competition
         competitionCategory1 = competitionCategoryService.addCompetitionCategory(
             competitionId,
-            herrar1
+            CategorySpec(herrar1.id, herrar1.name, herrar1.type)
         ).id
         competitionCategory2 = competitionCategoryService.addCompetitionCategory(
             competitionId,
-            herrar2
+            CategorySpec(herrar2.id, herrar2.name, herrar2.type)
         ).id
 
         // Competition start times are set up automatically now so fetch the two ones just added

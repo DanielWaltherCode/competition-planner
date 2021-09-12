@@ -51,19 +51,29 @@ class TestResultService(
         // Update competition category so that it's groups of 3 instead with one proceeding
         val original = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
 
-        val updatedSettings = dataGenerator.newCompetitionCategoryUpdateDTO(
-            original.id,
-            settings = dataGenerator.newGeneralSettingsDTO(
+        val updatedSettings = dataGenerator.newCompetitionCategoryUpdateSpec(
+            settings = dataGenerator.newGeneralSettingsSpec(
                 cost = original.settings.cost,
                 drawType = original.settings.drawType,
                 playersPerGroup = 3,
                 playersToPlayOff = 1,
                 poolDrawStrategy = original.settings.poolDrawStrategy
             ),
-            gameSettings = original.gameSettings
+            gameSettings = dataGenerator.newGameSettingsSpec(
+                original.gameSettings.numberOfSets,
+                original.gameSettings.winScore,
+                original.gameSettings.winMargin,
+                original.gameSettings.differentNumberOfGamesFromRound,
+                original.gameSettings.numberOfSetsFinal,
+                original.gameSettings.winScoreFinal,
+                original.gameSettings.winMarginFinal,
+                original.gameSettings.tiebreakInFinalGame,
+                original.gameSettings.winScoreTiebreak,
+                original.gameSettings.winMarginTieBreak
+            )
         )
 
-        competitionCategoryService.updateCompetitionCategory(updatedSettings)
+        competitionCategoryService.updateCompetitionCategory(original.id, updatedSettings)
 
         // Add players
         val allPlayers = playerRepository.getAll()
