@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.competitioncategory.domain
 
-import com.graphite.competitionplanner.domain.entity.CompetitionCategoryStatus
-import com.graphite.competitionplanner.competitioncategory.domain.interfaces.ICompetitionCategoryRepository
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
+import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import org.springframework.stereotype.Component
 
 @Component

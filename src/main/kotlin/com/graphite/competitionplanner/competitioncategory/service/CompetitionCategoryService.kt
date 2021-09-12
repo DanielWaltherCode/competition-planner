@@ -1,9 +1,9 @@
 package com.graphite.competitionplanner.competitioncategory.service
 
-import com.graphite.competitionplanner.category.interfaces.CategoryDTO
+import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.competitioncategory.domain.*
-import com.graphite.competitionplanner.competitioncategory.domain.interfaces.CompetitionCategoryDTO
-import com.graphite.competitionplanner.competitioncategory.domain.interfaces.CompetitionCategoryUpdateDTO
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryUpdateSpec
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.schedule.api.CategoryStartTimeSpec
@@ -56,9 +56,9 @@ class CompetitionCategoryService(
 
     fun addCompetitionCategory(
         competitionId: Int,
-        category: CategoryDTO
+        spec: CategorySpec
     ): CompetitionCategoryDTO {
-        val competitionCategory = addCompetitionCategory.execute(competitionId, category)
+        val competitionCategory = addCompetitionCategory.execute(competitionId, spec)
         scheduleService.addCategoryStartTime(competitionCategory.id, CategoryStartTimeSpec(null, null, null))
         return competitionCategory
     }
@@ -67,7 +67,7 @@ class CompetitionCategoryService(
         return getCompetitionCategories.execute(competitionId)
     }
 
-    fun updateCompetitionCategory(dto: CompetitionCategoryUpdateDTO) {
-        updateCompetitionCategory.execute(dto)
+    fun updateCompetitionCategory(competitionCategoryId: Int, spec: CompetitionCategoryUpdateSpec) {
+        updateCompetitionCategory.execute(competitionCategoryId, spec)
     }
 }

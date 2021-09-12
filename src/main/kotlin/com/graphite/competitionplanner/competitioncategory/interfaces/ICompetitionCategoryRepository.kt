@@ -1,8 +1,7 @@
-package com.graphite.competitionplanner.competitioncategory.domain.interfaces
+package com.graphite.competitionplanner.competitioncategory.interfaces
 
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
-import com.graphite.competitionplanner.domain.entity.CompetitionCategoryStatus
 
 interface ICompetitionCategoryRepository {
 
@@ -26,10 +25,10 @@ interface ICompetitionCategoryRepository {
      * Add a new competition category to the given competition
      *
      * @param competitionId Id for the competition
-     * @param dto Competition category to store
+     * @param spec Competition category to store
      * @return A CompetitionCategoryDTO identical to the provided one, except that its id is updated
      */
-    fun store(competitionId: Int, dto: CompetitionCategoryDTO): CompetitionCategoryDTO
+    fun store(competitionId: Int, spec: CompetitionCategorySpec): CompetitionCategoryDTO
 
     /**
      * Delete the given competition category, as well as all associated general- and game settings
@@ -43,11 +42,11 @@ interface ICompetitionCategoryRepository {
     /**
      * Update the given competition category
      *
-     * @param dto The competition category that will be updated
+     * @param spec The competition category that will be updated
      * @throws NotFoundException If a competition category that matches the dto's id cannot be found
      */
     @Throws(NotFoundException::class)
-    fun update(dto: CompetitionCategoryUpdateDTO)
+    fun update(id: Int, spec: CompetitionCategoryUpdateSpec)
 
     /**
      * Add a competition category to the list of available categories. If one tries to add a category with a name that

@@ -1,14 +1,14 @@
 package com.graphite.competitionplanner.result.service
 
+import com.graphite.competitionplanner.common.exception.GameValidationException
+import com.graphite.competitionplanner.competitioncategory.interfaces.GameSettingsSpec
+import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
+import com.graphite.competitionplanner.match.repository.MatchRepository
+import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
-import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.result.repository.ResultRepository
 import com.graphite.competitionplanner.tables.records.GameRecord
-import com.graphite.competitionplanner.common.exception.GameValidationException
-import com.graphite.competitionplanner.competitioncategory.domain.interfaces.GameSettingsDTO
-import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -94,7 +94,7 @@ class ResultService(
         // Todo -- add special validation for tie breaks or final matches with more sets
     }
 
-    private fun validateGame(gameRules: GameSettingsDTO, game: GameSpec) {
+    private fun validateGame(gameRules: GameSettingsSpec, game: GameSpec) {
         if (game.firstRegistrationResult < gameRules.winScore
             && game.secondRegistrationResult < gameRules.winScore
         ) {

@@ -1,9 +1,8 @@
 package com.graphite.competitionplanner.draw.service
 
 import com.graphite.competitionplanner.api.competition.DrawDTO
-import com.graphite.competitionplanner.competitioncategory.domain.interfaces.DrawTypeDTO
+import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
-import com.graphite.competitionplanner.domain.entity.DrawType
 import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.service.MatchService
@@ -46,19 +45,29 @@ class TestDrawCupOnly(
 
         val original = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
 
-        val updatedSettings = dataGenerator.newCompetitionCategoryUpdateDTO(
-            original.id,
-            settings = dataGenerator.newGeneralSettingsDTO(
+        val updatedSettings = dataGenerator.newCompetitionCategoryUpdateSpec(
+            settings = dataGenerator.newGeneralSettingsSpec(
                 cost = original.settings.cost,
-                drawType = DrawTypeDTO(DrawType.CUP_ONLY.name),
+                drawType = DrawType.CUP_ONLY,
                 playersPerGroup = original.settings.playersPerGroup,
                 playersToPlayOff = original.settings.playersToPlayOff,
                 poolDrawStrategy = original.settings.poolDrawStrategy
             ),
-            gameSettings = original.gameSettings
+            gameSettings = dataGenerator.newGameSettingsSpec(
+                original.gameSettings.numberOfSets,
+                original.gameSettings.winScore,
+                original.gameSettings.winMargin,
+                original.gameSettings.differentNumberOfGamesFromRound,
+                original.gameSettings.numberOfSetsFinal,
+                original.gameSettings.winScoreFinal,
+                original.gameSettings.winMarginFinal,
+                original.gameSettings.tiebreakInFinalGame,
+                original.gameSettings.winScoreTiebreak,
+                original.gameSettings.winMarginTieBreak
+            )
         )
 
-        competitionCategoryService.updateCompetitionCategory(updatedSettings)
+        competitionCategoryService.updateCompetitionCategory(original.id, updatedSettings)
     }
 
     @AfterEach

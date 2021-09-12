@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.util
 
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
+import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.club.repository.ClubRepository
@@ -142,7 +143,7 @@ class EventListener(
                 endDate = LocalDate.now().plusYears(10)
             )
         )
-        competitionCategoryService.addCompetitionCategory(0, CategoryDTO(0, "BYE", "BYE"))
+        competitionCategoryService.addCompetitionCategory(0, CategorySpec(0, "BYE", "BYE"))
         playerRepository.addPlayerWithId(
             0,
             PlayerSpec(
@@ -385,27 +386,27 @@ class EventListener(
 
         competitionCategoryService.addCompetitionCategory(
             lugiCompetitionId,
-            categories.find { it.name == "Herrar 1" }!!
+            categories.find { it.name == "Herrar 1" }!!.toSpec()
         )
         competitionCategoryService.addCompetitionCategory(
             lugiCompetitionId,
-            categories.find { it.name == "Herrar 2" }!!
+            categories.find { it.name == "Herrar 2" }!!.toSpec()
         )
         competitionCategoryService.addCompetitionCategory(
             lugiCompetitionId,
-            categories.find { it.name == "Damer 1" }!!
+            categories.find { it.name == "Damer 1" }!!.toSpec()
         )
         competitionCategoryService.addCompetitionCategory(
             lugiCompetitionId,
-            categories.find { it.name == "Damer 2" }!!
+            categories.find { it.name == "Damer 2" }!!.toSpec()
         )
         competitionCategoryService.addCompetitionCategory(
             lugiCompetitionId,
-            categories.find { it.name == "Damjuniorer 17" }!!
+            categories.find { it.name == "Damjuniorer 17" }!!.toSpec()
         )
         competitionCategoryService.addCompetitionCategory(
             lugiCompetitionId,
-            categories.find { it.name == "Damer 3" }!!
+            categories.find { it.name == "Damer 3" }!!.toSpec()
         )
 
         val umeaId = util.getClubIdOrDefault("Umeå IK")
@@ -413,24 +414,28 @@ class EventListener(
         val umeaCompetitionId = umeaCompetitions[0].id
         competitionCategoryService.addCompetitionCategory(
             umeaCompetitionId,
-            categories.find { it.name == "Herrar 1" }!!
+            categories.find { it.name == "Herrar 1" }!!.toSpec()
         )
         competitionCategoryService.addCompetitionCategory(
             umeaCompetitionId,
-            categories.find { it.name == "Herrar 2" }!!
+            categories.find { it.name == "Herrar 2" }!!.toSpec()
         )
         competitionCategoryService.addCompetitionCategory(
             umeaCompetitionId,
-            categories.find { it.name == "Damer 1" }!!
+            categories.find { it.name == "Damer 1" }!!.toSpec()
         )
         competitionCategoryService.addCompetitionCategory(
             umeaCompetitionId,
-            categories.find { it.name == "Damer 2" }!!
+            categories.find { it.name == "Damer 2" }!!.toSpec()
         )
         competitionCategoryService.addCompetitionCategory(
             umeaCompetitionId,
-            categories.find { it.name == "Damer 3" }!!
+            categories.find { it.name == "Damer 3" }!!.toSpec()
         )
+    }
+
+    private fun CategoryDTO.toSpec(): CategorySpec {
+        return CategorySpec(this.id, this.name, this.type)
     }
 
     fun registerPlayersSingles() {

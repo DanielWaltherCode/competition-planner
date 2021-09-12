@@ -2,10 +2,10 @@ package com.graphite.competitionplanner.draw.service
 
 import com.graphite.competitionplanner.api.competition.DrawDTO
 import com.graphite.competitionplanner.category.service.CategoryService
-import com.graphite.competitionplanner.competitioncategory.domain.interfaces.GeneralSettingsDTO
+import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
+import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsSpec
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
-import com.graphite.competitionplanner.domain.entity.DrawType
 import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
@@ -45,7 +45,7 @@ class DrawService(
         // players after the draw is made
 
         val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
-        val categoryMetadata: GeneralSettingsDTO
+        val categoryMetadata: GeneralSettingsSpec
         try {
             categoryMetadata = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId).settings
         } catch (ex: IllegalStateException) {
@@ -72,7 +72,7 @@ class DrawService(
         return getDraw(competitionCategoryId)
     }
 
-    private fun createSeed(competitionCategoryId: Int, categoryMetadata: GeneralSettingsDTO) {
+    private fun createSeed(competitionCategoryId: Int, categoryMetadata: GeneralSettingsSpec) {
         val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
         val playerList = mutableMapOf<Int, List<PlayerDTO>>()
         for (id in registrationIds) {
@@ -126,7 +126,7 @@ class DrawService(
 
     fun createPoolDraw(
         registrationIds: List<Int>,
-        categoryMetadata: GeneralSettingsDTO,
+        categoryMetadata: GeneralSettingsSpec,
         competitionCategoryId: Int
     ) {
         // If draw has already been made, first remove old matches

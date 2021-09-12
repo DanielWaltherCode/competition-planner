@@ -1,22 +1,22 @@
 <template>
-<div v-if="category.gameRules != null">
+<div v-if="category.gameSettings != null">
   <div class="row">
     <div class="d-flex col-12 p-2 justify-content-end">
       <button class="btn btn-primary" type="button" @click="saveChanges">{{$t("general.saveChanges")}}</button>
     </div>
     <div class="col-md-6 mb-3">
       <label class="h5 form-label" for="inputNumberOfSets">{{$t("categoryGameRules.nrSets")}}</label>
-      <input v-model="category.gameRules.nrSets" type="text" class="form-control" id="inputNumberOfSets">
+      <input v-model="category.gameSettings.numberOfSets" type="text" class="form-control" id="inputNumberOfSets">
     </div>
     <div class="col-md-6 mb-3">
       <label class="h5 form-label" for="inputPlayingUntil">{{$t("categoryGameRules.winScore")}}</label>
-      <input v-model="category.gameRules.winScore" type="text" class="form-control" id="inputPlayingUntil">
+      <input v-model="category.gameSettings.winScore" type="text" class="form-control" id="inputPlayingUntil">
     </div>
   </div>
   <div class="row">
     <div class="col mb-5">
       <label class="h5 form-label" for="inputWinMargin">{{$t("categoryGameRules.winMargin")}}</label>
-      <input v-model="category.gameRules.winMargin" type="text" class="form-control" placeholder="2" id="inputWinMargin">
+      <input v-model="category.gameSettings.winMargin" type="text" class="form-control" placeholder="2" id="inputWinMargin">
     </div>
   </div>
   <div class="form-check">
@@ -26,7 +26,7 @@
   <div v-if="differentRulesInEndgame" class="row">
     <div class="col-sm-12 col-md-6 mb-3">
       <label class="h5 form-label" for="newNrSetsFromRound"> {{$t("categoryGameRules.differentEndgameFrom")}}</label>
-      <select id="newNrSetsFromRound" v-model="category.gameRules.differentNumberOfGamesFromRound" class="form-select">
+      <select id="newNrSetsFromRound" v-model="category.gameSettings.differentNumberOfGamesFromRound" class="form-select">
         <option v-for="option in possibleRounds" :key="option" :value="option">
           {{$t("round." + option)}}
         </option>
@@ -34,25 +34,25 @@
     </div>
     <div class="col-sm-12 col-md-6 mb-3 d-flex flex-column justify-content-end">
       <label class="h5 form-label" for="inputEndGameNumberOfSets">{{$t("categoryGameRules.nrSetsEndgame")}}</label>
-      <input v-model="category.gameRules.nrSetsFinal" type="text" class="form-control" id="inputEndGameNumberOfSets">
+      <input v-model="category.gameSettings.numberOfSetsFinal" type="text" class="form-control" id="inputEndGameNumberOfSets">
     </div>
     <div class="col-sm-12 mb-5">
       <label class="h5 form-label" for="inputEndGameWinMargin">{{$t("categoryGameRules.winMarginFinals")}}</label>
-      <input v-model="category.gameRules.winMarginFinal" type="text" class="form-control" id="inputEndGameWinMargin">
+      <input v-model="category.gameSettings.winMarginFinal" type="text" class="form-control" id="inputEndGameWinMargin">
     </div>
   </div>
   <div class="form-check">
-    <input v-model="category.gameRules.tiebreakInFinal" class="form-check-input" type="checkbox" id="inputTiebreakSettingsEnabled">
+    <input v-model="category.gameSettings.tiebreakInFinalGame" class="form-check-input" type="checkbox" id="inputTiebreakSettingsEnabled">
     <label class="h4 form-check-label" for="inputTiebreakSettingsEnabled">{{$t("categoryGameRules.useTiebreak")}}</label>
   </div>
-  <div v-if="category.gameRules.tiebreakInFinal" class="row mb-5">
+  <div v-if="category.gameSettings.tiebreakInFinalGame" class="row mb-5">
     <div class="col-sm-12 col-md-6">
       <label class="h5 form-label" for="inputTiebreakPlayingUntil">{{$t("categoryGameRules.winScoreTiebreak")}}</label>
-      <input v-model="category.gameRules.winScoreTiebreak" type="text" class="form-control" placeholder="4" id="inputTiebreakPlayingUntil">
+      <input v-model="category.gameSettings.winScoreTiebreak" type="text" class="form-control" placeholder="4" id="inputTiebreakPlayingUntil">
     </div>
     <div class="col-sm-12 col-md-6">
       <label class="h5 form-label" for="inputTiebreakWinMargin">{{$t("categoryGameRules.winMarginTiebreak")}}</label>
-      <input v-model="category.gameRules.winMarginTiebreak" type="text" class="form-control" id="inputTiebreakWinMargin">
+      <input v-model="category.gameSettings.winMarginTieBreak" type="text" class="form-control" id="inputTiebreakWinMargin">
     </div>
   </div>
 </div>

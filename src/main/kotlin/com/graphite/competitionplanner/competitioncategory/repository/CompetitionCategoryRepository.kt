@@ -2,9 +2,9 @@ package com.graphite.competitionplanner.competitioncategory.repository
 
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
+import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.common.exception.NotFoundException
-import com.graphite.competitionplanner.competitioncategory.domain.interfaces.*
-import com.graphite.competitionplanner.domain.entity.CompetitionCategoryStatus
+import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.records.CategoryRecord
@@ -184,16 +184,22 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         return toCompetitionCategoryDto(records)
     }
 
-    override fun store(competitionId: Int, dto: CompetitionCategoryDTO): CompetitionCategoryDTO {
+    override fun store(competitionId: Int, spec: CompetitionCategorySpec): CompetitionCategoryDTO {
         val competitionCategoryRecord = dslContext.newRecord(COMPETITION_CATEGORY)
         competitionCategoryRecord.competitionId = competitionId
-        competitionCategoryRecord.category = dto.category.id
+        competitionCategoryRecord.category = spec.category.id
         competitionCategoryRecord.store()
 
-        dto.gameSettings.toRecord(competitionCategoryRecord.id).store()
-        dto.settings.toRecord(competitionCategoryRecord.id).store()
+        spec.gameSettings.toRecord(competitionCategoryRecord.id).store()
+        spec.settings.toRecord(competitionCategoryRecord.id).store()
 
-        return CompetitionCategoryDTO(competitionCategoryRecord.id, dto)
+        return CompetitionCategoryDTO(
+            id = competitionCategoryRecord.id,
+            status = spec.status.name,
+            category = spec.category,
+            settings = spec.settings,
+            gameSettings = spec.gameSettings
+        )
     }
 
     @Throws(NotFoundException::class)
@@ -213,20 +219,20 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
     }
 
     @Throws(NotFoundException::class)
-    override fun update(dto: CompetitionCategoryUpdateDTO) {
-        dslContext.selectFrom(COMPETITION_CATEGORY).where(COMPETITION_CATEGORY.ID.eq(dto.id)).fetchOne()
-            ?: throw NotFoundException("Could not update. Competition category with id ${dto.id} not found.")
+    override fun update(id: Int, spec: CompetitionCategoryUpdateSpec) {
+        dslContext.selectFrom(COMPETITION_CATEGORY).where(COMPETITION_CATEGORY.ID.eq(id)).fetchOne()
+            ?: throw NotFoundException("Could not update. Competition category with id $id not found.")
 
-        val gameSettingsRecord = dto.gameSettings.toRecord(dto.id)
+        val gameSettingsRecord = spec.gameSettings.toRecord(id)
         gameSettingsRecord.id = dslContext.selectFrom(COMPETITION_CATEGORY_GAME_RULES).where(
-            COMPETITION_CATEGORY_GAME_RULES.COMPETITION_CATEGORY_ID.eq(dto.id)
+            COMPETITION_CATEGORY_GAME_RULES.COMPETITION_CATEGORY_ID.eq(id)
         ).fetchOne().get(
             COMPETITION_CATEGORY_METADATA.ID
         )
 
-        val settingRecord = dto.settings.toRecord(dto.id)
+        val settingRecord = spec.settings.toRecord(id)
         settingRecord.id = dslContext.selectFrom(COMPETITION_CATEGORY_METADATA).where(
-            COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID.eq(dto.id)
+            COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID.eq(id)
         ).fetchOne().get(
             COMPETITION_CATEGORY_METADATA.ID
         )
@@ -251,19 +257,19 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             CompetitionCategoryDTO(
                 it.getValue(COMPETITION_CATEGORY.ID),
                 it.getValue(COMPETITION_CATEGORY.STATUS),
-                CategoryDTO(
+                CategorySpec(
                     it.getValue(CATEGORY.ID),
                     it.getValue(CATEGORY.CATEGORY_NAME),
                     it.getValue(CATEGORY.CATEGORY_TYPE)
                 ),
-                GeneralSettingsDTO(
+                GeneralSettingsSpec(
                     it.getValue(COMPETITION_CATEGORY_METADATA.COST),
-                    DrawTypeDTO(it.getValue(COMPETITION_CATEGORY_METADATA.DRAW_TYPE)),
+                    DrawType.valueOf(it.getValue(COMPETITION_CATEGORY_METADATA.DRAW_TYPE)),
                     it.getValue(COMPETITION_CATEGORY_METADATA.NR_PLAYERS_PER_GROUP),
                     it.getValue(COMPETITION_CATEGORY_METADATA.NR_PLAYERS_TO_PLAYOFF),
-                    PoolDrawStrategyDTO(it.getValue(COMPETITION_CATEGORY_METADATA.POOL_DRAW_STRATEGY))
+                    PoolDrawStrategy.valueOf(it.getValue(COMPETITION_CATEGORY_METADATA.POOL_DRAW_STRATEGY))
                 ),
-                GameSettingsDTO(
+                GameSettingsSpec(
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.NR_SETS),
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_SCORE),
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_MARGIN),
@@ -279,7 +285,7 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         }
     }
 
-    private fun GameSettingsDTO.toRecord(competitionCategoryId: Int): CompetitionCategoryGameRulesRecord {
+    private fun GameSettingsSpec.toRecord(competitionCategoryId: Int): CompetitionCategoryGameRulesRecord {
         val record = dslContext.newRecord(COMPETITION_CATEGORY_GAME_RULES)
         record.let {
             it.competitionCategoryId = competitionCategoryId
@@ -297,7 +303,7 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         return record
     }
 
-    private fun GeneralSettingsDTO.toRecord(competitionCategoryId: Int): CompetitionCategoryMetadataRecord {
+    private fun GeneralSettingsSpec.toRecord(competitionCategoryId: Int): CompetitionCategoryMetadataRecord {
         val record = dslContext.newRecord(COMPETITION_CATEGORY_METADATA)
         record.let {
             it.competitionCategoryId = competitionCategoryId

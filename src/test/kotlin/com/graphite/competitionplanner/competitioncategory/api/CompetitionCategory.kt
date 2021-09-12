@@ -6,7 +6,8 @@ import com.graphite.competitionplanner.club.domain.CreateClub
 import com.graphite.competitionplanner.club.domain.DeleteClub
 import com.graphite.competitionplanner.competition.domain.CreateCompetition
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
-import com.graphite.competitionplanner.competitioncategory.domain.interfaces.ICompetitionCategoryRepository
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
+import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.util.AbstractApiTest
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Test
@@ -45,7 +46,7 @@ class CompetitionCategory(
         val competitionCategory = testRestTemplate.postForObject(
             getUrl() + "/${competition.id}/category",
             HttpEntity(categorySpec, getAuthenticationHeaders()),
-            CompetitionCategorySpec::class.java
+            CompetitionCategoryDTO::class.java
         )
 
         // Clean up

@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.competitioncategory.service
 
 import com.graphite.competitionplanner.competition.service.CompetitionService
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
-import com.graphite.competitionplanner.domain.entity.CompetitionCategoryStatus
 import com.graphite.competitionplanner.player.service.PlayerService
 import com.graphite.competitionplanner.registration.api.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.service.RegistrationService
