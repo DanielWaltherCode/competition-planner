@@ -81,7 +81,8 @@ class TestAddCompetitionCategory {
             winScoreFinal = 11,
             winMarginFinal = 2,
             winScoreTiebreak = 2,
-            winMarginTieBreak = 2
+            winMarginTieBreak = 2,
+            useDifferentRulesInEndGame = false
         )
 
         val competitionId = 1

@@ -279,7 +279,8 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_MARGIN_FINAL),
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.TIE_BREAK_IN_FINAL_GAME),
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_SCORE_TIEBREAK),
-                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_MARGIN_TIE_BREAK)
+                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_MARGIN_TIE_BREAK),
+                    it.getValue(COMPETITION_CATEGORY_GAME_RULES.USE_DIFFERENT_RULES_IN_END_GAME)
                 )
             )
         }
@@ -299,6 +300,7 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             it.tieBreakInFinalGame = this.tiebreakInFinalGame
             it.winScoreTiebreak = this.winScoreTiebreak
             it.winMarginTieBreak = this.winMarginTieBreak
+            it.useDifferentRulesInEndGame = this.useDifferentRulesInEndGame
         }
         return record
     }

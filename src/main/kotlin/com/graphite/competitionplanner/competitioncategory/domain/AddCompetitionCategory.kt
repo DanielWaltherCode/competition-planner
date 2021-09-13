@@ -56,7 +56,8 @@ class AddCompetitionCategory(
             2,
             false,
             2,
-            2
+            2,
+            false
         )
     }
 }

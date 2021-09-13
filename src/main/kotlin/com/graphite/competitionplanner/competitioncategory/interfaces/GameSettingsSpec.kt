@@ -12,7 +12,8 @@ data class GameSettingsSpec(
     val winMarginFinal: Int,
     val tiebreakInFinalGame: Boolean,
     val winScoreTiebreak: Int,
-    val winMarginTieBreak: Int
+    val winMarginTieBreak: Int,
+    val useDifferentRulesInEndGame: Boolean
 ) {
     init {
         require(numberOfSets > 0) { "Number of sets must be greater than zero." }
