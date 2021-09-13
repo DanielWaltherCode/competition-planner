@@ -90,7 +90,7 @@ export default {
       CompetitionService.updateCompetition(objectToSave, this.competition.id).then(res => {
         this.$store.commit("set_competition", res.data)
         this.competitionUpdated = true
-        this.$toasted.show(this.$tc("newCompetition.competitionUpdated")).goAway(3000)
+        this.$toasted.show(this.$tc("toasts.competitionUpdated")).goAway(3000)
       }).catch(err => {
             console.log("Couldn't add competition", err)
           }

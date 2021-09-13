@@ -213,8 +213,9 @@ export default {
           playerId: this.player.id,
           competitionCategoryId: category.ie
         }
-        RegistrationService.registerPlayerSingles(this.competition.id, registrationSpec)
-        this.$toasted.show(this.$tc("player.add.success")).goAway(3000)
+        RegistrationService.registerPlayerSingles(this.competition.id, registrationSpec).then(() => {
+          this.$toasted.show(this.$tc("toasts.playerAdded")).goAway(3000)
+        })
       })
     },
   }

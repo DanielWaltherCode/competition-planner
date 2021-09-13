@@ -155,12 +155,14 @@ export default {
     },
     createDraw() {
       DrawService.createDraw(this.competition.id, this.chosenCategory.id).then(res => {
+        this.$toasted.show(this.$tc("toasts.categoryDrawn")).goAway(3000)
         this.draw = res.data
         this.isChosenCategoryDrawn = true
       })
     },
     deleteDraw() {
       DrawService.deleteDraw(this.competition.id, this.chosenCategory.id).then(() => {
+        this.$toasted.show(this.$tc("toasts.categoryDrawDeleted")).goAway(3000)
         this.isChosenCategoryDrawn = false
         this.getRegisteredPlayers()
       })

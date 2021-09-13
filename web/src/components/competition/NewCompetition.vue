@@ -72,7 +72,6 @@ export default {
       competitionAdded: false,
       competition: "",
       noCompetitionName: false,
-      noInfo: false,
       noStartDate: false,
       noEndDate: false,
       noCompetitionLocation: false,
@@ -86,19 +85,19 @@ export default {
       return this.$t(string)
     },
     validateSubmission() {
-      if (this.competitionName) {
+      if (!this.competitionName) {
         this.noCompetitionName = true
         return false
       }
-      if(this.competitionLocation) {
+      if(!this.competitionLocation) {
         this.noCompetitionLocation = true
         return false
       }
-      if (this.startDate) {
+      if (!this.startDate) {
         this.noStartDate = true
         return false
       }
-      if (this.endDate) {
+      if (!this.endDate) {
         this.noEndDate = true
         return false
       }
@@ -123,7 +122,7 @@ export default {
         this.$store.commit("set_competition", res.data)
         this.competition = res.data
         this.competitionAdded = true
-        this.$toasted.show("newCompetition.competitionUpdated").goAway(3000)
+        this.$toasted.show(this.$tc("toasts.competitionAdded")).goAway(3000)
       }).catch(err => {
             console.log("Couldn't add competition", err)
           }

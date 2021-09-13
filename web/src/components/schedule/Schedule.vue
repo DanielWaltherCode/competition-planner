@@ -259,7 +259,10 @@ export default {
         startInterval: updatedStartTime.startInterval,
         exactStartTime: exactStartTime,
       }
-      CategoryStartTimeService.updateCategoryStartTime(updatedStartTime.id, this.competition.id, updatedStartTime.categoryDTO.categoryId, objectToSave)
+      CategoryStartTimeService.updateCategoryStartTime(updatedStartTime.id,
+          this.competition.id, updatedStartTime.categoryDTO.categoryId, objectToSave).then(() => {
+        this.$toasted.show(this.$tc("toasts.startTimesSet")).goAway(3000)
+      })
     },
     setDailyStartEnd(dailyStartEndObject) {
       const startTime = this.getTime(dailyStartEndObject.startTime)

@@ -73,7 +73,7 @@ export default {
   methods: {
     save() {
       CategoryService.updateCompetitionCategory(this.competition.id, this.category).then(() => {
-        console.log("Update success")
+        this.$toasted.show(this.$tc("toasts.categoryUpdated")).goAway(3000)
       })
     }
   }

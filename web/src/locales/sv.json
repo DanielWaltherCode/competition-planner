@@ -59,9 +59,7 @@
     "info": "Tävlingsinformation",
     "startDate": "Startdatum",
     "endDate": "Slutdatum",
-    "location": "Plats",
-    "competitionAdded": "Tävlingen är skapad. Du kan nu gå vidare till nästa steg.",
-    "competitionUpdated": "Tävlingen uppdaterades"
+    "location": "Plats"
   },
   "categories": {
     "title": "Klasser",
@@ -139,8 +137,7 @@
       "club": "Klubb",
       "dateOfBirth": "Födelsedatum",
       "buttonText": "Lägg till spelare",
-      "clear": "Rensa spelare",
-      "success": "Spelare tillagd"
+      "clear": "Rensa spelare"
     }
   },
   "draw": {
@@ -260,5 +257,14 @@
   },
   "validations": {
     "required": "Fältet måste fyllas i"
+  },
+  "toasts": {
+    "competitionAdded": "Tävlingen är skapad. Du kan nu gå vidare till nästa steg.",
+    "competitionUpdated": "Tävlingen uppdaterades",
+    "categoryUpdate": "Klassen är uppdaterad",
+    "categoryDrawn": "Klassen är nu lottad",
+    "categoryDrawDeleted": "Lottningen är borttagen",
+    "playerAdded": "Spelare tillagd",
+    "startTimesSet": "Start"
   }
 }
