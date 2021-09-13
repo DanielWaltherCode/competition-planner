@@ -108,11 +108,14 @@ class TestCompetitionCategoryRepository(
         // Setup
         val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
         val spec =
-            dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, category.type))
+            dataGenerator.newCompetitionCategorySpec(
+                category = CategorySpec(category.id, category.name, category.type),
+                gameSettings = dataGenerator.newGameSettingsSpec(useDifferentRulesInEndGame = false))
         val original = repository.store(competition.id, spec)
         val updateSpec = dataGenerator.newCompetitionCategoryUpdateSpec(
             settings = dataGenerator.newGeneralSettingsSpec(cost = 110f, playersToPlayOff = 1),
-            gameSettings = dataGenerator.newGameSettingsSpec(numberOfSets = 4, winScore = 8, numberOfSetsFinal = 11)
+            gameSettings = dataGenerator.newGameSettingsSpec(
+                numberOfSets = 4, winScore = 8, numberOfSetsFinal = 11, useDifferentRulesInEndGame = true)
         )
 
         // Act
@@ -137,6 +140,8 @@ class TestCompetitionCategoryRepository(
         Assertions.assertEquals(updateSpec.gameSettings.tiebreakInFinalGame, updated.gameSettings.tiebreakInFinalGame)
         Assertions.assertEquals(updateSpec.gameSettings.winScoreTiebreak, updated.gameSettings.winScoreTiebreak)
         Assertions.assertEquals(updateSpec.gameSettings.winMarginTieBreak, updated.gameSettings.winMarginTieBreak)
+        Assertions.assertEquals(updateSpec.gameSettings.useDifferentRulesInEndGame,
+            updated.gameSettings.useDifferentRulesInEndGame)
 
         // Clean up
         repository.delete(updated.id)

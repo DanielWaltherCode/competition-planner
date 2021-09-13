@@ -243,7 +243,8 @@ class DataGenerator {
         winMarginFinal: Int = 3,
         tiebreakInFinalGame: Boolean = false,
         winScoreTiebreak: Int = 3,
-        winMarginTieBreak: Int = 3
+        winMarginTieBreak: Int = 3,
+        useDifferentRulesInEndGame: Boolean = false
     ) = GameSettingsSpec(
         numberOfSets,
         winScore,
@@ -254,7 +255,8 @@ class DataGenerator {
         winMarginFinal,
         tiebreakInFinalGame,
         winScoreTiebreak,
-        winMarginTieBreak
+        winMarginTieBreak,
+        useDifferentRulesInEndGame
     )
 
     fun newCategorySpec(
