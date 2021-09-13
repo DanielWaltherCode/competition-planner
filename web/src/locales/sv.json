@@ -258,9 +258,7 @@
     },
     "noMatches": "Ingen lottning är gjord än så inga matcher är uppsatta"
   },
-  "Exceptions": {
-    "GameValidationException": {
-      "1": "För få set inrapporterade"
-    }
+  "validations": {
+    "required": "Fältet måste fyllas i"
   }
 }

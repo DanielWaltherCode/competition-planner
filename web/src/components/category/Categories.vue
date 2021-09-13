@@ -46,7 +46,6 @@
               </button>
             </li>
           </ul>
-          <router-view></router-view>
           <form class="text-start row">
             <div class="tab-content" id="myTabContent">
               <CategoryGeneralSettings v-if="displayChoice === 'SETTINGS'"

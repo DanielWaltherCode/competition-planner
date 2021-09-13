@@ -99,7 +99,6 @@ export default {
   methods: {
     setUp() {
       this.resetVariables()
-      console.log("Calling setup")
       if (this.selectedMatch === null) {
         return
       }
@@ -113,7 +112,6 @@ export default {
           counter = 0
         }
         while (counter < this.matchRules.nrSets) {
-          console.log("Adding game")
           this.addGame()
           counter++
         }
@@ -140,7 +138,13 @@ export default {
         console.log(err.data)
       })
     },
+    validateSubmission() {
+      return true
+    },
     saveResults() {
+      if (!this.validateSubmission()) {
+        return
+      }
       this.error = null
       const resultsToSubmit = []
       this.setList.forEach(result => {
