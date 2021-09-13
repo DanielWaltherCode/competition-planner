@@ -70,7 +70,8 @@
     "noCategories": "Inga klasser är skapade än så länge",
     "createNew": "Skapa ny klass",
     "addClass": "Lägg till klassen",
-    "alreadyAddedCategories": "Tillagda klasser"
+    "alreadyAddedCategories": "Tillagda klasser",
+    "chooseClass": "Välj klass"
   },
   "categoryGameRules": {
     "nrSets": "Antal set",

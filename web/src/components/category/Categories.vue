@@ -12,6 +12,7 @@
         <div>
           <h5> {{ $t("categories.createNew") }}</h5>
           <select class="form-select w-75 my-3 mx-auto" v-model="newCategory">
+            <option :value="null" disabled hidden>{{ $t("categories.chooseClass")}}</option>
             <option v-for="category in possibleCategories" :value="category" :key="category.id">
               {{ category.name }}
             </option>
