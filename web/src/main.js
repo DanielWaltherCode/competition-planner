@@ -14,16 +14,6 @@ import 'vue2-timepicker/dist/VueTimepicker.css'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import Toasted from 'vue-toasted';
 import { vfmPlugin } from 'vue-final-modal'
-import {extend, ValidationProvider} from 'vee-validate';
-import { required } from 'vee-validate/dist/rules';
-
-Vue.component('ValidationProvider', ValidationProvider);
-
-// Override the default message.
-extend('required', {
-    ...required,
-    message: i18n.t("validations.required")
-});
 
 Vue.use(vfmPlugin)
 import VModal from 'vue-js-modal'
