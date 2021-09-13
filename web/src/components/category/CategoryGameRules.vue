@@ -20,10 +20,10 @@
     </div>
   </div>
   <div class="form-check">
-    <input v-model="differentRulesInEndgame" class="form-check-input" type="checkbox" value="" id="inputEndGameSettingsEnabled">
+    <input v-model="category.gameSettings.useDifferentRulesInEndGame" class="form-check-input" type="checkbox" value="" id="inputEndGameSettingsEnabled">
     <label class="h4 form-check-label" for="inputEndGameSettingsEnabled">{{$t("categoryGameRules.differentEndgame")}}</label>
   </div>
-  <div v-if="differentRulesInEndgame" class="row">
+  <div v-if="category.gameSettings.useDifferentRulesInEndGame" class="row">
     <div class="col-sm-12 col-md-6 mb-3">
       <label class="h5 form-label" for="newNrSetsFromRound"> {{$t("categoryGameRules.differentEndgameFrom")}}</label>
       <select id="newNrSetsFromRound" v-model="category.gameSettings.differentNumberOfGamesFromRound" class="form-select">
@@ -69,7 +69,6 @@ export default {
   },
   data() {
     return {
-      differentRulesInEndgame: false,
       possibleRounds: []
     }
   },

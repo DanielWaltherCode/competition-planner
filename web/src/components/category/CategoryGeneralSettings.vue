@@ -11,7 +11,7 @@
       <div class="col-sm-12 col-md-6 mb-3">
         <label class="h5 form-label"
                for="inputNumberOfPlayersPerPool">{{ $t("categorySettings.playersPerGroup") }}</label>
-        <select v-model="category.settings.nrPlayersPerGroup" id="inputNumberOfPlayersPerPool" class="form-select" >
+        <select v-model="category.settings.playersPerGroup" id="inputNumberOfPlayersPerPool" class="form-select" >
           <option v-for="i in 3" :key="i">
             {{ i + 2 }}
           </option>
@@ -33,7 +33,7 @@
     <div v-if="category.settings.drawType === 'POOL_AND_CUP'" class="row">
       <div class="col-sm-12 col-md-6 d-flex flex-column justify-content-end">
         <label class="h5 form-label" for="inputPlayersThatAdvance">{{ $t("categorySettings.playersToPlayoff") }}</label>
-        <input v-model="category.settings.nrPlayersToPlayoff" type="text" class="form-control" id="inputPlayersThatAdvance">
+        <input v-model="category.settings.playersToPlayOff" type="text" class="form-control" id="inputPlayersThatAdvance">
       </div>
       <div class="col-sm-12 col-md-6 d-flex flex-column justify-content-end">
         <label class="h5 form-label" for="inputDrawStrategy">{{ $t("categorySettings.drawStrategy") }}</label>
