@@ -55,7 +55,7 @@ class TestClubRepository(
     @Test
     fun shouldThrowNotFoundExceptionWhenUpdatingClubThatDoesNotExist() {
         Assertions.assertThrows(NotFoundException::class.java) {
-            clubRepository.update(123, dataGenerator.newClubSpec())
+            clubRepository.update(-1, dataGenerator.newClubSpec())
         }
     }
 

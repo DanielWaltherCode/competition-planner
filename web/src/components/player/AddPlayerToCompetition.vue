@@ -211,7 +211,7 @@ export default {
       categoriesToRegisterIn.forEach(category => {
         const registrationSpec = {
           playerId: this.player.id,
-          competitionCategoryId: category.ie
+          competitionCategoryId: category.id
         }
         RegistrationService.registerPlayerSingles(this.competition.id, registrationSpec).then(() => {
           this.$toasted.show(this.$tc("toasts.playerAdded")).goAway(3000)
