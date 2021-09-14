@@ -1,16 +1,22 @@
 package com.graphite.competitionplanner.registration.repository
 
 import com.graphite.competitionplanner.Tables.*
+import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
+import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesDTO
+import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpecWithDate
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.PlayerRegistration.PLAYER_REGISTRATION
 import com.graphite.competitionplanner.tables.Registration.REGISTRATION
-import com.graphite.competitionplanner.tables.records.*
+import com.graphite.competitionplanner.tables.records.CompetitionCategoryRegistrationRecord
+import com.graphite.competitionplanner.tables.records.PlayerRecord
+import com.graphite.competitionplanner.tables.records.PlayerRegistrationRecord
+import com.graphite.competitionplanner.tables.records.RegistrationRecord
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 @Repository
-class RegistrationRepository(val dslContext: DSLContext) {
+class RegistrationRepository(val dslContext: DSLContext) : IRegistrationRepository {
 
     // Sets up base registration. Double players playing together will have same registration id
     fun addRegistration(date: LocalDate): RegistrationRecord {
@@ -49,8 +55,8 @@ class RegistrationRepository(val dslContext: DSLContext) {
     // Links a registration to a specific category in the competition. Also includes the seed.
     fun registerInCategory(registrationId: Int, seed: Int?, competitionCategory: Int): CompetitionCategoryRegistrationRecord {
         val record = dslContext.newRecord(COMPETITION_CATEGORY_REGISTRATION)
-        record.registrationId = registrationId;
-        record.seed = seed;
+        record.registrationId = registrationId
+        record.seed = seed
         record.competitionCategoryId = competitionCategory
         record.store()
         return record
@@ -121,6 +127,13 @@ class RegistrationRepository(val dslContext: DSLContext) {
     }
 
     fun clearPlayingIn() = dslContext.deleteFrom(COMPETITION_CATEGORY_REGISTRATION).execute()
+
+    override fun store(spec: RegistrationSinglesSpecWithDate): RegistrationSinglesDTO {
+        // TODO: Implement
+        val registrationRecord = addRegistration(spec.date)
+
+        return RegistrationSinglesDTO(0, 0, 0, LocalDate.now())
+    }
 }
 
 
