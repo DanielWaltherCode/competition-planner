@@ -129,10 +129,11 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
     fun clearPlayingIn() = dslContext.deleteFrom(COMPETITION_CATEGORY_REGISTRATION).execute()
 
     override fun store(spec: RegistrationSinglesSpecWithDate): RegistrationSinglesDTO {
-        // TODO: Implement
         val registrationRecord = addRegistration(spec.date)
+        registerPlayer(registrationRecord.id, spec.playerId)
+        registerInCategory(registrationRecord.id, null, spec.competitionCategoryId)
 
-        return RegistrationSinglesDTO(0, 0, 0, LocalDate.now())
+        return RegistrationSinglesDTO(registrationRecord.id, spec.playerId, spec.competitionCategoryId, spec.date)
     }
 }
 

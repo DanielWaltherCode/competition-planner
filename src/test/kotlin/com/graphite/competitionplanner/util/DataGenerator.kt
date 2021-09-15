@@ -14,6 +14,7 @@ import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
+import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpecWithDate
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import java.time.LocalDate
@@ -326,6 +327,16 @@ class DataGenerator {
         playerId: Int = this.playerId++,
         competitionCategoryId: Int = this.competitionCategoryId++
     ) = RegistrationSinglesSpec(
+        playerId,
+        competitionCategoryId
+    )
+
+    fun newRegistrationSinglesSpecWithDate(
+        date: LocalDate = LocalDate.now(),
+        playerId: Int = this.playerId++,
+        competitionCategoryId: Int = this.competitionCategoryId++
+    ) = RegistrationSinglesSpecWithDate(
+        date,
         playerId,
         competitionCategoryId
     )
