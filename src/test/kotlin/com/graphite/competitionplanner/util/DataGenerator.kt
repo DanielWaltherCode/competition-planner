@@ -13,6 +13,9 @@ import com.graphite.competitionplanner.domain.entity.ScheduleSettings
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesDTO
+import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
+import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpecWithDate
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import java.time.LocalDate
@@ -26,6 +29,8 @@ class DataGenerator {
     private var playerId = 0
     private var clubId = 0
     private var matchId = 0
+    private var competitionCategoryId = 0
+    private var registrationId = 0
 
     internal fun newMatch(
         id: Int = matchId++,
@@ -199,6 +204,18 @@ class DataGenerator {
         gameSettings
     )
 
+    fun newRegistrationSinglesDTO(
+        id: Int = this.registrationId++,
+        playerId: Int = this.playerId++,
+        competitionCategoryId: Int = this.competitionCategoryId++,
+        date: LocalDate = LocalDate.now()
+    ) = RegistrationSinglesDTO(
+        id,
+        playerId,
+        competitionCategoryId,
+        date
+    )
+
     fun newCompetitionCategoryUpdateSpec(
         settings: GeneralSettingsSpec = newGeneralSettingsSpec(),
         gameSettings: GameSettingsSpec = newGameSettingsSpec()
@@ -318,6 +335,24 @@ class DataGenerator {
         lastName,
         clubId,
         dateOfBirth
+    )
+
+    fun newRegistrationSinglesSpec(
+        playerId: Int = this.playerId++,
+        competitionCategoryId: Int = this.competitionCategoryId++
+    ) = RegistrationSinglesSpec(
+        playerId,
+        competitionCategoryId
+    )
+
+    fun newRegistrationSinglesSpecWithDate(
+        date: LocalDate = LocalDate.now(),
+        playerId: Int = this.playerId++,
+        competitionCategoryId: Int = this.competitionCategoryId++
+    ) = RegistrationSinglesSpecWithDate(
+        date,
+        playerId,
+        competitionCategoryId
     )
 
     /**
