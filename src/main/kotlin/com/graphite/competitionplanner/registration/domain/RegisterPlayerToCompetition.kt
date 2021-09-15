@@ -18,6 +18,7 @@ class RegisterPlayerToCompetition(
 ) {
 
     fun execute(spec: RegistrationSinglesSpec): RegistrationSinglesDTO {
+        // TODO: We need to prevent the same player being added twice to the same competition
         findPlayer.byId(spec.playerId)
         findCompetitionCategory.byId(spec.competitionCategoryId)
 
