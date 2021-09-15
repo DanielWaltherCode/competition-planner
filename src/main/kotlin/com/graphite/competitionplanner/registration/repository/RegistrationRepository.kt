@@ -18,14 +18,6 @@ import java.time.LocalDate
 @Repository
 class RegistrationRepository(val dslContext: DSLContext) : IRegistrationRepository {
 
-    // Sets up base registration. Double players playing together will have same registration id
-    fun addRegistration(date: LocalDate): RegistrationRecord {
-        val registration: RegistrationRecord = dslContext.newRecord(REGISTRATION)
-        registration.registrationDate = date
-        registration.store()
-        return registration
-    }
-
     fun addRegistrationWithId(id: Int, date: LocalDate): RegistrationRecord {
         val registration: RegistrationRecord = dslContext.newRecord(REGISTRATION)
         registration.id = id
@@ -40,7 +32,6 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
 
     fun clearRegistration() = dslContext.deleteFrom(REGISTRATION).execute()
 
-
     // Links player to registration
     fun registerPlayer(registrationId: Int, playerId: Int): PlayerRegistrationRecord {
         val record: PlayerRegistrationRecord = dslContext.newRecord(PLAYER_REGISTRATION)
@@ -50,17 +41,8 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         return record
     }
 
-    fun clearPlayerRegistration() = dslContext.deleteFrom(PLAYER_REGISTRATION).execute()
 
-    // Links a registration to a specific category in the competition. Also includes the seed.
-    fun registerInCategory(registrationId: Int, seed: Int?, competitionCategory: Int): CompetitionCategoryRegistrationRecord {
-        val record = dslContext.newRecord(COMPETITION_CATEGORY_REGISTRATION)
-        record.registrationId = registrationId
-        record.seed = seed
-        record.competitionCategoryId = competitionCategory
-        record.store()
-        return record
-    }
+    fun clearPlayerRegistration() = dslContext.deleteFrom(PLAYER_REGISTRATION).execute()
 
     fun checkIfCategoryHasRegistrations(competitionCategory: Int): Boolean {
         return dslContext.fetchExists(dslContext.selectFrom(COMPETITION_CATEGORY_REGISTRATION)
@@ -134,6 +116,28 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         registerInCategory(registrationRecord.id, null, spec.competitionCategoryId)
 
         return RegistrationSinglesDTO(registrationRecord.id, spec.playerId, spec.competitionCategoryId, spec.date)
+    }
+
+    // Sets up base registration. Double players playing together will have same registration id
+    private fun addRegistration(date: LocalDate): RegistrationRecord {
+        val registration: RegistrationRecord = dslContext.newRecord(REGISTRATION)
+        registration.registrationDate = date
+        registration.store()
+        return registration
+    }
+
+    // Links a registration to a specific category in the competition. Also includes the seed.
+    private fun registerInCategory(
+        registrationId: Int,
+        seed: Int?,
+        competitionCategory: Int
+    ): CompetitionCategoryRegistrationRecord {
+        val record = dslContext.newRecord(COMPETITION_CATEGORY_REGISTRATION)
+        record.registrationId = registrationId
+        record.seed = seed
+        record.competitionCategoryId = competitionCategory
+        record.store()
+        return record
     }
 }
 

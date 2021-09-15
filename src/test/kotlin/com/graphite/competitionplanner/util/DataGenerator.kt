@@ -13,6 +13,7 @@ import com.graphite.competitionplanner.domain.entity.ScheduleSettings
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesDTO
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpecWithDate
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
@@ -29,6 +30,7 @@ class DataGenerator {
     private var clubId = 0
     private var matchId = 0
     private var competitionCategoryId = 0
+    private var registrationId = 0
 
     internal fun newMatch(
         id: Int = matchId++,
@@ -200,6 +202,18 @@ class DataGenerator {
         category,
         settings,
         gameSettings
+    )
+
+    fun newRegistrationSinglesDTO(
+        id: Int = this.registrationId++,
+        playerId: Int = this.playerId++,
+        competitionCategoryId: Int = this.competitionCategoryId++,
+        date: LocalDate = LocalDate.now()
+    ) = RegistrationSinglesDTO(
+        id,
+        playerId,
+        competitionCategoryId,
+        date
     )
 
     fun newCompetitionCategoryUpdateSpec(

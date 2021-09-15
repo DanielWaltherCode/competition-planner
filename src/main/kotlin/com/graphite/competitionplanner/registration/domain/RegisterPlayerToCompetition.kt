@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.registration.domain
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.player.domain.FindPlayer
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
+import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesDTO
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpecWithDate
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,11 +17,11 @@ class RegisterPlayerToCompetition(
     @Autowired val repository: IRegistrationRepository
 ) {
 
-    fun execute(spec: RegistrationSinglesSpec) {
+    fun execute(spec: RegistrationSinglesSpec): RegistrationSinglesDTO {
         findPlayer.byId(spec.playerId)
         findCompetitionCategory.byId(spec.competitionCategoryId)
 
-        repository.store(
+        return repository.store(
             RegistrationSinglesSpecWithDate(
                 LocalDate.now(),
                 spec.playerId,

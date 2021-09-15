@@ -2,57 +2,60 @@ package com.graphite.competitionplanner.registration.service
 
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
-import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.player.service.PlayerService
-import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
-import com.graphite.competitionplanner.util.Util
+import com.graphite.competitionplanner.registration.domain.RegisterPlayerToCompetition
+import com.graphite.competitionplanner.registration.repository.RegistrationRepository
+import com.graphite.competitionplanner.util.DataGenerator
+import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
+import org.mockito.Mockito.*
 import org.springframework.boot.test.context.SpringBootTest
 
-// TODO -- Rewrite class to set up and remove data before and after each test
 @SpringBootTest
-class TestRegistrationService(
-    @Autowired val competitionService: CompetitionService,
-    @Autowired val competitionCategoryRepository: CompetitionCategoryRepository,
-    @Autowired val registrationService: RegistrationService,
-    @Autowired val util: Util,
-    @Autowired val playerService: PlayerService,
-    @Autowired val playerRepository: PlayerRepository
-) {
+class TestRegistrationService {
+
+    private val mockedRegistrationRepository = mock(RegistrationRepository::class.java)
+    private val mockedCompetitionService = mock(CompetitionService::class.java)
+    private val mockedPlayerService = mock(PlayerService::class.java)
+    private val mockedCompetitionCategoryRepository = mock(CompetitionCategoryRepository::class.java)
+    private val mockedRegisterPlayerToCompetition = mock(RegisterPlayerToCompetition::class.java)
+    private val service = RegistrationService(
+        mockedRegistrationRepository,
+        mockedCompetitionService,
+        mockedPlayerService,
+        mockedCompetitionCategoryRepository,
+        mockedRegisterPlayerToCompetition
+    )
+
+    private val dataGenerator = DataGenerator()
 
     @Test
-    @Disabled
-    fun getRegistrationsByPlayerId() {
-        val playerId = playerRepository.getAll().stream().findFirst().map { it.id }.get()
-        val playedCompetitionDTO = registrationService.getRegistrationByPlayerId(playerId)
-        Assertions.assertNotNull(playedCompetitionDTO)
-        Assertions.assertNotNull(playedCompetitionDTO.player)
-        Assertions.assertTrue(playedCompetitionDTO.competitionsAndCategories.isNotEmpty())
+    fun shouldDelegateToUseCaseWhenAddingSinglePlayerRegistration() {
+        // Setup
+        val spec = dataGenerator.newRegistrationSinglesSpec()
+        `when`(mockedRegisterPlayerToCompetition.execute(spec)).thenReturn(dataGenerator.newRegistrationSinglesDTO())
+
+        // Act
+        service.registerPlayerSingles(spec)
+
+        // Assert
+        verify(mockedRegisterPlayerToCompetition, times(1)).execute(spec)
+        verify(mockedRegisterPlayerToCompetition, times(1)).execute(TestHelper.MockitoHelper.anyObject())
     }
 
     @Test
-    @Disabled
-    fun addRegistration() {
-        val umeId = util.getClubIdOrDefault("Umeå IK")
-        val umePlayers = playerService.getPlayersByClubId(umeId)
-        val idToRegister = umePlayers[3].id
+    fun shouldReturnTheRegistrationId() {
+        // Setup
+        val spec = dataGenerator.newRegistrationSinglesSpec()
+        val expected = dataGenerator.newRegistrationSinglesDTO(id = 1456)
+        `when`(mockedRegisterPlayerToCompetition.execute(spec)).thenReturn(expected)
 
-        val originalRegistrations = registrationService.getRegistrationByPlayerId(idToRegister)
-        val numberOfRegistrations = originalRegistrations.competitionsAndCategories.size
+        // Act
+        val registrationId = service.registerPlayerSingles(spec)
 
-        val competitions = competitionService.getByClubId(umeId)
-        val categoriesInCompetitionOne = competitionCategoryRepository.getCategoriesInCompetition(competitions[0].id)
-        // Register in same competition different category
-        registrationService.registerPlayerSingles(RegistrationSinglesSpec( idToRegister, categoriesInCompetitionOne[2].categoryId))
-
-        val newRegistrations = registrationService.getRegistrationByPlayerId(idToRegister)
-        val newNumberOfRegistrations = newRegistrations.competitionsAndCategories.size
-
-        Assertions.assertEquals(numberOfRegistrations + 1, newNumberOfRegistrations)
-
+        // Assertions
+        Assertions.assertEquals(expected.id, registrationId)
     }
 
 }

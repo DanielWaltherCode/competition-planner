@@ -5,12 +5,12 @@ import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.service.PlayerService
+import com.graphite.competitionplanner.registration.domain.RegisterPlayerToCompetition
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
-import java.time.LocalDate
 import kotlin.random.Random
 
 @Service
@@ -18,20 +18,12 @@ class RegistrationService(
     val registrationRepository: RegistrationRepository,
     val competitionService: CompetitionService,
     val playerService: PlayerService,
-    val competitionCategoryRepository: CompetitionCategoryRepository
+    val competitionCategoryRepository: CompetitionCategoryRepository,
+    val registerPlayerToCompetition: RegisterPlayerToCompetition
 ) {
 
-    fun registerPlayerSingles(registrationSinglesSpec: RegistrationSinglesSpec): Int {
-        val registration = registrationRepository.addRegistration(LocalDate.now())
-        registrationRepository.registerPlayer(registration.id, registrationSinglesSpec.playerId)
-        val playingInRecord = registrationRepository.registerInCategory(
-            registration.id,
-            null,
-            registrationSinglesSpec.competitionCategoryId
-        )
-        if(playingInRecord.id == null) {
-            return -1
-        }
+    fun registerPlayerSingles(spec: RegistrationSinglesSpec): Int {
+        val registration = registerPlayerToCompetition.execute(spec)
         return registration.id
     }
 
