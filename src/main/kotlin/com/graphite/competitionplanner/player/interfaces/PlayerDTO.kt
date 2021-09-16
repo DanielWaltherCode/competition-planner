@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.player.interfaces
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDate
 
 /**
@@ -11,5 +12,6 @@ data class PlayerDTO(
     val firstName: String,
     val lastName: String,
     val clubId: Int,
+    @JsonFormat(pattern = "yyyy-MM-dd")
     val dateOfBirth: LocalDate
 )
