@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.registration.repository
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesDTO
+import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpecWithDate
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.PlayerRegistration.PLAYER_REGISTRATION
@@ -116,6 +117,37 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         registerInCategory(registrationRecord.id, null, spec.competitionCategoryId)
 
         return RegistrationSinglesDTO(registrationRecord.id, spec.playerId, spec.competitionCategoryId, spec.date)
+    }
+
+    override fun getAllPlayerIdsRegisteredTo(competitionCategoryId: Int): List<Int> {
+        val records = dslContext.select()
+            .from(COMPETITION_CATEGORY_REGISTRATION)
+            .join(PLAYER_REGISTRATION)
+            .on(PLAYER_REGISTRATION.REGISTRATION_ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+            .join(PLAYER).on(PLAYER.ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
+            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+            .fetchInto(PLAYER)
+
+        return records.map { it.id }
+    }
+
+    override fun getRegistrationFor(spec: RegistrationSinglesSpec): RegistrationSinglesDTO {
+        val record = dslContext.select(REGISTRATION.ID, REGISTRATION.REGISTRATION_DATE, PLAYER_REGISTRATION.PLAYER_ID,
+            COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID)
+            .from(REGISTRATION)
+            .join(PLAYER_REGISTRATION).on(REGISTRATION.ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
+            .join(COMPETITION_CATEGORY_REGISTRATION)
+            .on(REGISTRATION.ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(spec.competitionCategoryId)
+                .and(PLAYER_REGISTRATION.PLAYER_ID.eq(spec.playerId)))
+            .fetchOne()
+
+        return RegistrationSinglesDTO(
+            record.getValue(REGISTRATION.ID),
+            record.getValue(PLAYER_REGISTRATION.PLAYER_ID),
+            record.getValue(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID),
+            record.getValue(REGISTRATION.REGISTRATION_DATE)
+        )
     }
 
     // Sets up base registration. Double players playing together will have same registration id

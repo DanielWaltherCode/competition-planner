@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Description
 
 @SpringBootTest
 class TestRegisterPlayerToCompetition {
@@ -84,6 +85,23 @@ class TestRegisterPlayerToCompetition {
 
         // Assert
         verify(repository, times(1)).store(TestHelper.MockitoHelper.anyObject())
+    }
+
+    @Test
+    @Description("When a user tries to register itself to the same competition category, we instead return the" +
+            "already existing registration.")
+    fun shouldNotRegisterIfPlayerAlreadyRegistered() {
+        // Setup
+        val spec = dataGenerator.newRegistrationSinglesSpec(playerId = 53)
+        `when`(repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)).thenReturn(listOf(spec.playerId))
+
+        // Act
+        registerPlayer.execute(spec)
+
+        // Assert
+        verify(repository, never()).store(TestHelper.MockitoHelper.anyObject())
+        verify(repository, times(1)).getRegistrationFor(spec)
+        verify(repository, times(1)).getRegistrationFor(TestHelper.MockitoHelper.anyObject())
     }
 
 }
