@@ -18,9 +18,13 @@ class RegisterPlayerToCompetition(
 ) {
 
     fun execute(spec: RegistrationSinglesSpec): RegistrationSinglesDTO {
-        // TODO: We need to prevent the same player being added twice to the same competition
         findPlayer.byId(spec.playerId)
         findCompetitionCategory.byId(spec.competitionCategoryId)
+
+        val playerIds = repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)
+        if (playerIds.contains(spec.playerId)) {
+            return repository.getRegistrationFor(spec)
+        }
 
         return repository.store(
             RegistrationSinglesSpecWithDate(
