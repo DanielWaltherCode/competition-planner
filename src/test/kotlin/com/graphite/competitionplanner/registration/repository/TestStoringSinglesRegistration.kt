@@ -19,7 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 
 @SpringBootTest
-class TestRegistrationRepository(
+class TestStoringSinglesRegistration(
     @Autowired val clubRepository: ClubRepository,
     @Autowired val playerRepository: PlayerRepository,
     @Autowired val competitionRepository: CompetitionRepository,
@@ -44,7 +44,7 @@ class TestRegistrationRepository(
     }
 
     @Test
-    fun shouldBeAbleToStoreRegistration() {
+    fun shouldBeAbleToStoreSinglesRegistration() {
         // Setup
         val player = playerRepository.store(dataGenerator.newPlayerSpec(clubId = club.id))
         val spec = dataGenerator.newRegistrationSinglesSpecWithDate(
@@ -54,7 +54,7 @@ class TestRegistrationRepository(
         )
 
         // Act
-        val registration = registrationRepository.store(spec)
+        val registration = registrationRepository.storeSingles(spec)
 
         // Assertions
         Assertions.assertTrue(registration.id > 0)
@@ -100,6 +100,6 @@ class TestRegistrationRepository(
             playerId = player.id,
             competitionCategoryId = competitionCategory.id
         )
-        return registrationRepository.store(spec)
+        return registrationRepository.storeSingles(spec)
     }
 }

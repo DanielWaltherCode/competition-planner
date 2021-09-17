@@ -13,9 +13,7 @@ import com.graphite.competitionplanner.domain.entity.ScheduleSettings
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
-import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesDTO
-import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
-import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpecWithDate
+import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import java.time.LocalDate
@@ -352,6 +350,28 @@ class DataGenerator {
     ) = RegistrationSinglesSpecWithDate(
         date,
         playerId,
+        competitionCategoryId
+    )
+
+    fun newRegistrationDoublesSpec(
+        playerOneId: Int = this.playerId++,
+        playerTwoId: Int = this.playerId++,
+        competitionCategoryId: Int = this.competitionCategoryId++
+    ) = RegistrationDoublesSpec(
+        playerOneId,
+        playerTwoId,
+        competitionCategoryId
+    )
+
+    fun newRegistrationDoublesSpecWithDate(
+        date: LocalDate = LocalDate.now(),
+        playerOneId: Int = this.playerId++,
+        playerTwoId: Int = this.playerId++,
+        competitionCategoryId: Int = this.competitionCategoryId++
+    ) = RegistrationDoublesSpecWithDate(
+        date,
+        playerOneId,
+        playerTwoId,
         competitionCategoryId
     )
 

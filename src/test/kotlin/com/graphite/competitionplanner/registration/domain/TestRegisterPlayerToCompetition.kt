@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.registration.domain
 
+import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.player.domain.FindPlayer
@@ -25,6 +26,9 @@ class TestRegisterPlayerToCompetition {
     fun shouldCheckThatPlayerExist() {
         // Setup
         val spec = dataGenerator.newRegistrationSinglesSpec(playerId = 10)
+        `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
+            dataGenerator.newCompetitionCategoryDTO(
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)))
 
         // Act
         registerPlayer.execute(spec)
@@ -35,9 +39,40 @@ class TestRegisterPlayerToCompetition {
     }
 
     @Test
+    fun shouldThrowExceptionIfCategoryIsNotOfTypeSingles() {
+        // Setup
+        val spec = dataGenerator.newRegistrationSinglesSpec(competitionCategoryId = 333)
+        `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
+            dataGenerator.newCompetitionCategoryDTO(
+                category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES.name)))
+
+        // Act & Assert
+        Assertions.assertThrows(IllegalArgumentException::class.java) {
+            registerPlayer.execute(spec)
+        }
+    }
+
+    @Test
+    fun shouldNotThrowExceptionIfCategoryIsOfTypeSingles() {
+        // Setup
+        val spec = dataGenerator.newRegistrationSinglesSpec(competitionCategoryId = 333)
+        `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
+            dataGenerator.newCompetitionCategoryDTO(
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)))
+
+        // Act & Assert
+        Assertions.assertDoesNotThrow {
+            registerPlayer.execute(spec)
+        }
+    }
+
+    @Test
     fun shouldCheckThatCompetitionCategoryExist() {
         // Setup
         val spec = dataGenerator.newRegistrationSinglesSpec(competitionCategoryId = 333)
+        `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
+            dataGenerator.newCompetitionCategoryDTO(
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)))
 
         // Act
         registerPlayer.execute(spec)
@@ -58,7 +93,7 @@ class TestRegisterPlayerToCompetition {
             registerPlayer.execute(spec)
         }
 
-        verify(repository, never()).store(TestHelper.MockitoHelper.anyObject())
+        verify(repository, never()).storeSingles(TestHelper.MockitoHelper.anyObject())
     }
 
     @Test
@@ -72,19 +107,22 @@ class TestRegisterPlayerToCompetition {
             registerPlayer.execute(spec)
         }
 
-        verify(repository, never()).store(TestHelper.MockitoHelper.anyObject())
+        verify(repository, never()).storeSingles(TestHelper.MockitoHelper.anyObject())
     }
 
     @Test
     fun shouldCallRepository() {
         // Setup
         val spec = dataGenerator.newRegistrationSinglesSpec()
+        `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
+            dataGenerator.newCompetitionCategoryDTO(
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)))
 
         // Act
         registerPlayer.execute(spec)
 
         // Assert
-        verify(repository, times(1)).store(TestHelper.MockitoHelper.anyObject())
+        verify(repository, times(1)).storeSingles(TestHelper.MockitoHelper.anyObject())
     }
 
     @Test
@@ -94,14 +132,16 @@ class TestRegisterPlayerToCompetition {
         // Setup
         val spec = dataGenerator.newRegistrationSinglesSpec(playerId = 53)
         `when`(repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)).thenReturn(listOf(spec.playerId))
+        `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
+            dataGenerator.newCompetitionCategoryDTO(
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)))
 
         // Act
         registerPlayer.execute(spec)
 
         // Assert
-        verify(repository, never()).store(TestHelper.MockitoHelper.anyObject())
+        verify(repository, never()).storeSingles(TestHelper.MockitoHelper.anyObject())
         verify(repository, times(1)).getRegistrationFor(spec)
-        verify(repository, times(1)).getRegistrationFor(TestHelper.MockitoHelper.anyObject())
     }
 
 }

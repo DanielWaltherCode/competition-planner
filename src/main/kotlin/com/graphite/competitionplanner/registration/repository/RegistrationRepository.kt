@@ -1,10 +1,7 @@
 package com.graphite.competitionplanner.registration.repository
 
 import com.graphite.competitionplanner.Tables.*
-import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
-import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesDTO
-import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
-import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpecWithDate
+import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.PlayerRegistration.PLAYER_REGISTRATION
 import com.graphite.competitionplanner.tables.Registration.REGISTRATION
@@ -13,6 +10,7 @@ import com.graphite.competitionplanner.tables.records.PlayerRecord
 import com.graphite.competitionplanner.tables.records.PlayerRegistrationRecord
 import com.graphite.competitionplanner.tables.records.RegistrationRecord
 import org.jooq.DSLContext
+import org.jooq.Record4
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
@@ -111,12 +109,25 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
 
     fun clearPlayingIn() = dslContext.deleteFrom(COMPETITION_CATEGORY_REGISTRATION).execute()
 
-    override fun store(spec: RegistrationSinglesSpecWithDate): RegistrationSinglesDTO {
+    override fun storeSingles(spec: RegistrationSinglesSpecWithDate): RegistrationSinglesDTO {
         val registrationRecord = addRegistration(spec.date)
         registerPlayer(registrationRecord.id, spec.playerId)
         registerInCategory(registrationRecord.id, null, spec.competitionCategoryId)
 
         return RegistrationSinglesDTO(registrationRecord.id, spec.playerId, spec.competitionCategoryId, spec.date)
+    }
+
+    override fun storeDoubles(spec: RegistrationDoublesSpecWithDate): RegistrationDoublesDTO {
+        val registrationRecord = addRegistration(spec.date)
+        registerPlayer(registrationRecord.id, spec.playerOneId)
+        registerPlayer(registrationRecord.id, spec.playerTwoId)
+        registerInCategory(registrationRecord.id, null, spec.competitionCategoryId)
+
+        return RegistrationDoublesDTO(registrationRecord.id,
+            spec.playerOneId,
+            spec.playerTwoId,
+            spec.competitionCategoryId,
+            spec.date)
     }
 
     override fun getAllPlayerIdsRegisteredTo(competitionCategoryId: Int): List<Int> {
@@ -132,15 +143,7 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
     }
 
     override fun getRegistrationFor(spec: RegistrationSinglesSpec): RegistrationSinglesDTO {
-        val record = dslContext.select(REGISTRATION.ID, REGISTRATION.REGISTRATION_DATE, PLAYER_REGISTRATION.PLAYER_ID,
-            COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID)
-            .from(REGISTRATION)
-            .join(PLAYER_REGISTRATION).on(REGISTRATION.ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
-            .join(COMPETITION_CATEGORY_REGISTRATION)
-            .on(REGISTRATION.ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
-            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(spec.competitionCategoryId)
-                .and(PLAYER_REGISTRATION.PLAYER_ID.eq(spec.playerId)))
-            .fetchOne()
+        val record = getRegistration(spec.playerId, spec.competitionCategoryId)
 
         return RegistrationSinglesDTO(
             record.getValue(REGISTRATION.ID),
@@ -148,6 +151,32 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             record.getValue(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID),
             record.getValue(REGISTRATION.REGISTRATION_DATE)
         )
+    }
+
+    override fun getRegistrationFor(spec: RegistrationDoublesSpec): RegistrationDoublesDTO {
+        val registrationOne = getRegistration(spec.playerOneId, spec.competitionCategoryId)
+        val registrationTwo = getRegistration(spec.playerTwoId, spec.competitionCategoryId)
+        return RegistrationDoublesDTO(
+            registrationOne.getValue(REGISTRATION.ID),
+            registrationOne.getValue(PLAYER_REGISTRATION.PLAYER_ID),
+            registrationTwo.getValue(PLAYER_REGISTRATION.PLAYER_ID),
+            registrationOne.getValue(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID),
+            registrationOne.getValue(REGISTRATION.REGISTRATION_DATE))
+    }
+
+    /**
+     * Will return one row as RegistrationId, RegistrationDate, PlayerId, CompetitionCategoryId
+     */
+    private fun getRegistration(playerId: Int, competitionCategoryId: Int): Record4<Int, LocalDate, Int, Int> {
+        return dslContext.select(REGISTRATION.ID, REGISTRATION.REGISTRATION_DATE, PLAYER_REGISTRATION.PLAYER_ID,
+            COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID)
+            .from(REGISTRATION)
+            .join(PLAYER_REGISTRATION).on(REGISTRATION.ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
+            .join(COMPETITION_CATEGORY_REGISTRATION)
+            .on(REGISTRATION.ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
+                .and(PLAYER_REGISTRATION.PLAYER_ID.eq(playerId)))
+            .fetchOne()
     }
 
     // Sets up base registration. Double players playing together will have same registration id

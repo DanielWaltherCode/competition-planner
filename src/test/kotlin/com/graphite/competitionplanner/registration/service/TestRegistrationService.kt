@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.registration.service
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.player.service.PlayerService
+import com.graphite.competitionplanner.registration.domain.RegisterDoubleToCompetition
 import com.graphite.competitionplanner.registration.domain.RegisterPlayerToCompetition
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.util.DataGenerator
@@ -20,12 +21,14 @@ class TestRegistrationService {
     private val mockedPlayerService = mock(PlayerService::class.java)
     private val mockedCompetitionCategoryRepository = mock(CompetitionCategoryRepository::class.java)
     private val mockedRegisterPlayerToCompetition = mock(RegisterPlayerToCompetition::class.java)
+    private val mockedRegisterDoublesToCompetition = mock(RegisterDoubleToCompetition::class.java)
     private val service = RegistrationService(
         mockedRegistrationRepository,
         mockedCompetitionService,
         mockedPlayerService,
         mockedCompetitionCategoryRepository,
-        mockedRegisterPlayerToCompetition
+        mockedRegisterPlayerToCompetition,
+        mockedRegisterDoublesToCompetition
     )
 
     private val dataGenerator = DataGenerator()
