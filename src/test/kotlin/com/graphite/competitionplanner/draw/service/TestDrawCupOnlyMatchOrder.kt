@@ -142,14 +142,14 @@ class TestDrawCupOnlyMatchOrder(
     @AfterEach
     fun removeMatchesAndRegistrations() {
         // Remove matches
-        matchService.deleteMatchesInCategory(competition.id)
+        matchService.deleteMatchesInCategory(competitionCategory.id)
 
         // Remove registrations and delete category
-        val registrationIds = registrationRepository.getRegistrationIdsInCategory(competition.id)
+        val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategory.id)
         for (id in registrationIds) {
             registrationService.unregister(id)
         }
-        competitionCategoryService.deleteCategoryInCompetition(competition.id)
+        competitionCategoryService.deleteCategoryInCompetition(competitionCategory.id)
 
     }
 

@@ -12,6 +12,7 @@ import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.registration.service.RegistrationService
@@ -320,7 +321,7 @@ class DrawService(
 
     fun poolDrawRecordToDTO(poolDrawRecord: PoolDrawRecord): PoolDrawDTO {
         return PoolDrawDTO(
-            registrationService.getPlayersFromRegistrationId(poolDrawRecord.registrationId),
+            registrationService.getPlayersWithClubFromRegistrationId(poolDrawRecord.registrationId),
             poolDrawRecord.playerNumber
         )
     }
@@ -356,7 +357,7 @@ data class SingleGroupDTO(
 // Contains player position in given group. Has no link to matches/results, is only used to display players
 // in correct order when the group is presented
 data class PoolDrawDTO(
-    val playerDTOs: List<PlayerDTO>,
+    val playerDTOs: List<PlayerWithClubDTO>,
     val playerNumber: Int
 )
 

@@ -265,6 +265,7 @@
     "categoryDrawn": "Klassen är nu lottad",
     "categoryDrawDeleted": "Lottningen är borttagen",
     "playerAdded": "Spelare tillagd",
-    "startTimesSet": "Start"
+    "startTimesSet": "Start",
+    "resultRegistered": "Resultatet är sparat"
   }
 }

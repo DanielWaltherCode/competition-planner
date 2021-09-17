@@ -11,6 +11,7 @@ import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import io.swagger.annotations.ApiModelProperty
@@ -55,7 +56,7 @@ class CompetitionOpenApi(
         return drawService.isDrawMade(competitionCategoryId)
     }
     @GetMapping("/{competitionId}/registration/{competitionCategoryId}")
-    fun getPlayersInCategory(@PathVariable competitionCategoryId: Int): List<List<PlayerDTO>> {
+    fun getPlayersInCategory(@PathVariable competitionCategoryId: Int): List<List<PlayerWithClubDTO>> {
         return registrationService.getPlayersInCompetitionCategory(competitionCategoryId)
     }
 

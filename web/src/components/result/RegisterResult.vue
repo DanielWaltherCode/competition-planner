@@ -154,6 +154,7 @@ export default {
       })
       ResultService.updateFullMatchResult(this.selectedMatch.id, {gameList: resultsToSubmit}).then(() => {
         this.$emit("closeAndUpdate", this.selectedMatch.id)
+        this.$toasted.show(this.$tc("toasts.resultRegistered")).goAway(3000)
       }).catch(err => {
         const response = err.response.data
         console.log(response)

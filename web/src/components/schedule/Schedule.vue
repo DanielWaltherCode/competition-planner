@@ -39,11 +39,11 @@
                 </thead>
                 <tbody>
                 <tr v-for="category in categoryStartTimeDTO.categoryStartTimeList" :key="category.id">
-                  <td>{{ category.categoryDTO.name }}</td>
+                  <td>{{ category.categoryDTO.categoryName }}</td>
                   <!-- Select date -->
                   <td>
                     <select id="date-selection" class="form-control"
-                            v-on:change="setStartTime(category)" v-model="category.playingDay">
+                            v-on:change="saveStartTime(category)" v-model="category.playingDay">
                       <option value="null"> {{ $t("schedule.main.notSelected") }}</option>
                       <option v-for="(day, counter) in categoryStartTimeDTO.startTimeFormOptions.availableDays"
                               v-bind:key="counter" :value="getPlayingDate(day)">
@@ -54,10 +54,12 @@
                   <!-- Select interval during day -->
                   <td>
                     <select id="interval-selection" class="form-control"
-                            v-on:change="setStartTime(category)" v-model="category.startInterval">
+                            v-on:change="saveStartTime(category)"
+                            :disabled="category.playingDay === null || category.playingDay === 'null'"
+                            v-model="category.startInterval">
                       <option v-for="(interval, counter) in categoryStartTimeDTO.startTimeFormOptions.startIntervals"
                               v-bind:key="counter" :value="interval"
-                              :disabled="category.playingDay === null || category.playingDay === 'null'">
+                              >
                         {{ getInterval(interval) }}
                       </option>
                     </select>
@@ -65,12 +67,15 @@
                   <!-- Select exact start time -->
                   <td>
                     <vue-timepicker v-model="category.exactStartTime"
-                                    v-on:change="setStartTime(category)"
+                                    v-on:change="saveStartTime(category)"
                                     :disabled="category.startInterval === 'NOT_SELECTED'"></vue-timepicker>
                   </td>
                 </tr>
                 </tbody>
               </table>
+              <div>
+                <button type="button" class="btn btn-primary" @click="saveStartTime">{{$t("general.saveChanges")}}</button>
+              </div>
             </div>
             <!-- General information about competition -->
             <div class="row blue-section p-3">
@@ -252,16 +257,21 @@ export default {
     },
     formattedDate: getFormattedDate,
     formatTime: getHoursMinutes,
-    setStartTime(updatedStartTime) {
-      const exactStartTime = this.getTime(updatedStartTime.exactStartTime)
+    saveStartTime(category) {
+      const exactStartTime = this.getTime(category.exactStartTime)
       const objectToSave = {
-        playingDay: updatedStartTime.playingDay === "null" ? null : updatedStartTime.playingDay,
-        startInterval: updatedStartTime.startInterval,
+        playingDay: category.playingDay === "null" ? null : category.playingDay,
+        startInterval: category.startInterval,
         exactStartTime: exactStartTime,
       }
-      CategoryStartTimeService.updateCategoryStartTime(updatedStartTime.id,
-          this.competition.id, updatedStartTime.categoryDTO.categoryId, objectToSave).then(() => {
+      CategoryStartTimeService.updateCategoryStartTime(category.id,
+          this.competition.id, category.categoryDTO.categoryId, objectToSave).then(() => {
         this.$toasted.show(this.$tc("toasts.startTimesSet")).goAway(3000)
+      })
+    },
+    saveStartTimes() {
+      this.categoryStartTimeDTO.categoryStartTimeList.forEach(category => {
+        this.saveStartTime(category)
       })
     },
     setDailyStartEnd(dailyStartEndObject) {

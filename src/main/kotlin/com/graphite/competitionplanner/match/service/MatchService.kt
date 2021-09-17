@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.draw.service.MatchSpec
 import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.service.CompetitionCategoryDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.result.service.ResultDTO
@@ -79,8 +80,8 @@ class MatchService(
             CompetitionCategoryDTO(record.competitionCategoryId,
                 competitionCategoryRepository.getCategoryType(record.competitionCategoryId).categoryName),
             record.matchType,
-            registrationService.getPlayersFromRegistrationId(record.firstRegistrationId),
-            registrationService.getPlayersFromRegistrationId(record.secondRegistrationId),
+            registrationService.getPlayersWithClubFromRegistrationId(record.firstRegistrationId),
+            registrationService.getPlayersWithClubFromRegistrationId(record.secondRegistrationId),
             record.matchOrderNumber,
             record.groupOrRound,
             registrationService.getPlayersFromRegistrationId(record.winner)
@@ -97,8 +98,8 @@ class MatchService(
             CompetitionCategoryDTO(match.competitionCategoryId,
                 competitionCategoryRepository.getCategoryType(match.competitionCategoryId).categoryName),
             match.matchType,
-            registrationService.getPlayersFromRegistrationId(match.firstRegistrationId),
-            registrationService.getPlayersFromRegistrationId(match.secondRegistrationId),
+            registrationService.getPlayersWithClubFromRegistrationId(match.firstRegistrationId),
+            registrationService.getPlayersWithClubFromRegistrationId(match.secondRegistrationId),
             match.matchOrderNumber,
             match.groupOrRound,
             registrationService.getPlayersFromRegistrationId(match.winner),
@@ -120,8 +121,8 @@ data class MatchDTO(
     val endTime: LocalDateTime?,
     val competitionCategory: CompetitionCategoryDTO,
     val matchType: String,
-    val firstPlayer: List<PlayerDTO>,
-    val secondPlayer: List<PlayerDTO>,
+    val firstPlayer: List<PlayerWithClubDTO>,
+    val secondPlayer: List<PlayerWithClubDTO>,
     val matchOrderNumber: Int,
     val groupOrRound: String, // Either group name (e.g. Group "A") or the round like Round of 64, Quarterfinals
     val winner: List<PlayerDTO>
@@ -133,8 +134,8 @@ data class MatchAndResultDTO(
     val endTime: LocalDateTime?,
     val competitionCategory: CompetitionCategoryDTO,
     val matchType: String,
-    val firstPlayer: List<PlayerDTO>,
-    val secondPlayer: List<PlayerDTO>,
+    val firstPlayer: List<PlayerWithClubDTO>,
+    val secondPlayer: List<PlayerWithClubDTO>,
     val matchOrderNumber: Int,
     val groupOrRound: String, // Either group name (e.g. Group "A") or the round like Round of 64, Quarterfinals
     val winner: List<PlayerDTO>,

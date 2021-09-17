@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.registration.api
 
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
 import com.graphite.competitionplanner.registration.service.RegistrationDoublesDTO
@@ -28,7 +29,7 @@ class CompetitionRegistrationApi(
     }
 
     @GetMapping("/{competitionCategoryId}")
-    fun getPlayersInCategory(@PathVariable competitionCategoryId: Int): List<List<PlayerDTO>> {
+    fun getPlayersInCategory(@PathVariable competitionCategoryId: Int): List<List<PlayerWithClubDTO>> {
         return registrationService.getPlayersInCompetitionCategory(competitionCategoryId)
     }
 

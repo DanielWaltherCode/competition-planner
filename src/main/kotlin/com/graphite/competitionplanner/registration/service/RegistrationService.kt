@@ -4,6 +4,7 @@ import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.player.service.PlayerService
 import com.graphite.competitionplanner.registration.domain.RegisterPlayerToCompetition
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
@@ -43,39 +44,43 @@ class RegistrationService(
         return playerRecords.map { PlayerDTO(it.id, it.firstName, it.lastName, it.clubId, it.dateOfBirth) }
     }
 
+    fun getPlayersWithClubFromRegistrationId(registrationId: Int?): List<PlayerWithClubDTO> {
+        if (registrationId == null) {
+            return emptyList()
+        }
+        val playerRecords = registrationRepository.getPlayersFromRegistrationId(registrationId)
+        return playerRecords.map { playerService.getPlayer(it.id) }
+    }
+
     fun getRegisteredPlayers(competitionId: Int, searchType: String): RegisteredPlayersDTO {
             if (searchType.toUpperCase() == SearchType.NAME.name) {
                 val players = registrationRepository.getRegistrationsInCompetition(competitionId)
-                val initialsAndPlayersMap = mutableMapOf<String, MutableSet<PlayerDTO>>()
+                val initialsAndPlayersMap = mutableMapOf<String, MutableSet<PlayerWithClubDTO>>()
                 for (player in players) {
                     val playerDtoWithClub = playerService.getPlayer(player.id)
-                    val playerDTO = PlayerDTO(playerDtoWithClub.id, playerDtoWithClub.firstName,
-                        playerDtoWithClub.lastName, playerDtoWithClub.club.id, playerDtoWithClub.dateOfBirth)
                     val initial: String = player.lastName[0].toUpperCase() + ""
 
                     // If initial has already been added, add to list. Else create player list and add initial
                     if (initialsAndPlayersMap.containsKey(initial)) {
-                        initialsAndPlayersMap[initial]?.add(playerDTO)
+                        initialsAndPlayersMap[initial]?.add(playerDtoWithClub)
                     } else {
                         initialsAndPlayersMap[initial] = mutableSetOf()
-                        initialsAndPlayersMap[initial]?.add(playerDTO)
+                        initialsAndPlayersMap[initial]?.add(playerDtoWithClub)
                     }
                 }
                 return RegisteredPlayersDTO(SearchType.NAME, initialsAndPlayersMap)
             } else if (searchType.toUpperCase() == SearchType.CLUB.name) {
                 val players = registrationRepository.getRegistrationsInCompetition(competitionId)
-                val clubsAndPlayersMap = mutableMapOf<String, MutableSet<PlayerDTO>>()
+                val clubsAndPlayersMap = mutableMapOf<String, MutableSet<PlayerWithClubDTO>>()
                 for (player in players) {
                     val playerDtoWithClub = playerService.getPlayer(player.id)
-                    val playerDTO = PlayerDTO(playerDtoWithClub.id, playerDtoWithClub.firstName,
-                        playerDtoWithClub.lastName, playerDtoWithClub.club.id, playerDtoWithClub.dateOfBirth)
                     val clubName = playerDtoWithClub.club.name
                     // If initial has already been added, add to list. Else create player list and add initial
                     if (clubsAndPlayersMap.containsKey(clubName)) {
-                        clubsAndPlayersMap[clubName]?.add(playerDTO)
+                        clubsAndPlayersMap[clubName]?.add(playerDtoWithClub)
                     } else {
                         clubsAndPlayersMap[clubName] = mutableSetOf()
-                        clubsAndPlayersMap[clubName]?.add(playerDTO)
+                        clubsAndPlayersMap[clubName]?.add(playerDtoWithClub)
                     }
                 }
                 return RegisteredPlayersDTO(SearchType.CLUB, clubsAndPlayersMap)
@@ -85,19 +90,17 @@ class RegistrationService(
             }
     }
 
-    private fun getPlayersInCategories(competitionId: Int): MutableMap<String, Set<PlayerDTO>> {
-        val groupingAndPlayers = mutableMapOf<String, Set<PlayerDTO>>()
+    private fun getPlayersInCategories(competitionId: Int): MutableMap<String, Set<PlayerWithClubDTO>> {
+        val groupingAndPlayers = mutableMapOf<String, Set<PlayerWithClubDTO>>()
         val playersAndCategories = competitionCategoryRepository.getCategoriesAndPlayers(competitionId)
         val uniqueCategories = playersAndCategories.map { it.categoryName }.distinct()
 
         for (category in uniqueCategories) {
-            val registeredPlayers = mutableSetOf<PlayerDTO>()
+            val registeredPlayers = mutableSetOf<PlayerWithClubDTO>()
             for (entry in playersAndCategories) {
                 if (entry.categoryName == category) {
                     val playerDtoWithClub = playerService.getPlayer(entry.playerId)
-                    val playerDTO = PlayerDTO(playerDtoWithClub.id, playerDtoWithClub.firstName,
-                        playerDtoWithClub.lastName, playerDtoWithClub.club.id, playerDtoWithClub.dateOfBirth)
-                    registeredPlayers.add(playerDTO)
+                    registeredPlayers.add(playerDtoWithClub)
                 }
             }
             groupingAndPlayers[category] = registeredPlayers
@@ -124,17 +127,13 @@ class RegistrationService(
                 )
             )
         }
-        return PlayerCompetitionDTO(player = PlayerDTO(player.id,
-            player.firstName,
-            player.lastName,
-            player.club.id,
-            player.dateOfBirth),
+        return PlayerCompetitionDTO(player = player,
             competitionsAndCategories = playerCompetitions)
     }
 
-    fun getPlayersInCompetitionCategory(competitionCategoryId: Int): List<List<PlayerDTO>> {
+    fun getPlayersInCompetitionCategory(competitionCategoryId: Int): List<List<PlayerWithClubDTO>> {
         val registrationIds = competitionCategoryRepository.getRegistrationsInCategory(competitionCategoryId)
-        return registrationIds.map{getPlayersFromRegistrationId(it)}
+        return registrationIds.map{getPlayersWithClubFromRegistrationId(it)}
     }
 
     fun getSeed(): Int {
@@ -157,7 +156,7 @@ data class RegistrationDoublesDTO(
 
 
 data class PlayerCompetitionDTO(
-    val player: PlayerDTO,
+    val player: PlayerWithClubDTO,
     val competitionsAndCategories: List<CompetitionAndCategoriesDTO>
 )
 
@@ -168,7 +167,7 @@ data class CompetitionAndCategoriesDTO(
 
 data class RegisteredPlayersDTO(
     val groupingType: SearchType,
-    val groupingsAndPlayers: Map<String, Set<PlayerDTO>>
+    val groupingsAndPlayers: Map<String, Set<PlayerWithClubDTO>>
 )
 
 
@@ -179,7 +178,7 @@ data class CompetitionRegistrationsDTO(
 
 data class CategoryRegistrations(
     val category: CompetitionCategoryDTO,
-    val registeredPlayers: List<PlayerDTO>
+    val registeredPlayers: List<PlayerWithClubDTO>
 )
 
 data class CompetitionCategoryDTO(
