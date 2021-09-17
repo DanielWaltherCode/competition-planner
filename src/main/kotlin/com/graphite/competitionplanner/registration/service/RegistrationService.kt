@@ -6,7 +6,10 @@ import com.graphite.competitionplanner.competitioncategory.repository.Competitio
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.player.service.PlayerService
+import com.graphite.competitionplanner.registration.domain.RegisterDoubleToCompetition
 import com.graphite.competitionplanner.registration.domain.RegisterPlayerToCompetition
+import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesDTO
+import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesSpec
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import org.springframework.http.HttpStatus
@@ -20,12 +23,17 @@ class RegistrationService(
     val competitionService: CompetitionService,
     val playerService: PlayerService,
     val competitionCategoryRepository: CompetitionCategoryRepository,
-    val registerPlayerToCompetition: RegisterPlayerToCompetition
+    val registerPlayerToCompetition: RegisterPlayerToCompetition,
+    val registerDoubleToCompetition: RegisterDoubleToCompetition
 ) {
 
     fun registerPlayerSingles(spec: RegistrationSinglesSpec): Int {
         val registration = registerPlayerToCompetition.execute(spec)
         return registration.id
+    }
+
+    fun registerPlayersDoubles(spec: RegistrationDoublesSpec): RegistrationDoublesDTO {
+        return registerDoubleToCompetition.execute(spec)
     }
 
     fun unregister(registrationId: Int): Boolean {
@@ -140,20 +148,6 @@ class RegistrationService(
         return Random.nextInt(0, 16)
     }
 }
-
-data class RegistrationSinglesDTO(
-    val id: Int?,
-    val playerId: Int,
-    val competitionCategoryId: Int
-)
-
-data class RegistrationDoublesDTO(
-    val id: Int?,
-    val firstPlayerId: Int,
-    val secondPlayerId: Int,
-    val competitionCategoryId: Int
-)
-
 
 data class PlayerCompetitionDTO(
     val player: PlayerWithClubDTO,

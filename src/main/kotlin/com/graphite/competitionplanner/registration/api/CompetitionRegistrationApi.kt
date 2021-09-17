@@ -1,11 +1,11 @@
 package com.graphite.competitionplanner.registration.api
 
 import com.graphite.competitionplanner.competition.service.CompetitionService
-import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesDTO
+import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesSpec
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
-import com.graphite.competitionplanner.registration.service.RegistrationDoublesDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import io.swagger.annotations.ApiModelProperty
 import org.springframework.web.bind.annotation.*
@@ -40,9 +40,8 @@ class CompetitionRegistrationApi(
     }
 
     @PostMapping("/doubles")
-    fun registerPlayerDoubles(registrationDoublesDTO: RegistrationDoublesDTO): Boolean {
-        // TODO:  Implement
-        return true
+    fun registerPlayerDoubles(spec: RegistrationDoublesSpec): RegistrationDoublesDTO {
+        return registrationService.registerPlayersDoubles(spec) // TODO: Return doubles dto
     }
 
     @DeleteMapping("/{registrationId}")
