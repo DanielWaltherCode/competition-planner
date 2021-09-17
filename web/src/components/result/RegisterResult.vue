@@ -6,7 +6,7 @@
       <thead>
       <tr>
         <th class="col-3 col-sm-4"></th>
-        <th v-for="set in matchRules.nrSets" :key="set" class="col-auto">{{ set }}</th>
+        <th v-for="set in matchRules.numberOfSets" :key="set" class="col-auto">{{ set }}</th>
       </tr>
       </thead>
       <tbody>
@@ -111,7 +111,7 @@ export default {
         if (counter === undefined) {
           counter = 0
         }
-        while (counter < this.matchRules.nrSets) {
+        while (counter < this.matchRules.numberOfSets) {
           this.addGame()
           counter++
         }
@@ -134,6 +134,7 @@ export default {
       })
       ResultService.addPartialResult(this.selectedMatch.id, {gameList: resultsToSubmit}).then(() => {
         this.$emit("closeAndUpdate", this.selectedMatch.id)
+        this.$toasted.show(this.$tc("toasts.temporaryResultRegistered")).goAway(3000)
       }).catch(err => {
         console.log(err.data)
       })

@@ -266,6 +266,7 @@
     "categoryDrawDeleted": "Lottningen är borttagen",
     "playerAdded": "Spelare tillagd",
     "startTimesSet": "Start",
-    "resultRegistered": "Resultatet är sparat"
+    "resultRegistered": "Resultatet är sparat",
+    "temporaryResultRegistered": "Tillfälligt resultatet är sparat"
   }
 }
