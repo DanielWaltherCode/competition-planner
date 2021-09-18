@@ -28,6 +28,16 @@ interface IPlayerRepository {
     fun findById(id: Int): PlayerDTO
 
     /**
+     * Return the players that have the given ids
+     *
+     * Any id that does not match an actual player will be ignored.
+     *
+     * @param playerIds Ids of the players
+     * @return List of players
+     */
+    fun findAllForIds(playerIds: List<Int>): List<PlayerWithClubDTO>
+
+    /**
      * Return a list of players where the first name or last name
      * starts with the given search string
      *

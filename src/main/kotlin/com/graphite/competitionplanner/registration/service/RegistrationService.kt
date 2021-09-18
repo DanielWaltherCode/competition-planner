@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.registration.service
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
+import com.graphite.competitionplanner.player.domain.FindPlayer
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.player.service.PlayerService
@@ -26,7 +27,8 @@ class RegistrationService(
     val registerPlayerToCompetition: RegisterPlayerToCompetition,
     val registerDoubleToCompetition: RegisterDoubleToCompetition,
     val unregister: Unregister,
-    val getPlayersFromRegistration: GetPlayersFromRegistration
+    val getPlayersFromRegistration: GetPlayersFromRegistration,
+    val findPlayer: FindPlayer
 ) {
 
     fun registerPlayerSingles(spec: RegistrationSinglesSpec): Int {
@@ -50,12 +52,13 @@ class RegistrationService(
         return getPlayersFromRegistration.execute(registrationId)
     }
 
+    // TODO: Make this function take a non-nullable input
     fun getPlayersWithClubFromRegistrationId(registrationId: Int?): List<PlayerWithClubDTO> {
         if (registrationId == null) {
             return emptyList()
         }
-        val playerRecords = registrationRepository.getPlayersFromRegistrationId(registrationId)
-        return playerRecords.map { playerService.getPlayer(it.id) }
+        val players = getPlayersFromRegistration.execute(registrationId)
+        return findPlayer.byIds(players.map { it.id })
     }
 
     fun getRegisteredPlayers(competitionId: Int, searchType: String): RegisteredPlayersDTO {

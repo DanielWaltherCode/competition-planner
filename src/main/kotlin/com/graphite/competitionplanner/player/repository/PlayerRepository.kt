@@ -108,6 +108,12 @@ class PlayerRepository(val dslContext: DSLContext) : IPlayerRepository {
         }
     }
 
+    override fun findAllForIds(playerIds: List<Int>): List<PlayerWithClubDTO> {
+        val records =
+            dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(PLAYER.ID.`in`(playerIds))
+        return records.map { transformIntoPlayerWithClubDto(it) }
+    }
+
     override fun findByName(startOfName: String): List<PlayerWithClubDTO> {
         val records = dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(
             PLAYER.FIRST_NAME.startsWithIgnoreCase(startOfName)
