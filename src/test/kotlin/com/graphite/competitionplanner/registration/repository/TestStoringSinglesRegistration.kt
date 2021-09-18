@@ -52,8 +52,8 @@ class TestStoringSinglesRegistration(
     @Test
     fun shouldReturnPlayerIdsForTheGivenCompetitionCategory() {
         // Setup
-        val registrationOne = setupRegisterPlayer()
-        val registrationTwo = setupRegisterPlayer()
+        val registrationOne = setupSingleRegistration()
+        val registrationTwo = setupSingleRegistration()
 
         // Act
         val playerIds = registrationRepository.getAllPlayerIdsRegisteredTo(competitionCategory.id)
@@ -66,7 +66,7 @@ class TestStoringSinglesRegistration(
     @Test
     fun shouldBeAbleToGetExistingRegistration() {
         // Setup
-        val expected = setupRegisterPlayer()
+        val expected = setupSingleRegistration()
 
         // Act
         val actual = registrationRepository.getRegistrationFor(

@@ -153,6 +153,16 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             registrationOne.getValue(REGISTRATION.REGISTRATION_DATE))
     }
 
+    override fun getRegistrationsIn(competitionCategoryId: Int): List<RegistrationDTO> {
+        val records = dslContext.select()
+            .from(REGISTRATION)
+            .join(COMPETITION_CATEGORY_REGISTRATION)
+            .on(REGISTRATION.ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+            .fetchInto(REGISTRATION)
+        return records.map { RegistrationDTO(it.id, it.registrationDate) }
+    }
+
     override fun getPlayersFrom(registrationId: Int): List<PlayerDTO> {
         val records = dslContext.select().from(REGISTRATION).join(PLAYER_REGISTRATION).on(REGISTRATION.ID.eq(
             PLAYER_REGISTRATION.REGISTRATION_ID)).join(PLAYER).on(PLAYER_REGISTRATION.PLAYER_ID.eq(PLAYER.ID)).where(

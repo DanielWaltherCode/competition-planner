@@ -38,6 +38,14 @@ interface IRegistrationRepository {
     fun getRegistrationFor(spec: RegistrationDoublesSpec): RegistrationDoublesDTO
 
     /**
+     * Return the registrations for the given competition category.
+     *
+     * @param competitionCategoryId Id of the competition category
+     * @return A list of registrations
+     */
+    fun getRegistrationsIn(competitionCategoryId: Int): List<RegistrationDTO>
+
+    /**
      * Return the players that are associated with the given registration id.
      *
      * If the registration id does not exist, then this function

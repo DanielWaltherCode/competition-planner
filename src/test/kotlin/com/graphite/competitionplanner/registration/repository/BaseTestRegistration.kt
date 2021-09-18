@@ -51,7 +51,7 @@ open class BaseTestRegistration(
         return registrationRepository.storeDoubles(spec)
     }
 
-    protected fun setupRegisterPlayer(): RegistrationSinglesDTO {
+    protected fun setupSingleRegistration(): RegistrationSinglesDTO {
         val player = playerRepository.store(dataGenerator.newPlayerSpec(clubId = club.id))
         val spec = dataGenerator.newRegistrationSinglesSpecWithDate(
             date = LocalDate.now(),
