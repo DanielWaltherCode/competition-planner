@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.registration.repository
 
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.PlayerRegistration.PLAYER_REGISTRATION
@@ -150,6 +151,15 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             registrationTwo.getValue(PLAYER_REGISTRATION.PLAYER_ID),
             registrationOne.getValue(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID),
             registrationOne.getValue(REGISTRATION.REGISTRATION_DATE))
+    }
+
+    override fun getPlayersFrom(registrationId: Int): List<PlayerDTO> {
+        val records = dslContext.select().from(REGISTRATION).join(PLAYER_REGISTRATION).on(REGISTRATION.ID.eq(
+            PLAYER_REGISTRATION.REGISTRATION_ID)).join(PLAYER).on(PLAYER_REGISTRATION.PLAYER_ID.eq(PLAYER.ID)).where(
+            REGISTRATION.ID.eq(registrationId)).fetchInto(
+            PLAYER)
+
+        return records.map { PlayerDTO(it.id, it.firstName, it.lastName, it.clubId, it.dateOfBirth) }
     }
 
     @Throws(NotFoundException::class)
