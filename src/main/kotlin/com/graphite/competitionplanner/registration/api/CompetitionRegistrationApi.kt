@@ -45,8 +45,8 @@ class CompetitionRegistrationApi(
     }
 
     @DeleteMapping("/{registrationId}")
-    fun deleteRegistration(@PathVariable registrationId: Int): Boolean {
-        return registrationService.unregister(registrationId)
+    fun deleteRegistration(@PathVariable registrationId: Int) {
+        registrationService.unregister(registrationId)
     }
 }
 

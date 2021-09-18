@@ -1,5 +1,7 @@
 package com.graphite.competitionplanner.registration.interfaces
 
+import com.graphite.competitionplanner.common.exception.NotFoundException
+
 
 interface IRegistrationRepository {
 
@@ -33,4 +35,12 @@ interface IRegistrationRepository {
      * Return the registration for the given player and competition category
      */
     fun getRegistrationFor(spec: RegistrationDoublesSpec): RegistrationDoublesDTO
+
+    /**
+     * Remove the registration with the given Id
+     *
+     * @throws NotFoundException If a registration with the given id does not exist
+     */
+    @Throws(NotFoundException::class)
+    fun remove(registrationId: Int)
 }
