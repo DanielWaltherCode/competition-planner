@@ -1,6 +1,8 @@
 package com.graphite.competitionplanner.util
 
 import org.mockito.Mockito
+import java.time.Duration
+import java.time.Instant
 
 class TestHelper {
     object MockitoHelper {
@@ -13,5 +15,18 @@ class TestHelper {
 
         @Suppress("UNCHECKED_CAST")
         fun <T> uninitialized(): T = null as T
+    }
+
+    object Benchmark {
+        fun realtime(body: () -> Unit): Duration {
+            val start = Instant.now()
+            var end: Instant
+            try {
+                body()
+            } finally {
+                end = Instant.now()
+            }
+            return Duration.between(start, end)
+        }
     }
 }
