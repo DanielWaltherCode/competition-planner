@@ -77,6 +77,7 @@ class DrawService(
         val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
         val playerList = mutableMapOf<Int, List<PlayerDTO>>()
         for (id in registrationIds) {
+            // TODO: Remove this N+1 query, we should make a repository function that takes an array of registration ids instead
             playerList[id] = registrationService.getPlayersFromRegistrationId(id)
         }
 
@@ -212,6 +213,7 @@ class DrawService(
         for (key in groupMap.keys) {
             playerGroups[key] = mutableListOf()
             for (registrationId in groupMap[key]!!) {
+                // TODO: Remove this N+1 query, we should make a repository function that takes an array of registration ids instead
                 val players = registrationService.getPlayersFromRegistrationId(registrationId)
                 if (players.size > 1) {
                     println("Warning, more than one player returned for singles")

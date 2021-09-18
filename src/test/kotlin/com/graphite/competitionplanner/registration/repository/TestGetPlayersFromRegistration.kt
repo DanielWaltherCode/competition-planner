@@ -2,7 +2,6 @@ package com.graphite.competitionplanner.registration.repository
 
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.repository.ClubRepository
-import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.player.repository.PlayerRepository
@@ -13,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TestRemoveRegistration(
+class TestGetPlayersFromRegistration(
     @Autowired clubRepository: ClubRepository,
     @Autowired playerRepository: PlayerRepository,
     @Autowired competitionRepository: CompetitionRepository,
@@ -30,37 +29,40 @@ class TestRemoveRegistration(
 ) {
 
     @Test
-    fun shouldThrowNotFoundIfRegistrationIdCannotBeFound() {
-        Assertions.assertThrows(NotFoundException::class.java) {
-            registrationRepository.remove(-1)
-        }
-    }
-
-    @Test
-    fun shouldBeAbleToRemoveDoublesRegistration() {
+    fun shouldBeAbleToGetPlayersFromDoublesRegistration() {
         // Setup
         val registration = setupDoubleRegistration()
 
         // Act
-        registrationRepository.remove(registration.id)
+        val players = registrationRepository.getPlayersFrom(registration.id)
 
         // Assert
-        Assertions.assertThrows(NotFoundException::class.java) {
-            registrationRepository.remove(registration.id)
-        }
+        Assertions.assertTrue(players.size == 2, "Expected to find exactly two players. Found ${players.size} players")
+        val playerIds = players.map { it.id }
+        Assertions.assertTrue(playerIds.contains(registration.playerOneId))
+        Assertions.assertTrue(playerIds.contains(registration.playerTwoId))
     }
 
     @Test
-    fun shouldBeAbleToRemoveSinglesRegistration() {
+    fun shouldBeAbleToGetPlayersFromSinglesRegistration() {
         // Setup
         val registration = setupRegisterPlayer()
 
         // Act
-        registrationRepository.remove(registration.id)
+        val players = registrationRepository.getPlayersFrom(registration.id)
 
         // Assert
-        Assertions.assertThrows(NotFoundException::class.java) {
-            registrationRepository.remove(registration.id)
-        }
+        Assertions.assertTrue(players.size == 1, "Expected to find only one player. Found ${players.size} players")
+        Assertions.assertEquals(registration.playerId, players.first().id)
+    }
+
+    @Test
+    fun shouldReturnEmptyListIfRegistrationIdDoesNotExist() {
+        // Act
+        val players = registrationRepository.getPlayersFrom(-3)
+
+        // Assert
+        Assertions.assertTrue(players.isEmpty(), "Expected to not get any players")
     }
 }
+

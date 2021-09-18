@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.registration.interfaces
 
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 
 
 interface IRegistrationRepository {
@@ -35,6 +36,16 @@ interface IRegistrationRepository {
      * Return the registration for the given player and competition category
      */
     fun getRegistrationFor(spec: RegistrationDoublesSpec): RegistrationDoublesDTO
+
+    /**
+     * Return the players that are associated with the given registration id.
+     *
+     * If the registration id does not exist, then this function
+     * will return an empty list.
+     *
+     * @return A list of player objects.
+     */
+    fun getPlayersFrom(registrationId: Int): List<PlayerDTO>
 
     /**
      * Remove the registration with the given Id
