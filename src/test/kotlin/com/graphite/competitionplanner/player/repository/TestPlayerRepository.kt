@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.util.DataGenerator
+import io.jsonwebtoken.lang.Assert
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -133,6 +134,35 @@ class TestPlayerRepository(
 
         // Clean up
         playerRepository.delete(player.id)
+    }
+
+    @Test
+    fun shouldIgnorePlayerIdsThatDoesNotExist() {
+        // Act
+        val result = playerRepository.findAllForIds(listOf(-1, -3))
+
+        // Assert
+        Assert.isTrue(result.isEmpty())
+    }
+
+    @Test
+    fun shouldReturnAllPlayersWithGivenIds() {
+        // Setup
+        val player1 = playerRepository.store(dataGenerator.newPlayerSpec("Lasse", "Nilsson", club.id))
+        val player2 = playerRepository.store(dataGenerator.newPlayerSpec("Lasse", "Nilsson", club.id))
+
+        // Act
+        val players = playerRepository.findAllForIds(listOf(player1.id, player2.id))
+
+        // Assert
+        val playerIds = players.map { it.id }
+        Assertions.assertTrue(playerIds.size == 2)
+        Assertions.assertTrue(playerIds.contains(player1.id))
+        Assertions.assertTrue(playerIds.contains(player2.id))
+
+        // Clean up
+        playerRepository.delete(player1.id)
+        playerRepository.delete(player2.id)
     }
 
     @Test

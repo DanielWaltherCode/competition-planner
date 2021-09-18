@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class FindPlayer(
-    val playerRepository: IPlayerRepository,
+    val repository: IPlayerRepository,
     val findClub: FindClub
 ) {
 
@@ -19,12 +19,17 @@ class FindPlayer(
      */
     @Throws(NotFoundException::class)
     fun byId(id: Int): PlayerWithClubDTO {
-        val player = playerRepository.findById(id)
+        val player = repository.findById(id)
         val club = findClub.byId(player.clubId)
         return PlayerWithClubDTO(player.id, player.firstName, player.lastName, club, player.dateOfBirth)
     }
 
-    fun byPartName(partName: String): List<PlayerWithClubDTO> {
-        return playerRepository.findByName(partName)
+    fun byIds(playerIds: List<Int>): List<PlayerWithClubDTO> {
+        return repository.findAllForIds(playerIds)
     }
+
+    fun byPartName(partName: String): List<PlayerWithClubDTO> {
+        return repository.findByName(partName)
+    }
+
 }
