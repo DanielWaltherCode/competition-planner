@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.registration.repository
 
 import com.graphite.competitionplanner.Tables.*
+import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.PlayerRegistration.PLAYER_REGISTRATION
@@ -25,11 +26,7 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         return registration
     }
 
-    fun deleteRegistration(registrationId: Int): Boolean {
-        return dslContext.deleteFrom(REGISTRATION).where(REGISTRATION.ID.eq(registrationId)).execute() > 0
-    }
-
-    fun clearRegistration() = dslContext.deleteFrom(REGISTRATION).execute()
+    internal fun clearRegistration() = dslContext.deleteFrom(REGISTRATION).execute()
 
     // Links player to registration
     fun registerPlayer(registrationId: Int, playerId: Int): PlayerRegistrationRecord {
@@ -71,15 +68,6 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             .from(COMPETITION_CATEGORY_REGISTRATION)
             .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
             .fetchInto(Int::class.java)
-    }
-
-    fun getRegisteredPlayersInCategory(competitionCategoryId: Int): List<PlayerRecord> {
-        return dslContext.select()
-            .from(COMPETITION_CATEGORY_REGISTRATION)
-            .join(PLAYER_REGISTRATION).on(PLAYER_REGISTRATION.REGISTRATION_ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
-            .join(PLAYER).on(PLAYER.ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
-            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
-            .fetchInto(PLAYER)
     }
 
     fun getPlayersFromRegistrationId(registrationId: Int): List<PlayerRecord> {
@@ -162,6 +150,14 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             registrationTwo.getValue(PLAYER_REGISTRATION.PLAYER_ID),
             registrationOne.getValue(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID),
             registrationOne.getValue(REGISTRATION.REGISTRATION_DATE))
+    }
+
+    @Throws(NotFoundException::class)
+    override fun remove(registrationId: Int) {
+        val success = dslContext.deleteFrom(REGISTRATION).where(REGISTRATION.ID.eq(registrationId)).execute() > 0
+        if (!success) {
+            throw NotFoundException("Could not delete. The registration with id $registrationId was not found.")
+        }
     }
 
     /**

@@ -8,13 +8,12 @@ import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.player.service.PlayerService
 import com.graphite.competitionplanner.registration.domain.RegisterDoubleToCompetition
 import com.graphite.competitionplanner.registration.domain.RegisterPlayerToCompetition
+import com.graphite.competitionplanner.registration.domain.Unregister
 import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesDTO
 import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesSpec
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
-import org.springframework.web.server.ResponseStatusException
 import kotlin.random.Random
 
 @Service
@@ -24,7 +23,8 @@ class RegistrationService(
     val playerService: PlayerService,
     val competitionCategoryRepository: CompetitionCategoryRepository,
     val registerPlayerToCompetition: RegisterPlayerToCompetition,
-    val registerDoubleToCompetition: RegisterDoubleToCompetition
+    val registerDoubleToCompetition: RegisterDoubleToCompetition,
+    val unregister: Unregister
 ) {
 
     fun registerPlayerSingles(spec: RegistrationSinglesSpec): Int {
@@ -36,12 +36,8 @@ class RegistrationService(
         return registerDoubleToCompetition.execute(spec)
     }
 
-    fun unregister(registrationId: Int): Boolean {
-        val successfulDelete = registrationRepository.deleteRegistration(registrationId)
-        if (!successfulDelete) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "No registration with id $registrationId found")
-        }
-        return true
+    fun unregister(registrationId: Int) {
+        unregister.execute(registrationId)
     }
 
     fun getPlayersFromRegistrationId(registrationId: Int?): List<PlayerDTO> {
