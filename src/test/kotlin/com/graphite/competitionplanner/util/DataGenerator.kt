@@ -214,6 +214,16 @@ class DataGenerator {
         date
     )
 
+    fun newRegistrationRankDTO(
+        id: Int = this.registrationId++,
+        competitionCategoryId: Int = this.competitionCategoryId++,
+        rank: Int = 99
+    ) = RegistrationRankDTO(
+        id,
+        competitionCategoryId,
+        rank
+    )
+
     fun newCompetitionCategoryUpdateSpec(
         settings: GeneralSettingsSpec = newGeneralSettingsSpec(),
         gameSettings: GameSettingsSpec = newGameSettingsSpec()
