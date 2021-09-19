@@ -1,18 +1,20 @@
 package com.graphite.competitionplanner.registration.repository
 
 import com.graphite.competitionplanner.Tables.*
+import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.PlayerRegistration.PLAYER_REGISTRATION
 import com.graphite.competitionplanner.tables.Registration.REGISTRATION
-import com.graphite.competitionplanner.tables.records.CompetitionCategoryRegistrationRecord
-import com.graphite.competitionplanner.tables.records.PlayerRecord
-import com.graphite.competitionplanner.tables.records.PlayerRegistrationRecord
-import com.graphite.competitionplanner.tables.records.RegistrationRecord
+import com.graphite.competitionplanner.tables.records.*
 import org.jooq.DSLContext
 import org.jooq.Record4
+import org.jooq.TableField
+import org.jooq.impl.DSL.partitionBy
+import org.jooq.impl.DSL.sum
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
@@ -177,6 +179,38 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         val success = dslContext.deleteFrom(REGISTRATION).where(REGISTRATION.ID.eq(registrationId)).execute() > 0
         if (!success) {
             throw NotFoundException("Could not delete. The registration with id $registrationId was not found.")
+        }
+    }
+
+    override fun getRegistrationRank(competitionCategory: CompetitionCategoryDTO): List<RegistrationRankDTO> {
+        val rankFieldName = "rank"
+        val records = dslContext.select(
+            REGISTRATION.ID,
+            COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID,
+            sum(getRankField(competitionCategory.category)).over(partitionBy(REGISTRATION.ID)).`as`(rankFieldName))
+            .distinctOn(REGISTRATION.ID)
+            .from(REGISTRATION)
+            .join(COMPETITION_CATEGORY_REGISTRATION)
+            .on(REGISTRATION.ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+            .join(PLAYER_REGISTRATION).on(REGISTRATION.ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
+            .join(PLAYER_RANKING).on(PLAYER_RANKING.PLAYER_ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
+            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategory.id))
+            .fetch()
+
+        return records.map {
+            RegistrationRankDTO(
+                it.getValue(REGISTRATION.ID),
+                it.getValue(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID),
+                it.getValue(rankFieldName).toString().toInt()
+            )
+        }
+    }
+
+    private fun getRankField(category: CategorySpec): TableField<PlayerRankingRecord, Int>? {
+        return if (category.type == "DOUBLES") {
+            PLAYER_RANKING.RANK_DOUBLE
+        } else {
+            PLAYER_RANKING.RANK_SINGLE
         }
     }
 

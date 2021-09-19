@@ -19,8 +19,8 @@ open class BaseTestRegistration(
     val clubRepository: ClubRepository,
     val playerRepository: PlayerRepository,
     val competitionRepository: CompetitionRepository,
-    private val categoryRepository: CategoryRepository,
-    private val competitionCategoryRepository: CompetitionCategoryRepository,
+    val categoryRepository: CategoryRepository,
+    val competitionCategoryRepository: CompetitionCategoryRepository,
     val registrationRepository: IRegistrationRepository
 ) {
 
@@ -33,6 +33,10 @@ open class BaseTestRegistration(
     fun setup() {
         club = clubRepository.store(dataGenerator.newClubSpec())
         competition = competitionRepository.store(dataGenerator.newCompetitionSpec(organizingClubId = club.id))
+        setupCompetitionCategory()
+    }
+
+    open fun setupCompetitionCategory() {
         val category = categoryRepository.getAvailableCategories().first()
         competitionCategory = competitionCategoryRepository.store(
             competitionId = competition.id,

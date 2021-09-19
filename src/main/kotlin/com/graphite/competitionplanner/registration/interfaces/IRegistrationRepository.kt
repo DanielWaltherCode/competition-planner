@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.registration.interfaces
 
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 
 
@@ -62,4 +63,9 @@ interface IRegistrationRepository {
      */
     @Throws(NotFoundException::class)
     fun remove(registrationId: Int)
+
+    /**
+     * Return the rankings of each registration for the given competition category
+     */
+    fun getRegistrationRank(competitionCategory: CompetitionCategoryDTO): List<RegistrationRankDTO>
 }
