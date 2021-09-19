@@ -10,8 +10,11 @@ const CategoryService = {
     getCompetitionCategories(competitionId) {
         return Axios.get(`/competition/${competitionId}/category`, {withCredentials: true})
     },
-    updateCompetitionCategory(competitionId, competitionCategory) {
-        return Axios.put(`/competition/${competitionId}/category/${competitionCategory.id}`, competitionCategory, {withCredentials: true})
+    updateCompetitionCategory(competitionId, competitionCategoryId, updatedCategory) {
+        return Axios.put(`/competition/${competitionId}/category/${competitionCategoryId}`, updatedCategory, {withCredentials: true})
+    },
+    deleteCompetitionCategory(competitionId, competitionCategoryId) {
+        return Axios.delete(`/competition/${competitionId}/category/${competitionCategoryId}`, {withCredentials: true})
     },
 
     // Category general settings

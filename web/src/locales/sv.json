@@ -68,6 +68,7 @@
     "noCategories": "Inga klasser är skapade än så länge",
     "createNew": "Skapa ny klass",
     "addClass": "Lägg till klassen",
+    "delete": "Ta bort klassen",
     "alreadyAddedCategories": "Tillagda klasser",
     "chooseClass": "Välj klass"
   },
@@ -232,7 +233,7 @@
     "category": "Klass",
     "result": "Resultat",
     "register": "Registrera",
-    "update": "Uppdatera result",
+    "update": "Uppdatera resultat",
     "round": "Grupp/runda",
     "group": "Pool",
     "modal": {
@@ -261,8 +262,9 @@
   "toasts": {
     "competitionAdded": "Tävlingen är skapad. Du kan nu gå vidare till nästa steg.",
     "competitionUpdated": "Tävlingen uppdaterades",
-    "categoryUpdate": "Klassen är uppdaterad",
+    "categoryUpdated": "Klassen är uppdaterad",
     "categoryDrawn": "Klassen är nu lottad",
+    "categoryDeleted": "Klassen är borttagen",
     "categoryDrawDeleted": "Lottningen är borttagen",
     "playerAdded": "Spelare tillagd",
     "startTimesSet": "Start",

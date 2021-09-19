@@ -29,9 +29,13 @@ class CompetitionCategoryApi(
         return competitionCategoryService.getCompetitionCategoriesFor(competitionId)
     }
 
-    @DeleteMapping("/{competitionCategoryId}")
+    @DeleteMapping("/{competitionCategoryId}/cancel")
     fun cancelCompetitionCategory(@PathVariable competitionId: Int, @PathVariable competitionCategoryId: Int) {
         return competitionCategoryService.cancelCategoryInCompetition(competitionCategoryId)
+    }
+    @DeleteMapping("/{competitionCategoryId}")
+    fun deleteCompetitionCategory(@PathVariable competitionId: Int, @PathVariable competitionCategoryId: Int) {
+        return competitionCategoryService.deleteCategoryInCompetition(competitionCategoryId)
     }
 
     @PutMapping("/{competitionCategoryId}")

@@ -32,7 +32,7 @@
       </div>
 
       <!-- Main -->
-        <div v-if="activeCategory !== null" class="col-6 pt-5 ps-md-5">
+        <div v-if="activeCategory !== null" class="col-md-9 pt-5 ps-md-5">
           <h2> {{activeCategory.name}}</h2>
           <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
@@ -46,14 +46,22 @@
               </button>
             </li>
           </ul>
-          <form class="text-start row">
+          <div class="text-start row">
             <div class="tab-content" id="myTabContent">
+
+              <h2 class="p-3">{{activeCategory.category.name}}</h2>
+              <div class="d-flex col-12 p-2 justify-content-end">
+                <div class="p-2 border border-1 rounded">
+                  <button class="btn btn-primary m-1" type="button" @click="save">{{ $t("general.saveChanges") }}</button>
+                  <button class="btn btn-danger" type="button" @click="deleteCategory">{{ $t("categories.delete") }}</button>
+                </div>
+              </div>
               <CategoryGeneralSettings v-if="displayChoice === 'SETTINGS'"
                                        :category="activeCategory"></CategoryGeneralSettings>
               <CategoryGameSettings v-if="displayChoice === 'GAME_RULES'"
                                     :category="activeCategory"></CategoryGameSettings>
             </div>
-          </form>
+          </div>
         </div>
         <div v-else class="col justify-content-center">
           <h3 class="text-dark p-4">{{ $t("categories.noCategories") }}</h3>
@@ -89,7 +97,6 @@ export default {
     }
   },
   mounted() {
-    this.competitionCategories = []
     // Fetch categories already set up in the competition
     CategoryService.getCompetitionCategories(this.competition.id).then(res => {
       this.competitionCategories = res.data
@@ -118,6 +125,22 @@ export default {
         this.newCategory = null
       })
     },
+    save() {
+      CategoryService.updateCompetitionCategory(this.competition.id, this.activeCategory.id, this.activeCategory).then(() => {
+        this.$toasted.show(this.$tc("toasts.categoryUpdated")).goAway(3000)
+      })
+    },
+    deleteCategory() {
+      CategoryService.deleteCompetitionCategory(this.competition.id, this.activeCategory.id).then(() => {
+        this.$toasted.show(this.$tc("toasts.categoryDeleted")).goAway(3000)
+        CategoryService.getCompetitionCategories(this.competition.id).then(res => {
+          this.competitionCategories = res.data
+          if (this.competitionCategories.length > 0) {
+            this.activeCategory = this.competitionCategories[0]
+          }
+        })
+      })
+    }
   }
 }
 </script>

@@ -1,9 +1,6 @@
 <template>
 <div v-if="category.gameSettings != null">
   <div class="row">
-    <div class="d-flex col-12 p-2 justify-content-end">
-      <button class="btn btn-primary" type="button" @click="saveChanges">{{$t("general.saveChanges")}}</button>
-    </div>
     <div class="col-md-6 mb-3">
       <label class="h5 form-label" for="inputNumberOfSets">{{$t("categoryGameRules.nrSets")}}</label>
       <input v-model="category.gameSettings.numberOfSets" type="text" class="form-control" id="inputNumberOfSets">

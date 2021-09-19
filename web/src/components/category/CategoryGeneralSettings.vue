@@ -1,9 +1,6 @@
 <template>
   <div v-if="category.settings != null">
     <div class="row">
-      <div class="d-flex col-12 p-2 justify-content-end">
-        <button class="btn btn-primary" type="button" @click="save">{{ $t("general.saveChanges") }}</button>
-      </div>
       <div class="col-sm-12 col-md-6 mb-3">
         <label class="h5 form-label" for="inputCost">{{ $t("categorySettings.cost") }}</label>
         <input v-model="category.settings.cost" type="text" class="form-control" id="inputCost">
@@ -71,11 +68,7 @@ export default {
     })
   },
   methods: {
-    save() {
-      CategoryService.updateCompetitionCategory(this.competition.id, this.category).then(() => {
-        this.$toasted.show(this.$tc("toasts.categoryUpdated")).goAway(3000)
-      })
-    }
+
   }
 }
 </script>
