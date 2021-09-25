@@ -4,6 +4,8 @@ import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
+import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
+import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.tables.Competition
@@ -19,7 +21,7 @@ import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 @Repository
-class RegistrationRepository(val dslContext: DSLContext) : IRegistrationRepository {
+class RegistrationRepository(val dslContext: DSLContext) : IRegistrationRepository, ISeedRepository {
 
     fun addRegistrationWithId(id: Int, date: LocalDate): RegistrationRecord {
         val registration: RegistrationRecord = dslContext.newRecord(REGISTRATION)
@@ -249,6 +251,16 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         record.competitionCategoryId = competitionCategory
         record.store()
         return record
+    }
+
+    override fun setSeeds(registrationSeeds: List<RegistrationSeedDTO>) {
+        for (registration in registrationSeeds) {
+            dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
+                .set(COMPETITION_CATEGORY_REGISTRATION.SEED, registration.seed)
+                .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(registration.competitionCategoryId)
+                    .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(registration.id)))
+                .execute()
+        }
     }
 }
 
