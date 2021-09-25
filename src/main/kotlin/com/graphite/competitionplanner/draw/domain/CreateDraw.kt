@@ -8,7 +8,6 @@ import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
 import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCompetitionCategory
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
-import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import org.springframework.stereotype.Component
 import kotlin.math.ceil
 
@@ -45,15 +44,21 @@ class CreateDraw(
 
     private fun drawGroups(registrations: List<RegistrationSeedDTO>, settings: GeneralSettingsSpec): List<Group> {
         val numberOfGroups = ceil((registrations.size.toDouble() / settings.playersPerGroup.toDouble())).toInt()
+        val groups = createEmptyGroups(numberOfGroups)
 
         val seededRegistrations = registrations.filter { it.seed != null }.sortedBy { it.seed!! }
         val nonSeededRegistrations = registrations.filter { it.seed == null }
 
-        val groups = (1..numberOfGroups).toList().map {
+        return addRoundRobin(groups, seededRegistrations + nonSeededRegistrations.shuffled())
+            .map {
+                it.apply { this.matches = generateMatchesFor(this.registrationIds) }
+            }
+    }
+
+    private fun createEmptyGroups(numberOfGroups: Int): List<Group> {
+        return (1..numberOfGroups).toList().map {
             Group(it.asPoolName(), emptyList(), emptyList())
         }
-
-        return addRoundRobin(groups, seededRegistrations + nonSeededRegistrations.shuffled())
     }
 
     /**
@@ -84,6 +89,22 @@ class CreateDraw(
 
     private fun createPlayOffs(registrations: List<RegistrationSeedDTO>): CompetitionCategoryPlayoffDrawDTO {
         return CompetitionCategoryPlayoffDrawDTO(1, emptyList())
+    }
+
+    private fun generateMatchesFor(registrations: List<Int>): List<Match> {
+        with(registrations) {
+            return if (isEmpty()) {
+                emptyList()
+            } else {
+                val remaining = takeLast(registrations.size - 1)
+                val matches = generateMatchesFor(first(), remaining)
+                matches + generateMatchesFor(remaining)
+            }
+        }
+    }
+
+    private fun generateMatchesFor(registration: Int, others: List<Int>): List<Match> {
+        return (1..others.size).map { registration }.zip(others).map { Match(MatchType.GROUP, it.first, it.second) }
     }
 
     private fun Int.asPoolName(): String {
@@ -133,7 +154,7 @@ class CompetitionCategoryGroupsDrawDTO(
 data class Group(
     val name: String,
     val registrationIds: List<Int>,
-    val matches: List<MatchDTO>
+    var matches: List<Match>
 )
 
 data class Match(
