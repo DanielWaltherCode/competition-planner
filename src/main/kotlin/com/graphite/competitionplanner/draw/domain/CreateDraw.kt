@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.draw.domain
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsSpec
+import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
 import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
 import com.graphite.competitionplanner.draw.service.MatchType
@@ -10,6 +11,8 @@ import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCom
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import org.springframework.stereotype.Component
 import kotlin.math.ceil
+import kotlin.math.log2
+import kotlin.math.pow
 
 @Component
 class CreateDraw(
@@ -88,7 +91,25 @@ class CreateDraw(
 
 
     private fun createPlayOffs(registrations: List<RegistrationSeedDTO>): CompetitionCategoryPlayoffDrawDTO {
-        return CompetitionCategoryPlayoffDrawDTO(1, emptyList())
+        // If we are not an even power of 2, then we need to add so called BYE players to the list of registrations
+        // until we reach a number that is a power of 2
+        val numberOfRounds = ceil(log2(registrations.size.toDouble())).toInt()
+        val numberOfByePlayers = (2.0.pow(numberOfRounds.toDouble()) - registrations.size).toInt()
+        val registrationsWithBye = registrations.map { it.id } + (1..numberOfByePlayers).map { 0 }
+
+        val matches = generatePlayOffMatchesFor(registrationsWithBye)
+
+        return CompetitionCategoryPlayoffDrawDTO(1, numberOfRounds.asRound(), matches)
+    }
+
+    private fun generatePlayOffMatchesFor(registrations: List<Int>): List<Match> {
+        return if (registrations.isEmpty()) {
+            emptyList()
+        } else {
+            val match = Match(MatchType.PLAYOFF, registrations.first(), registrations.last())
+            val remaining = generatePlayOffMatchesFor(registrations.drop(1).dropLast(1))
+            listOf(match) + remaining
+        }
     }
 
     private fun generateMatchesFor(registrations: List<Int>): List<Match> {
@@ -135,6 +156,18 @@ class CreateDraw(
         }
     }
 
+    private fun Int.asRound(): Round {
+        return when (this) {
+            1 -> Round.FINAL
+            2 -> Round.SEMI_FINAL
+            3 -> Round.QUARTER_FINAL
+            4 -> Round.ROUND_OF_16
+            5 -> Round.ROUND_OF_32
+            6 -> Round.ROUND_OF_64
+            else -> Round.UNKNOWN
+        }
+    }
+
 }
 
 sealed class CompetitionCategoryDrawDTO(
@@ -143,6 +176,7 @@ sealed class CompetitionCategoryDrawDTO(
 
 class CompetitionCategoryPlayoffDrawDTO(
     competitionCategoryId: Int,
+    val round: Round,
     val matches: List<Match>
 ) : CompetitionCategoryDrawDTO(competitionCategoryId)
 
