@@ -28,7 +28,7 @@ class DataGenerator {
     private var clubId = 0
     private var matchId = 0
     private var competitionCategoryId = 0
-    private var registrationId = 0
+    private var registrationId = 1
 
     internal fun newMatch(
         id: Int = matchId++,
@@ -212,6 +212,16 @@ class DataGenerator {
         playerId,
         competitionCategoryId,
         date
+    )
+
+    fun newRegistrationRankDTO(
+        id: Int = this.registrationId++,
+        competitionCategoryId: Int = this.competitionCategoryId++,
+        rank: Int = 99
+    ) = RegistrationRankDTO(
+        id,
+        competitionCategoryId,
+        rank
     )
 
     fun newCompetitionCategoryUpdateSpec(

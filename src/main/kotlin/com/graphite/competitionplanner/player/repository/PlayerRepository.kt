@@ -23,6 +23,7 @@ class PlayerRepository(val dslContext: DSLContext) : IPlayerRepository {
             .fetchOneInto(PLAYER_RANKING)
     }
 
+    //TODO: Take CategoryType instead of string
     fun addPlayerRanking(playerId: Int, rankToAdd: Int, categoryType: String) {
         val currentRecord = getPlayerRanking(playerId)
 

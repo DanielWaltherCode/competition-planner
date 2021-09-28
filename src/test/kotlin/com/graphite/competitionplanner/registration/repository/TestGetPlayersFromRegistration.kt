@@ -46,7 +46,7 @@ class TestGetPlayersFromRegistration(
     @Test
     fun shouldBeAbleToGetPlayersFromSinglesRegistration() {
         // Setup
-        val registration = setupRegisterPlayer()
+        val registration = setupSingleRegistration()
 
         // Act
         val players = registrationRepository.getPlayersFrom(registration.id)

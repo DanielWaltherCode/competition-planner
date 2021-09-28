@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.registration.repository
 
+import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.repository.ClubRepository
-import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.player.repository.PlayerRepository
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TestRemoveRegistration(
+class TestGetRegistrationRankForSingles(
     @Autowired clubRepository: ClubRepository,
     @Autowired playerRepository: PlayerRepository,
     @Autowired competitionRepository: CompetitionRepository,
@@ -29,38 +29,31 @@ class TestRemoveRegistration(
     registrationRepository
 ) {
 
-    @Test
-    fun shouldThrowNotFoundIfRegistrationIdCannotBeFound() {
-        Assertions.assertThrows(NotFoundException::class.java) {
-            registrationRepository.remove(-1)
-        }
+    override fun setupCompetitionCategory() {
+        // Override this so we set up competition category as a singles
+        val category = categoryRepository.getAvailableCategories().first { it.type == CategoryType.SINGLES.name }
+        competitionCategory = competitionCategoryRepository.store(
+            competitionId = competition.id,
+            spec = dataGenerator.newCompetitionCategorySpec(
+                category = dataGenerator.newCategorySpec(id = category.id, name = category.name, type = category.type)))
     }
 
     @Test
-    fun shouldBeAbleToRemoveDoublesRegistration() {
+    fun shouldGetCorrectRanksForSingles() {
         // Setup
-        val registration = setupDoubleRegistration()
+        val reg1 = setupSingleRegistration()
+        val reg2 = setupSingleRegistration()
+
+        playerRepository.addPlayerRanking(reg1.playerId, 39, CategoryType.SINGLES.name)
+        playerRepository.addPlayerRanking(reg2.playerId, 98, CategoryType.SINGLES.name)
 
         // Act
-        registrationRepository.remove(registration.id)
+        val registrationRanks = registrationRepository.getRegistrationRank(competitionCategory)
 
         // Assert
-        Assertions.assertThrows(NotFoundException::class.java) {
-            registrationRepository.remove(registration.id)
-        }
-    }
-
-    @Test
-    fun shouldBeAbleToRemoveSinglesRegistration() {
-        // Setup
-        val registration = setupSingleRegistration()
-
-        // Act
-        registrationRepository.remove(registration.id)
-
-        // Assert
-        Assertions.assertThrows(NotFoundException::class.java) {
-            registrationRepository.remove(registration.id)
-        }
+        val actualReg1 = registrationRanks.first { it.id == reg1.id }
+        Assertions.assertEquals(39, actualReg1.rank)
+        val actualReg2 = registrationRanks.first { it.id == reg2.id }
+        Assertions.assertEquals(98, actualReg2.rank)
     }
 }

@@ -2,7 +2,6 @@ package com.graphite.competitionplanner.registration.repository
 
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.repository.ClubRepository
-import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.player.repository.PlayerRepository
@@ -13,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TestRemoveRegistration(
+class TestGetRegistrationsInCompetitionCategory(
     @Autowired clubRepository: ClubRepository,
     @Autowired playerRepository: PlayerRepository,
     @Autowired competitionRepository: CompetitionRepository,
@@ -30,37 +29,27 @@ class TestRemoveRegistration(
 ) {
 
     @Test
-    fun shouldThrowNotFoundIfRegistrationIdCannotBeFound() {
-        Assertions.assertThrows(NotFoundException::class.java) {
-            registrationRepository.remove(-1)
-        }
+    fun shouldReturnEmptyListIfCompetitionCategoryDoesNotExist() {
+        // Act
+        val registrations = registrationRepository.getRegistrationsIn(-13)
+
+        // Assert
+        Assertions.assertTrue(registrations.isEmpty())
     }
 
     @Test
-    fun shouldBeAbleToRemoveDoublesRegistration() {
+    fun shouldReturnTheCorrectRegistrations() {
         // Setup
-        val registration = setupDoubleRegistration()
+        val registrationOne = setupSingleRegistration()
+        val registrationTwo = setupSingleRegistration()
 
         // Act
-        registrationRepository.remove(registration.id)
+        val registrations = registrationRepository.getRegistrationsIn(competitionCategory.id)
 
         // Assert
-        Assertions.assertThrows(NotFoundException::class.java) {
-            registrationRepository.remove(registration.id)
-        }
-    }
-
-    @Test
-    fun shouldBeAbleToRemoveSinglesRegistration() {
-        // Setup
-        val registration = setupSingleRegistration()
-
-        // Act
-        registrationRepository.remove(registration.id)
-
-        // Assert
-        Assertions.assertThrows(NotFoundException::class.java) {
-            registrationRepository.remove(registration.id)
-        }
+        val registrationIds = registrations.map { it.id }
+        Assertions.assertTrue(registrations.size == 2, "Expected to get exactly two registrations")
+        Assertions.assertTrue(registrationIds.contains(registrationOne.id))
+        Assertions.assertTrue(registrationIds.contains(registrationTwo.id))
     }
 }

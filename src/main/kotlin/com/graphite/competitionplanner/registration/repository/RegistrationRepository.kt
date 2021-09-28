@@ -1,23 +1,27 @@
 package com.graphite.competitionplanner.registration.repository
 
 import com.graphite.competitionplanner.Tables.*
+import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
+import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
+import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.PlayerRegistration.PLAYER_REGISTRATION
 import com.graphite.competitionplanner.tables.Registration.REGISTRATION
-import com.graphite.competitionplanner.tables.records.CompetitionCategoryRegistrationRecord
-import com.graphite.competitionplanner.tables.records.PlayerRecord
-import com.graphite.competitionplanner.tables.records.PlayerRegistrationRecord
-import com.graphite.competitionplanner.tables.records.RegistrationRecord
+import com.graphite.competitionplanner.tables.records.*
 import org.jooq.DSLContext
 import org.jooq.Record4
+import org.jooq.TableField
+import org.jooq.impl.DSL.partitionBy
+import org.jooq.impl.DSL.sum
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 @Repository
-class RegistrationRepository(val dslContext: DSLContext) : IRegistrationRepository {
+class RegistrationRepository(val dslContext: DSLContext) : IRegistrationRepository, ISeedRepository {
 
     fun addRegistrationWithId(id: Int, date: LocalDate): RegistrationRecord {
         val registration: RegistrationRecord = dslContext.newRecord(REGISTRATION)
@@ -153,6 +157,16 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             registrationOne.getValue(REGISTRATION.REGISTRATION_DATE))
     }
 
+    override fun getRegistrationsIn(competitionCategoryId: Int): List<RegistrationDTO> {
+        val records = dslContext.select()
+            .from(REGISTRATION)
+            .join(COMPETITION_CATEGORY_REGISTRATION)
+            .on(REGISTRATION.ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+            .fetchInto(REGISTRATION)
+        return records.map { RegistrationDTO(it.id, it.registrationDate) }
+    }
+
     override fun getPlayersFrom(registrationId: Int): List<PlayerDTO> {
         val records = dslContext.select().from(REGISTRATION).join(PLAYER_REGISTRATION).on(REGISTRATION.ID.eq(
             PLAYER_REGISTRATION.REGISTRATION_ID)).join(PLAYER).on(PLAYER_REGISTRATION.PLAYER_ID.eq(PLAYER.ID)).where(
@@ -167,6 +181,38 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         val success = dslContext.deleteFrom(REGISTRATION).where(REGISTRATION.ID.eq(registrationId)).execute() > 0
         if (!success) {
             throw NotFoundException("Could not delete. The registration with id $registrationId was not found.")
+        }
+    }
+
+    override fun getRegistrationRank(competitionCategory: CompetitionCategoryDTO): List<RegistrationRankDTO> {
+        val rankFieldName = "rank"
+        val records = dslContext.select(
+            REGISTRATION.ID,
+            COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID,
+            sum(getRankField(competitionCategory.category)).over(partitionBy(REGISTRATION.ID)).`as`(rankFieldName))
+            .distinctOn(REGISTRATION.ID)
+            .from(REGISTRATION)
+            .join(COMPETITION_CATEGORY_REGISTRATION)
+            .on(REGISTRATION.ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+            .join(PLAYER_REGISTRATION).on(REGISTRATION.ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
+            .join(PLAYER_RANKING).on(PLAYER_RANKING.PLAYER_ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
+            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategory.id))
+            .fetch()
+
+        return records.map {
+            RegistrationRankDTO(
+                it.getValue(REGISTRATION.ID),
+                it.getValue(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID),
+                it.getValue(rankFieldName).toString().toInt()
+            )
+        }
+    }
+
+    private fun getRankField(category: CategorySpec): TableField<PlayerRankingRecord, Int>? {
+        return if (category.type == "DOUBLES") {
+            PLAYER_RANKING.RANK_DOUBLE
+        } else {
+            PLAYER_RANKING.RANK_SINGLE
         }
     }
 
@@ -205,6 +251,16 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         record.competitionCategoryId = competitionCategory
         record.store()
         return record
+    }
+
+    override fun setSeeds(registrationSeeds: List<RegistrationSeedDTO>) {
+        for (registration in registrationSeeds) {
+            dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
+                .set(COMPETITION_CATEGORY_REGISTRATION.SEED, registration.seed)
+                .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(registration.competitionCategoryId)
+                    .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(registration.id)))
+                .execute()
+        }
     }
 }
 
