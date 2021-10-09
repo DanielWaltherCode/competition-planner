@@ -2,7 +2,6 @@ package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
-import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
 import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCompetitionCategory
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
@@ -13,7 +12,7 @@ import org.mockito.Mockito
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TestCreateDrawCupOnly {
+class TestCreateDrawMatchOrder {
 
     private val mockedGetRegistrationInCompetitionCategory =
         Mockito.mock(GetRegistrationsInCompetitionCategory::class.java)
@@ -32,7 +31,7 @@ class TestCreateDrawCupOnly {
     private val dataGenerator = DataGenerator()
 
     @Test
-    fun sevenPlayersOneBye() {
+    fun oneMatch() {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
             settings = dataGenerator.newGeneralSettingsSpec(
@@ -40,7 +39,7 @@ class TestCreateDrawCupOnly {
                 playersPerGroup = 3
             )
         )
-        val registrationRanks = (1..7).toList().map {
+        val registrationRanks = (1..2).toList().map {
             dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
         }
         Mockito.`when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
@@ -51,29 +50,41 @@ class TestCreateDrawCupOnly {
         val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayoffDrawDTO
 
         // Assert
-        val matches = result.matches
-        Assertions.assertEquals(7, matches.size, "In a binary tree with 4 leaves, there should be in total 7 nodes.")
+        val match = result.matches.first()
 
+        Assertions.assertEquals(1, match.order)
+    }
+
+    @Test
+    fun twoMatches() {
+        val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
+            id = 33,
+            settings = dataGenerator.newGeneralSettingsSpec(
+                drawType = DrawType.CUP_ONLY,
+                playersPerGroup = 3
+            )
+        )
+        val registrationRanks = (1..4).toList().map {
+            dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
+        }
+        Mockito.`when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
+        Mockito.`when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory))
+            .thenReturn(registrationRanks)
+
+        // Act
+        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayoffDrawDTO
+
+        // Assert
         val bestToWorst = registrationRanks.sortedBy { -it.rank }
-        val bestRegistration = bestToWorst[0]
-        val byePlayerID = 0
-        matches.assertThereIsMatchWith(bestRegistration.id, byePlayerID)
+        val matchWithRankOne = result.matches.first { it.contains(bestToWorst[0].id) }
+        val matchWithRankTwo = result.matches.first { it.contains(bestToWorst[1].id) }
 
-        val secondBestRegistration = bestToWorst[1]
-        val worstRegistration = bestToWorst.last()
-        matches.assertThereIsMatchWith(secondBestRegistration.id, worstRegistration.id)
-
-        val thirdBestRegistration = bestToWorst[2]
-        val thirdWorstRegistration = bestToWorst[bestToWorst.size - 3]
-        matches.assertThereIsMatchWith(thirdBestRegistration.id, thirdWorstRegistration.id)
-
-        val fourthBestRegistration = bestToWorst[3]
-        val secondWorstRegistration = bestToWorst[bestToWorst.size - 2]
-        matches.assertThereIsMatchWith(fourthBestRegistration.id, secondWorstRegistration.id)
+        Assertions.assertEquals(1, matchWithRankOne.order)
+        Assertions.assertEquals(2, matchWithRankTwo.order)
     }
 
     @Test
-    fun ninePlayersSevenByes() {
+    fun fourMatches() {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
             settings = dataGenerator.newGeneralSettingsSpec(
@@ -81,7 +92,7 @@ class TestCreateDrawCupOnly {
                 playersPerGroup = 3
             )
         )
-        val registrationRanks = (1..9).toList().map {
+        val registrationRanks = (1..8).toList().map {
             dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
         }
         Mockito.`when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
@@ -92,94 +103,17 @@ class TestCreateDrawCupOnly {
         val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayoffDrawDTO
 
         // Assert
-        val matches = result.matches
-        Assertions.assertEquals(15, matches.size, "In a binary tree with 8 leaves, there should be in total 15 nodes.")
-
-        val byePlayerID = 0
-        val matchesWithByeInFirstRound =
-            matches.filter { it.round == Round.ROUND_OF_16 }.filter { it.contains(byePlayerID) }
-        Assertions.assertEquals(7, matchesWithByeInFirstRound.size, "Expected to find 7 BYE players in first round")
-
         val bestToWorst = registrationRanks.sortedBy { -it.rank }
-        val bestRegistration = bestToWorst[0]
-        matches.assertThereIsMatchWith(bestRegistration.id, byePlayerID)
+        val matchWithRankOne = result.matches.first { it.contains(bestToWorst[0].id) }
+        val matchWithRankTwo = result.matches.first { it.contains(bestToWorst[1].id) }
+        val matchWithRankThree = result.matches.first { it.contains(bestToWorst[2].id) }
+        val matchWithRankFour = result.matches.first { it.contains(bestToWorst[3].id) }
 
-        val secondBestRegistration = bestToWorst[1]
-        matches.assertThereIsMatchWith(secondBestRegistration.id, byePlayerID)
+        Assertions.assertEquals(1, matchWithRankOne.order)
+        Assertions.assertTrue(matchWithRankFour.order <= 2, "Order was ${matchWithRankFour.order}")
 
-        val thirdBestRegistration = bestToWorst[2]
-        matches.assertThereIsMatchWith(thirdBestRegistration.id, byePlayerID)
-
-        val fourthBestRegistration = bestToWorst[3]
-        matches.assertThereIsMatchWith(fourthBestRegistration.id, byePlayerID)
-    }
-
-    @Test
-    fun twoPlayers() {
-        assertThatCorrectNumberOfMatchesAreGenerated(2, Round.FINAL)
-    }
-
-    @Test
-    fun fourPlayers() {
-        assertThatCorrectNumberOfMatchesAreGenerated(4, Round.SEMI_FINAL)
-    }
-
-    @Test
-    fun eightPlayers() {
-        assertThatCorrectNumberOfMatchesAreGenerated(8, Round.QUARTER_FINAL)
-    }
-
-    @Test
-    fun sixteenPlayers() {
-        assertThatCorrectNumberOfMatchesAreGenerated(16, Round.ROUND_OF_16)
-    }
-
-    @Test
-    fun thirtyTwoPlayers() {
-        assertThatCorrectNumberOfMatchesAreGenerated(32, Round.ROUND_OF_32)
-    }
-
-    @Test
-    fun fiveHundredAndTwelvePlayers() {
-        assertThatCorrectNumberOfMatchesAreGenerated(512, Round.UNKNOWN)
-    }
-
-    fun assertThatCorrectNumberOfMatchesAreGenerated(
-        numberOfPlayers: Int,
-        expectedRound: Round
-    ) {
-        val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
-            id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
-                drawType = DrawType.CUP_ONLY,
-                playersPerGroup = 3
-            )
-        )
-        val registrationRanks = (1..numberOfPlayers).toList().map {
-            dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
-        }
-        Mockito.`when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
-        Mockito.`when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory))
-            .thenReturn(registrationRanks)
-
-        // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayoffDrawDTO
-
-        // Assert
-        val expectedNumberOfMatches =
-            numberOfPlayers - 1 // Based on the formula for total number of nodes in a binary tree. Which is 2 * numberOfLeafNodes - 1
-        val matches = result.matches
-        Assertions.assertEquals(expectedNumberOfMatches, matches.size, "Wrong number of matches generated")
-        Assertions.assertEquals(expectedRound, result.startingRound)
-    }
-
-    /**
-     * Raises assertion error if there are no match in the list of matches that contains both registrations
-     */
-    fun List<PlayOffMatch>.assertThereIsMatchWith(registrationIdOne: Int, registrationIdTwo: Int) {
-        val match = this.find { it.contains(registrationIdOne) }!!
-        Assertions.assertTrue(match.contains(registrationIdTwo),
-            "Could not find a match containing registration ids $registrationIdOne and $registrationIdTwo")
+        Assertions.assertTrue(matchWithRankTwo.order > 2, "Order was ${matchWithRankTwo.order}")
+        Assertions.assertTrue(matchWithRankThree.order > 2, "Order was ${matchWithRankThree.order}")
     }
 
     fun PlayOffMatch.contains(registrationId: Int): Boolean {
