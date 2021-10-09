@@ -6,7 +6,6 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSet
 import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
 import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
-import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCompetitionCategory
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import org.springframework.stereotype.Component
@@ -39,7 +38,9 @@ class CreateDraw(
             when (it.drawType) {
                 DrawType.POOL_ONLY,
                 DrawType.POOL_AND_CUP
-                -> CompetitionCategoryGroupsDrawDTO(competitionCategory.id, drawGroups(registrationsWithSeeds, it))
+                -> CompetitionCategoryGroupsDrawDTO(competitionCategory.id,
+                    drawGroups(registrationsWithSeeds, it),
+                    emptyList())
                 DrawType.CUP_ONLY -> createPlayOffs(registrationsWithSeeds)
             }
         }
@@ -97,22 +98,88 @@ class CreateDraw(
         val numberOfByePlayers = (2.0.pow(numberOfRounds.toDouble()) - registrations.size).toInt()
         val registrationsWithBye = registrations.map { it.id } + (1..numberOfByePlayers).map { 0 }
 
-        val matches = generatePlayOffMatchesFor(registrationsWithBye)
+        val firstRoundOfMatches = generatePlayOffMatchesForFirstRound(registrationsWithBye).map {
+            it.apply {
+                round = numberOfRounds.asRound()
+            }
+        }
 
-        return CompetitionCategoryPlayoffDrawDTO(1, numberOfRounds.asRound(), matches)
+        val placeholderMatches = buildRemainingPlayOffTree(firstRoundOfMatches.size / 2)
+
+        return CompetitionCategoryPlayoffDrawDTO(1, numberOfRounds.asRound(), firstRoundOfMatches + placeholderMatches)
     }
 
-    private fun generatePlayOffMatchesFor(registrations: List<Int>): List<Match> {
-        return if (registrations.isEmpty()) {
-            emptyList()
+    /**
+     * Generates the first round of matches in a play off given a list of registrations.
+     *
+     * The following properties are true for the generated matches:
+     * - Match order is set so it guarantees that the best and second best players do not meet until final round,
+     * - Best players are paired against the worse ranked players, where BYE is considered the worst ranked player giving
+     * the best players a free game in first round.
+     *
+     * There are two requirements on the list of registration ids:
+     * 1. It has to be sorted from best to worst (given some ranking)
+     * 2. The size of the list has to be an even power of 2 i.e. 0, 2, 4, 8, 16 etc.
+     *
+     * @return A list of matches representing the first round in a play off
+     */
+    private fun generatePlayOffMatchesForFirstRound(registrations: List<Int>): List<PlayOffMatch> {
+        return if (registrations.size == 2) {
+            listOf(PlayOffMatch(registrations.first(), registrations.last(), 1, Round.UNKNOWN))
         } else {
-            val match = Match(MatchType.PLAYOFF, registrations.first(), registrations.last())
-            val remaining = generatePlayOffMatchesFor(registrations.drop(1).dropLast(1))
-            listOf(match) + remaining
+            val best = registrations.take(2)
+            val remaining = registrations.drop(2)
+            val first =
+                generatePlayOffMatchesForFirstRound(listOf(best.first()) + remaining.filterIndexed { index, _ -> index % 2 == 1 })
+            val second =
+                generatePlayOffMatchesForFirstRound(listOf(best.last()) + remaining.filterIndexed { index, _ -> index % 2 == 0 })
+            first + second.shiftOrderBy(first.size)
         }
     }
 
-    private fun generateMatchesFor(registrations: List<Int>): List<Match> {
+    fun List<PlayOffMatch>.shiftOrderBy(n: Int): List<PlayOffMatch> {
+        return this.map { it.apply { order += n } }
+    }
+
+    /**
+     * Returns a list of play off matches with specified rounds and match order. This algorithm starts at the bottom
+     * of the play of tree and generates all the remaining rounds recursively up until the final round.
+     *
+     * @param numberOfMatchesInRound - Initial number of matches to start
+     */
+    fun buildRemainingPlayOffTree(numberOfMatchesInRound: Int): List<PlayOffMatch> {
+        return when {
+            numberOfMatchesInRound < 1 -> {
+                emptyList()
+            }
+            numberOfMatchesInRound == 1 -> {
+                listOf(PlayOffMatch(0, 0, 1, Round.FINAL))
+            }
+            else -> {
+                val thisRound = (1..numberOfMatchesInRound).map {
+                    PlayOffMatch(0,
+                        0,
+                        it,
+                        numberOfMatchesToRound(numberOfMatchesInRound))
+                }
+                val nextRound = buildRemainingPlayOffTree(numberOfMatchesInRound / 2)
+                thisRound + nextRound
+            }
+        }
+    }
+
+    /**
+     * Converts a number of matches to a Round
+     */
+    private fun numberOfMatchesToRound(number: Int): Round {
+        return (ceil(log2(number.toDouble())).toInt() + 1).asRound()
+    }
+
+    /**
+     * Generate a list of matches where every registration in the list will go up against every other registration
+     * exactly once. Example a list of registration 1, 2, 3 would result in the match ups 1 - 2, 1 - 3, and 2 - 3
+     */
+    private fun generateMatchesFor(registrations: List<Int>): List<GroupMatch> {
         with(registrations) {
             return if (isEmpty()) {
                 emptyList()
@@ -124,10 +191,19 @@ class CreateDraw(
         }
     }
 
-    private fun generateMatchesFor(registration: Int, others: List<Int>): List<Match> {
-        return (1..others.size).map { registration }.zip(others).map { Match(MatchType.GROUP, it.first, it.second) }
+    /**
+     * Returns a list of matches where each mach is between the given registration and one other in the other lists.
+     *
+     * Example: Given registration id is 1, and others contain ids 2, 3, 4. Then returned matches are:
+     * 1 - 2, 1 - 3, and 1 - 4
+     */
+    private fun generateMatchesFor(registration: Int, others: List<Int>): List<GroupMatch> {
+        return (1..others.size).map { registration }.zip(others).map { GroupMatch(it.first, it.second) }
     }
 
+    /**
+     * Convert an integer to a pool name. 1 -> A, 2 -> B, ..., 22 -> W
+     */
     private fun Int.asPoolName(): String {
         return when (this) {
             1 -> "A"
@@ -156,6 +232,9 @@ class CreateDraw(
         }
     }
 
+    /**
+     * Convert an integer to a Round. 1 -> FINAL, 2 -> SEMI_FINAL etc.
+     */
     private fun Int.asRound(): Round {
         return when (this) {
             1 -> Round.FINAL
@@ -176,24 +255,31 @@ sealed class CompetitionCategoryDrawDTO(
 
 class CompetitionCategoryPlayoffDrawDTO(
     competitionCategoryId: Int,
-    val round: Round,
-    val matches: List<Match>
+    val startingRound: Round,
+    val matches: List<PlayOffMatch>
 ) : CompetitionCategoryDrawDTO(competitionCategoryId)
 
 class CompetitionCategoryGroupsDrawDTO(
     competitionCategoryId: Int,
-    val groups: List<Group>
+    val groups: List<Group>,
+    val matches: List<PlayOffMatch>
 ) : CompetitionCategoryDrawDTO(competitionCategoryId)
 
 data class Group(
     val name: String,
     val registrationIds: List<Int>,
-    var matches: List<Match>
+    var matches: List<GroupMatch>
 )
 
-data class Match(
-    val type: MatchType,
-//    val order: Int, Match order number. Keep it?
+data class PlayOffMatch(
+    val registrationOneId: Int,
+    val registrationTwoId: Int,
+    var order: Int,
+    var round: Round
+)
+
+data class GroupMatch(
     val registrationOneId: Int,
     val registrationTwoId: Int
 )
+
