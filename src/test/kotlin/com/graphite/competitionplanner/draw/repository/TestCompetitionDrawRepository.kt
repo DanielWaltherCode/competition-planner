@@ -61,6 +61,56 @@ class TestCompetitionDrawRepository(
         repository.store(dto)
     }
 
+    @Test
+    fun canStorePlayOffWithBye() {
+        // Setup
+        val club = clubRepository.store(dataGenerator.newClubSpec())
+        val competition = club.addCompetition()
+        val competitionCategory = competition.createCategory()
+        val players = club.addPlayers(1)
+        val registrations = competitionCategory.registerPlayers(players)
+        val dto = CompetitionCategoryPlayOffDrawSpec(
+            competitionCategoryId = competitionCategory.id,
+            startingRound = Round.FINAL,
+            matches = listOf(
+                PlayOffMatch(
+                    registrationOneId = Registration.Real(registrations.first().id),
+                    registrationTwoId = Registration.Bye,
+                    order = 1,
+                    round = Round.FINAL
+                )
+            )
+        )
+
+        // Act
+        repository.store(dto)
+    }
+
+    @Test
+    fun canStorePlayOffWithPlaceholder() {
+        // Setup
+        val club = clubRepository.store(dataGenerator.newClubSpec())
+        val competition = club.addCompetition()
+        val competitionCategory = competition.createCategory()
+        val players = club.addPlayers(1)
+        val registrations = competitionCategory.registerPlayers(players)
+        val dto = CompetitionCategoryPlayOffDrawSpec(
+            competitionCategoryId = competitionCategory.id,
+            startingRound = Round.FINAL,
+            matches = listOf(
+                PlayOffMatch(
+                    registrationOneId = Registration.Placeholder,
+                    registrationTwoId = Registration.Real(registrations.first().id),
+                    order = 1,
+                    round = Round.FINAL
+                )
+            )
+        )
+
+        // Act
+        repository.store(dto)
+    }
+
     fun CompetitionCategoryDTO.registerPlayers(players: List<PlayerDTO>): List<RegistrationSinglesDTO> {
         return players.map {
             dataGenerator.newRegistrationSinglesSpecWithDate(playerId = it.id, competitionCategoryId = this.id)
