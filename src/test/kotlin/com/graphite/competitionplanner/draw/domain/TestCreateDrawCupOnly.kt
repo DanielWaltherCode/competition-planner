@@ -48,28 +48,27 @@ class TestCreateDrawCupOnly {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayoffDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayOffDrawSpec
 
         // Assert
         val matches = result.matches
         Assertions.assertEquals(7, matches.size, "In a binary tree with 4 leaves, there should be in total 7 nodes.")
 
-        val bestToWorst = registrationRanks.sortedBy { -it.rank }
+        val bestToWorst = registrationRanks.sortedBy { -it.rank }.map { Registration.Real(it.id) }
         val bestRegistration = bestToWorst[0]
-        val byePlayerID = 0
-        matches.assertThereIsMatchWith(bestRegistration.id, byePlayerID)
+        matches.assertThereIsMatchWith(bestRegistration, Registration.Bye)
 
         val secondBestRegistration = bestToWorst[1]
         val worstRegistration = bestToWorst.last()
-        matches.assertThereIsMatchWith(secondBestRegistration.id, worstRegistration.id)
+        matches.assertThereIsMatchWith(secondBestRegistration, worstRegistration)
 
         val thirdBestRegistration = bestToWorst[2]
         val thirdWorstRegistration = bestToWorst[bestToWorst.size - 3]
-        matches.assertThereIsMatchWith(thirdBestRegistration.id, thirdWorstRegistration.id)
+        matches.assertThereIsMatchWith(thirdBestRegistration, thirdWorstRegistration)
 
         val fourthBestRegistration = bestToWorst[3]
         val secondWorstRegistration = bestToWorst[bestToWorst.size - 2]
-        matches.assertThereIsMatchWith(fourthBestRegistration.id, secondWorstRegistration.id)
+        matches.assertThereIsMatchWith(fourthBestRegistration, secondWorstRegistration)
     }
 
     @Test
@@ -89,29 +88,29 @@ class TestCreateDrawCupOnly {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayoffDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayOffDrawSpec
 
         // Assert
         val matches = result.matches
         Assertions.assertEquals(15, matches.size, "In a binary tree with 8 leaves, there should be in total 15 nodes.")
 
-        val byePlayerID = 0
+        val byePlayerID = Registration.Bye
         val matchesWithByeInFirstRound =
             matches.filter { it.round == Round.ROUND_OF_16 }.filter { it.contains(byePlayerID) }
         Assertions.assertEquals(7, matchesWithByeInFirstRound.size, "Expected to find 7 BYE players in first round")
 
-        val bestToWorst = registrationRanks.sortedBy { -it.rank }
+        val bestToWorst = registrationRanks.sortedBy { -it.rank }.map { Registration.Real(it.id) }
         val bestRegistration = bestToWorst[0]
-        matches.assertThereIsMatchWith(bestRegistration.id, byePlayerID)
+        matches.assertThereIsMatchWith(bestRegistration, byePlayerID)
 
         val secondBestRegistration = bestToWorst[1]
-        matches.assertThereIsMatchWith(secondBestRegistration.id, byePlayerID)
+        matches.assertThereIsMatchWith(secondBestRegistration, byePlayerID)
 
         val thirdBestRegistration = bestToWorst[2]
-        matches.assertThereIsMatchWith(thirdBestRegistration.id, byePlayerID)
+        matches.assertThereIsMatchWith(thirdBestRegistration, byePlayerID)
 
         val fourthBestRegistration = bestToWorst[3]
-        matches.assertThereIsMatchWith(fourthBestRegistration.id, byePlayerID)
+        matches.assertThereIsMatchWith(fourthBestRegistration, byePlayerID)
     }
 
     @Test
@@ -163,7 +162,7 @@ class TestCreateDrawCupOnly {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayoffDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayOffDrawSpec
 
         // Assert
         val expectedNumberOfMatches =
@@ -176,13 +175,31 @@ class TestCreateDrawCupOnly {
     /**
      * Raises assertion error if there are no match in the list of matches that contains both registrations
      */
-    fun List<PlayOffMatch>.assertThereIsMatchWith(registrationIdOne: Int, registrationIdTwo: Int) {
-        val match = this.find { it.contains(registrationIdOne) }!!
-        Assertions.assertTrue(match.contains(registrationIdTwo),
-            "Could not find a match containing registration ids $registrationIdOne and $registrationIdTwo")
+    fun List<PlayOffMatch>.assertThereIsMatchWith(registrationOne: Registration, registrationTwo: Registration) {
+        val match = this.find { it.contains(registrationOne) }!!
+        Assertions.assertTrue(match.contains(registrationTwo),
+            "Could not find a match containing registration ids $registrationOne and $registrationTwo")
     }
 
-    fun PlayOffMatch.contains(registrationId: Int): Boolean {
-        return this.registrationOneId == registrationId || this.registrationTwoId == registrationId
+    fun PlayOffMatch.contains(registration: Registration): Boolean {
+        when (registration) {
+            is Registration.Real -> {
+                return if (this.registrationOneId is Registration.Real && this.registrationTwoId is Registration.Real) {
+                    (this.registrationOneId as Registration.Real).id == registration.id || (this.registrationTwoId as Registration.Real).id == registration.id
+                } else if (this.registrationOneId is Registration.Real) {
+                    (this.registrationOneId as Registration.Real).id == registration.id
+                } else if (this.registrationTwoId is Registration.Real) {
+                    (this.registrationTwoId as Registration.Real).id == registration.id
+                } else {
+                    false
+                }
+            }
+            is Registration.Bye -> {
+                return this.registrationOneId is Registration.Bye || this.registrationTwoId is Registration.Bye
+            }
+            is Registration.Placeholder -> {
+                return this.registrationOneId is Registration.Placeholder || this.registrationTwoId is Registration.Placeholder
+            }
+        }
     }
 }

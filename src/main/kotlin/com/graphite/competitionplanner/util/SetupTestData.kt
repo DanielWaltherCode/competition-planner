@@ -63,6 +63,7 @@ class EventListener(
         registerUsers()
         playerSetup()
         setUpBYEPlayer()
+        setUpPlaceHolderRegistration()
         addPlayerRankings()
         categorySetup()
         competitionCategorySetup()
@@ -126,6 +127,10 @@ class EventListener(
         categoryRepository.addCategory("Pojkar 8", "SINGLES")
         categoryRepository.addCategory("Herrdubbel", "DOUBLES")
         categoryRepository.addCategory("Damdubbel", "DOUBLES")
+    }
+
+    fun setUpPlaceHolderRegistration() {
+        registrationRepository.addRegistrationWithId(1, LocalDate.now())
     }
 
     fun setUpBYEPlayer() {

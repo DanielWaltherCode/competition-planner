@@ -5,7 +5,7 @@ data class RegistrationRankDTO(
     /**
      * The registration id
      */
-    val id: Int,
+    val id: Int, // TODO: Registration.real?
 
     /**
      * The competition category id

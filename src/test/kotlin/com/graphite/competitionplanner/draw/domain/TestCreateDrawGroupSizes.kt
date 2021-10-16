@@ -46,7 +46,7 @@ class TestCreateDrawGroupSizes {
         `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawSpec
 
         // Assert
         Assertions.assertEquals(3, result.groups.size)
@@ -72,7 +72,7 @@ class TestCreateDrawGroupSizes {
         `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawSpec
 
         // Assert
         Assertions.assertEquals(2, result.groups.size)
@@ -98,7 +98,7 @@ class TestCreateDrawGroupSizes {
         `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawSpec
 
         // Assert
         Assertions.assertEquals(5, result.groups.size)
@@ -122,7 +122,7 @@ class TestCreateDrawGroupSizes {
         `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawSpec
 
         // Assert
         Assertions.assertEquals(6, result.groups.size)
@@ -150,7 +150,7 @@ class TestCreateDrawGroupSizes {
         `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawSpec
 
         // Assert
         Assertions.assertEquals(1, result.groups.size)
@@ -174,7 +174,7 @@ class TestCreateDrawGroupSizes {
         `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawSpec
 
         // Assert
         Assertions.assertEquals(1, result.groups.size)
@@ -198,7 +198,7 @@ class TestCreateDrawGroupSizes {
         `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawSpec
 
         // Assert
         Assertions.assertEquals(19, result.groups.size)
