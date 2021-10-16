@@ -47,7 +47,7 @@ class TestCreateDrawMatchOrder {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayoffDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayOffDrawSpec
 
         // Assert
         val match = result.matches.first()
@@ -72,12 +72,12 @@ class TestCreateDrawMatchOrder {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayoffDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayOffDrawSpec
 
         // Assert
-        val bestToWorst = registrationRanks.sortedBy { -it.rank }
-        val matchWithRankOne = result.matches.first { it.contains(bestToWorst[0].id) }
-        val matchWithRankTwo = result.matches.first { it.contains(bestToWorst[1].id) }
+        val bestToWorst = registrationRanks.sortedBy { -it.rank }.map { Registration.Real(it.id) }
+        val matchWithRankOne = result.matches.first { it.contains(bestToWorst[0]) }
+        val matchWithRankTwo = result.matches.first { it.contains(bestToWorst[1]) }
 
         Assertions.assertEquals(1, matchWithRankOne.order)
         Assertions.assertEquals(2, matchWithRankTwo.order)
@@ -100,14 +100,14 @@ class TestCreateDrawMatchOrder {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayoffDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayOffDrawSpec
 
         // Assert
-        val bestToWorst = registrationRanks.sortedBy { -it.rank }
-        val matchWithRankOne = result.matches.first { it.contains(bestToWorst[0].id) }
-        val matchWithRankTwo = result.matches.first { it.contains(bestToWorst[1].id) }
-        val matchWithRankThree = result.matches.first { it.contains(bestToWorst[2].id) }
-        val matchWithRankFour = result.matches.first { it.contains(bestToWorst[3].id) }
+        val bestToWorst = registrationRanks.sortedBy { -it.rank }.map { Registration.Real(it.id) }
+        val matchWithRankOne = result.matches.first { it.contains(bestToWorst[0]) }
+        val matchWithRankTwo = result.matches.first { it.contains(bestToWorst[1]) }
+        val matchWithRankThree = result.matches.first { it.contains(bestToWorst[2]) }
+        val matchWithRankFour = result.matches.first { it.contains(bestToWorst[3]) }
 
         Assertions.assertEquals(1, matchWithRankOne.order)
         Assertions.assertTrue(matchWithRankFour.order <= 2, "Order was ${matchWithRankFour.order}")
@@ -116,7 +116,25 @@ class TestCreateDrawMatchOrder {
         Assertions.assertTrue(matchWithRankThree.order > 2, "Order was ${matchWithRankThree.order}")
     }
 
-    fun PlayOffMatch.contains(registrationId: Int): Boolean {
-        return this.registrationOneId == registrationId || this.registrationTwoId == registrationId
+    fun PlayOffMatch.contains(registration: Registration): Boolean {
+        when (registration) {
+            is Registration.Real -> {
+                return if (this.registrationOneId is Registration.Real && this.registrationTwoId is Registration.Real) {
+                    (this.registrationOneId as Registration.Real).id == registration.id || (this.registrationTwoId as Registration.Real).id == registration.id
+                } else if (this.registrationOneId is Registration.Real) {
+                    (this.registrationOneId as Registration.Real).id == registration.id
+                } else if (this.registrationTwoId is Registration.Real) {
+                    (this.registrationTwoId as Registration.Real).id == registration.id
+                } else {
+                    false
+                }
+            }
+            is Registration.Bye -> {
+                return this.registrationOneId is Registration.Bye || this.registrationTwoId is Registration.Bye
+            }
+            is Registration.Placeholder -> {
+                return this.registrationOneId is Registration.Placeholder || this.registrationTwoId is Registration.Placeholder
+            }
+        }
     }
 }

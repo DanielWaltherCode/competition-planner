@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.draw.service
 
 import com.graphite.competitionplanner.domain.entity.Round
-import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
+import com.graphite.competitionplanner.match.repository.MatchRepository
 import org.springframework.stereotype.Service
 
 @Service
@@ -401,10 +401,10 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
 
     fun getPlayoffOrderWhereOneProceeds(nrGroups: Int): List<Int> {
         val numberOfPositionsInPlayoff = getNumberOfPlaysInFirstPlayoffRound(nrGroups)
-        when(numberOfPositionsInPlayoff) {
+        when (numberOfPositionsInPlayoff) {
             2 -> return listOf(1, 2)
-            4 -> return listOf(1, 4, 3, 2)
-            8 -> return listOf(1, 8, 5, 4, 3, 6, 7, 2)
+            4 -> return listOf(1, 4, 3, 2) //   4, 1, 2, 3
+            8 -> return listOf(1, 8, 5, 4, 3, 6, 7, 2)  //     4, 1, 2, 3
             16 -> return listOf(
                 1, 16,
                 12, 5,

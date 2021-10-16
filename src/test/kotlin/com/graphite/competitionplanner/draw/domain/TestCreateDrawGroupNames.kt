@@ -47,7 +47,7 @@ class TestCreateDrawGroupNames {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawSpec
 
         // Assert
         val groupNames = result.groups.map { it.name }
