@@ -22,6 +22,7 @@ const PlayerService = {
             withCredentials: true
         })
     }
+
 }
 
 export default PlayerService

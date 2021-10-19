@@ -13,29 +13,30 @@
           <h4> {{ $t("player.sidebar.title") }}</h4>
         </div>
         <ul class="list-group list-group-flush">
-          <li class="list-group-item" @click="makeDisplayChoice('overview')"
-              :class="displayChoice === 'overview' ? 'active' : ''">
+          <li class="list-group-item" @click="$router.push('/players/overview')"
+              :class="$route.path.includes('overview') ? 'active' : ''">
             {{ $t("player.sidebar.overview") }}
           </li>
-          <li class="list-group-item" @click="makeDisplayChoice('addNew')"
-              :class="displayChoice === 'addNew' ? 'active' : ''">
+          <li class="list-group-item" @click="$router.push('/players/add')"
+              :class="$route.path.includes('add') ? 'active' : ''">
             {{ $t("player.sidebar.addNew") }}
+          </li>
+          <li class="list-group-item" @click="$router.push('/players/detail/0')"
+              :class="$route.path.includes('detail') ? 'active' : ''">
+            {{ $t("player.sidebar.detail") }}
           </li>
         </ul>
       </div>
 
       <!-- Main content -->
       <div id="main" class="col-md-9 mx-auto">
-        <RegisteredPlayers v-if="displayChoice === 'overview'"></RegisteredPlayers>
-        <AddPlayerToCompetition v-if="displayChoice === 'addNew'"></AddPlayerToCompetition>
+        <router-view></router-view>
       </div>
     </div>
   </main>
 </template>
 
 <script>
-import RegisteredPlayers from "@/components/player/RegisteredPlayers";
-import AddPlayerToCompetition from "@/components/player/AddPlayerToCompetition";
 
 export default {
   name: "Player",
@@ -44,12 +45,8 @@ export default {
       displayChoice: "overview",
     }
   },
-  components: {AddPlayerToCompetition, RegisteredPlayers},
-
-  methods: {
-    makeDisplayChoice(choice) {
-      this.displayChoice = choice
-    },
+  mounted() {
+    this.$router.push('/players/overview')
   }
 }
 </script>

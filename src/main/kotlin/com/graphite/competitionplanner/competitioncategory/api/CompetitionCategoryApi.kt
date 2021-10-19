@@ -26,7 +26,8 @@ class CompetitionCategoryApi(
 
     @GetMapping
     fun getCompetitionCategories(@PathVariable competitionId: Int): List<CompetitionCategoryDTO> {
-        return competitionCategoryService.getCompetitionCategoriesFor(competitionId)
+        val competitionCategories = competitionCategoryService.getCompetitionCategoriesFor(competitionId)
+        return competitionCategories.sortedBy { c -> c.category.name }
     }
 
     @DeleteMapping("/{competitionCategoryId}/cancel")

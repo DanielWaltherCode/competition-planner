@@ -1,0 +1,99 @@
+<template>
+  <div>
+    <div class="row p-4 d-flex align-items-center">
+      <autocomplete class="col-sm-8 mx-auto" id="autocomplete-field"
+                    ref="autocomplete"
+                    :search="searchPlayers"
+                    auto-select
+                    :get-result-value="getSearchResult"
+                    :placeholder="$t('player.search')"
+                    @submit="handleSubmit">
+      </autocomplete>
+    </div>
+    <p class="fs-6 text-danger" v-if="playerNotFound">{{ $t("player.notFound") }}</p>
+    <div class="p-4" v-if="player !== null">
+      <h4 class="text-dark"> {{ player.firstName + " " + player.lastName }}</h4>
+      <div class="p-4">
+        <h5>{{ $t("player.categories") }}</h5>
+        <div v-for="registration in registrations" :key="registration.id">
+          <p>{{ registration.competitionCategory.name }}
+            <span v-if="registration.competitionCategory.type === 'DOUBLES'">
+                {{ $t("player.playingWith") }}
+                {{ registration.accompanyingPlayer.firstName + ' ' + registration.accompanyingPlayer.lastName }} )
+              </span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import RegistrationService from "@/common/api-services/registration.service";
+import Autocomplete from '@trevoreyre/autocomplete-vue'
+import '@trevoreyre/autocomplete-vue/dist/style.css'
+import PlayerService from "@/common/api-services/player.service";
+
+export default {
+  name: "PlayerDetail",
+  data() {
+    return {
+      player: null,
+      playerId: null,
+      playerNotFound: false,
+      registrations: []
+    }
+  },
+  components: {Autocomplete},
+  computed: {
+    competition: function () {
+      return this.$store.getters.competition
+    }
+  },
+  mounted() {
+    this.playerId = this.$route.params.id
+    if (this.playerId !== '0') {
+      this.getRegistrations(this.competition.id, this.playerId)
+    }
+  },
+  methods: {
+    getRegistrations(competitionId, playerId) {
+      RegistrationService.getRegistrationsForPlayer(competitionId, playerId).then(res => {
+        this.player = res.data.player
+        this.registrations = res.data.registrations
+      })
+          .catch(() => {
+            this.$toasted.show(this.$tc("toasts.error.general")).goAway(3000)
+          })
+    },
+    searchPlayers(input) {
+      if (input.length < 1) {
+        return [];
+      }
+      return new Promise(resolve => {
+        PlayerService.searchAllPlayers(input).then(res => {
+          this.playerNotFound = false
+          resolve(res.data)
+        }).catch(() => {
+          this.playerNotFound = true;
+        })
+      })
+    },
+    getSearchResult(searchResult) {
+      return searchResult.firstName + " " + searchResult.lastName
+    },
+    handleSubmit(result) {
+      if (result === undefined || result === "") {
+        return;
+      }
+      this.player = result
+      this.$router.replace({params: {id: this.player.id}}).catch(() => {})
+      this.getRegistrations(this.competition.id, this.player.id)
+    },
+  }
+}
+</script>
+
+<style scoped>
+
+</style>

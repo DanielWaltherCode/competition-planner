@@ -37,7 +37,7 @@
           <p class="mb-0"> {{ grouping }} </p>
         </div>
         <div v-for="player in players" :key="player.id" class="mt-2 d-flex">
-          <p class="player-name">{{ player.lastName + ", " + player.firstName }}</p>
+          <p class="player-name clickable" @click="$router.push('/players/detail/' + player.id)">{{ player.lastName + ", " + player.firstName }}</p>
         </div>
       </div>
     </div>

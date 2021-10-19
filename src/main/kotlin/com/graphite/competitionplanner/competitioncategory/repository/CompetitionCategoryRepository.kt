@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.competitioncategory.repository
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
+import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.domain.entity.Round
@@ -130,7 +131,8 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             COMPETITION_CATEGORY.COMPETITION_ID,
             COMPETITION_CATEGORY.ID,
             COMPETITION_CATEGORY.STATUS,
-            CATEGORY.CATEGORY_NAME
+            CATEGORY.CATEGORY_NAME,
+            CATEGORY.CATEGORY_TYPE
         )
             .from(PLAYER_REGISTRATION)
                 .join(COMPETITION_CATEGORY_REGISTRATION).on(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
@@ -143,12 +145,50 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
 
        return records.stream().map {
            CompetitionAndCategories(
-               it.getValue(COMPETITION_CATEGORY.COMPETITION_ID), it.getValue(
-                   COMPETITION_CATEGORY.ID
-               ),
-               it.getValue(CATEGORY.CATEGORY_NAME)
+               it.getValue(COMPETITION_CATEGORY.COMPETITION_ID),
+               it.getValue(COMPETITION_CATEGORY.ID),
+               it.getValue(CATEGORY.CATEGORY_NAME),
+               it.getValue(CATEGORY.CATEGORY_TYPE)
            )
        }.toList()
+    }
+
+    fun getRegistrationsForPlayerInCompetition(competitionId: Int, playerId: Int): List<RegistrationsInCompetition> {
+        val records = dslContext.select(
+            PLAYER_REGISTRATION.REGISTRATION_ID,
+            COMPETITION_CATEGORY.ID,
+            CATEGORY.CATEGORY_NAME,
+            CATEGORY.CATEGORY_TYPE
+        )
+            .from(PLAYER_REGISTRATION)
+            .join(COMPETITION_CATEGORY_REGISTRATION).on(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
+            .join(COMPETITION_CATEGORY)
+            .on(COMPETITION_CATEGORY.ID.eq(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID))
+            .join(PLAYER).on(PLAYER_REGISTRATION.PLAYER_ID.eq(PLAYER.ID))
+            .join(CATEGORY).on(CATEGORY.ID.eq(COMPETITION_CATEGORY.CATEGORY))
+            .where(PLAYER_REGISTRATION.PLAYER_ID.eq(playerId)).and(COMPETITION_CATEGORY.COMPETITION_ID.eq(competitionId))
+            .fetch()
+
+        return records.stream().map {
+            RegistrationsInCompetition(
+                it.getValue(PLAYER_REGISTRATION.REGISTRATION_ID),
+                it.getValue(COMPETITION_CATEGORY.ID),
+                it.getValue(CATEGORY.CATEGORY_NAME),
+                it.getValue(CATEGORY.CATEGORY_TYPE)
+            )
+        }.toList()
+    }
+
+    /**
+     * This fetches a registration (given an id) and return the player id associated with the registration, but not the
+     * id passed as a parameter. The idea is that we have a player that we know are playing doubles and now we want to
+     * know who they are playing with.
+     */
+    fun getAccompanyingPlayerId(registrationId: Int, otherPlayerId: Int): Int? {
+        return dslContext.select(PLAYER_REGISTRATION.PLAYER_ID)
+            .from(PLAYER_REGISTRATION)
+            .where(PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId).and(PLAYER_REGISTRATION.PLAYER_ID.notEqual(otherPlayerId)))
+            .fetchOneInto(Int::class.java)
     }
 
     fun clearTable() = dslContext.deleteFrom(COMPETITION_CATEGORY).execute()
@@ -328,7 +368,18 @@ data class CategoriesAndPlayers(
 data class CompetitionAndCategories(
     val competitionId: Int,
     val categoryId: Int,
-    val categoryName: String
+    val categoryName: String,
+    val categoryType: String
+)
+
+/**
+ * Used for displaying which categories in a competition a given player is registered in
+ */
+data class RegistrationsInCompetition(
+    val registrationId: Int,
+    val categoryId: Int,
+    val categoryName: String,
+    val categoryType: String
 )
 
 data class CompetitionCategory(

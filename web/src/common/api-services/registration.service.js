@@ -13,6 +13,9 @@ const RegistrationService = {
     },
     getDraw(competitionId, categoryId) {
         return Axios.get(`/competition/${competitionId}/draw/${categoryId}`, {withCredentials: true})
+    },
+    getRegistrationsForPlayer(competitionId, playerId) {
+        return Axios.get(`/competition/${competitionId}/registration/player/${playerId}`, {withCredentials: true})
     }
 }
 

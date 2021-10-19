@@ -54,14 +54,16 @@
             <div id="group-section">
               <div id="main-header">
                 <div class="d-flex justify-content-end p-3">
-                  <button type="button" class="btn btn-danger me-3" @click="deleteDraw">{{
+                  <div class="p-2 border border-1 rounded">
+                    <button type="button" class="btn btn-warning me-3" @click="createDraw">{{
+                        $t("draw.main.redraw")
+                      }}
+                    </button>
+                  <button type="button" class="btn btn-danger" @click="deleteDraw">{{
                       $t("draw.main.deleteDraw")
                     }}
                   </button>
-                  <button type="button" class="btn btn-warning" @click="createDraw">{{
-                      $t("draw.main.redraw")
-                    }}
-                  </button>
+                  </div>
                 </div>
               </div>
               <br>
@@ -154,18 +156,22 @@ export default {
       })
     },
     createDraw() {
-      DrawService.createDraw(this.competition.id, this.chosenCategory.id).then(res => {
-        this.$toasted.show(this.$tc("toasts.categoryDrawn")).goAway(3000)
-        this.draw = res.data
-        this.isChosenCategoryDrawn = true
-      })
+      if(confirm(this.$tc("confirm.redraw"))) {
+        DrawService.createDraw(this.competition.id, this.chosenCategory.id).then(res => {
+          this.$toasted.show(this.$tc("toasts.categoryDrawn")).goAway(3000)
+          this.draw = res.data
+          this.isChosenCategoryDrawn = true
+        })
+      }
     },
     deleteDraw() {
-      DrawService.deleteDraw(this.competition.id, this.chosenCategory.id).then(() => {
-        this.$toasted.show(this.$tc("toasts.categoryDrawDeleted")).goAway(3000)
-        this.isChosenCategoryDrawn = false
-        this.getRegisteredPlayers()
-      })
+      if(confirm(this.$tc("confirm.deleteDraw"))) {
+        DrawService.deleteDraw(this.competition.id, this.chosenCategory.id).then(() => {
+          this.$toasted.show(this.$tc("toasts.categoryDrawDeleted")).goAway(3000)
+          this.isChosenCategoryDrawn = false
+          this.getRegisteredPlayers()
+        })
+      }
     },
     getDraw(categoryId) {
       DrawService.getDraw(this.competition.id, categoryId).then(res => {

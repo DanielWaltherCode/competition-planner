@@ -172,9 +172,11 @@ export default {
           })
     },
     deleteResults() {
-      ResultService.deleteResult(this.selectedMatch.id).then(() => {
-        this.$emit("close", this.selectedMatch.id)
-      })
+      if(confirm(this.$tc("confirm.deleteResult"))) {
+        ResultService.deleteResult(this.selectedMatch.id).then(() => {
+          this.$emit("close", this.selectedMatch.id)
+        })
+      }
     },
     getPlayerOne: getPlayerOne,
     getPlayerTwo: getPlayerTwo

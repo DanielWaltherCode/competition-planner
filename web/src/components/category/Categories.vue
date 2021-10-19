@@ -131,15 +131,17 @@ export default {
       })
     },
     deleteCategory() {
-      CategoryService.deleteCompetitionCategory(this.competition.id, this.activeCategory.id).then(() => {
-        this.$toasted.show(this.$tc("toasts.categoryDeleted")).goAway(3000)
-        CategoryService.getCompetitionCategories(this.competition.id).then(res => {
-          this.competitionCategories = res.data
-          if (this.competitionCategories.length > 0) {
-            this.activeCategory = this.competitionCategories[0]
-          }
+      if(confirm(this.$tc("confirm.deleteCategory"))) {
+        CategoryService.deleteCompetitionCategory(this.competition.id, this.activeCategory.id).then(() => {
+          this.$toasted.show(this.$tc("toasts.categoryDeleted")).goAway(3000)
+          CategoryService.getCompetitionCategories(this.competition.id).then(res => {
+            this.competitionCategories = res.data
+            if (this.competitionCategories.length > 0) {
+              this.activeCategory = this.competitionCategories[0]
+            }
+          })
         })
-      })
+      }
     }
   }
 }

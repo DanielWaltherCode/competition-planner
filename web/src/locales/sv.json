@@ -118,8 +118,9 @@
   "player": {
     "sidebar": {
       "title": "Spelaralternativ",
-      "overview": "Spelaröversikt",
-      "addNew": "Lägg till spelare"
+      "overview": "Anmälda spelare",
+      "addNew": "Lägg till spelare",
+      "detail": "Detaljinfo om enskild spelare"
     },
     "search": "Sök på spelare",
     "title": "Spelare",
@@ -129,6 +130,7 @@
     "club": "Klubb",
     "categories": "Klasser",
     "sortBy": "Sortera efter",
+    "notFound": "Ingen spelare med det namnet hittades",
     "add": {
       "heading": "Registrera en spelare manuellt i tävlingen",
       "helperText": "Här kan du lägga till en spelare manuellt om denne inte har anmälts av sin klubb online sedan tidigare. Det bästa är att söka fram spelaren så att vi kan autofylla uppgifterna. Om spelaren inte finns i vår databas kan du fylla i uppgifterna manuellt men då finns inga uppgifter om rankingpoäng och seedning",
@@ -139,7 +141,9 @@
       "dateOfBirth": "Födelsedatum",
       "buttonText": "Lägg till spelare",
       "clear": "Rensa spelare"
-    }
+    },
+    "info": "Spelarinfo",
+    "playingWith": "(Tillsammans med "
   },
   "draw": {
     "sidebar": {
@@ -269,6 +273,15 @@
     "playerAdded": "Spelare tillagd",
     "startTimesSet": "Start",
     "resultRegistered": "Resultatet är sparat",
-    "temporaryResultRegistered": "Tillfälligt resultatet är sparat"
+    "temporaryResultRegistered": "Tillfälligt resultatet är sparat",
+    "error": {
+      "general": "Något gick fel. Var god försök senare"
+    }
+  },
+  "confirm": {
+    "redraw": "Är du säker på att du vill göra en ny lottning för klassen?",
+    "deleteDraw": "Är du säker på att du vill ta bort lottningen för klassen?",
+    "deleteCategory": "Är du säker på att du vill ta bort klassen?",
+    "deleteResult": "Är du säker på att du vill ta bort resultatet?"
   }
 }

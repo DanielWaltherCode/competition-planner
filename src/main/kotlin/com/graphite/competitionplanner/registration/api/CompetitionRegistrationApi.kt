@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.registration.api
 
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.registration.interfaces.PlayerRegistrationDTO
 import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesDTO
 import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesSpec
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
@@ -47,6 +48,14 @@ class CompetitionRegistrationApi(
     @DeleteMapping("/{registrationId}")
     fun deleteRegistration(@PathVariable registrationId: Int) {
         registrationService.unregister(registrationId)
+    }
+
+    // Retrieves player information and all the categories and player is registered in
+    // in a given competition (including who they are playing with in doubles)
+    @GetMapping("/player/{playerId}")
+    fun getRegistrationsForPlayer(@PathVariable competitionId: Int,
+                                  @PathVariable playerId: Int): PlayerRegistrationDTO {
+        return registrationService.getRegistrationsForPlayerInCompetition(competitionId, playerId)
     }
 }
 

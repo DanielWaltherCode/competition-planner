@@ -1,5 +1,8 @@
 import Vue from "vue";
 import Router from "vue-router"
+import RegisteredPlayers from "@/components/player/RegisteredPlayers";
+import AddPlayerToCompetition from "@/components/player/AddPlayerToCompetition";
+import PlayerDetail from "@/components/player/PlayerDetail";
 
 Vue.use(Router)
 
@@ -34,7 +37,22 @@ export default new Router({
             {
                 path: "/players",
                 name: "players",
-                component: () => import("@/components/player/Player")
+                component: () => import("@/components/player/Player"),
+                children: [
+                    {
+                        path: "overview",
+                        component: RegisteredPlayers
+                    },
+                    {
+                        path: "add",
+                        component: AddPlayerToCompetition
+                    },
+                    {
+                        path: "detail/:id",
+                        component: PlayerDetail
+                    }
+
+                ]
             },
             {
                 path: "/draw",

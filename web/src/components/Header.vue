@@ -18,43 +18,43 @@
               <ul id="main-ul" class="navbar-nav me-auto ms-4 mb-2 mb-lg-0">
                 <li class="nav-item">
                   <router-link class="nav-link" to="/overview" v-if="isLoggedIn && !!competition"
-                               :class="$router.currentRoute.path === '/overview' ? 'active' : ''">
+                               :class="$route.path === '/overview' ? 'active' : ''">
                     {{ $t("header.overview") }}
                   </router-link>
                 </li>
                 <li class="nav-item">
                   <router-link class="nav-link" to="/classes" v-if="isLoggedIn && !!competition"
-                               :class="$router.currentRoute.path === '/classes' ? 'active' : ''">
+                               :class="$route.path === '/classes' ? 'active' : ''">
                     {{ $t("header.classes") }}
                   </router-link>
                 </li>
                 <li class="nav-item">
                   <router-link class="nav-link" to="/players" v-if="isLoggedIn && !!competition"
-                               :class="$router.currentRoute.path === '/players' ? 'active' : ''">
+                               :class="$route.path === '/players' ? 'active' : ''">
                     {{ $t("header.players") }}
                   </router-link>
                 </li>
                 <li class="nav-item">
                   <router-link class="nav-link" to="/draw" v-if="isLoggedIn && !!competition"
-                               :class="$router.currentRoute.path === '/draw' ? 'active' : ''">
+                               :class="$route.path === '/draw' ? 'active' : ''">
                     {{ $t("header.draws") }}
                   </router-link>
                 </li>
                 <li class="nav-item">
                   <router-link class="nav-link" to="/schedule" v-if="isLoggedIn && !!competition"
-                               :class="$router.currentRoute.path === '/schedule' ? 'active' : ''">
+                               :class="$route.path === '/schedule' ? 'active' : ''">
                     {{ $t("header.schedule") }}
                   </router-link>
                 </li>
                 <li class="nav-item">
                   <router-link class="nav-link" to="/results" v-if="isLoggedIn && !!competition"
-                               :class="$router.currentRoute.path === '/results' ? 'active' : ''">
+                               :class="$route.path === '/results' ? 'active' : ''">
                     {{ $t("header.results") }}
                   </router-link>
                 </li>
                 <li class="nav-item">
                   <router-link class="nav-link" to="/billing" v-if="isLoggedIn && !!competition"
-                               :class="$router.currentRoute.path === '/billing' ? 'active' : ''">
+                               :class="$route.path === '/billing' ? 'active' : ''">
                     {{ $t("header.billing") }}
                   </router-link>
                 </li>
@@ -67,14 +67,14 @@
                     <li class="nav-item">
                       Note one exclamation point here for competition, all others have two
                       <router-link class="nav-link submenu" to="/new-competition"
-                                   :class="$router.currentRoute.path === '/new-competition' ? 'active' : ''">
+                                   :class="$route.path === '/new-competition' ? 'active' : ''">
                         {{ $t("header.handle.newCompetition") }}
                       </router-link>
                     </li>
                     <li class="nav-item">
                       Note one exclamation point here for competition, all others have twox
                       <router-link class="nav-link submenu" to="/choose-competition"
-                                   :class="$router.currentRoute.path === '/choose-competition' ? 'active' : ''">
+                                   :class="$route.path === '/choose-competition' ? 'active' : ''">
                         {{ $t("header.handle.administerCompetition") }}
                       </router-link>
                     </li>
