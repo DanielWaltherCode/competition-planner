@@ -50,6 +50,20 @@ class MatchRepository(val dslContext: DSLContext) {
             .fetchInto(MATCH)
     }
 
+    fun getMatchesInCompetitionForPlayer(competitionId: Int, registrationId: Int): List<MatchRecord> {
+        return dslContext
+            .select().from(COMPETITION)
+            .join(COMPETITION_CATEGORY)
+            .on(COMPETITION.ID.eq(COMPETITION_CATEGORY.COMPETITION_ID))
+            .join(MATCH)
+            .on(COMPETITION_CATEGORY.ID.eq(MATCH.COMPETITION_CATEGORY_ID))
+            .where(COMPETITION.ID.eq(competitionId))
+                .and(MATCH.FIRST_REGISTRATION_ID.eq(registrationId)
+                    .or(MATCH.SECOND_REGISTRATION_ID.eq(registrationId)))
+            .orderBy(MATCH.ID.asc())
+            .fetchInto(MATCH)
+    }
+
     fun getMatchesInCategoryForMatchType(competitionCategoryId: Int, matchType: MatchType): List<MatchRecord> {
         return dslContext
             .select().from(MATCH)

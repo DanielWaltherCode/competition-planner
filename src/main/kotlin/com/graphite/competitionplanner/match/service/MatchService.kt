@@ -19,7 +19,7 @@ import java.time.LocalDateTime
 @Service
 class MatchService(
     val matchRepository: MatchRepository,
-    val registrationService: RegistrationService,
+    @Lazy val registrationService: RegistrationService,
     @Lazy val resultService: ResultService,
     val competitionCategoryRepository: CompetitionCategoryRepository
 ) {
@@ -60,6 +60,11 @@ class MatchService(
 
     fun getMatchesInCompetition(competitionId: Int): List<MatchAndResultDTO> {
         val matchRecords = matchRepository.getMatchesInCompetition(competitionId)
+        return matchRecords.map { recordToMatchAndResultDTO(it) }
+    }
+
+    fun getMatchesInCompetitionForPlayer(competitionId: Int, registrationId: Int): List<MatchAndResultDTO> {
+        val matchRecords = matchRepository.getMatchesInCompetitionForPlayer(competitionId, registrationId)
         return matchRecords.map { recordToMatchAndResultDTO(it) }
     }
 

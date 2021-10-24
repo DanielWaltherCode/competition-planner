@@ -75,25 +75,7 @@
                 </div>
                 <div class="col-sm-8">
                   <div id="matches" class="row justify-content-center">
-                    <p class="text-start">{{ $t("draw.pool.matches") }}</p>
-                    <table class="table table-bordered table-striped table-sm">
-                      <thead class="thead-dark">
-                      <tr>
-                        <th>{{ $t("draw.pool.time") }}</th>
-                        <th></th>
-                        <th></th>
-                        <th>{{ $t("draw.pool.result") }}</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      <tr class="group-matches" v-for="match in group.matches" :key="match.id">
-                        <td>{{ getTime(match) }}</td>
-                        <td>{{ getPlayerOne(match) }}</td>
-                        <td>{{ getPlayerTwo(match) }}</td>
-                        <td></td>
-                      </tr>
-                      </tbody>
-                    </table>
+                    <match-list-component :matches="group.matches" />
                   </div>
                 </div>
                 <br>
@@ -111,9 +93,10 @@ import DrawService from "@/common/api-services/draw.service";
 import RegistrationService from "@/common/api-services/registration.service";
 import PoolDraw from "@/components/draw/PoolDraw";
 import CategoryService from "@/common/api-services/category.service";
+import MatchListComponent from "@/components/general/MatchListComponent";
 
 export default {
-  components: {PoolDraw},
+  components: {MatchListComponent, PoolDraw},
   data() {
     return {
       chosenCategory: null,
@@ -184,31 +167,6 @@ export default {
             this.registeredPlayersLists = res.data
           })
     },
-    getPlayerOne(match) {
-      let playerOne = ""
-      if (match.firstPlayer.length === 1) {
-        playerOne = match.firstPlayer[0].firstName + " " + match.firstPlayer[0].lastName
-      } else if (match.firstPlayer.length === 2) {
-        playerOne = match.firstPlayer[0].firstName + " " + match.firstPlayer[0].lastName + "/" +
-            match.firstPlayer[1].firstName + " " + match.firstPlayer[1].lastName
-      }
-      return playerOne
-    },
-    getPlayerTwo(match) {
-      let playerTwo = ""
-      if (match.secondPlayer.length === 1) {
-        playerTwo = match.secondPlayer[0].firstName + " " + match.secondPlayer[0].lastName
-      } else if (match.firstPlayer.length === 2) {
-        playerTwo = match.secondPlayer[0].firstName + " " + match.secondPlayer[0].lastName + "/" +
-            match.secondPlayer[1].firstName + " " + match.secondPlayer[1].lastName
-      }
-      return playerTwo
-    },
-    getTime(match) {
-      if (match.startTime === null) {
-        return this.$t("draw.pool.noTime")
-      }
-    }
   }
 }
 </script>

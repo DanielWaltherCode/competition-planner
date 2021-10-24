@@ -153,4 +153,8 @@ h1, h2, h3 {
 .custom-select{
   background: none !important;
 }
+
+.black{
+  color: black;
+}
 </style>

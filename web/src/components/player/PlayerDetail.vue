@@ -12,16 +12,16 @@
     </div>
     <p class="fs-6 text-danger" v-if="playerNotFound">{{ $t("player.notFound") }}</p>
     <div class="p-4" v-if="player !== null">
-      <h4 class="text-dark"> {{ player.firstName + " " + player.lastName }}</h4>
+      <h2 class="black"> {{ player.firstName + " " + player.lastName }}</h2>
       <div class="p-4">
-        <h5>{{ $t("player.categories") }}</h5>
-        <div v-for="registration in registrations" :key="registration.id">
+        <div class="p-4" v-for="registration in registrations" :key="registration.id">
           <p>{{ registration.competitionCategory.name }}
             <span v-if="registration.competitionCategory.type === 'DOUBLES'">
                 {{ $t("player.playingWith") }}
                 {{ registration.accompanyingPlayer.firstName + ' ' + registration.accompanyingPlayer.lastName }} )
               </span>
           </p>
+            <match-list-component :matches="registration.matches" />
         </div>
       </div>
     </div>
@@ -33,6 +33,7 @@ import RegistrationService from "@/common/api-services/registration.service";
 import Autocomplete from '@trevoreyre/autocomplete-vue'
 import '@trevoreyre/autocomplete-vue/dist/style.css'
 import PlayerService from "@/common/api-services/player.service";
+import MatchListComponent from "@/components/general/MatchListComponent";
 
 export default {
   name: "PlayerDetail",
@@ -44,7 +45,7 @@ export default {
       registrations: []
     }
   },
-  components: {Autocomplete},
+  components: {MatchListComponent, Autocomplete},
   computed: {
     competition: function () {
       return this.$store.getters.competition
@@ -87,7 +88,8 @@ export default {
         return;
       }
       this.player = result
-      this.$router.replace({params: {id: this.player.id}}).catch(() => {})
+      this.$router.replace({params: {id: this.player.id}}).catch(() => {
+      })
       this.getRegistrations(this.competition.id, this.player.id)
     },
   }

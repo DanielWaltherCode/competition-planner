@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.registration.service
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
+import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.domain.FindPlayer
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
@@ -26,7 +27,8 @@ class RegistrationService(
     val registerDoubleToCompetition: RegisterDoubleToCompetition,
     val unregister: Unregister,
     val getPlayersFromRegistration: GetPlayersFromRegistration,
-    val findPlayer: FindPlayer
+    val findPlayer: FindPlayer,
+    val matchService: MatchService
 ) {
 
     fun registerPlayerSingles(spec: RegistrationSinglesSpec): Int {
@@ -160,10 +162,13 @@ class RegistrationService(
                     accompanyingPlayer = playerService.findPlayer.byId(accompanyingPlayerId)
                 }
             }
+            // Get matches
+            val matches = matchService.getMatchesInCompetitionForPlayer(competitionId, registration.registrationId)
             registrationDTOs.add(
                 CategoryRegistrationDTO(
                     registration.registrationId,
                     CompetitionCategoryWithTypeDTO(registration.categoryId, registration.categoryName, registration.categoryType),
+                    matches,
                     accompanyingPlayer
                 )
             )
