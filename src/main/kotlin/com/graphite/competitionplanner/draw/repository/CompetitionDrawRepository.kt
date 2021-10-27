@@ -163,10 +163,10 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
                     .join(c2).on(c2.ID.eq(p2.CLUB_ID))
                     .where(m.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
             ).orderBy(m.ID.`as`("match_id").desc())
-            .fetch(MyMapper())
+            .fetch(DataRowMapper())
     }
 
-    class MyMapper :
+    class DataRowMapper :
         RecordMapper<Record12<Int, String, Int, Int, String, Int, String, String, LocalDate, Int, String, String>, DataRow> {
         override fun map(p0: Record12<Int, String, Int, Int, String, Int, String, String, LocalDate, Int, String, String>?): DataRow {
             return DataRow(
