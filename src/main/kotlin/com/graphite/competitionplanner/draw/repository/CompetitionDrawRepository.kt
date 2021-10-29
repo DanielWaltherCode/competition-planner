@@ -53,9 +53,9 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
     }
 
     override fun get(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
-        val dataRows = getDataRows(competitionCategoryId)
-        val playOffMatches = constructPlayOffMatches(dataRows.filter { it.groupOrRound.isRound() })
-        val groupMatches = constructGroupDraws(dataRows.filter { !it.groupOrRound.isRound() })
+        val records = getDataRows(competitionCategoryId)
+        val playOffMatches = constructPlayOffMatches(records.filter { it.groupOrRound.isRound() })
+        val groupMatches = constructGroupDraws(records.filter { !it.groupOrRound.isRound() })
 
         return CompetitionCategoryDrawDTO(
             competitionCategoryId,
@@ -68,12 +68,12 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
         return Round.values().any { it.name == this }
     }
 
-    private fun constructPlayOffMatches(dataRows: List<DataRow>): List<PlayOffMatchDTO> {
-        return if (dataRows.isEmpty()) {
+    private fun constructPlayOffMatches(records: List<MatchPlayerRecord>): List<PlayOffMatchDTO> {
+        return if (records.isEmpty()) {
             emptyList()
         } else {
-            val matchId = dataRows.first().matchId
-            val rows = dataRows.filter { it.matchId == matchId }
+            val matchId = records.first().matchId
+            val rows = records.filter { it.matchId == matchId }
             val player1 =
                 rows.filter { it.registrationOrder == RegistrationOrder.First }.map { it.toPlayerWithClubDto() }
             val player2 =
@@ -83,11 +83,11 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
             listOf(PlayOffMatchDTO(player1,
                 player2,
                 order,
-                round)) + constructPlayOffMatches(dataRows.drop(rows.count()))
+                round)) + constructPlayOffMatches(records.drop(rows.count()))
         }
     }
 
-    private fun DataRow.toPlayerWithClubDto(): PlayerWithClubDTO {
+    private fun MatchPlayerRecord.toPlayerWithClubDto(): PlayerWithClubDTO {
         return PlayerWithClubDTO(
             this.playerId,
             this.firstName,
@@ -101,12 +101,12 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
         )
     }
 
-    private fun constructGroupDraws(dataRows: List<DataRow>): List<GroupDrawDTO> {
+    private fun constructGroupDraws(dataRows: List<MatchPlayerRecord>): List<GroupDrawDTO> {
         // TODO: Implement
         return emptyList()
     }
 
-    private fun getDataRows(competitionCategoryId: Int): List<DataRow> {
+    private fun getDataRows(competitionCategoryId: Int): List<MatchPlayerRecord> {
         val r1 = REGISTRATION.`as`("r1")
         val pr1 = PLAYER_REGISTRATION.`as`("pr1")
         val p1 = PLAYER.`as`("p1")
@@ -163,13 +163,13 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
                     .join(c2).on(c2.ID.eq(p2.CLUB_ID))
                     .where(m.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
             ).orderBy(m.ID.`as`("match_id").desc())
-            .fetch(DataRowMapper())
+            .fetch(MatchPlayerRecordMapper())
     }
 
-    class DataRowMapper :
-        RecordMapper<Record12<Int, String, Int, Int, String, Int, String, String, LocalDate, Int, String, String>, DataRow> {
-        override fun map(p0: Record12<Int, String, Int, Int, String, Int, String, String, LocalDate, Int, String, String>?): DataRow {
-            return DataRow(
+    class MatchPlayerRecordMapper :
+        RecordMapper<Record12<Int, String, Int, Int, String, Int, String, String, LocalDate, Int, String, String>, MatchPlayerRecord> {
+        override fun map(p0: Record12<Int, String, Int, Int, String, Int, String, String, LocalDate, Int, String, String>?): MatchPlayerRecord {
+            return MatchPlayerRecord(
                 p0?.get("match_id", MATCH.ID.type)!!,
                 p0.getValue(MATCH.GROUP_OR_ROUND)!!,
                 p0.getValue(MATCH.MATCH_ORDER_NUMBER)!!,
@@ -186,7 +186,7 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
         }
     }
 
-    class DataRow(
+    class MatchPlayerRecord(
         val matchId: Int,
         val groupOrRound: String,
         val matchOrder: Int,
