@@ -208,6 +208,27 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
         dslContext.batchInsert(records).execute()
     }
 
+    private fun storeGroup(draw: CompetitionCategoryGroupsDrawSpec) {
+        // TODO: Store the group ?
+        val playerOffMatchRecords = draw.matches.map { it.toRecord(draw.competitionCategoryId) }
+        val groupMatchRecords =
+            draw.groups.flatMap { group -> group.matches.map { it.toRecord(draw.competitionCategoryId, group.name) } }
+        dslContext.batchInsert(playerOffMatchRecords + groupMatchRecords).execute()
+    }
+
+    private fun GroupMatch.toRecord(competitionCategoryId: Int, groupName: String): MatchRecord {
+        val record = dslContext.newRecord(MATCH)
+        record.startTime = null
+        record.endTime = null
+        record.competitionCategoryId = competitionCategoryId
+        record.matchType = MatchType.GROUP.name
+        record.firstRegistrationId = this.registrationOneId.asInt()
+        record.secondRegistrationId = this.registrationTwoId.asInt()
+        record.matchOrderNumber = 0
+        record.groupOrRound = groupName
+        return record
+    }
+
     private fun PlayOffMatch.toRecord(competitionCategoryId: Int): MatchRecord {
         val record = dslContext.newRecord(MATCH)
         record.startTime = null
@@ -229,7 +250,4 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
         }
     }
 
-    private fun storeGroup(draw: CompetitionCategoryGroupsDrawSpec) {
-        // TODO: Implement
-    }
 }
