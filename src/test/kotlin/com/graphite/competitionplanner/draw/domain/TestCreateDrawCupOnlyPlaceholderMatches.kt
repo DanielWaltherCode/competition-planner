@@ -48,7 +48,7 @@ class TestCreateDrawCupOnlyPlaceholderMatches {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawSpec
 
         // Assert
         result.matches.assertCorrectNumberOfMatchesInRound(Round.FINAL, 1)
@@ -81,7 +81,7 @@ class TestCreateDrawCupOnlyPlaceholderMatches {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawSpec
 
         // Assert
         result.matches.assertMatchOrdersExist(Round.FINAL, (1..1).toList())

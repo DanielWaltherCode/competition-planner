@@ -47,7 +47,7 @@ class TestCreateDrawGeneratedMatches {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as GroupsDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as GroupsDrawSpec
 
         // Assert
         val matches = result.groups.first().matches
@@ -77,7 +77,7 @@ class TestCreateDrawGeneratedMatches {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as GroupsDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as GroupsDrawSpec
 
         // Assert
         val matches = result.groups.first().matches
@@ -107,7 +107,7 @@ class TestCreateDrawGeneratedMatches {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as GroupsDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as GroupsDrawSpec
 
         // Assert
         val matches = result.groups.first().matches

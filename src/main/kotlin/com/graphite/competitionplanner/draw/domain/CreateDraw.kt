@@ -25,7 +25,7 @@ class CreateDraw(
     /**
      * Creates a draw for the given competition category
      */
-    fun execute(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
+    fun execute(competitionCategoryId: Int): CompetitionCategoryDrawSpec {
         val competitionCategory = findCompetitionCategory.byId(competitionCategoryId)
 
         // TODO: If draw already made, delete draw and associated matches and remake, seed, matches etc.
@@ -38,7 +38,7 @@ class CreateDraw(
             when (it.drawType) {
                 DrawType.POOL_ONLY,
                 DrawType.POOL_AND_CUP
-                -> GroupsDrawDTO(competitionCategory.id,
+                -> GroupsDrawSpec(competitionCategory.id,
                     drawGroups(registrationsWithSeeds, it),
                     emptyList())
                 DrawType.CUP_ONLY -> createPlayOffs(registrationsWithSeeds)
@@ -92,7 +92,7 @@ class CreateDraw(
     }
 
 
-    private fun createPlayOffs(registrations: List<RegistrationSeedDTO>): PlayOffDrawDTO {
+    private fun createPlayOffs(registrations: List<RegistrationSeedDTO>): PlayOffDrawSpec {
         // If we are not an even power of 2, then we need to add so called BYE players to the list of registrations
         // until we reach a number that is a power of 2
         val numberOfRounds = ceil(log2(registrations.size.toDouble())).toInt()
@@ -108,7 +108,7 @@ class CreateDraw(
 
         val placeholderMatches = buildRemainingPlayOffTree(firstRoundOfMatches.size / 2)
 
-        return PlayOffDrawDTO(1, numberOfRounds.asRound(), firstRoundOfMatches + placeholderMatches)
+        return PlayOffDrawSpec(1, numberOfRounds.asRound(), firstRoundOfMatches + placeholderMatches)
     }
 
     /**
@@ -257,21 +257,21 @@ class CreateDraw(
 
 }
 
-sealed class CompetitionCategoryDrawDTO(
+sealed class CompetitionCategoryDrawSpec(
     val competitionCategoryId: Int
 )
 
-class PlayOffDrawDTO(
+class PlayOffDrawSpec(
     competitionCategoryId: Int,
     val startingRound: Round,
     val matches: List<PlayOffMatch>
-) : CompetitionCategoryDrawDTO(competitionCategoryId)
+) : CompetitionCategoryDrawSpec(competitionCategoryId)
 
-class GroupsDrawDTO(
+class GroupsDrawSpec(
     competitionCategoryId: Int,
     val groups: List<Group>,
     val matches: List<PlayOffMatch>
-) : CompetitionCategoryDrawDTO(competitionCategoryId)
+) : CompetitionCategoryDrawSpec(competitionCategoryId)
 
 data class Group(
     val name: String,

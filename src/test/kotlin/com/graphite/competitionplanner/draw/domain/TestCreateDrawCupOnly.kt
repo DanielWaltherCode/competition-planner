@@ -48,7 +48,7 @@ class TestCreateDrawCupOnly {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawSpec
 
         // Assert
         val matches = result.matches
@@ -88,7 +88,7 @@ class TestCreateDrawCupOnly {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawSpec
 
         // Assert
         val matches = result.matches
@@ -162,7 +162,7 @@ class TestCreateDrawCupOnly {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawSpec
 
         // Assert
         val expectedNumberOfMatches =

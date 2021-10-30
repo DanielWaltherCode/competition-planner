@@ -45,10 +45,10 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
 
     fun clearTable() = dslContext.deleteFrom(POOL_DRAW).execute()
 
-    override fun store(draw: CompetitionCategoryDrawDTO) {
+    override fun store(draw: CompetitionCategoryDrawSpec) {
         when (draw) {
-            is PlayOffDrawDTO -> storePlayoff(draw)
-            is GroupsDrawDTO -> storeGroup(draw)
+            is PlayOffDrawSpec -> storePlayoff(draw)
+            is GroupsDrawSpec -> storeGroup(draw)
         }
     }
 
@@ -203,15 +203,12 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
 
     enum class RegistrationOrder { First, Second }
 
-    private fun storePlayoff(draw: CompetitionCategoryPlayOffDrawSpec) {
-=======
-    private fun storePlayoff(draw: PlayOffDrawDTO) {
->>>>>>> Add first draft of playoff draw
+    private fun storePlayoff(draw: PlayOffDrawSpec) {
         val records = draw.matches.map { it.toRecord(draw.competitionCategoryId) }
         dslContext.batchInsert(records).execute()
     }
 
-    private fun storeGroup(draw: CompetitionCategoryGroupsDrawSpec) {
+    private fun storeGroup(draw: GroupsDrawSpec) {
         // TODO: Store the group ?
         val playerOffMatchRecords = draw.matches.map { it.toRecord(draw.competitionCategoryId) }
         val groupMatchRecords =

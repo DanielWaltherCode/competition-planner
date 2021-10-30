@@ -47,7 +47,7 @@ class TestCreateDrawMatchOrder {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawSpec
 
         // Assert
         val match = result.matches.first()
@@ -72,7 +72,7 @@ class TestCreateDrawMatchOrder {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawSpec
 
         // Assert
         val bestToWorst = registrationRanks.sortedBy { -it.rank }.map { Registration.Real(it.registrationId) }
@@ -100,7 +100,7 @@ class TestCreateDrawMatchOrder {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawDTO
+        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawSpec
 
         // Assert
         val bestToWorst = registrationRanks.sortedBy { -it.rank }.map { Registration.Real(it.registrationId) }

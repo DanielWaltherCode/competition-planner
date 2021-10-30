@@ -6,7 +6,7 @@ import com.graphite.competitionplanner.competition.interfaces.ICompetitionReposi
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.domain.entity.Round
-import com.graphite.competitionplanner.draw.domain.CompetitionCategoryPlayOffDrawSpec
+import com.graphite.competitionplanner.draw.domain.PlayOffDrawSpec
 import com.graphite.competitionplanner.draw.domain.PlayOffMatch
 import com.graphite.competitionplanner.draw.domain.Registration
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
@@ -45,7 +45,7 @@ class TestGet(
         val competitionCategory = competition.createCategory()
         val players = club.addPlayers(4)
         val registrations = competitionCategory.registerPlayers(players)
-        val spec = CompetitionCategoryPlayOffDrawSpec(
+        val spec = PlayOffDrawSpec(
             competitionCategoryId = competitionCategory.id,
             startingRound = Round.SEMI_FINAL,
             matches = listOf(
@@ -107,7 +107,7 @@ class TestGet(
         val registrationTwo = competitionCategory.registerForDoubles(players.take(4).takeLast(2))
         val registrationThree = competitionCategory.registerForDoubles(players.takeLast(4).take(2))
         val registrationFour = competitionCategory.registerForDoubles(players.takeLast(4).takeLast(2))
-        val spec = CompetitionCategoryPlayOffDrawSpec(
+        val spec = PlayOffDrawSpec(
             competitionCategoryId = competitionCategory.id,
             startingRound = Round.SEMI_FINAL,
             matches = listOf(

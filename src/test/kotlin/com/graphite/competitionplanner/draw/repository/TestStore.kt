@@ -36,7 +36,7 @@ class TestStore(
         val competitionCategory = competition.createCategory()
         val players = club.addPlayers(2)
         val registrations = competitionCategory.registerPlayers(players)
-        val spec = CompetitionCategoryPlayOffDrawSpec(
+        val spec = PlayOffDrawSpec(
             competitionCategoryId = competitionCategory.id,
             startingRound = Round.FINAL,
             matches = listOf(
@@ -61,7 +61,7 @@ class TestStore(
         val competitionCategory = competition.createCategory()
         val players = club.addPlayers(1)
         val registrations = competitionCategory.registerPlayers(players)
-        val spec = CompetitionCategoryPlayOffDrawSpec(
+        val spec = PlayOffDrawSpec(
             competitionCategoryId = competitionCategory.id,
             startingRound = Round.FINAL,
             matches = listOf(
@@ -86,7 +86,7 @@ class TestStore(
         val competitionCategory = competition.createCategory()
         val players = club.addPlayers(1)
         val registrations = competitionCategory.registerPlayers(players)
-        val spec = CompetitionCategoryPlayOffDrawSpec(
+        val spec = PlayOffDrawSpec(
             competitionCategoryId = competitionCategory.id,
             startingRound = Round.FINAL,
             matches = listOf(
@@ -111,7 +111,7 @@ class TestStore(
         val players = club.addPlayers(4)
         val registrations = competitionCategory.registerPlayers(players)
         val registrationIds = registrations.map { Registration.Real(it.id) }
-        val spec = CompetitionCategoryGroupsDrawSpec(
+        val spec = GroupsDrawSpec(
             competitionCategoryId = competitionCategory.id,
             groups = listOf(
                 Group(

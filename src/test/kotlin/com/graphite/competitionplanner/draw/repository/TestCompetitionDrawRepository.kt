@@ -9,7 +9,7 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.Competitio
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.domain.entity.Round
-import com.graphite.competitionplanner.draw.domain.PlayOffDrawDTO
+import com.graphite.competitionplanner.draw.domain.PlayOffDrawSpec
 import com.graphite.competitionplanner.draw.domain.PlayOffMatch
 import com.graphite.competitionplanner.draw.domain.Registration
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
@@ -43,7 +43,7 @@ class TestCompetitionDrawRepository(
         val competitionCategory = competition.createCategory()
         val players = club.addPlayers(2)
         val registrations = competitionCategory.registerPlayers(players)
-        val dto = PlayOffDrawDTO(
+        val dto = PlayOffDrawSpec(
             competitionCategoryId = competitionCategory.id,
             startingRound = Round.FINAL,
             matches = listOf(
@@ -68,7 +68,7 @@ class TestCompetitionDrawRepository(
         val competitionCategory = competition.createCategory()
         val players = club.addPlayers(1)
         val registrations = competitionCategory.registerPlayers(players)
-        val dto = PlayOffDrawDTO(
+        val dto = PlayOffDrawSpec(
             competitionCategoryId = competitionCategory.id,
             startingRound = Round.FINAL,
             matches = listOf(
@@ -93,7 +93,7 @@ class TestCompetitionDrawRepository(
         val competitionCategory = competition.createCategory()
         val players = club.addPlayers(1)
         val registrations = competitionCategory.registerPlayers(players)
-        val dto = PlayOffDrawDTO(
+        val dto = PlayOffDrawSpec(
             competitionCategoryId = competitionCategory.id,
             startingRound = Round.FINAL,
             matches = listOf(
