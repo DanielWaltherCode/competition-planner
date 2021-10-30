@@ -47,7 +47,7 @@ class TestCreateDrawMatchOrder {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayOffDrawSpec
+        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawDTO
 
         // Assert
         val match = result.matches.first()
@@ -72,10 +72,10 @@ class TestCreateDrawMatchOrder {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayOffDrawSpec
+        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawDTO
 
         // Assert
-        val bestToWorst = registrationRanks.sortedBy { -it.rank }.map { Registration.Real(it.id) }
+        val bestToWorst = registrationRanks.sortedBy { -it.rank }.map { Registration.Real(it.registrationId) }
         val matchWithRankOne = result.matches.first { it.contains(bestToWorst[0]) }
         val matchWithRankTwo = result.matches.first { it.contains(bestToWorst[1]) }
 
@@ -100,10 +100,10 @@ class TestCreateDrawMatchOrder {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayOffDrawSpec
+        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawDTO
 
         // Assert
-        val bestToWorst = registrationRanks.sortedBy { -it.rank }.map { Registration.Real(it.id) }
+        val bestToWorst = registrationRanks.sortedBy { -it.rank }.map { Registration.Real(it.registrationId) }
         val matchWithRankOne = result.matches.first { it.contains(bestToWorst[0]) }
         val matchWithRankTwo = result.matches.first { it.contains(bestToWorst[1]) }
         val matchWithRankThree = result.matches.first { it.contains(bestToWorst[2]) }

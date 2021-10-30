@@ -1,108 +1,128 @@
 <template>
   <main id="tournament">
-    <ul class="round">
 
-      <li class="spacer">&nbsp;</li>
+    <section id="bracket">
+        <div class="d-flex">
+          <div class="round current w-100 d-flex align-content-between m-4" v-for="round in playoffRounds"
+               :key="round.round">
+            <div class="round-details">{{ $t("round." + round.round) }}</div>
+            <div class="w-100 h-100 d-flex flex-column justify-content-around">
+              <div class="matchup" v-for="match in round.matches" :key="match.id">
+                <table class="table table-responsive mb-2">
+                  <tbody class="bg-white">
+                  <tr>
+                    <td>
+                      <div v-if="match.firstPlayer[0].firstName !== 'BYE'">
+                        <p class="mb-0" :class="isPlayerOneWinner(match) ? 'fw-bold' : ''">
+                          {{ getPlayerOne(match) }}
+                          <span class="text-uppercase"> {{ getClub(match.firstPlayer) }}</span>
+                        </p>
+                      </div>
+                    </td>
+                    <td class="score" v-for="game in match.result.gameList" :key="game.id">
+                      {{ game.firstRegistrationResult }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div v-if="match.secondPlayer[0].firstName !== 'BYE'">
+                        <p class="mb-0" :class="isPlayerTwoWinner(match) ? 'fw-bold' : ''">
+                          {{ getPlayerTwo(match) }} <span
+                            class="text-uppercase"> {{ getClub(match.secondPlayer) }}</span>
+                        </p>
+                      </div>
+                    </td>
+                    <td class="score" v-for="game in match.result.gameList" :key="game.id">
+                      {{ game.secondRegistrationResult }}
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
 
-      <li class="game game-top"></li>
-      <li class="game game-spacer">&nbsp;</li>
-      <li class="game game-bottom "></li>
-
-      <li class="spacer">&nbsp;</li>
-    </ul>
-    <ul class="round round-2">
-      <li class="spacer">&nbsp;</li>
-
-      <li class="game game-top winner">Lousville <span>82</span></li>
-      <li class="game game-spacer">&nbsp;</li>
-      <li class="game game-bottom ">Colo St <span>56</span></li>
-
-      <li class="spacer">&nbsp;</li>
-
-      <li class="game game-top winner">Oregon <span>74</span></li>
-      <li class="game game-spacer">&nbsp;</li>
-      <li class="game game-bottom ">Saint Louis <span>57</span></li>
-
-      <li class="spacer">&nbsp;</li>
-
-      <li class="game game-top ">Memphis <span>48</span></li>
-      <li class="game game-spacer">&nbsp;</li>
-      <li class="game game-bottom winner">Mich St <span>70</span></li>
-
-      <li class="spacer">&nbsp;</li>
-
-      <li class="game game-top ">Creighton <span>50</span></li>
-      <li class="game game-spacer">&nbsp;</li>
-      <li class="game game-bottom winner">Duke <span>66</span></li>
-
-      <li class="spacer">&nbsp;</li>
-    </ul>
+            </div>
+          </div>
+      </div>
+    </section>
 
   </main>
 </template>
 
 <script>
+import DrawService from "@/common/api-services/draw.service";
+import {getClub, getPlayerOne, getPlayerTwo, isPlayerOneWinner, isPlayerTwoWinner} from "@/common/util";
+
 export default {
   name: "PlayoffDraw",
+  data() {
+    return {
+      playoffRounds: []
+    }
+  },
   props: {
     playoff: Object
+  },
+  mounted() {
+    DrawService.getPlayoffDraw().then(res => {
+      this.playoffRounds = res.data
+    })
+  },
+  methods: {
+    getPlayerOne: getPlayerOne,
+    getPlayerTwo: getPlayerTwo,
+    getClub: getClub,
+    isPlayerOneWinner: isPlayerOneWinner,
+    isPlayerTwoWinner: isPlayerTwoWinner,
   }
 }
 </script>
 
 <style scoped>
-/*
- *  Flex Layout Specifics
-*/
-main{
-  display:flex;
-  flex-direction:row;
-}
-.round{
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  width:200px;
-  list-style:none;
-  padding:0;
-}
-.round .spacer{ flex-grow:1; }
-.round .spacer:first-child,
-.round .spacer:last-child{ flex-grow:.5; }
 
-.round .game-spacer{
-  flex-grow:1;
+
+#bracket {
+  background-color: rgba(225, 225, 225, 0.20);
+  font-size: 12px;
+  padding: 40px 0;
+  height: 100%;
 }
 
-/*
- *  General Styles
-*/
-body{
-  padding:10px;
-  line-height:1.4em;
+
+.round {
+  display: block;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
 }
 
-li.game{
-  padding-left:20px;
+.split-one .round {
+  margin: 0 2.5% 0 0;
 }
 
-li.game.winner{
-  font-weight:bold;
-}
-li.game span{
-  float:right;
-  margin-right:5px;
+
+.score {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #2C7399;
+  font-weight: bold;
+  right: 5px;
 }
 
-li.game-top{ border-bottom:1px solid #aaa; }
-
-li.game-spacer{
-  border-right:1px solid #aaa;
-  min-height:40px;
+.round-details {
+  font-size: 13px;
+  color: #2C7399;
+  text-transform: uppercase;
+  text-align: center;
+  height: 40px;
 }
 
-li.game-bottom{
-  border-top:1px solid #aaa;
+.current li {
+  opacity: 1;
 }
+
+
 
 </style>

@@ -14,7 +14,7 @@ export function getHoursMinutes(date) {
     return getDisplayTime(dateObject.getHours()) + ":" + getDisplayTime(dateObject.getMinutes())
 }
 
-export function getPlayerOne(match) {
+export function getPlayerOneWithClub(match) {
     let playerOne = ""
     if (match.firstPlayer.length === 1) {
         playerOne = match.firstPlayer[0].firstName + " " + match.firstPlayer[0].lastName + " " + match.firstPlayer[0].club.name
@@ -25,7 +25,7 @@ export function getPlayerOne(match) {
     return playerOne
 }
 
-export function getPlayerTwo(match) {
+export function getPlayerTwoWithClub(match) {
     let playerTwo = ""
     if (match.secondPlayer.length === 1) {
         playerTwo = match.secondPlayer[0].firstName + " " + match.secondPlayer[0].lastName + " " + match.secondPlayer[0].club.name
@@ -34,6 +34,56 @@ export function getPlayerTwo(match) {
             match.secondPlayer[1].firstName + " " + match.secondPlayer[1].lastName + " " + match.secondPlayer[1].club.name
     }
     return playerTwo
+}
+
+export function getPlayerOne(match) {
+    let playerOne = ""
+    if (match.firstPlayer.length === 1) {
+        playerOne = match.firstPlayer[0].firstName + " " + match.firstPlayer[0].lastName
+    } else if (match.firstPlayer.length === 2) {
+        playerOne = match.firstPlayer[0].firstName + " " + match.firstPlayer[0].lastName +
+            match.firstPlayer[1].firstName + " " + match.firstPlayer[1].lastName
+    }
+    return playerOne
+}
+
+export function getPlayerTwo(match) {
+    let playerTwo = ""
+    if (match.secondPlayer.length === 1) {
+        playerTwo = match.secondPlayer[0].firstName + " " + match.secondPlayer[0].lastName
+    } else if (match.firstPlayer.length === 2) {
+        playerTwo = match.secondPlayer[0].firstName + " " + match.secondPlayer[0].lastName +
+            match.secondPlayer[1].firstName + " " + match.secondPlayer[1].lastName
+    }
+    return playerTwo
+}
+
+export function isPlayerOneWinner(match) {
+    if (match.winner.length === 0) {
+        return false
+    }
+    let winnerIds = match.winner.map(player => player.id)
+
+    return winnerIds.includes(match.firstPlayer[0].id)
+}
+
+export function isPlayerTwoWinner(match) {
+    if (match.winner.length === 0) {
+        return false
+    }
+    let winnerIds = match.winner.map(player => player.id)
+
+    return winnerIds.includes(match.secondPlayer[0].id)
+
+}
+
+export function getClub(playerDTOs) {
+    if (playerDTOs.length === 1) {
+        return playerDTOs[0].club.name
+    }
+    else if (playerDTOs.length === 2) {
+        return playerDTOs[0].club.name + "/" + playerDTOs[1].club.name
+    }
 }
 
 export function getDisplayTime(time) {

@@ -67,7 +67,7 @@
 
 <script>
 import ResultService from "@/common/api-services/result.service";
-import {getPlayerOne, getPlayerTwo} from "@/common/util";
+import {getPlayerOneWithClub, getPlayerTwoWithClub} from "@/common/util";
 import CategoryService from "@/common/api-services/category.service";
 import DefinitionComponent from "@/components/general/DefinitionComponent";
 
@@ -178,8 +178,8 @@ export default {
         })
       }
     },
-    getPlayerOne: getPlayerOne,
-    getPlayerTwo: getPlayerTwo
+    getPlayerOne: getPlayerOneWithClub,
+    getPlayerTwo: getPlayerTwoWithClub
   }
 }
 </script>

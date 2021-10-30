@@ -48,13 +48,13 @@ class TestCreateDrawCupOnly {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayOffDrawSpec
+        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawDTO
 
         // Assert
         val matches = result.matches
         Assertions.assertEquals(7, matches.size, "In a binary tree with 4 leaves, there should be in total 7 nodes.")
 
-        val bestToWorst = registrationRanks.sortedBy { -it.rank }.map { Registration.Real(it.id) }
+        val bestToWorst = registrationRanks.sortedBy { -it.rank }.map { Registration.Real(it.registrationId) }
         val bestRegistration = bestToWorst[0]
         matches.assertThereIsMatchWith(bestRegistration, Registration.Bye)
 
@@ -88,7 +88,7 @@ class TestCreateDrawCupOnly {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayOffDrawSpec
+        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawDTO
 
         // Assert
         val matches = result.matches
@@ -99,7 +99,7 @@ class TestCreateDrawCupOnly {
             matches.filter { it.round == Round.ROUND_OF_16 }.filter { it.contains(byePlayerID) }
         Assertions.assertEquals(7, matchesWithByeInFirstRound.size, "Expected to find 7 BYE players in first round")
 
-        val bestToWorst = registrationRanks.sortedBy { -it.rank }.map { Registration.Real(it.id) }
+        val bestToWorst = registrationRanks.sortedBy { -it.rank }.map { Registration.Real(it.registrationId) }
         val bestRegistration = bestToWorst[0]
         matches.assertThereIsMatchWith(bestRegistration, byePlayerID)
 
@@ -162,7 +162,7 @@ class TestCreateDrawCupOnly {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryPlayOffDrawSpec
+        val result = createDraw.execute(competitionCategory.id) as PlayOffDrawDTO
 
         // Assert
         val expectedNumberOfMatches =

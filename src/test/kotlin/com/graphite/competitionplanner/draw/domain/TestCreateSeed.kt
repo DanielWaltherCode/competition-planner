@@ -36,7 +36,7 @@ class TestCreateSeed(
 
         // Assert
         val firstSeed = seededRegistrations.first { it.seed == 1 }
-        Assertions.assertEquals(highestRank.id, firstSeed.id)
+        Assertions.assertEquals(highestRank.registrationId, firstSeed.id)
     }
 
 }

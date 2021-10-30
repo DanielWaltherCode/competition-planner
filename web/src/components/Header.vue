@@ -121,26 +121,6 @@ export default {
 </script>
 
 <style scoped>
-/*
-nav {
-  box-shadow: 0 3px #efefef;
-}
-
-#brand {
-  color: white;
-}
-
-.navbar {
-  background-color: var(--main-color) !important;
-}
-
-.nav-link {
-  color: white !important;
-}
-
-.submenu {
-  color: var(--main-color) !important;
-}*/
 
 .navbar-collapse {
   justify-content: space-between;

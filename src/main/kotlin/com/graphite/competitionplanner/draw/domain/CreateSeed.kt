@@ -30,7 +30,7 @@ class CreateSeed {
 
         return sortedHighestRankFirst.mapIndexed { index, it ->
             RegistrationSeedDTO(
-                it.id,
+                it.registrationId,
                 it.competitionCategoryId,
                 seed = if (index < numberOfSeeds) index + 1 else null
             )

@@ -371,3 +371,8 @@ data class PlayoffRound(
     val round: Round,
     val matches: List<MatchUp>
 )
+
+data class PlayoffRoundDTO(
+    val round: Round,
+    val matches: List<MatchAndResultDTO>
+)

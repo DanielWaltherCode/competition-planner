@@ -51,9 +51,9 @@ class TestGetRegistrationRankForSingles(
         val registrationRanks = registrationRepository.getRegistrationRank(competitionCategory)
 
         // Assert
-        val actualReg1 = registrationRanks.first { it.id == reg1.id }
+        val actualReg1 = registrationRanks.first { it.registrationId == reg1.id }
         Assertions.assertEquals(39, actualReg1.rank)
-        val actualReg2 = registrationRanks.first { it.id == reg2.id }
+        val actualReg2 = registrationRanks.first { it.registrationId == reg2.id }
         Assertions.assertEquals(98, actualReg2.rank)
     }
 }

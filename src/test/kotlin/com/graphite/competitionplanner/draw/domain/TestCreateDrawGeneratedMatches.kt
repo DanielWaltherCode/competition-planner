@@ -47,15 +47,15 @@ class TestCreateDrawGeneratedMatches {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawSpec
+        val result = createDraw.execute(competitionCategory.id) as GroupsDrawDTO
 
         // Assert
         val matches = result.groups.first().matches
         Assertions.assertEquals(3, matches.size)
 
         for (registration in registrationRanks) {
-            val res = matches.filter { it.contains(Registration.Real(registration.id)) }
-            Assertions.assertEquals(2, res.size, "Registration with id ${registration.id} did get the correct " +
+            val res = matches.filter { it.contains(Registration.Real(registration.registrationId)) }
+            Assertions.assertEquals(2, res.size, "Registration with id ${registration.registrationId} did get the correct " +
                     "number of matches.")
         }
     }
@@ -77,15 +77,15 @@ class TestCreateDrawGeneratedMatches {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawSpec
+        val result = createDraw.execute(competitionCategory.id) as GroupsDrawDTO
 
         // Assert
         val matches = result.groups.first().matches
         Assertions.assertEquals(6, matches.size)
 
         for (registration in registrationRanks) {
-            val res = matches.filter { it.contains(Registration.Real(registration.id)) }
-            Assertions.assertEquals(3, res.size, "Registration with id ${registration.id} did get the correct " +
+            val res = matches.filter { it.contains(Registration.Real(registration.registrationId)) }
+            Assertions.assertEquals(3, res.size, "Registration with id ${registration.registrationId} did get the correct " +
                     "number of matches.")
         }
     }
@@ -107,15 +107,15 @@ class TestCreateDrawGeneratedMatches {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as CompetitionCategoryGroupsDrawSpec
+        val result = createDraw.execute(competitionCategory.id) as GroupsDrawDTO
 
         // Assert
         val matches = result.groups.first().matches
         Assertions.assertEquals(10, matches.size)
 
         for (registration in registrationRanks) {
-            val res = matches.filter { it.contains(Registration.Real(registration.id)) }
-            Assertions.assertEquals(4, res.size, "Registration with id ${registration.id} did get the correct " +
+            val res = matches.filter { it.contains(Registration.Real(registration.registrationId)) }
+            Assertions.assertEquals(4, res.size, "Registration with id ${registration.registrationId} did get the correct " +
                     "number of matches.")
         }
     }

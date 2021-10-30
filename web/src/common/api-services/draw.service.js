@@ -14,6 +14,9 @@ const DrawService = {
     },
     deleteDraw(competitionId, categoryId) {
         return Axios.delete(`/competition/${competitionId}/draw/${categoryId}`, {withCredentials: true})
+    },
+    getPlayoffDraw() {
+        return Axios.get(`/competition/1/draw/1/mock`, {withCredentials: true})
     }
 }
 

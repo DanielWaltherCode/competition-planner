@@ -107,7 +107,8 @@
     "QUARTER_FINAL": "Kvartsfinal",
     "ROUND_OF_16": "Åttondelsfinal",
     "ROUND_OF_32": "16-delsfinal",
-    "ROUND_OF_64": "32-delsfinal"
+    "ROUND_OF_64": "32-delsfinal",
+    "ROUND_OF_128": "64-delsfinal"
   },
   "general": {
     "save": "Spara",

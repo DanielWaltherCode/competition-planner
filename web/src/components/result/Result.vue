@@ -69,7 +69,7 @@
 
 <script>
 import MatchService from "@/common/api-services/match.service";
-import {getPlayerOne, getPlayerTwo} from "@/common/util";
+import {getPlayerOneWithClub, getPlayerTwoWithClub} from "@/common/util";
 import RegisterResult from "@/components/result/RegisterResult";
 
 export default {
@@ -109,8 +109,8 @@ export default {
       })
     },
     // TODO - move to util
-    getPlayerOne: getPlayerOne,
-    getPlayerTwo: getPlayerTwo,
+    getPlayerOne: getPlayerOneWithClub,
+    getPlayerTwo: getPlayerTwoWithClub,
     getTime(match) {
       if (match != null && match.startTime === null) {
         return this.$t("draw.pool.noTime")

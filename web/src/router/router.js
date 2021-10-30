@@ -3,6 +3,16 @@ import Router from "vue-router"
 import RegisteredPlayers from "@/components/player/RegisteredPlayers";
 import AddPlayerToCompetition from "@/components/player/AddPlayerToCompetition";
 import PlayerDetail from "@/components/player/PlayerDetail";
+import Player from "@/components/player/Player";
+import Categories from "@/components/category/Categories";
+import Landing from "@/components/Landing";
+import NewCompetition from "@/components/competition/NewCompetition";
+import CompetitionOverview from "@/components/competition/CompetitionOverview";
+import Draw from "@/components/draw/Draw";
+import Schedule from "@/components/schedule/Schedule";
+import Result from "@/components/result/Result";
+import ScheduleAdvanced from "@/components/schedule/ScheduleAdvanced";
+import PlayoffDraw from "@/components/draw/PlayoffDraw";
 
 Vue.use(Router)
 
@@ -11,33 +21,29 @@ export default new Router({
         routes: [
             {
                 path: "/",
-                name: "home",
-                component: () => import("@/components/Landing"),
+                component: Landing,
             },
             {
                 path: "/landing",
-                name: "landing",
-                component: () => import("@/components/Landing"),
+                component: Landing,
             },
             {
                 path: "/new-competition",
-                name: "newCompetition",
-                component: () => import("@/components/competition/NewCompetition"),
+                component: NewCompetition,
             },
             {
                 path: "/overview",
-                name: "overview",
-                component: () => import("@/components/competition/CompetitionOverview"),
+                component: CompetitionOverview,
             },
             {
                 path: "/classes",
                 name: "classes",
-                component: () => import("@/components/category/Categories")
+                component: Categories
             },
             {
                 path: "/players",
                 name: "players",
-                component: () => import("@/components/player/Player"),
+                component: Player,
                 children: [
                     {
                         path: "overview",
@@ -56,23 +62,23 @@ export default new Router({
             },
             {
                 path: "/draw",
-                name: "draw",
-                component: () => import("@/components/draw/Draw"),
+                component: Draw,
+            },
+            {
+                path: "/playoffDraw",
+                component: PlayoffDraw,
             },
             {
                 path: "/schedule",
-                name: "schedule",
-                component: () => import("@/components/schedule/Schedule"),
+                component:Schedule,
             },
             {
                 path: "/schedule-advanced",
-                name: "schedule-advanced",
-                component: () => import("@/components/schedule/ScheduleAdvanced"),
+                component: ScheduleAdvanced,
             },
             {
                 path: "/results",
-                name: "results",
-                component: () => import("@/components/result/Result"),
+                component: Result,
             }
         ],
         scrollBehavior() {
