@@ -1,0 +1,95 @@
+# Deploy competition planner api and web to Digital Ocean
+
+name: Deploy to Digital Ocean
+
+# Controls when the workflow will run
+# Note! This will run both when closing PR and when pushing directly to master
+on:
+  push:
+    branches:
+      - master
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The server to run the build on
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout our code  
+        uses: actions/checkout@v2
+      
+      # Build backend and move to to deploy directory
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+      - name: Build with Maven
+        run: mvn --update-snapshots clean install
+      - name: Create deploy directory and copy jar file  
+        run: mkdir deploy && cp target/*.jar deploy
+      
+      # Build frontend
+      - name: Install Node
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+      - name: Build frontend
+        run: npm install && npm run build
+        working-directory: ./web
+      - name: Copy dist file to deploy directory 
+        run: zip -r dist.zip dist; mv dist.zip /github/workspace/deploy/ 
+        working-directory: ./web
+    
+    # Deploy via ssh 
+      - name: Stop current competition planner service
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: sudo service compplanner stop
+          host: ${{secrets.SSH_HOST}}
+          username: ${{secrets.SSH_USERNAME}}
+          passphrase: ${{secrets.SSH_PASSWORD}}
+          privateKey: ${{secrets.SSH_PRIVATE_KEY}}
+          port: ${{secrets.SSH_PORT}}   
+      - name: Clean up from previous deploy
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: rm -rf old_deploy; mkdir old_deploy; mv deploy/* old_deploy
+          host: ${{secrets.SSH_HOST}}
+          username: ${{secrets.SSH_USERNAME}}
+          passphrase: ${{secrets.SSH_PASSWORD}}
+          privateKey: ${{secrets.SSH_PRIVATE_KEY}}
+          port: ${{secrets.SSH_PORT}}      
+      - name: Deploy new artifacts
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: /github/workspace/deploy/ 
+          remote: /home/github-actions/deploy/
+          host: ${{secrets.SSH_HOST}}
+          username: ${{secrets.SSH_USERNAME}}
+          passphrase: ${{secrets.SSH_PASSWORD}}
+          port: ${{secrets.SSH_PORT}}   
+      - name: Unzip dist file
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: cd deploy; unzip dist.zip
+          host: ${{secrets.SSH_HOST}}
+          username: ${{secrets.SSH_USERNAME}}
+          passphrase: ${{secrets.SSH_PASSWORD}}
+          port: ${{secrets.SSH_PORT}}  
+      - name: Start competition planner service
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: sudo service compplanner start
+          host: ${{secrets.SSH_HOST}}
+          username: ${{secrets.SSH_USERNAME}}
+          passphrase: ${{secrets.SSH_PASSWORD}}
+          privateKey: ${{secrets.SSH_PRIVATE_KEY}}
+          port: ${{secrets.SSH_PORT}}    
+ 
+  
