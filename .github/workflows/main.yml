@@ -73,6 +73,7 @@ jobs:
           host: ${{secrets.SSH_HOST}}
           username: ${{secrets.SSH_USERNAME}}
           passphrase: ${{secrets.SSH_PASSWORD}}
+          privateKey: ${{secrets.SSH_PRIVATE_KEY}}
           port: ${{secrets.SSH_PORT}}   
       - name: Unzip dist file
         uses: garygrossgarten/github-action-ssh@release
@@ -81,6 +82,7 @@ jobs:
           host: ${{secrets.SSH_HOST}}
           username: ${{secrets.SSH_USERNAME}}
           passphrase: ${{secrets.SSH_PASSWORD}}
+          privateKey: ${{secrets.SSH_PRIVATE_KEY}}
           port: ${{secrets.SSH_PORT}}  
       - name: Start competition planner service
         uses: garygrossgarten/github-action-ssh@release
