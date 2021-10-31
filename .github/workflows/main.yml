@@ -78,7 +78,7 @@ jobs:
       - name: Unzip dist file
         uses: garygrossgarten/github-action-ssh@release
         with:
-          command: unzip deploy/dist.zip
+          command: cd deploy; unzip dist.zip
           host: ${{secrets.SSH_HOST}}
           username: ${{secrets.SSH_USERNAME}}
           passphrase: ${{secrets.SSH_PASSWORD}}
