@@ -50,7 +50,7 @@ jobs:
       - name: Stop current competition planner service
         uses: garygrossgarten/github-action-ssh@release
         with:
-          command: sudo service compplanner stop
+          command: sudo systemctl stop compplanner.service 
           host: ${{secrets.SSH_HOST}}
           username: ${{secrets.SSH_USERNAME}}
           passphrase: ${{secrets.SSH_PASSWORD}}
@@ -68,7 +68,7 @@ jobs:
       - name: Deploy new artifacts
         uses: garygrossgarten/github-action-scp@release
         with:
-          local: /github/workspace/deploy/ 
+          local: $GITHUB_WORKSPACE/deploy/* 
           remote: /home/github-actions/deploy/
           host: ${{secrets.SSH_HOST}}
           username: ${{secrets.SSH_USERNAME}}
@@ -85,7 +85,7 @@ jobs:
       - name: Start competition planner service
         uses: garygrossgarten/github-action-ssh@release
         with:
-          command: sudo service compplanner start
+          command: sudo systemctl start compplanner.service 
           host: ${{secrets.SSH_HOST}}
           username: ${{secrets.SSH_USERNAME}}
           passphrase: ${{secrets.SSH_PASSWORD}}
