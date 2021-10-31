@@ -64,6 +64,10 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
         )
     }
 
+    override fun delete(competitionCategoryId: Int) {
+        TODO("Not yet implemented")
+    }
+
     private fun String.isRound(): Boolean {
         return Round.values().any { it.name == this }
     }
