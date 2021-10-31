@@ -59,7 +59,7 @@ jobs:
       - name: Clean up from previous deploy
         uses: garygrossgarten/github-action-ssh@release
         with:
-          command: pwd; ls -l; rm -rf old_deploy; mkdir old_deploy; mv deploy/* old_deploy
+          command: pwd; ls -l; rm -rf old_deploy; mkdir old_deploy; cp -r deploy/* old_deploy; rm -rf deploy/*
           host: ${{secrets.SSH_HOST}}
           username: ${{secrets.SSH_USERNAME}}
           passphrase: ${{secrets.SSH_PASSWORD}}
@@ -68,7 +68,7 @@ jobs:
       - name: Deploy new artifacts
         uses: garygrossgarten/github-action-scp@release
         with:
-          local: $GITHUB_WORKSPACE/deploy/* 
+          local: $GITHUB_WORKSPACE/deploy
           remote: /home/github-actions/deploy/
           host: ${{secrets.SSH_HOST}}
           username: ${{secrets.SSH_USERNAME}}
@@ -77,7 +77,7 @@ jobs:
       - name: Unzip dist file
         uses: garygrossgarten/github-action-ssh@release
         with:
-          command: cd deploy; unzip dist.zip
+          command: unzip deploy/dist.zip
           host: ${{secrets.SSH_HOST}}
           username: ${{secrets.SSH_USERNAME}}
           passphrase: ${{secrets.SSH_PASSWORD}}
