@@ -59,7 +59,7 @@ jobs:
       - name: Clean up from previous deploy
         uses: garygrossgarten/github-action-ssh@release
         with:
-          command: rm -rf old_deploy; mkdir old_deploy; mv deploy/* old_deploy
+          command: pwd; ls -l; rm -rf old_deploy; mkdir old_deploy; mv deploy/* old_deploy
           host: ${{secrets.SSH_HOST}}
           username: ${{secrets.SSH_USERNAME}}
           passphrase: ${{secrets.SSH_PASSWORD}}
