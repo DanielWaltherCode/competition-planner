@@ -28,7 +28,8 @@ class CreateDraw(
     fun execute(competitionCategoryId: Int): CompetitionCategoryDrawSpec {
         val competitionCategory = findCompetitionCategory.byId(competitionCategoryId)
 
-        // TODO: If draw already made, delete draw and associated matches and remake, seed, matches etc.
+        // TODO: We should check the state of this competition category.
+        // TODO: Has drawn been made? Has a match already been played? Etc.
 
         val registrationRanks = repository.getRegistrationRank(competitionCategory)
         val registrationsWithSeeds = createSeed.execute(registrationRanks)
