@@ -32,7 +32,7 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -Dmaven.test.skip=true
       - name: Create deploy directory and copy jar file  
-        run: mkdir /github/workspace && cp target/*.jar /github/workspace/deploy/
+        run: mkdir $GITHUB_WORKSPACE/deploy && cp target/*.jar $GITHUB_WORKSPACE/deploy/
       
       # Build frontend
       - name: Install Node
@@ -43,7 +43,7 @@ jobs:
         run: npm install && npm run build
         working-directory: ./web
       - name: Copy dist file to deploy directory 
-        run: zip -r dist.zip dist; mv dist.zip /github/workspace/deploy/ 
+        run: zip -r dist.zip dist; mv dist.zip $GITHUB_WORKSPACE/deploy/ 
         working-directory: ./web
     
     # Deploy via ssh 
