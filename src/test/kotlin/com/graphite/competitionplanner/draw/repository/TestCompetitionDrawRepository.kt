@@ -8,17 +8,12 @@ import com.graphite.competitionplanner.competition.interfaces.ICompetitionReposi
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
-import com.graphite.competitionplanner.domain.entity.Round
-import com.graphite.competitionplanner.draw.domain.PlayOffDrawSpec
-import com.graphite.competitionplanner.draw.domain.PlayOffMatch
-import com.graphite.competitionplanner.draw.domain.Registration
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesDTO
 import com.graphite.competitionplanner.util.DataGenerator
-import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
@@ -34,81 +29,6 @@ class TestCompetitionDrawRepository(
 ) {
 
     protected val dataGenerator = DataGenerator()
-
-    @Test
-    fun canStorePlayOff() {
-        // Setup
-        val club = clubRepository.store(dataGenerator.newClubSpec())
-        val competition = club.addCompetition()
-        val competitionCategory = competition.createCategory()
-        val players = club.addPlayers(2)
-        val registrations = competitionCategory.registerPlayers(players)
-        val dto = PlayOffDrawSpec(
-            competitionCategoryId = competitionCategory.id,
-            startingRound = Round.FINAL,
-            matches = listOf(
-                PlayOffMatch(
-                    registrationOneId = Registration.Real(registrations.first().id),
-                    registrationTwoId = Registration.Real(registrations.last().id),
-                    order = 1,
-                    round = Round.FINAL
-                )
-            )
-        )
-
-        // Act
-        repository.store(dto)
-    }
-
-    @Test
-    fun canStorePlayOffWithBye() {
-        // Setup
-        val club = clubRepository.store(dataGenerator.newClubSpec())
-        val competition = club.addCompetition()
-        val competitionCategory = competition.createCategory()
-        val players = club.addPlayers(1)
-        val registrations = competitionCategory.registerPlayers(players)
-        val dto = PlayOffDrawSpec(
-            competitionCategoryId = competitionCategory.id,
-            startingRound = Round.FINAL,
-            matches = listOf(
-                PlayOffMatch(
-                    registrationOneId = Registration.Real(registrations.first().id),
-                    registrationTwoId = Registration.Bye,
-                    order = 1,
-                    round = Round.FINAL
-                )
-            )
-        )
-
-        // Act
-        repository.store(dto)
-    }
-
-    @Test
-    fun canStorePlayOffWithPlaceholder() {
-        // Setup
-        val club = clubRepository.store(dataGenerator.newClubSpec())
-        val competition = club.addCompetition()
-        val competitionCategory = competition.createCategory()
-        val players = club.addPlayers(1)
-        val registrations = competitionCategory.registerPlayers(players)
-        val dto = PlayOffDrawSpec(
-            competitionCategoryId = competitionCategory.id,
-            startingRound = Round.FINAL,
-            matches = listOf(
-                PlayOffMatch(
-                    registrationOneId = Registration.Placeholder,
-                    registrationTwoId = Registration.Real(registrations.first().id),
-                    order = 1,
-                    round = Round.FINAL
-                )
-            )
-        )
-
-        // Act
-        repository.store(dto)
-    }
 
     fun CompetitionCategoryDTO.registerPlayers(players: List<PlayerDTO>): List<RegistrationSinglesDTO> {
         return players.map {
