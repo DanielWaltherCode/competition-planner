@@ -4,10 +4,7 @@ import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.domain.entity.Round
 import com.graphite.competitionplanner.draw.domain.*
-import com.graphite.competitionplanner.draw.interfaces.CompetitionCategoryDrawDTO
-import com.graphite.competitionplanner.draw.interfaces.GroupDrawDTO
-import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
-import com.graphite.competitionplanner.draw.interfaces.PlayOffMatchDTO
+import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.draw.service.PoolDrawHelper
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
@@ -55,12 +52,12 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
     override fun get(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
         val records = getDataRows(competitionCategoryId)
         val playOffMatches = constructPlayOffMatches(records.filter { it.groupOrRound.isRound() })
-        val groupMatches = constructGroupDraws(records.filter { !it.groupOrRound.isRound() })
+        val groupDraws = constructGroupDraws(records.filter { !it.groupOrRound.isRound() })
 
         return CompetitionCategoryDrawDTO(
             competitionCategoryId,
             playOffMatches,
-            groupMatches
+            groupDraws
         )
     }
 
@@ -105,9 +102,35 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
         )
     }
 
-    private fun constructGroupDraws(dataRows: List<MatchPlayerRecord>): List<GroupDrawDTO> {
-        // TODO: Implement
-        return emptyList()
+    private fun constructGroupDraws(records: List<MatchPlayerRecord>): List<GroupDrawDTO> {
+        val groupNames = records.distinctBy { it.groupOrRound }.map { it.groupOrRound }
+        val groupDraws = mutableListOf<GroupDrawDTO>()
+        for (name in groupNames) {
+            groupDraws.add(constructGroupDraw(name, records.filter { it.groupOrRound == name }))
+        }
+        return groupDraws
+    }
+
+    private fun constructGroupDraw(name: String, records: List<MatchPlayerRecord>): GroupDrawDTO {
+        return GroupDrawDTO(
+            name,
+            records.distinctBy { it.playerId }.map { it.toPlayerWithClubDto() },
+            constructGroupMatches(records)
+        )
+    }
+
+    private fun constructGroupMatches(records: List<MatchPlayerRecord>): List<GroupMatchDTO> {
+        return if (records.isEmpty()) {
+            return emptyList()
+        } else {
+            val matchId = records.first().matchId
+            val rows = records.filter { it.matchId == matchId }
+            val player1 =
+                rows.filter { it.registrationOrder == RegistrationOrder.First }.map { it.toPlayerWithClubDto() }
+            val player2 =
+                rows.filter { it.registrationOrder == RegistrationOrder.Second }.map { it.toPlayerWithClubDto() }
+            listOf(GroupMatchDTO(player1, player2)) + constructGroupMatches(records.drop(rows.count()))
+        }
     }
 
     private fun getDataRows(competitionCategoryId: Int): List<MatchPlayerRecord> {

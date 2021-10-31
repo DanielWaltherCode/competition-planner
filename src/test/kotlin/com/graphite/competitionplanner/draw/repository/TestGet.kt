@@ -6,12 +6,13 @@ import com.graphite.competitionplanner.competition.interfaces.ICompetitionReposi
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.domain.entity.Round
-import com.graphite.competitionplanner.draw.domain.PlayOffDrawSpec
-import com.graphite.competitionplanner.draw.domain.PlayOffMatch
-import com.graphite.competitionplanner.draw.domain.Registration
+import com.graphite.competitionplanner.draw.domain.*
+import com.graphite.competitionplanner.draw.interfaces.GroupDrawDTO
+import com.graphite.competitionplanner.draw.interfaces.GroupMatchDTO
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.PlayOffMatchDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesDTO
@@ -171,5 +172,116 @@ class TestGet(
             playerTwoId = players.last().id,
             competitionCategoryId = this.id)
         return registrationRepository.storeDoubles(doubleRegistration)
+    }
+
+    @Test
+    fun canGetSinglesGroupDraw() {
+        // Setup
+        val club = clubRepository.store(dataGenerator.newClubSpec())
+        val competition = club.addCompetition()
+        val competitionCategory = competition.createCategory()
+        val players = club.addPlayers(9)
+        val registrations = competitionCategory.registerPlayers(players)
+        val registrationIds = registrations.map { Registration.Real(it.id) }
+        val spec = GroupsDrawSpec(
+            competitionCategoryId = competitionCategory.id,
+            groups = listOf(
+                Group(
+                    name = "A",
+                    registrationIds = registrationIds.take(3),
+                    matches = listOf(
+                        GroupMatch(registrationIds[0], registrationIds[1]),
+                        GroupMatch(registrationIds[0], registrationIds[2]),
+                        GroupMatch(registrationIds[1], registrationIds[2])
+                    )
+                ),
+                Group(
+                    name = "B",
+                    registrationIds = registrationIds.drop(3).take(3),
+                    matches = listOf(
+                        GroupMatch(registrationIds[3], registrationIds[4]),
+                        GroupMatch(registrationIds[3], registrationIds[5]),
+                        GroupMatch(registrationIds[4], registrationIds[5])
+                    )
+                ),
+                Group(
+                    name = "C",
+                    registrationIds = registrationIds.drop(6).take(3),
+                    matches = listOf(
+                        GroupMatch(registrationIds[6], registrationIds[7]),
+                        GroupMatch(registrationIds[6], registrationIds[8]),
+                        GroupMatch(registrationIds[7], registrationIds[8])
+                    )
+                )
+            ),
+            matches = emptyList()
+        )
+
+        // Act
+        repository.store(spec)
+        val result = repository.get(competitionCategory.id)
+
+        // Assert
+        Assertions.assertEquals(competitionCategory.id, result.competitionCategoryId)
+        Assertions.assertEquals(3, result.groupDraw.size, "Expected to find 3 groups")
+        Assertions.assertEquals(0, result.playOff.size, "Expected to find 0 playoff matches.")
+
+        val playersWithClub = players.map { PlayerWithClubDTO(it.id, it.firstName, it.lastName, club, it.dateOfBirth) }
+
+        // Validate group A
+        val expectedGroupA = GroupDrawDTO(
+            name = "A",
+            players = listOf(playersWithClub[0], playersWithClub[1], playersWithClub[2]),
+            matches = listOf(
+                GroupMatchDTO(listOf(playersWithClub[0]), listOf(playersWithClub[1])),
+                GroupMatchDTO(listOf(playersWithClub[0]), listOf(playersWithClub[2])),
+                GroupMatchDTO(listOf(playersWithClub[1]), listOf(playersWithClub[2]))
+            )
+        )
+
+        val actualGroupA = result.groupDraw.first { it.name == "A" }
+        assertGroupsEqual(expectedGroupA, actualGroupA)
+
+        // Validate group B
+        val expectedGroupB = GroupDrawDTO(
+            name = "B",
+            players = listOf(playersWithClub[3], playersWithClub[4], playersWithClub[5]),
+            matches = listOf(
+                GroupMatchDTO(listOf(playersWithClub[3]), listOf(playersWithClub[4])),
+                GroupMatchDTO(listOf(playersWithClub[3]), listOf(playersWithClub[5])),
+                GroupMatchDTO(listOf(playersWithClub[4]), listOf(playersWithClub[5]))
+            )
+        )
+
+        val actualGroupB = result.groupDraw.first { it.name == "B" }
+        assertGroupsEqual(expectedGroupB, actualGroupB)
+
+        // Validate group C
+        val expectedGroupC = GroupDrawDTO(
+            name = "C",
+            players = listOf(playersWithClub[6], playersWithClub[7], playersWithClub[8]),
+            matches = listOf(
+                GroupMatchDTO(listOf(playersWithClub[6]), listOf(playersWithClub[7])),
+                GroupMatchDTO(listOf(playersWithClub[6]), listOf(playersWithClub[8])),
+                GroupMatchDTO(listOf(playersWithClub[7]), listOf(playersWithClub[8]))
+            )
+        )
+
+        val actualGroupC = result.groupDraw.first { it.name == "C" }
+        assertGroupsEqual(expectedGroupC, actualGroupC)
+    }
+
+    private fun assertGroupsEqual(expected: GroupDrawDTO, actual: GroupDrawDTO) {
+        Assertions.assertEquals(expected.name, actual.name)
+
+        Assertions.assertEquals(
+            expected.players.sortedBy { it.id },
+            actual.players.sortedBy { it.id }
+        )
+
+        Assertions.assertEquals(expected.matches.size, actual.matches.size)
+        for (match in expected.matches) {
+            Assertions.assertTrue(actual.matches.contains(match), "Expected to find match $match")
+        }
     }
 }
