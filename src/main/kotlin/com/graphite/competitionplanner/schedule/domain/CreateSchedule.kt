@@ -1,12 +1,12 @@
 package com.graphite.competitionplanner.schedule.domain
 
-import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
-import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleDTO
-import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.domain.entity.Match
 import com.graphite.competitionplanner.domain.entity.Schedule
 import com.graphite.competitionplanner.domain.entity.ScheduleSettings
 import com.graphite.competitionplanner.domain.entity.Timeslot
+import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
+import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleDTO
+import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.util.plusDuration
 import org.springframework.stereotype.Component
 import java.time.temporal.ChronoUnit

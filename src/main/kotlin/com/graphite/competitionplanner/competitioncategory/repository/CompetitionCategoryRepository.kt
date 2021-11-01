@@ -3,7 +3,6 @@ package com.graphite.competitionplanner.competitioncategory.repository
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
-import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.domain.entity.Round
@@ -16,7 +15,6 @@ import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.SelectConditionStep
 import org.springframework.stereotype.Repository
-import kotlin.streams.toList
 
 /**
  * N..N table for categories at a given competition
@@ -52,29 +50,6 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         )
     }
 
-    fun getCategoriesInCompetition(competitionId: Int): List<CompetitionCategory> {
-        val records: List<Record> = dslContext.select(
-            COMPETITION_CATEGORY.ID,
-            COMPETITION_CATEGORY.STATUS,
-            CATEGORY.CATEGORY_NAME
-        )
-            .from(Competition.COMPETITION)
-            .join(COMPETITION_CATEGORY).on(
-                COMPETITION_CATEGORY.COMPETITION_ID.eq(
-                    Competition.COMPETITION.ID))
-            .join(CATEGORY).on(CATEGORY.ID.eq(COMPETITION_CATEGORY.CATEGORY))
-            .where(Competition.COMPETITION.ID.eq(competitionId))
-            .fetch()
-
-        return records.stream().map {
-            CompetitionCategory(
-                it.getValue(COMPETITION_CATEGORY.ID),
-                it.getValue(CATEGORY.CATEGORY_NAME),
-                it.getValue(COMPETITION_CATEGORY.STATUS)
-            )
-        }.toList()
-    }
-
     fun getCategoryType(competitionCategoryId: Int) : CategoryRecord {
         return dslContext.select().from(COMPETITION_CATEGORY)
                 .join(CATEGORY).on(CATEGORY.ID.eq(COMPETITION_CATEGORY.CATEGORY))
@@ -107,12 +82,12 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
                 .where(Competition.COMPETITION.ID.eq(competitionId))
                 .fetch()
 
-        return records.stream().map {
+        return records.map {
             CategoriesAndPlayers(
                 it.getValue(COMPETITION_CATEGORY.ID),
                 it.getValue(CATEGORY.CATEGORY_NAME), it.getValue(PLAYER.ID)
             )
-        }.toList()
+        }
 
     }
     // Returns registrations ids for the players registered in a given competition category
@@ -143,14 +118,14 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             .where(PLAYER_REGISTRATION.PLAYER_ID.eq(playerId))
             .fetch()
 
-       return records.stream().map {
-           CompetitionAndCategories(
-               it.getValue(COMPETITION_CATEGORY.COMPETITION_ID),
-               it.getValue(COMPETITION_CATEGORY.ID),
-               it.getValue(CATEGORY.CATEGORY_NAME),
-               it.getValue(CATEGORY.CATEGORY_TYPE)
-           )
-       }.toList()
+        return records.map {
+            CompetitionAndCategories(
+                it.getValue(COMPETITION_CATEGORY.COMPETITION_ID),
+                it.getValue(COMPETITION_CATEGORY.ID),
+                it.getValue(CATEGORY.CATEGORY_NAME),
+                it.getValue(CATEGORY.CATEGORY_TYPE)
+            )
+        }
     }
 
     fun getRegistrationsForPlayerInCompetition(competitionId: Int, playerId: Int): List<RegistrationsInCompetition> {
@@ -169,14 +144,14 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             .where(PLAYER_REGISTRATION.PLAYER_ID.eq(playerId)).and(COMPETITION_CATEGORY.COMPETITION_ID.eq(competitionId))
             .fetch()
 
-        return records.stream().map {
+        return records.map {
             RegistrationsInCompetition(
                 it.getValue(PLAYER_REGISTRATION.REGISTRATION_ID),
                 it.getValue(COMPETITION_CATEGORY.ID),
                 it.getValue(CATEGORY.CATEGORY_NAME),
                 it.getValue(CATEGORY.CATEGORY_TYPE)
             )
-        }.toList()
+        }
     }
 
     /**
