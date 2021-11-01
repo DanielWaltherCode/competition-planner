@@ -28,7 +28,9 @@ jobs:
         image: postgres
         # Provide the password for postgres
         env:
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: competition
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -40,11 +42,6 @@ jobs:
           - 5432:5432
 
     steps:
-      - name: Create database
-        run: |
-          sudo -u postgres createdb --owner=postgres competition
-          PGPASSWORD=postgres psql --username=postgres --host=localhost --list competition
-
       - name: Checkout our code
         uses: actions/checkout@v2
 
