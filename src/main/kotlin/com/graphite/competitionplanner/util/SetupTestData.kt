@@ -54,7 +54,7 @@ class EventListener(
     @EventListener
     fun onApplicationEvent(event: ContextRefreshedEvent) {
         clearTables()
-        setUpData()
+//        setUpData()
     }
 
     fun setUpData() {
