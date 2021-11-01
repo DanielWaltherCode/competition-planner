@@ -1,12 +1,12 @@
 package com.graphite.competitionplanner.schedule.domain
 
-import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
-import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleDTO
-import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.domain.entity.Match
 import com.graphite.competitionplanner.domain.entity.Schedule
 import com.graphite.competitionplanner.domain.entity.ScheduleSettings
 import com.graphite.competitionplanner.domain.entity.Timeslot
+import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
+import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleDTO
+import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.util.plusDuration
 import org.springframework.stereotype.Component
 import java.time.temporal.ChronoUnit
@@ -71,7 +71,7 @@ class CreateSchedule {
                 // players that belongs to two categories will essentially have a higher priority
                 val playerPriorities = calculatePlayerPriorityBasedOn(remainingMatches)
                 val matchPriorities = calculateMatchPriorityBasedOn(category.matches, playerPriorities)
-                val highestPriority = matchPriorities.maxBy { match -> match.priority }
+                val highestPriority = matchPriorities.maxByOrNull { match -> match.priority }
                 schedule = schedule.add(highestPriority!!.match)
                 remainingMatches = remainingMatches.filterNot { it.id == highestPriority.match.id }
             }

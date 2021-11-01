@@ -1,9 +1,9 @@
 package com.graphite.competitionplanner.match.api
 
+import com.graphite.competitionplanner.draw.service.MatchSpec
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchDTO
 import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.draw.service.MatchSpec
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
@@ -28,6 +28,6 @@ class MatchApi(val matchService: MatchService) {
 
     @GetMapping("single/{matchId}")
     fun getMatch(@PathVariable matchId: Int): MatchAndResultDTO {
-        return matchService.getMatchWithResult(matchId);
+        return matchService.getMatchWithResult(matchId)
     }
 }

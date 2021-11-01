@@ -8,7 +8,7 @@ import org.mockito.Mockito.*
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TestPlayerService() {
+class TestPlayerService {
 
     private val dataGenerator = DataGenerator()
 

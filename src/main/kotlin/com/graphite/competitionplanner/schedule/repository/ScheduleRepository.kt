@@ -2,7 +2,10 @@ package com.graphite.competitionplanner.schedule.repository
 
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.schedule.api.*
-import com.graphite.competitionplanner.tables.records.*
+import com.graphite.competitionplanner.tables.records.ScheduleAvailableTablesRecord
+import com.graphite.competitionplanner.tables.records.ScheduleCategoryRecord
+import com.graphite.competitionplanner.tables.records.ScheduleDailyTimesRecord
+import com.graphite.competitionplanner.tables.records.ScheduleMetadataRecord
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
@@ -20,7 +23,7 @@ class ScheduleRepository(private val dslContext: DSLContext) {
         record.pauseAfterGroupStage = scheduleMetadataSpec.pauseAfterGroupStage
         record.pauseBetweenGroupMatches = scheduleMetadataSpec.pauseBetweenGroupMatches
         record.pauseBetweenPlayoffMatches = scheduleMetadataSpec.pauseBetweenPlayoffMatches
-        record.competitionId = competitionId;
+        record.competitionId = competitionId
         record.store()
         return record
     }
@@ -55,9 +58,9 @@ class ScheduleRepository(private val dslContext: DSLContext) {
         record.pauseAfterGroupStage = scheduleMetadataSpec.pauseAfterGroupStage
         record.pauseBetweenGroupMatches = scheduleMetadataSpec.pauseBetweenGroupMatches
         record.pauseBetweenPlayoffMatches = scheduleMetadataSpec.pauseBetweenPlayoffMatches
-        record.competitionId = competitionId;
+        record.competitionId = competitionId
         record.update()
-        return record;
+        return record
     }
 
     // Table availability methods
@@ -80,7 +83,7 @@ class ScheduleRepository(private val dslContext: DSLContext) {
         availableTablesSpec: AvailableTablesSpec
     ): ScheduleAvailableTablesRecord {
         val record = dslContext.newRecord(SCHEDULE_AVAILABLE_TABLES)
-        record.id = availableTablesId;
+        record.id = availableTablesId
         record.nrTables = availableTablesSpec.nrTables
         record.hour = availableTablesSpec.hour
         record.day = availableTablesSpec.day
@@ -176,7 +179,7 @@ class ScheduleRepository(private val dslContext: DSLContext) {
         record.exactStartTime = categoryStartTimeSpec.exactStartTime
         record.competitonCategoryId = competitionCategoryId
         record.update()
-        return record;
+        return record
     }
 
     fun deleteCategoryStartTime(scheduleStartTimeId: Int) {

@@ -12,7 +12,6 @@ import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import java.io.IOException
-import java.util.ArrayList
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
@@ -28,7 +27,7 @@ class AuthenticationFilter(authenticationManager: AuthenticationManager) : Usern
             val loginCredentials = ObjectMapper().readValue(req.inputStream, UserLogin::class.java)
 
             // Spring automatically connects to the database, validates the password, and returns the user object
-            // This works because we implented the loadUserByUsername method in UserService
+            // This works because we implemented the loadUserByUsername method in UserService
             val authenticationToken = UsernamePasswordAuthenticationToken(
                 loginCredentials.username, loginCredentials.password, ArrayList()
             )

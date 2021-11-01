@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 
 @SpringBootTest
-class TestPlayerSpec() {
+class TestPlayerSpec {
 
     private final val dataGenerator = DataGenerator()
     val club = dataGenerator.newClubDTO()

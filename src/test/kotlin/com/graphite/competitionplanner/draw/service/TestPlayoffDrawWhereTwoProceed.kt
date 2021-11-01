@@ -10,7 +10,7 @@ class TestPlayoffDrawWhereTwoProceed(
     @Autowired val drawUtil: DrawUtilTwoProceed
 ) {
 
-    val BYE = "BYE"
+    val bye = "BYE"
 
     @Test
     fun test2Groups() {
@@ -32,12 +32,12 @@ class TestPlayoffDrawWhereTwoProceed(
         testDrawSidesConsistency(matchUps)
 
         Assertions.assertEquals("A1", matchUps[0].player1)
-        Assertions.assertEquals(BYE, matchUps[0].player2)
+        Assertions.assertEquals(bye, matchUps[0].player2)
         Assertions.assertEquals("B2", matchUps[1].player1)
         Assertions.assertEquals("C2", matchUps[1].player2)
         Assertions.assertEquals("A2", matchUps[2].player1)
         Assertions.assertEquals("C1", matchUps[2].player2)
-        Assertions.assertEquals(BYE, matchUps[3].player1)
+        Assertions.assertEquals(bye, matchUps[3].player1)
         Assertions.assertEquals("B1", matchUps[3].player2)
     }
 
@@ -64,20 +64,20 @@ class TestPlayoffDrawWhereTwoProceed(
         testDrawSidesConsistency(matchUps)
 
         Assertions.assertEquals("A1", matchUps[0].player1)
-        Assertions.assertEquals(BYE, matchUps[0].player2)
+        Assertions.assertEquals(bye, matchUps[0].player2)
         Assertions.assertEquals("B2", matchUps[1].player1)
         Assertions.assertEquals("E2", matchUps[1].player2)
         Assertions.assertEquals("D1", matchUps[2].player1)
-        Assertions.assertEquals(BYE, matchUps[2].player2)
+        Assertions.assertEquals(bye, matchUps[2].player2)
         Assertions.assertEquals("C2", matchUps[3].player1)
-        Assertions.assertEquals(BYE, matchUps[3].player2)
-        Assertions.assertEquals(BYE, matchUps[4].player1)
+        Assertions.assertEquals(bye, matchUps[3].player2)
+        Assertions.assertEquals(bye, matchUps[4].player1)
         Assertions.assertEquals("E1", matchUps[4].player2)
-        Assertions.assertEquals(BYE, matchUps[5].player1)
+        Assertions.assertEquals(bye, matchUps[5].player1)
         Assertions.assertEquals("C1", matchUps[5].player2)
         Assertions.assertEquals("A2", matchUps[6].player1)
         Assertions.assertEquals("D2", matchUps[6].player2)
-        Assertions.assertEquals(BYE, matchUps[7].player1)
+        Assertions.assertEquals(bye, matchUps[7].player1)
         Assertions.assertEquals("B1", matchUps[7].player2)
     }
 
@@ -88,20 +88,20 @@ class TestPlayoffDrawWhereTwoProceed(
         testDrawSidesConsistency(matchUps)
 
         Assertions.assertEquals("A1", matchUps[0].player1)
-        Assertions.assertEquals(BYE, matchUps[0].player2)
+        Assertions.assertEquals(bye, matchUps[0].player2)
         Assertions.assertEquals("B2", matchUps[1].player1)
         Assertions.assertEquals("E2", matchUps[1].player2)
         Assertions.assertEquals("D1", matchUps[2].player1)
-        Assertions.assertEquals(BYE, matchUps[2].player2)
+        Assertions.assertEquals(bye, matchUps[2].player2)
         Assertions.assertEquals("F1", matchUps[3].player1)
         Assertions.assertEquals("C2", matchUps[3].player2)
         Assertions.assertEquals("F2", matchUps[4].player1)
         Assertions.assertEquals("E1", matchUps[4].player2)
-        Assertions.assertEquals(BYE, matchUps[5].player1)
+        Assertions.assertEquals(bye, matchUps[5].player1)
         Assertions.assertEquals("C1", matchUps[5].player2)
         Assertions.assertEquals("A2", matchUps[6].player1)
         Assertions.assertEquals("D2", matchUps[6].player2)
-        Assertions.assertEquals(BYE, matchUps[7].player1)
+        Assertions.assertEquals(bye, matchUps[7].player1)
         Assertions.assertEquals("B1", matchUps[7].player2)
     }
 
@@ -126,36 +126,36 @@ class TestPlayoffDrawWhereTwoProceed(
         testDrawSidesConsistency(matchUps)
 
         Assertions.assertEquals("A1", matchUps[0].player1)
-        Assertions.assertEquals(BYE, matchUps[0].player2)
+        Assertions.assertEquals(bye, matchUps[0].player2)
         Assertions.assertEquals("I2", matchUps[1].player1)
         Assertions.assertEquals("E2", matchUps[1].player2)
         Assertions.assertEquals("H1", matchUps[2].player1)
-        Assertions.assertEquals(BYE, matchUps[2].player2)
+        Assertions.assertEquals(bye, matchUps[2].player2)
         Assertions.assertEquals("G2", matchUps[3].player1)
-        Assertions.assertEquals(BYE, matchUps[3].player2)
+        Assertions.assertEquals(bye, matchUps[3].player2)
         Assertions.assertEquals("D1", matchUps[4].player1)
-        Assertions.assertEquals(BYE, matchUps[4].player2)
+        Assertions.assertEquals(bye, matchUps[4].player2)
         Assertions.assertEquals("C2", matchUps[5].player1)
-        Assertions.assertEquals(BYE, matchUps[5].player2)
+        Assertions.assertEquals(bye, matchUps[5].player2)
         Assertions.assertEquals("B2", matchUps[6].player1)
-        Assertions.assertEquals(BYE, matchUps[6].player2)
+        Assertions.assertEquals(bye, matchUps[6].player2)
         Assertions.assertEquals("F1", matchUps[7].player1)
-        Assertions.assertEquals(BYE, matchUps[7].player2)
-        Assertions.assertEquals(BYE, matchUps[8].player1)
+        Assertions.assertEquals(bye, matchUps[7].player2)
+        Assertions.assertEquals(bye, matchUps[8].player1)
         Assertions.assertEquals("E1", matchUps[8].player2)
-        Assertions.assertEquals(BYE, matchUps[9].player1)
+        Assertions.assertEquals(bye, matchUps[9].player1)
         Assertions.assertEquals("F2", matchUps[9].player2)
-        Assertions.assertEquals(BYE, matchUps[10].player1)
+        Assertions.assertEquals(bye, matchUps[10].player1)
         Assertions.assertEquals("C1", matchUps[10].player2)
-        Assertions.assertEquals(BYE, matchUps[11].player1)
+        Assertions.assertEquals(bye, matchUps[11].player1)
         Assertions.assertEquals("A2", matchUps[11].player2)
-        Assertions.assertEquals(BYE, matchUps[12].player1)
+        Assertions.assertEquals(bye, matchUps[12].player1)
         Assertions.assertEquals("G1", matchUps[12].player2)
-        Assertions.assertEquals(BYE, matchUps[13].player1)
+        Assertions.assertEquals(bye, matchUps[13].player1)
         Assertions.assertEquals("I1", matchUps[13].player2)
         Assertions.assertEquals("H2", matchUps[14].player1)
         Assertions.assertEquals("D2", matchUps[14].player2)
-        Assertions.assertEquals(BYE, matchUps[15].player1)
+        Assertions.assertEquals(bye, matchUps[15].player1)
         Assertions.assertEquals("B1", matchUps[15].player2)
     }
 
@@ -201,7 +201,7 @@ class TestPlayoffDrawWhereTwoProceed(
         testDrawSidesConsistency(matchUps)
 
         Assertions.assertEquals("A1", matchUps[0].player1)
-        Assertions.assertEquals(BYE, matchUps[0].player2)
+        Assertions.assertEquals(bye, matchUps[0].player2)
         Assertions.assertEquals("L1", matchUps[1].player1)
         Assertions.assertEquals("E2", matchUps[1].player2)
         Assertions.assertEquals("H1", matchUps[2].player1)
@@ -230,7 +230,7 @@ class TestPlayoffDrawWhereTwoProceed(
         Assertions.assertEquals("I1", matchUps[13].player2)
         Assertions.assertEquals("H2", matchUps[14].player1)
         Assertions.assertEquals("D2", matchUps[14].player2)
-        Assertions.assertEquals(BYE, matchUps[15].player1)
+        Assertions.assertEquals(bye, matchUps[15].player1)
         Assertions.assertEquals("B1", matchUps[15].player2)
     }
 
@@ -292,8 +292,8 @@ class TestPlayoffDrawWhereTwoProceed(
         playersFirstHalf: List<String>,
         playersSecondHalf: List<String>
     ) {
-        val firstHalfPositions = playersFirstHalf.filter { it != BYE }.map { it[1] }
-        val secondHalfPositions = playersSecondHalf.filter { it != BYE }.map { it[1] }
+        val firstHalfPositions = playersFirstHalf.filter { it != bye }.map { it[1] }
+        val secondHalfPositions = playersSecondHalf.filter { it != bye }.map { it[1] }
 
         val ones = mutableListOf<Char>()
         val twos = mutableListOf<Char>()

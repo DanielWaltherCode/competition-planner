@@ -14,5 +14,5 @@ There are two kinds of test suite configurations:
 - All but benchmarks - which runs all test cases except the bench marking tests
 - Benchmark - which runs only the bench marking tests
 
-Benchmarking tests are detected on the class name. It should begin with the word Benchmark e.g BenchmarkPlayerApi could
+Benchmarking tests are detected on the class name. It should begin with the word Benchmark e.g. BenchmarkPlayerApi could
 be the name of a benchmarking test that target the player api.

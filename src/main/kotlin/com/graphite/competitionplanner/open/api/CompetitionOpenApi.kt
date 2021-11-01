@@ -1,16 +1,15 @@
 package com.graphite.competitionplanner.open.api
 
-import com.graphite.competitionplanner.api.competition.DrawDTO
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
+import com.graphite.competitionplanner.draw.api.DrawDTO
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService

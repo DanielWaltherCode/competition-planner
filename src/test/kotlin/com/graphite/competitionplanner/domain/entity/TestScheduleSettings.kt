@@ -41,7 +41,7 @@ class TestScheduleSettings {
     @Test
     fun shouldNotThrowIfDifferenceBetweenStartAndEndTimeIsGreaterOrEqualToTheAverageMatchTime() {
         val startTime = LocalDateTime.now()
-        Assertions.assertDoesNotThrow() {
+        Assertions.assertDoesNotThrow {
             dataGenerator.newScheduleSettings(
                 averageMatchTime = 15.minutes,
                 startTime = startTime,

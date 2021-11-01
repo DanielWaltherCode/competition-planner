@@ -1,8 +1,11 @@
-package com.graphite.competitionplanner.api.competition
+package com.graphite.competitionplanner.draw.api
 
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.domain.entity.Round
-import com.graphite.competitionplanner.draw.service.*
+import com.graphite.competitionplanner.draw.service.DrawService
+import com.graphite.competitionplanner.draw.service.GroupDrawDTO
+import com.graphite.competitionplanner.draw.service.PlayoffDTO
+import com.graphite.competitionplanner.draw.service.PlayoffRoundDTO
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
@@ -12,9 +15,7 @@ import com.graphite.competitionplanner.result.service.GameDTO
 import com.graphite.competitionplanner.result.service.ResultDTO
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalUnit
 
 @RestController
 @RequestMapping("competition/{competitionId}/draw/{competitionCategoryId}")

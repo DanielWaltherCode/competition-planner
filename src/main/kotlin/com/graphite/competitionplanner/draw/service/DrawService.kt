@@ -1,12 +1,12 @@
 package com.graphite.competitionplanner.draw.service
 
-import com.graphite.competitionplanner.api.competition.DrawDTO
 import com.graphite.competitionplanner.category.service.CategoryService
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsSpec
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.draw.api.DrawDTO
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
@@ -53,7 +53,7 @@ class DrawService(
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Category metadata not found for that id")
         }
 
-        // Check if draw has alredy been made. If so remove and create again.
+        // Check if draw has already been made. If so remove and create again.
         if(isDrawMade(competitionCategoryId)) {
             deleteDraw(competitionCategoryId)
         }

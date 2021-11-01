@@ -82,7 +82,7 @@ class UserService(
         return UserDTO(
             userRecord.id,
             userRecord.username,
-            ClubNoAddressDTO(club.id!!, club.name)
+            ClubNoAddressDTO(club.id, club.name)
         )
     }
 }

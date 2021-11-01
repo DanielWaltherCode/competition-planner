@@ -12,7 +12,7 @@ import org.mockito.Mockito.*
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TestCompetitionsService() {
+class TestCompetitionsService {
 
     private final val mockedCreateCompetition = mock(CreateCompetition::class.java)
     private final val mockedUpdateCompetition = mock(UpdateCompetition::class.java)
