@@ -40,6 +40,11 @@ jobs:
           - 5432:5432
 
     steps:
+      - name: Create database
+        run: |
+          sudo -u postgres createdb --owner=postgres competition
+          PGPASSWORD=postgres psql --username=postgres --host=localhost --list competition
+
       - name: Checkout our code
         uses: actions/checkout@v2
 
@@ -49,9 +54,6 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-
-      #      - name: Compile with Maven
-      #        run: mvn compile
 
       - name: Test with Maven
         run: mvn test
