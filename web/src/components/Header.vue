@@ -112,7 +112,7 @@ export default {
   methods: {
     logout() {
       this.$store.commit("logout")
-      if (!this.$route.name.includes("landing")) {
+      if (!this.$route.path.includes("landing")) {
         this.$router.push('/landing')
       }
     },
