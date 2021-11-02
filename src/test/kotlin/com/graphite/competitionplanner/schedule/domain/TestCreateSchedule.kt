@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDateTime
+import kotlin.time.Duration
 import kotlin.time.minutes
 
 @SpringBootTest
@@ -151,7 +152,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
     @Test
     fun whenNoMoreTimeForTheDayNextTimeslotShouldBeScheduledNextDay() {
         val startTime = LocalDateTime.now()
-        val averageMatchTime = 15.minutes
+        val averageMatchTime = Duration.minutes(15)
         val endTime = startTime.plusDuration(averageMatchTime)
         val settings = dataGenerator.newScheduleSettingsDTO(
             averageMatchTime = averageMatchTime,
@@ -176,7 +177,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
 
     @Test
     fun timeBetweenTimeslotsIsZero() {
-        val settings = dataGenerator.newScheduleSettingsDTO(15.minutes, 1, LocalDateTime.now())
+        val settings = dataGenerator.newScheduleSettingsDTO(Duration.minutes(15) , 1, LocalDateTime.now())
         val schedule = createSchedule.execute(pool1, settings)
         val zipped = schedule.timeslots.zipWithNext()
         val startTimeEqualEndTime =

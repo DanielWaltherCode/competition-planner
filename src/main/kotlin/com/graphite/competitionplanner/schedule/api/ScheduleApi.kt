@@ -165,7 +165,7 @@ class DailyStartEndApi(val scheduleService: ScheduleService, val scheduleReposit
     fun addDailyStartEnd(
         @PathVariable competitionId: Int,
         @RequestBody dailyStartAndEndSpec: DailyStartAndEndSpec
-    ): DailyStartAndEndDTO {
+    ): DailyStartAndEndDTO? {
         return scheduleService.addDailyStartAndEnd(competitionId, dailyStartAndEndSpec)
     }
 
@@ -174,7 +174,7 @@ class DailyStartEndApi(val scheduleService: ScheduleService, val scheduleReposit
         @PathVariable competitionId: Int,
         @PathVariable dailyStartEndId: Int,
         @RequestBody dailyStartAndEndSpec: DailyStartAndEndSpec
-    ): DailyStartAndEndDTO {
+    ): DailyStartAndEndDTO? {
         return scheduleService.updateDailyStartAndEnd(dailyStartEndId, competitionId, dailyStartAndEndSpec)
     }
 
@@ -182,7 +182,7 @@ class DailyStartEndApi(val scheduleService: ScheduleService, val scheduleReposit
     fun getDailyStartEnd(
         @PathVariable competitionId: Int,
         @PathVariable day: LocalDate
-    ): DailyStartAndEndDTO {
+    ): DailyStartAndEndDTO? {
         return scheduleService.getDailyStartAndEnd(competitionId, day)
     }
 

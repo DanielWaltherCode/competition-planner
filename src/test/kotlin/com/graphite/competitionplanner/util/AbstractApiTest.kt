@@ -16,7 +16,7 @@ import org.springframework.web.server.ResponseStatusException
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @IfProfileValue(name = "spring.profiles.active", value = "api-test")
-@TestPropertySource(locations = ["/application.yml"])
+@TestPropertySource(locations = ["/application.properties"])
 abstract class AbstractApiTest(
     @LocalServerPort val port: Int,
     @Autowired val testRestTemplate: TestRestTemplate

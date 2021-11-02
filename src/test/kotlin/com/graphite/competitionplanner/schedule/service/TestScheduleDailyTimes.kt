@@ -6,10 +6,7 @@ import com.graphite.competitionplanner.competition.repository.CompetitionReposit
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.schedule.api.DailyStartAndEndSpec
 import com.graphite.competitionplanner.util.Util
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
@@ -54,6 +51,7 @@ class TestScheduleDailyTimes(
     @Test
     fun getDailyStartEndForDay() {
         val dailyStartEnd = scheduleService.getDailyStartAndEnd(competitionId, LocalDate.now())
+            ?: fail("Expected to find daily start end")
         Assertions.assertNotNull(dailyStartEnd)
         Assertions.assertNotNull(dailyStartEnd.id)
         Assertions.assertNotNull(dailyStartEnd.startTime)
@@ -65,6 +63,7 @@ class TestScheduleDailyTimes(
     fun updateDailyStartAndEnd() {
         // Update start and end times for first day of competition
         val dailyStartEnd = scheduleService.getDailyStartAndEnd(competitionId, LocalDate.now())
+            ?: fail("Expected to find daily start end")
         val newStartTime = LocalTime.of(10, 0)
         val newEndTime = LocalTime.of(19, 0)
 
@@ -75,6 +74,7 @@ class TestScheduleDailyTimes(
         )
         val updatedDailyStartAndEnd =
             scheduleService.updateDailyStartAndEnd(dailyStartEnd.id, competitionId, updateSpec)
+                ?: fail("Expected to find daily start end")
 
         Assertions.assertNotNull(updatedDailyStartAndEnd)
         Assertions.assertEquals(newStartTime, updatedDailyStartAndEnd.startTime)

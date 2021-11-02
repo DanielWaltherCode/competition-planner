@@ -62,12 +62,12 @@ class RegistrationService(
     }
 
     fun getRegisteredPlayers(competitionId: Int, searchType: String): RegisteredPlayersDTO {
-        if (searchType.toUpperCase() == SearchType.NAME.name) {
+        if (searchType.uppercase() == SearchType.NAME.name) {
             val players = registrationRepository.getRegistrationsInCompetition(competitionId)
             val initialsAndPlayersMap = mutableMapOf<String, MutableSet<PlayerWithClubDTO>>()
             for (player in players) {
                 val playerDtoWithClub = playerService.getPlayer(player.id)
-                val initial: String = player.lastName[0].toUpperCase() + ""
+                val initial: String = player.lastName[0].uppercase() + ""
 
                 // If initial has already been added, add to list. Else create player list and add initial
                 if (initialsAndPlayersMap.containsKey(initial)) {
@@ -78,7 +78,7 @@ class RegistrationService(
                 }
             }
             return RegisteredPlayersDTO(SearchType.NAME, initialsAndPlayersMap)
-        } else if (searchType.toUpperCase() == SearchType.CLUB.name) {
+        } else if (searchType.uppercase() == SearchType.CLUB.name) {
             val players = registrationRepository.getRegistrationsInCompetition(competitionId)
             val clubsAndPlayersMap = mutableMapOf<String, MutableSet<PlayerWithClubDTO>>()
             for (player in players) {

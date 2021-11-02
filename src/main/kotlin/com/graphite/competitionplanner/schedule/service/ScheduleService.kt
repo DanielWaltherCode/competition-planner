@@ -12,7 +12,9 @@ import com.graphite.competitionplanner.tables.records.ScheduleDailyTimesRecord
 import com.graphite.competitionplanner.tables.records.ScheduleMetadataRecord
 import org.jooq.exception.NoDataFoundException
 import org.springframework.context.annotation.Lazy
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
@@ -150,6 +152,7 @@ class ScheduleService(
         // Takes selected day, finds all competition hours of that day, and sets nr tables available to same
         // number for all hours
         val dailyStartAndEndDTO = getDailyStartAndEnd(competitionId, availableTablesFullDaySpec.day)
+            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Daily start end needs to be set first")
         var currentTime = dailyStartAndEndDTO.startTime
 
         if (ChronoUnit.HOURS.between(currentTime, dailyStartAndEndDTO.endTime) < 24) {
@@ -234,7 +237,7 @@ class ScheduleService(
     fun addDailyStartAndEnd(
         competitionId: Int,
         dailyStartAndEndSpec: DailyStartAndEndSpec
-    ): DailyStartAndEndDTO {
+    ): DailyStartAndEndDTO? {
         val record = scheduleRepository.addDailyStartAndEnd(competitionId, dailyStartAndEndSpec)
         return dailyStartEndRecordToDTO(record)
     }
@@ -265,12 +268,12 @@ class ScheduleService(
         dailyStartAndEndId: Int,
         competitionId: Int,
         dailyStartAndEndSpec: DailyStartAndEndSpec
-    ): DailyStartAndEndDTO {
+    ): DailyStartAndEndDTO? {
         val record = scheduleRepository.updateDailyStartAndEnd(dailyStartAndEndId, competitionId, dailyStartAndEndSpec)
         return dailyStartEndRecordToDTO(record)
     }
 
-    fun getDailyStartAndEnd(competitionId: Int, day: LocalDate): DailyStartAndEndDTO {
+    fun getDailyStartAndEnd(competitionId: Int, day: LocalDate): DailyStartAndEndDTO? {
         val record = scheduleRepository.getDailyStartAndEnd(competitionId, day)
         return dailyStartEndRecordToDTO(record)
     }
@@ -325,7 +328,10 @@ class ScheduleService(
         )
     }
 
-    private fun dailyStartEndRecordToDTO(dailyTimesRecord: ScheduleDailyTimesRecord): DailyStartAndEndDTO {
+    private fun dailyStartEndRecordToDTO(dailyTimesRecord: ScheduleDailyTimesRecord?): DailyStartAndEndDTO? {
+        if (dailyTimesRecord == null) {
+            return null
+        }
         return DailyStartAndEndDTO(
             dailyTimesRecord.id,
             dailyTimesRecord.day,
@@ -386,7 +392,7 @@ data class DailyStartAndEndDTO(
 )
 
 data class DailyStartAndEndWithOptionsDTO(
-    val dailyStartEndList: List<DailyStartAndEndDTO>,
+    val dailyStartEndList: List<DailyStartAndEndDTO?>,
     @JsonFormat(pattern = "yyyy-MM-dd")
     val availableDays: List<LocalDate>
 )

@@ -35,7 +35,7 @@ class ResultRepository(val dslContext: DSLContext) {
             .fetchInto(GAME)
     }
 
-    fun countResults(): Int {
+    fun countResults(): Int? {
         return dslContext.selectCount()
             .from(GAME)
             .fetchOne(0, Int::class.java)

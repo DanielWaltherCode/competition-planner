@@ -25,5 +25,5 @@ class Util(val clubRepository: ClubRepository,
  * Adds the duration to the LocalDateTime and return a copy of it
  */
 fun LocalDateTime.plusDuration(duration: Duration): LocalDateTime {
-    return this.plusMinutes(duration.inMinutes.toLong())
+    return this.plusMinutes(duration.inWholeMinutes)
 }
