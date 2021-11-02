@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.match.repository
 
 import com.graphite.competitionplanner.Tables.*
+import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.draw.service.MatchSpec
 import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.tables.records.MatchRecord
@@ -15,6 +16,7 @@ class MatchRepository(val dslContext: DSLContext) {
 
     fun getMatch(matchId: Int): MatchRecord {
         return dslContext.select().from(MATCH).where(MATCH.ID.eq(matchId)).fetchOneInto(MATCH)
+            ?: throw NotFoundException("Competition category with $matchId not found.")
     }
 
     fun getMatchesInCategory(competitionCategoryId: Int): List<MatchRecord> {

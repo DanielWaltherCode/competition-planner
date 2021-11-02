@@ -228,7 +228,7 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             .on(REGISTRATION.ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
             .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
                 .and(PLAYER_REGISTRATION.PLAYER_ID.eq(playerId)))
-            .fetchOne()
+            .fetchOne() ?: throw NotFoundException("Combination of $playerId and $competitionCategoryId not found.")
     }
 
     // Sets up base registration. Double players playing together will have same registration id
