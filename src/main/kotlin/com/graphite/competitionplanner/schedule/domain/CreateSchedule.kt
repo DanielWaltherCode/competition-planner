@@ -71,7 +71,7 @@ class CreateSchedule {
                 // players that belongs to two categories will essentially have a higher priority
                 val playerPriorities = calculatePlayerPriorityBasedOn(remainingMatches)
                 val matchPriorities = calculateMatchPriorityBasedOn(category.matches, playerPriorities)
-                val highestPriority = matchPriorities.maxByOrNull { match -> match.priority }
+                val highestPriority = matchPriorities.maxByOrNull{ match -> match.priority }
                 schedule = schedule.add(highestPriority!!.match)
                 remainingMatches = remainingMatches.filterNot { it.id == highestPriority.match.id }
             }
@@ -130,7 +130,7 @@ class CreateSchedule {
     }
 
     private fun List<PlayerPriority>.calculatePriorityFor(match: Match): Int {
-        return this.filter { match.playerIds().contains(it.playerId) }.sumBy { it.priority }
+        return this.filter { match.playerIds().contains(it.playerId) }.sumOf { it.priority }
     }
 
     /**
