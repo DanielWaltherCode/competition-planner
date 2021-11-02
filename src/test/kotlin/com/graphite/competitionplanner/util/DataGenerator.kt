@@ -53,8 +53,8 @@ class DataGenerator {
     )
 
     internal fun newScheduleSettings(
-        averageMatchTime: Duration = 15.minutes,
-        numberOfTables: Int = 8,
+        averageMatchTime: Duration = Duration.minutes(15),
+                numberOfTables: Int = 8,
         startTime: LocalDateTime = LocalDateTime.now(),
         endTime: LocalDateTime = LocalDateTime.now().plusHours(8)
     ) = ScheduleSettings(
@@ -131,8 +131,8 @@ class DataGenerator {
     )
 
     fun newScheduleSettingsDTO(
-        averageMatchTime: Duration = 15.minutes,
-        numberOfTables: Int = 8,
+        averageMatchTime: Duration = Duration.minutes(15),
+                numberOfTables: Int = 8,
         startTime: LocalDateTime = LocalDateTime.now(),
         endTime: LocalDateTime = LocalDateTime.now().plusHours(8)
     ) = ScheduleSettingsDTO(

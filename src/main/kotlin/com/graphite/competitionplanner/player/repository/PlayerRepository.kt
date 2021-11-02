@@ -28,20 +28,20 @@ class PlayerRepository(val dslContext: DSLContext) : IPlayerRepository {
         val currentRecord = getPlayerRanking(playerId)
 
         if (currentRecord != null) {
-            if (categoryType.toUpperCase() == "SINGLES") {
+            if (categoryType.uppercase() == "SINGLES") {
                 currentRecord.rankSingle += rankToAdd
                 currentRecord.update()
-            } else if (categoryType.toUpperCase() == "DOUBLES") {
+            } else if (categoryType.uppercase() == "DOUBLES") {
                 currentRecord.rankDouble += rankToAdd
                 currentRecord.update()
             }
         } else {
             val record = dslContext.newRecord(PLAYER_RANKING)
             record.playerId = playerId
-            if (categoryType.toUpperCase() == "SINGLES") {
+            if (categoryType.uppercase() == "SINGLES") {
                 record.rankSingle = rankToAdd
                 record.store()
-            } else if (categoryType.toUpperCase() == "DOUBLES") {
+            } else if (categoryType.uppercase() == "DOUBLES") {
                 record.rankDouble = rankToAdd
                 record.store()
             }

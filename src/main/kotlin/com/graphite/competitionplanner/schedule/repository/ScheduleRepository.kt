@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.schedule.repository
 
 import com.graphite.competitionplanner.Tables.*
+import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.schedule.api.*
 import com.graphite.competitionplanner.tables.records.ScheduleAvailableTablesRecord
 import com.graphite.competitionplanner.tables.records.ScheduleCategoryRecord
@@ -31,7 +32,7 @@ class ScheduleRepository(private val dslContext: DSLContext) {
     fun getScheduleMetadata(competitionId: Int): ScheduleMetadataRecord {
         return dslContext.selectFrom(SCHEDULE_METADATA)
             .where(SCHEDULE_METADATA.COMPETITION_ID.eq(competitionId))
-            .fetchOneInto(SCHEDULE_METADATA)
+            .fetchOneInto(SCHEDULE_METADATA) ?: throw NotFoundException("No schedule metadata found for $competitionId")
     }
 
     fun updateMinutesPerMatch(competitionId: Int, minutesPerMatchSpec: MinutesPerMatchSpec) {
@@ -217,7 +218,7 @@ class ScheduleRepository(private val dslContext: DSLContext) {
         return record
     }
 
-    fun getDailyStartAndEnd(competitionId: Int, day: LocalDate): ScheduleDailyTimesRecord {
+    fun getDailyStartAndEnd(competitionId: Int, day: LocalDate): ScheduleDailyTimesRecord? {
         return dslContext.selectFrom(SCHEDULE_DAILY_TIMES)
             .where(SCHEDULE_DAILY_TIMES.COMPETITION_ID.eq(competitionId).and(SCHEDULE_DAILY_TIMES.DAY.eq(day)))
             .fetchOneInto(SCHEDULE_DAILY_TIMES)

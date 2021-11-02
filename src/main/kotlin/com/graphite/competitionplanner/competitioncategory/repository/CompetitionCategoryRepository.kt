@@ -13,6 +13,7 @@ import com.graphite.competitionplanner.tables.records.CompetitionCategoryMetadat
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryRecord
 import org.jooq.DSLContext
 import org.jooq.Record
+import org.jooq.Record2
 import org.jooq.SelectConditionStep
 import org.springframework.stereotype.Repository
 
@@ -35,13 +36,13 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
     }
 
     fun getById(competitionCategoryId: Int): CompetitionCategory {
-        val record: Record = dslContext.select(
+        val record: Record2<String, String> = dslContext.select(
             COMPETITION_CATEGORY.STATUS,
             CATEGORY.CATEGORY_NAME
         ).from(COMPETITION_CATEGORY)
             .join(CATEGORY).on(CATEGORY.ID.eq(COMPETITION_CATEGORY.CATEGORY))
             .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
-            .fetchOne()
+            .fetchOne() ?: throw NotFoundException("No competition category data found for categoryId $competitionCategoryId")
 
         return CompetitionCategory(
             competitionCategoryId,
@@ -54,7 +55,9 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         return dslContext.select().from(COMPETITION_CATEGORY)
                 .join(CATEGORY).on(CATEGORY.ID.eq(COMPETITION_CATEGORY.CATEGORY))
                 .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
-                .fetchOneInto(CATEGORY)
+                .fetchOneInto(CATEGORY) ?:
+                throw NotFoundException("No competition category type found for categoryId $competitionCategoryId")
+
     }
 
     fun getCategoriesAndPlayers(competitionId: Int): List<CategoriesAndPlayers> {
@@ -241,14 +244,14 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         val gameSettingsRecord = spec.gameSettings.toRecord(id)
         gameSettingsRecord.id = dslContext.selectFrom(COMPETITION_CATEGORY_GAME_RULES).where(
             COMPETITION_CATEGORY_GAME_RULES.COMPETITION_CATEGORY_ID.eq(id)
-        ).fetchOne().get(
+        ).fetchOne()?.get(
             COMPETITION_CATEGORY_METADATA.ID
         )
 
         val settingRecord = spec.settings.toRecord(id)
         settingRecord.id = dslContext.selectFrom(COMPETITION_CATEGORY_METADATA).where(
             COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID.eq(id)
-        ).fetchOne().get(
+        ).fetchOne()?.get(
             COMPETITION_CATEGORY_METADATA.ID
         )
 
