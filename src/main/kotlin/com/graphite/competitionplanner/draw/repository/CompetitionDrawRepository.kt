@@ -62,7 +62,7 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
     }
 
     override fun delete(competitionCategoryId: Int) {
-        TODO("Not yet implemented")
+        dslContext.deleteFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
     }
 
     private fun String.isRound(): Boolean {
