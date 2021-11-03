@@ -21,6 +21,14 @@ const PlayerService = {
             },
             withCredentials: true
         })
+    },
+    findByNameInCompetition(partOfName, competitionId) {
+        return Axios.get(`/player/name-search/` + competitionId, {
+            params: {
+                partOfName: partOfName
+            },
+            withCredentials: true
+        })
     }
 
 }

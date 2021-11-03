@@ -1,7 +1,6 @@
 package com.graphite.competitionplanner.player.repository
 
-import com.graphite.competitionplanner.Tables.CLUB
-import com.graphite.competitionplanner.Tables.PLAYER_RANKING
+import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.player.interfaces.IPlayerRepository

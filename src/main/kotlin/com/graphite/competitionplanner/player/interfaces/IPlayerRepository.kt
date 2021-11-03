@@ -66,4 +66,5 @@ interface IPlayerRepository {
      */
     @Throws(NotFoundException::class)
     fun delete(id: Int): PlayerDTO
+
 }

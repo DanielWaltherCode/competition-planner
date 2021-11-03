@@ -3,6 +3,8 @@ package com.graphite.competitionplanner.player.service
 import com.graphite.competitionplanner.player.domain.*
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.registration.repository.RegistrationRepository
+import com.graphite.competitionplanner.registration.service.RegistrationService
 import org.springframework.stereotype.Service
 
 @Service
@@ -11,7 +13,8 @@ class PlayerService(
     val updatePlayer: UpdatePlayer,
     val listAllPlayersInClub: ListAllPlayersInClub,
     val deletePlayer: DeletePlayer,
-    val findPlayer: FindPlayer
+    val findPlayer: FindPlayer,
+    val registrationRepository: RegistrationRepository
 ) {
 
     fun getPlayersByClubId(clubId: Int): List<PlayerWithClubDTO> {
@@ -32,6 +35,16 @@ class PlayerService(
 
     fun findByName(partOfName: String): List<PlayerWithClubDTO> {
         return findPlayer.byPartName(partOfName)
+    }
+
+    fun findByNameInCompetition(partOfName: String, competitionId: Int): List<PlayerWithClubDTO> {
+        val players = registrationRepository.getRegistrationsInCompetition(competitionId)
+        val matchingPlayers = players.filter {
+            it.firstName.startsWith(partOfName, ignoreCase = true)
+                    || it.lastName.startsWith(partOfName, ignoreCase = true)
+        }.distinctBy { it.id }
+
+        return matchingPlayers.map { getPlayer(it.id) }
     }
 
     fun deletePlayer(playerId: Int): Boolean {

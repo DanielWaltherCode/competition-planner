@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.player.service
 
 import com.graphite.competitionplanner.player.domain.*
+import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Test
@@ -12,18 +13,20 @@ class TestPlayerService {
 
     private val dataGenerator = DataGenerator()
 
-    private final val createPlayer = mock(CreatePlayer::class.java)
-    private final val updatePlayer = mock(UpdatePlayer::class.java)
-    private final val listAllPlayersInClub = mock(ListAllPlayersInClub::class.java)
-    private final val deletePlayer = mock(DeletePlayer::class.java)
-    private final val findPlayer = mock(FindPlayer::class.java)
+    private val createPlayer = mock(CreatePlayer::class.java)
+    private val updatePlayer = mock(UpdatePlayer::class.java)
+    private val listAllPlayersInClub = mock(ListAllPlayersInClub::class.java)
+    private val deletePlayer = mock(DeletePlayer::class.java)
+    private val findPlayer = mock(FindPlayer::class.java)
+    private val registrationRepository = mock(RegistrationRepository::class.java)
 
     val playerService = PlayerService(
         createPlayer,
         updatePlayer,
         listAllPlayersInClub,
         deletePlayer,
-        findPlayer
+        findPlayer,
+        registrationRepository
     )
 
     @Test

@@ -33,6 +33,11 @@ class PlayerApi(
         return playerService.findByName(partOfName)
     }
 
+    @GetMapping("name-search/{competitionId}")
+    fun searchPlayerInCompetition(@PathVariable competitionId: Int, @RequestParam partOfName: String): List<PlayerWithClubDTO> {
+        return playerService.findByNameInCompetition(partOfName, competitionId)
+    }
+
     @GetMapping
     fun getPlayersByClubId(@RequestParam clubId: Int): List<PlayerWithClubDTO> {
         return playerService.getPlayersByClubId(clubId)
