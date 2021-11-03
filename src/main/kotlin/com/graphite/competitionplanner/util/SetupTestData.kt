@@ -25,6 +25,7 @@ import com.graphite.competitionplanner.user.repository.UserRepository
 import com.graphite.competitionplanner.user.service.UserService
 import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.event.EventListener
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -62,8 +63,12 @@ class EventListener(
         competitionSetup()
         registerUsers()
         playerSetup()
-        setUpBYEPlayer()
-        setUpPlaceHolderRegistration()
+        try {
+            setUpBYEPlayer()
+            setUpPlaceHolderRegistration()
+        } catch (ex: DuplicateKeyException) {
+            // Nothing
+        }
         addPlayerRankings()
         categorySetup()
         competitionCategorySetup()
