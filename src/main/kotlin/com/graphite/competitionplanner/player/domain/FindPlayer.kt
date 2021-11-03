@@ -31,5 +31,4 @@ class FindPlayer(
     fun byPartName(partName: String): List<PlayerWithClubDTO> {
         return repository.findByName(partName)
     }
-
 }

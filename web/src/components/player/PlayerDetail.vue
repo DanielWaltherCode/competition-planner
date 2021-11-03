@@ -72,7 +72,7 @@ export default {
         return [];
       }
       return new Promise(resolve => {
-        PlayerService.searchAllPlayers(input).then(res => {
+        PlayerService.findByNameInCompetition(input, this.competition.id).then(res => {
           this.playerNotFound = false
           resolve(res.data)
         }).catch(() => {
