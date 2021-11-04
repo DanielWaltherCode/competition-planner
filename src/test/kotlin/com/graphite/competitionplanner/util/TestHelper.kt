@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.util
 
+import org.mockito.ArgumentCaptor
 import org.mockito.Mockito
 import java.time.Duration
 import java.time.Instant
@@ -15,6 +16,12 @@ class TestHelper {
 
         @Suppress("UNCHECKED_CAST")
         fun <T> uninitialized(): T = null as T
+
+        /**
+         * Returns ArgumentCaptor.capture() as nullable type to avoid java.lang.IllegalStateException
+         * when null is returned.
+         */
+        fun <T> capture(argumentCaptor: ArgumentCaptor<T>): T = argumentCaptor.capture()
     }
 
     object Benchmark {

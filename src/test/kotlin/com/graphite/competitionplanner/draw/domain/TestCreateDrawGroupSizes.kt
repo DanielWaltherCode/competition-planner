@@ -2,12 +2,17 @@ package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
+import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
 import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCompetitionCategory
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.util.DataGenerator
+import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
+import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 import org.springframework.boot.test.context.SpringBootTest
@@ -19,16 +24,21 @@ class TestCreateDrawGroupSizes {
     private val mockedFindCompetitionCategory = mock(FindCompetitionCategory::class.java)
     private val mockedRegistrationRepository = mock(IRegistrationRepository::class.java)
     private val mockedSeedRepository = mock(ISeedRepository::class.java)
+    private val mockedCompetitionDrawRepository = mock(ICompetitionDrawRepository::class.java)
 
     private val createDraw = CreateDraw(
         mockedGetRegistrationInCompetitionCategory,
         mockedFindCompetitionCategory,
         CreateSeed(),
         mockedRegistrationRepository,
-        mockedSeedRepository
+        mockedSeedRepository,
+        mockedCompetitionDrawRepository
     )
 
     private val dataGenerator = DataGenerator()
+
+    @Captor
+    lateinit var classCaptor: ArgumentCaptor<CompetitionCategoryDrawSpec>
 
     @Test
     fun competitionWithTenPlayersAndGroupsOfFour() {
@@ -46,7 +56,11 @@ class TestCreateDrawGroupSizes {
         `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as GroupsDrawSpec
+        createDraw.execute(competitionCategory.id)
+
+        // Record the spec sent to the repository for validation
+        Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
+        val result = classCaptor.value as GroupsDrawSpec
 
         // Assert
         Assertions.assertEquals(3, result.groups.size)
@@ -72,7 +86,11 @@ class TestCreateDrawGroupSizes {
         `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as GroupsDrawSpec
+        createDraw.execute(competitionCategory.id)
+
+        // Record the spec sent to the repository for validation
+        Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
+        val result = classCaptor.value as GroupsDrawSpec
 
         // Assert
         Assertions.assertEquals(2, result.groups.size)
@@ -98,7 +116,11 @@ class TestCreateDrawGroupSizes {
         `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as GroupsDrawSpec
+        createDraw.execute(competitionCategory.id)
+
+        // Record the spec sent to the repository for validation
+        Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
+        val result = classCaptor.value as GroupsDrawSpec
 
         // Assert
         Assertions.assertEquals(5, result.groups.size)
@@ -122,7 +144,11 @@ class TestCreateDrawGroupSizes {
         `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as GroupsDrawSpec
+        createDraw.execute(competitionCategory.id)
+
+        // Record the spec sent to the repository for validation
+        Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
+        val result = classCaptor.value as GroupsDrawSpec
 
         // Assert
         Assertions.assertEquals(6, result.groups.size)
@@ -150,7 +176,11 @@ class TestCreateDrawGroupSizes {
         `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as GroupsDrawSpec
+        createDraw.execute(competitionCategory.id)
+
+        // Record the spec sent to the repository for validation
+        Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
+        val result = classCaptor.value as GroupsDrawSpec
 
         // Assert
         Assertions.assertEquals(1, result.groups.size)
@@ -174,7 +204,11 @@ class TestCreateDrawGroupSizes {
         `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as GroupsDrawSpec
+        createDraw.execute(competitionCategory.id)
+
+        // Record the spec sent to the repository for validation
+        Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
+        val result = classCaptor.value as GroupsDrawSpec
 
         // Assert
         Assertions.assertEquals(1, result.groups.size)
@@ -198,7 +232,11 @@ class TestCreateDrawGroupSizes {
         `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as GroupsDrawSpec
+        createDraw.execute(competitionCategory.id)
+
+        // Record the spec sent to the repository for validation
+        Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
+        val result = classCaptor.value as GroupsDrawSpec
 
         // Assert
         Assertions.assertEquals(19, result.groups.size)

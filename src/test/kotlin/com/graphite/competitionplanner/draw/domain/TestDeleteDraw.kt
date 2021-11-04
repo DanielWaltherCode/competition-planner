@@ -11,8 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest
 class TestDeleteDraw {
 
-    private final val mockedDrawRepository = Mockito.mock(ICompetitionDrawRepository::class.java)
-    private final val mockedCompetitionCategoryRepository = Mockito.mock(ICompetitionCategoryRepository::class.java)
+    private val mockedDrawRepository = Mockito.mock(ICompetitionDrawRepository::class.java)
+    private val mockedCompetitionCategoryRepository = Mockito.mock(ICompetitionCategoryRepository::class.java)
 
     private val deleteDraw = DeleteDraw(mockedDrawRepository, mockedCompetitionCategoryRepository)
 
