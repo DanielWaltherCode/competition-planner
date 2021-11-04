@@ -6,8 +6,11 @@ interface ICompetitionDrawRepository {
 
     /**
      * Store the draw of a specific competition category
+     *
+     * @param draw The specification of the draw
+     * @return The newly stored draw
      */
-    fun store(draw: CompetitionCategoryDrawSpec)
+    fun store(draw: CompetitionCategoryDrawSpec): CompetitionCategoryDrawDTO
 
     /**
      * Returns the matches from a resulting draw of a specific competition category

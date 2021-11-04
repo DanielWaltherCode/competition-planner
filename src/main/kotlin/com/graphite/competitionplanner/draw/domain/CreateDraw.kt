@@ -4,6 +4,8 @@ import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitio
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsSpec
 import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.draw.interfaces.CompetitionCategoryDrawDTO
+import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
 import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
 import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCompetitionCategory
@@ -19,13 +21,14 @@ class CreateDraw(
     val findCompetitionCategory: FindCompetitionCategory,
     val createSeed: CreateSeed,
     val repository: IRegistrationRepository,
-    val seedRepository: ISeedRepository
+    val seedRepository: ISeedRepository,
+    val drawRepository: ICompetitionDrawRepository
 ) {
 
     /**
      * Creates a draw for the given competition category
      */
-    fun execute(competitionCategoryId: Int): CompetitionCategoryDrawSpec {
+    fun execute(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
         val competitionCategory = findCompetitionCategory.byId(competitionCategoryId)
 
         // TODO: We should check the state of this competition category.
@@ -35,7 +38,7 @@ class CreateDraw(
         val registrationsWithSeeds = createSeed.execute(registrationRanks)
         seedRepository.setSeeds(registrationsWithSeeds)
 
-        return competitionCategory.settings.let {
+        val spec = competitionCategory.settings.let {
             when (it.drawType) {
                 DrawType.POOL_ONLY,
                 DrawType.POOL_AND_CUP
@@ -45,6 +48,8 @@ class CreateDraw(
                 DrawType.CUP_ONLY -> createPlayOffs(registrationsWithSeeds)
             }
         }
+
+        return drawRepository.store(spec)
     }
 
     private fun drawGroups(registrations: List<RegistrationSeedDTO>, settings: GeneralSettingsSpec): List<Group> {

@@ -2,12 +2,16 @@ package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
+import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
 import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCompetitionCategory
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.util.DataGenerator
+import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
 import org.mockito.Mockito
 import org.springframework.boot.test.context.SpringBootTest
 
@@ -19,16 +23,21 @@ class TestCreateDrawGroupNames {
     private val mockedFindCompetitionCategory = Mockito.mock(FindCompetitionCategory::class.java)
     private val mockedRegistrationRepository = Mockito.mock(IRegistrationRepository::class.java)
     private val mockedSeedRepository = Mockito.mock(ISeedRepository::class.java)
+    private val mockedCompetitionDrawRepository = Mockito.mock(ICompetitionDrawRepository::class.java)
 
     private val createDraw = CreateDraw(
         mockedGetRegistrationInCompetitionCategory,
         mockedFindCompetitionCategory,
         CreateSeed(),
         mockedRegistrationRepository,
-        mockedSeedRepository
+        mockedSeedRepository,
+        mockedCompetitionDrawRepository
     )
 
     private val dataGenerator = DataGenerator()
+
+    @Captor
+    lateinit var classCaptor: ArgumentCaptor<CompetitionCategoryDrawSpec>
 
     @Test
     fun groupNamesShallBeUnique() {
@@ -47,7 +56,11 @@ class TestCreateDrawGroupNames {
             .thenReturn(registrationRanks)
 
         // Act
-        val result = createDraw.execute(competitionCategory.id) as GroupsDrawSpec
+        createDraw.execute(competitionCategory.id)
+
+        // Record the spec sent to the repository for validation
+        Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
+        val result = classCaptor.value as GroupsDrawSpec
 
         // Assert
         val groupNames = result.groups.map { it.name }
