@@ -9,6 +9,7 @@ import com.graphite.competitionplanner.draw.domain.*
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -50,7 +51,17 @@ class TestStore(
         )
 
         // Act
-        repository.store(spec)
+        val result = repository.store(spec)
+
+        // Assert
+        Assertions.assertEquals(competitionCategory.id, result.competitionCategoryId)
+        Assertions.assertEquals(1, result.playOff.size, "Expected to find 1 match")
+
+        val final = result.playOff.first()
+        Assertions.assertEquals(registrations[0].playerId, final.player1.first().id)
+        Assertions.assertEquals(registrations[1].playerId, final.player2.first().id)
+        Assertions.assertEquals(1, final.order)
+        Assertions.assertEquals(Round.FINAL, final.round)
     }
 
     @Test
@@ -75,7 +86,18 @@ class TestStore(
         )
 
         // Act
-        repository.store(spec)
+        val result = repository.store(spec)
+
+        // Assert
+        Assertions.assertEquals(competitionCategory.id, result.competitionCategoryId)
+        Assertions.assertEquals(1, result.playOff.size, "Expected to find 1 match")
+
+        val final = result.playOff.first()
+        Assertions.assertEquals(registrations[0].playerId, final.player1.first().id)
+        Assertions.assertEquals(0, final.player2.first().id,
+            "Expected to find id 0, which represents the bye player")
+        Assertions.assertEquals(1, final.order)
+        Assertions.assertEquals(Round.FINAL, final.round)
     }
 
     @Test
@@ -100,7 +122,18 @@ class TestStore(
         )
 
         // Act
-        repository.store(spec)
+        val result = repository.store(spec)
+
+        // Assert
+        Assertions.assertEquals(competitionCategory.id, result.competitionCategoryId)
+        Assertions.assertEquals(1, result.playOff.size, "Expected to find 1 match")
+
+        val final = result.playOff.first()
+        Assertions.assertEquals(1, final.player1.first().id,
+            "Expected to find player id 1 which represents the placeholder player")
+        Assertions.assertEquals(registrations[0].playerId, final.player2.first().id)
+        Assertions.assertEquals(1, final.order)
+        Assertions.assertEquals(Round.FINAL, final.round)
     }
 
     @Test
@@ -135,6 +168,27 @@ class TestStore(
             )
         )
 
-        repository.store(spec)
+        val result = repository.store(spec)
+
+        // Assert
+        Assertions.assertEquals(competitionCategory.id, result.competitionCategoryId)
+        Assertions.assertEquals(2, result.groupDraw.size, "Expected to find two groups")
+        Assertions.assertEquals(1, result.playOff.size, "Expected to find 1 playoff match")
+
+        val groupA = result.groupDraw.first { it.name == "A" }
+        Assertions.assertEquals(2, groupA.players.size, "Expected to find 2 players in group A")
+        Assertions.assertEquals(1, groupA.matches.size, "Expected to find 1 game in group A")
+
+        val groupB = result.groupDraw.first { it.name == "B" }
+        Assertions.assertEquals(2, groupB.players.size, "Expected to find 2 players in group B")
+        Assertions.assertEquals(1, groupB.matches.size, "Expected to find 1 game in group B")
+
+        val final = result.playOff.first()
+        Assertions.assertEquals(1, final.player1.first().id,
+            "Expected to find player id 1 which represents the placeholder player")
+        Assertions.assertEquals(1, final.player2.first().id,
+            "Expected to find player id 1 which represents the placeholder player")
+        Assertions.assertEquals(1, final.order)
+        Assertions.assertEquals(Round.FINAL, final.round)
     }
 }

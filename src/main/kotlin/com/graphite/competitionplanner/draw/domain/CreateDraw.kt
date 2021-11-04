@@ -49,8 +49,7 @@ class CreateDraw(
             }
         }
 
-        drawRepository.store(spec)
-        return drawRepository.get(competitionCategoryId)
+        return drawRepository.store(spec)
     }
 
     private fun drawGroups(registrations: List<RegistrationSeedDTO>, settings: GeneralSettingsSpec): List<Group> {

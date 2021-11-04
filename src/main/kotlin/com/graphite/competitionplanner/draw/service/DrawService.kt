@@ -39,7 +39,6 @@ class DrawService(
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-
     fun createDraw(competitionCategoryId: Int): DrawDTO {
         // Check draw type and fetch players signed up in this category
         // its easier to work with registration ids since it could be doubles and then translate back to
