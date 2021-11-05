@@ -157,4 +157,8 @@ h1, h2, h3 {
 .black{
   color: black;
 }
+
+.bg-grey {
+  background-color: rgba(225, 225, 225, 0.20);
+}
 </style>

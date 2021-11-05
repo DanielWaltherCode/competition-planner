@@ -42,9 +42,10 @@
             <!-- List of registered players if there are any -->
             <div id="registered-players" v-if="!isChosenCategoryDrawn && registeredPlayersLists.length > 0">
               <h3>{{ $t("draw.main.registeredPlayers") }}</h3>
-              <div v-for="(playerList, index) in registeredPlayersLists" :key="index">
-                <div v-for="player in playerList" :key="player.id">
-                  {{ player.firstName + " " + player.lastName + " (" + player.club.name + ")" }}
+              <!-- The innerPlayerList contains two players in case of doubles -->
+              <div v-for="(innerPlayerList, index) in registeredPlayersLists" class="py-2 justify-content-center" :key="index">
+                <div v-for="player in innerPlayerList" :key="player.id">
+                  {{ player.firstName + " " + player.lastName + " " + player.club.name }}
                 </div>
               </div>
             </div>

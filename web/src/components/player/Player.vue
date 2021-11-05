@@ -25,6 +25,10 @@
               :class="$route.path.includes('detail') ? 'active' : ''">
             {{ $t("player.sidebar.detail") }}
           </li>
+          <li class="list-group-item" @click="$router.push('/players/create')"
+              :class="$route.path.includes('create') ? 'active' : ''">
+            {{ $t("player.sidebar.create") }}
+          </li>
         </ul>
       </div>
 

@@ -17,6 +17,7 @@ import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.player.service.PlayerService
+import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesSpec
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.registration.service.RegistrationService
@@ -74,6 +75,7 @@ class EventListener(
         competitionCategorySetup()
         registerPlayersSingles()
         registerMatch()
+        registerPlayersDoubles()
     }
 
     fun registerUsers() {
@@ -429,6 +431,10 @@ class EventListener(
             lugiCompetitionId,
             categories.find { it.name == "Damer 3" }!!.toSpec()
         )
+        competitionCategoryService.addCompetitionCategory(
+            lugiCompetitionId,
+            categories.find { it.name == "Herrdubbel" }!!.toSpec()
+        )
 
         val umeaId = util.getClubIdOrDefault("Umeå IK")
         val umeaCompetitions = competitionService.getByClubId(umeaId)
@@ -457,6 +463,58 @@ class EventListener(
 
     private fun CategoryDTO.toSpec(): CategorySpec {
         return CategorySpec(this.id, this.name, this.type)
+    }
+
+    fun registerPlayersDoubles() {
+        val lugiId = util.getClubIdOrDefault("Lugi")
+        val lugiPlayers = playerService.getPlayersByClubId(lugiId)
+        val umePlayers = playerService.getPlayersByClubId(util.getClubIdOrDefault("Umeå IK"))
+        val otherPlayers = playerService.getPlayersByClubId(util.getClubIdOrDefault("Övriga"))
+        val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
+        val competitionCategories = competitionCategoryService.getCompetitionCategoriesFor(lugiCompetitionId)
+
+        registrationService.registerPlayersDoubles(
+            RegistrationDoublesSpec(
+                lugiPlayers[0].id,
+                lugiPlayers[1].id,
+                competitionCategories[6].id
+            )
+        )
+        registrationService.registerPlayersDoubles(
+            RegistrationDoublesSpec(
+                lugiPlayers[2].id,
+                umePlayers[0].id,
+                competitionCategories[6].id
+            )
+        )
+        registrationService.registerPlayersDoubles(
+            RegistrationDoublesSpec(
+                lugiPlayers[3].id,
+                umePlayers[1].id,
+                competitionCategories[6].id
+            )
+        )
+        registrationService.registerPlayersDoubles(
+            RegistrationDoublesSpec(
+                lugiPlayers[4].id,
+                lugiPlayers[5].id,
+                competitionCategories[6].id
+            )
+        )
+        registrationService.registerPlayersDoubles(
+            RegistrationDoublesSpec(
+                otherPlayers[0].id,
+                otherPlayers[1].id,
+                competitionCategories[6].id
+            )
+        )
+        registrationService.registerPlayersDoubles(
+            RegistrationDoublesSpec(
+                umePlayers[2].id,
+                umePlayers[3].id,
+                competitionCategories[6].id
+            )
+        )
     }
 
     fun registerPlayersSingles() {
