@@ -11,7 +11,7 @@ import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.tables.records.MatchRecord
 import com.graphite.competitionplanner.tables.records.PoolDrawRecord
 import org.jooq.DSLContext
-import org.jooq.Record12
+import org.jooq.Record13
 import org.jooq.RecordMapper
 import org.jooq.impl.DSL.inline
 import org.springframework.stereotype.Repository
@@ -81,10 +81,14 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
                 rows.filter { it.registrationOrder == RegistrationOrder.Second }.map { it.toPlayerWithClubDto() }
             val order = rows.first().matchOrder
             val round = Round.valueOf(rows.first().groupOrRound)
-            listOf(PlayOffMatchDTO(player1,
+            val winner = rows.filter { it.registrationNumber == rows.first().winner }.map { it.toPlayerWithClubDto() }
+            listOf(PlayOffMatchDTO(
+                matchId,
+                player1,
                 player2,
                 order,
-                round)) + constructPlayOffMatches(records.drop(rows.count()))
+                round,
+                winner)) + constructPlayOffMatches(records.drop(rows.count()))
         }
     }
 
@@ -129,7 +133,8 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
                 rows.filter { it.registrationOrder == RegistrationOrder.First }.map { it.toPlayerWithClubDto() }
             val player2 =
                 rows.filter { it.registrationOrder == RegistrationOrder.Second }.map { it.toPlayerWithClubDto() }
-            listOf(GroupMatchDTO(player1, player2)) + constructGroupMatches(records.drop(rows.count()))
+            val winner = rows.filter { it.registrationNumber == rows.first().winner }.map { it.toPlayerWithClubDto() }
+            listOf(GroupMatchDTO(matchId, player1, player2, winner)) + constructGroupMatches(records.drop(rows.count()))
         }
     }
 
@@ -153,6 +158,7 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
                 m.MATCH_ORDER_NUMBER,
                 m.FIRST_REGISTRATION_ID.`as`("registration_id"),
                 inline(RegistrationOrder.First.name).`as`("registration_order"), // Keeping track from which select
+                m.WINNER,
                 p1.ID.`as`("player_id"),
                 p1.FIRST_NAME,
                 p1.LAST_NAME,
@@ -175,6 +181,7 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
                         m.MATCH_ORDER_NUMBER,
                         m.SECOND_REGISTRATION_ID.`as`("registration_id"),
                         inline(RegistrationOrder.Second.name).`as`("registration_order"), // Keeping track from which select
+                        m.WINNER,
                         p2.ID.`as`("player_id"),
                         p2.FIRST_NAME,
                         p2.LAST_NAME,
@@ -194,14 +201,15 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
     }
 
     class MatchPlayerRecordMapper :
-        RecordMapper<Record12<Int, String, Int, Int, String, Int, String, String, LocalDate, Int, String, String>, MatchPlayerRecord> {
-        override fun map(p0: Record12<Int, String, Int, Int, String, Int, String, String, LocalDate, Int, String, String>?): MatchPlayerRecord {
+        RecordMapper<Record13<Int, String, Int, Int, String, Int, Int?, String, String, LocalDate, Int, String, String>, MatchPlayerRecord> {
+        override fun map(p0: Record13<Int, String, Int, Int, String, Int, Int?, String, String, LocalDate, Int, String, String>?): MatchPlayerRecord {
             return MatchPlayerRecord(
                 p0?.get("match_id", MATCH.ID.type)!!,
                 p0.getValue(MATCH.GROUP_OR_ROUND)!!,
                 p0.getValue(MATCH.MATCH_ORDER_NUMBER)!!,
                 p0.getValue("registration_id", REGISTRATION.ID.type),
                 RegistrationOrder.valueOf(p0.getValue("registration_order", String::class.java)),
+                p0.getValue(MATCH.WINNER),
                 p0.getValue("player_id", PLAYER.ID.type)!!,
                 p0.getValue(PLAYER.FIRST_NAME)!!,
                 p0.getValue(PLAYER.LAST_NAME)!!,
@@ -219,6 +227,7 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
         val matchOrder: Int,
         val registrationNumber: Int,
         val registrationOrder: RegistrationOrder, // Indicates whether this row came from first or second select i.e. first_registration or second_registration
+        val winner: Int?, // Null if winner has not been decided yet
         val playerId: Int,
         val firstName: String,
         val lastName: String,
