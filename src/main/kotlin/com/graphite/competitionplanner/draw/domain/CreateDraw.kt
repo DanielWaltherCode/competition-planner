@@ -40,11 +40,17 @@ class CreateDraw(
 
         val spec = competitionCategory.settings.let {
             when (it.drawType) {
-                DrawType.POOL_ONLY,
-                DrawType.POOL_AND_CUP
-                -> GroupsDrawSpec(competitionCategory.id,
+                DrawType.POOL_ONLY -> GroupsDrawSpec(
+                    competitionCategory.id,
                     drawGroups(registrationsWithSeeds, it),
-                    emptyList())
+                    emptyList()
+                )
+                DrawType.POOL_AND_CUP
+                -> GroupsDrawSpec(
+                    competitionCategory.id,
+                    drawGroups(registrationsWithSeeds, it),
+                    constructPlayoff(registrationsWithSeeds, it)
+                )
                 DrawType.CUP_ONLY -> createPlayOffs(registrationsWithSeeds)
             }
         }
@@ -53,7 +59,7 @@ class CreateDraw(
     }
 
     private fun drawGroups(registrations: List<RegistrationSeedDTO>, settings: GeneralSettingsSpec): List<Group> {
-        val numberOfGroups = ceil((registrations.size.toDouble() / settings.playersPerGroup.toDouble())).toInt()
+        val numberOfGroups = calculateNumberOfGroups(registrations.size, settings)
         val groups = createEmptyGroups(numberOfGroups)
 
         val seededRegistrations =
@@ -64,6 +70,15 @@ class CreateDraw(
             .map {
                 it.apply { this.matches = generateMatchesFor(this.registrationIds) }
             }
+    }
+
+    private fun constructPlayoff(registrations: List<RegistrationSeedDTO>, settings: GeneralSettingsSpec): List<PlayOffMatch> {
+        val matchesInFirstRound = ceil(settings.playersToPlayOff.toDouble() * calculateNumberOfGroups(registrations.size, settings).toDouble() / 2.0).toInt()
+        return buildRemainingPlayOffTree(matchesInFirstRound)
+    }
+
+    private fun calculateNumberOfGroups(numberOfRegistrations: Int, settings: GeneralSettingsSpec): Int {
+        return ceil((numberOfRegistrations.toDouble() / settings.playersPerGroup.toDouble())).toInt()
     }
 
     private fun createEmptyGroups(numberOfGroups: Int): List<Group> {
@@ -96,7 +111,6 @@ class CreateDraw(
     private fun addRegistrationToGroup(group: Group, registration: Registration.Real): Group {
         return Group(group.name, group.registrationIds + listOf(registration), group.matches)
     }
-
 
     private fun createPlayOffs(registrations: List<RegistrationSeedDTO>): PlayOffDrawSpec {
         // If we are not an even power of 2, then we need to add so called BYE players to the list of registrations
@@ -133,11 +147,14 @@ class CreateDraw(
      */
     private fun generatePlayOffMatchesForFirstRound(registrations: List<Registration>): List<PlayOffMatch> {
         return if (registrations.size == 2) {
-            listOf(PlayOffMatch(
-                registrations.first(),
-                registrations.last(),
-                1,
-                Round.UNKNOWN))
+            listOf(
+                PlayOffMatch(
+                    registrations.first(),
+                    registrations.last(),
+                    1,
+                    Round.UNKNOWN
+                )
+            )
         } else {
             val best = registrations.take(2)
             val remaining = registrations.drop(2)
@@ -173,7 +190,8 @@ class CreateDraw(
                         Registration.Placeholder,
                         Registration.Placeholder,
                         it,
-                        numberOfMatchesToRound(numberOfMatchesInRound))
+                        numberOfMatchesToRound(numberOfMatchesInRound)
+                    )
                 }
                 val nextRound = buildRemainingPlayOffTree(numberOfMatchesInRound / 2)
                 thisRound + nextRound
