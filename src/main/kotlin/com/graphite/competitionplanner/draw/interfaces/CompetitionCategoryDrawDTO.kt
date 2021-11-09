@@ -26,6 +26,10 @@ data class CompetitionCategoryDrawDTO(
  */
 data class PlayOffMatchDTO(
     /**
+     * Match id
+     */
+    val id: Int,
+    /**
      * List of players in team one. Contains two players if it is a double game
      */
     val player1: List<PlayerWithClubDTO>,
@@ -43,7 +47,12 @@ data class PlayOffMatchDTO(
     /**
      * The round this match is played in.
      */
-    var round: Round
+    var round: Round,
+    /**
+     * The winner of this match. If list is is empty, then no winner has been decided. Contains two players if it is a
+     * double game
+     */
+    val winner: List<PlayerWithClubDTO>
 )
 
 /**
@@ -69,11 +78,20 @@ data class GroupDrawDTO(
  */
 data class GroupMatchDTO(
     /**
+     * Match id
+     */
+    val id: Int,
+    /**
      * List of players in team one. Contains two players if it is a double game
      */
     val player1: List<PlayerWithClubDTO>,
     /**
      * List of players in team two. Contains two players if it is a double game
      */
-    val player2: List<PlayerWithClubDTO>
+    val player2: List<PlayerWithClubDTO>,
+    /**
+     * The winner of this match. If list is is empty, then no winner has been decided. Contains two players if it is a
+     * double game
+     */
+    val winner: List<PlayerWithClubDTO>
 )
