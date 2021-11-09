@@ -233,9 +233,9 @@ class TestGet(
             name = "A",
             players = listOf(playersWithClub[0], playersWithClub[1], playersWithClub[2]),
             matches = listOf(
-                GroupMatchDTO(listOf(playersWithClub[0]), listOf(playersWithClub[1])),
-                GroupMatchDTO(listOf(playersWithClub[0]), listOf(playersWithClub[2])),
-                GroupMatchDTO(listOf(playersWithClub[1]), listOf(playersWithClub[2]))
+                GroupMatchDTO(0, listOf(playersWithClub[0]), listOf(playersWithClub[1]), emptyList()),
+                GroupMatchDTO(0, listOf(playersWithClub[0]), listOf(playersWithClub[2]), emptyList()),
+                GroupMatchDTO(0, listOf(playersWithClub[1]), listOf(playersWithClub[2]), emptyList())
             )
         )
 
@@ -247,9 +247,9 @@ class TestGet(
             name = "B",
             players = listOf(playersWithClub[3], playersWithClub[4], playersWithClub[5]),
             matches = listOf(
-                GroupMatchDTO(listOf(playersWithClub[3]), listOf(playersWithClub[4])),
-                GroupMatchDTO(listOf(playersWithClub[3]), listOf(playersWithClub[5])),
-                GroupMatchDTO(listOf(playersWithClub[4]), listOf(playersWithClub[5]))
+                GroupMatchDTO(0, listOf(playersWithClub[3]), listOf(playersWithClub[4]), emptyList()),
+                GroupMatchDTO(0, listOf(playersWithClub[3]), listOf(playersWithClub[5]), emptyList()),
+                GroupMatchDTO(0, listOf(playersWithClub[4]), listOf(playersWithClub[5]), emptyList())
             )
         )
 
@@ -261,9 +261,9 @@ class TestGet(
             name = "C",
             players = listOf(playersWithClub[6], playersWithClub[7], playersWithClub[8]),
             matches = listOf(
-                GroupMatchDTO(listOf(playersWithClub[6]), listOf(playersWithClub[7])),
-                GroupMatchDTO(listOf(playersWithClub[6]), listOf(playersWithClub[8])),
-                GroupMatchDTO(listOf(playersWithClub[7]), listOf(playersWithClub[8]))
+                GroupMatchDTO(0, listOf(playersWithClub[6]), listOf(playersWithClub[7]), emptyList()),
+                GroupMatchDTO(0, listOf(playersWithClub[6]), listOf(playersWithClub[8]), emptyList()),
+                GroupMatchDTO(0, listOf(playersWithClub[7]), listOf(playersWithClub[8]), emptyList())
             )
         )
 
@@ -272,6 +272,7 @@ class TestGet(
     }
 
     private fun assertGroupsEqual(expected: GroupDrawDTO, actual: GroupDrawDTO) {
+        Assertions.assertTrue(actual.matches.all { it.id > 0 }, "At least one match did not have an id larger than 0.")
         Assertions.assertEquals(expected.name, actual.name)
 
         Assertions.assertEquals(
@@ -280,8 +281,11 @@ class TestGet(
         )
 
         Assertions.assertEquals(expected.matches.size, actual.matches.size)
+
+        // Since we cannot know the IDs set on matches, we map them to zeroes so we can compare.
+        val comparableMatches = actual.matches.map { GroupMatchDTO(0, it.player1, it.player2, it.winner) }
         for (match in expected.matches) {
-            Assertions.assertTrue(actual.matches.contains(match), "Expected to find match $match")
+            Assertions.assertTrue(comparableMatches.contains(match), "Expected to find match $match")
         }
     }
 }
