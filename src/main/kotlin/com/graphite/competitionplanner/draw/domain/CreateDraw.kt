@@ -49,7 +49,7 @@ class CreateDraw(
                 -> GroupsDrawSpec(
                     competitionCategory.id,
                     drawGroups(registrationsWithSeeds, it),
-                    constructPlayoff(registrationsWithSeeds, it)
+                    createPlayOffWithOnlyPlaceholder(registrationsWithSeeds, it)
                 )
                 DrawType.CUP_ONLY -> createPlayOffs(registrationsWithSeeds)
             }
@@ -72,7 +72,7 @@ class CreateDraw(
             }
     }
 
-    private fun constructPlayoff(registrations: List<RegistrationSeedDTO>, settings: GeneralSettingsSpec): List<PlayOffMatch> {
+    private fun createPlayOffWithOnlyPlaceholder(registrations: List<RegistrationSeedDTO>, settings: GeneralSettingsSpec): List<PlayOffMatch> {
         val matchesInFirstRound = ceil(settings.playersToPlayOff.toDouble() * calculateNumberOfGroups(registrations.size, settings).toDouble() / 2.0).toInt()
         return buildRemainingPlayOffTree(matchesInFirstRound)
     }
