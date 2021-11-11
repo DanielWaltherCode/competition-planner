@@ -46,6 +46,7 @@
 
 <script>
 import PlayerService from "@/common/api-services/player.service";
+import ClubService from "@/common/api-services/club.service";
 
 export default {
   name: "CreateNewPlayer",
@@ -60,10 +61,17 @@ export default {
       firstName: null,
       lastName: null,
       club: null,
+      clubs: [],
       dateOfBirth: null,
     }
   },
+  mounted() {
+    ClubService.getClubs().then(res => {
+      this.clubs = res.data
+    })
+  },
   methods: {
+
     clearPlayer() {
       this.firstName = null
       this.lastName = null

@@ -31,14 +31,12 @@ class RegisterDoubleToCompetition(
         }
 
         val playerIds = repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)
-        // If id is 0 that means one player registered in doubles without a partner. If there is no partner,
-        // assign the BYE player as partner for now
-        if (playerIds.contains(spec.playerOneId) && spec.playerOneId != 0) {
+        if (playerIds.contains(spec.playerOneId)) {
             // Todo - gör om till nytt exception med en egen felkod som webben kan mappa till ett felmeddelande
             throw ResponseStatusException(HttpStatus.BAD_REQUEST,
                 "Player ${playerOne.firstName + " " + playerOne.lastName} is already registered in this category")
         }
-        if (playerIds.contains(spec.playerTwoId) && spec.playerTwoId != 0) {
+        if (playerIds.contains(spec.playerTwoId)) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST,
                 "Player ${playerTwo.firstName + " " + playerTwo.lastName} is already registered in this category")
         }

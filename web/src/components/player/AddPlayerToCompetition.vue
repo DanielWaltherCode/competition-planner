@@ -3,7 +3,7 @@
     <!-- Page heading -->
     <div class="row p-4 blue-section">
       <h4 class="text-start">{{ $t("player.add.heading") }}</h4>
-      <p class="text-start">{{ $t("player.add.helperText") }}
+      <p class="text-start col-sm-8">{{ $t("player.add.helperText") }}
         <span class="clickable"
               @click="$router.push('/players/create')">{{ $t("player.sidebar.create") }}
         </span>
@@ -15,7 +15,9 @@
       <search-player-component class="justify-content-center" v-on:clear-player="singlesPlayer = null"
                                v-on:player-found="singlesPlayer = $event"></search-player-component>
       <div v-if="singlesPlayer !== null" class="row px-4">
+        <div class="col-sm-4"></div>
         <div class="form-check col-sm-6 mb-3">
+          <h5 class="text-start">{{$t("player.categories")}}</h5>
           <div v-for="competitionCategory in singlesCategories" :key="competitionCategory.category.id">
             <input class="form-check-input ms-1" type="checkbox" :value="competitionCategory.category.name"
                    :id="competitionCategory.category.id" @change="noCategories = false" v-model="selectedSinglesCategories">
@@ -23,7 +25,7 @@
               {{ competitionCategory.category.name }}
             </label>
           </div>
-          <p class="fs-6 text-danger" v-if="noCategories">{{ $t("validations.required") }}</p>
+          <p class="fs-6 text-danger text-start" v-if="noCategories">{{ $t("toasts.playerNoCategories") }}</p>
         </div>
         <div class="d-flex justify-content-end">
           <button type="button" class="btn btn-primary" @click="addSinglesPlayerToCompetition">
@@ -38,15 +40,17 @@
       <div class="d-flex justify-content-start px-4">
         <p class="mb-0">{{ $t("player.doublesPlayer1") }}</p>
       </div>
-      <search-player-component class="justify-content-center" v-on:clear-player="doublesPlayer1 = null"
+      <search-player-component class="justify-content-center" ref="double1" v-on:clear-player="doublesPlayer1 = null"
                                v-on:player-found="doublesPlayer1 = $event"></search-player-component>
       <div class="d-flex justify-content-start px-4">
         <p class="mb-0">{{ $t("player.doublesPlayer2") }}</p>
       </div>
-      <search-player-component class="justify-content-center" v-on:clear-player="doublesPlayer2 = null"
+      <search-player-component class="justify-content-center" ref="double2" v-on:clear-player="doublesPlayer2 = null"
                                v-on:player-found="doublesPlayer2 = $event"></search-player-component>
-      <div v-if="doublesPlayer1 !== null && doublesPlayer2 !== null" class="row px-4">
+      <div v-if="doublesPlayer1 !== null && doublesPlayer2 !== null" class="row px-4 pb-4">
+        <div class="col-sm-4"></div>
         <div class="form-check col-sm-6 mb-3">
+          <h5 class="text-start">{{$t("player.categories")}}</h5>
           <div v-for="competitionCategory in doublesCategories" :key="competitionCategory.category.id">
             <input class="form-check-input ms-1" type="checkbox" :value="competitionCategory.category.name"
                    :id="competitionCategory.category.id" @change="noCategories = false" v-model="selectedDoublesCategories">
@@ -54,7 +58,7 @@
               {{ competitionCategory.category.name }}
             </label>
           </div>
-          <p class="fs-6 text-danger" v-if="noCategories">{{ $t("validations.required") }}</p>
+          <p class="fs-6 text-danger text-start" v-if="noCategories">{{ $t("toasts.playerNoCategories") }}</p>
         </div>
         <div class="d-flex justify-content-end">
           <button type="button" class="btn btn-primary" @click="registerDoublesPlayers">
@@ -68,7 +72,6 @@
 
 <script>
 import CategoryService from "@/common/api-services/category.service";
-import ClubService from "@/common/api-services/club.service";
 
 import RegistrationService from "@/common/api-services/registration.service";
 import SearchPlayerComponent from "@/components/player/SearchPlayerComponent";
@@ -78,7 +81,6 @@ export default {
   data() {
     return {
       noCategories: false,
-      clubs: [],
       selectedSinglesCategories: [],
       selectedDoublesCategories: [],
       competitionCategories: [],
@@ -103,9 +105,7 @@ export default {
     CategoryService.getCompetitionCategories(this.competition.id).then(res => {
       this.competitionCategories = res.data
     })
-    ClubService.getClubs().then(res => {
-      this.clubs = res.data
-    })
+
   },
   methods: {
     addSinglesPlayerToCompetition() {
@@ -119,6 +119,7 @@ export default {
       const categoriesToRegisterIn = this.competitionCategories.filter(val => this.selectedSinglesCategories.includes(val.category.name))
 
       if (categoriesToRegisterIn.length === 0) {
+        this.noCategories = true;
         this.$toasted.show(this.$tc("toasts.playerNoCategories")).goAway(3000)
         return;
       }
@@ -136,47 +137,36 @@ export default {
       this.selectedSinglesCategories = []
     },
     registerDoublesPlayers() {
-      if (this.doublesPlayer1 === null && this.doublesPlayer2 === null) {
+      if (this.doublesPlayer1 === null || this.doublesPlayer2 === null) {
         this.$toasted.show(this.$tc("toasts.playerCouldNotBeAddedToCompetition")).goAway(5000)
         return;
       }
       const categoriesToRegisterIn = this.competitionCategories.filter(val => this.selectedDoublesCategories.includes(val.category.name))
 
       if (categoriesToRegisterIn.length === 0) {
+        this.noCategories = true;
         this.$toasted.show(this.$tc("toasts.playerNoCategories")).goAway(3000)
         return;
       }
 
       categoriesToRegisterIn.forEach(category => {
-        let registrationSpec = {}
-        if (this.doublesPlayer1 !== null && this.doublesPlayer2 !== null) {
-          registrationSpec = {
+          const registrationSpec = {
             playerOneId: this.doublesPlayer1.id,
             playerTwoId: this.doublesPlayer2.id,
             competitionCategoryId: category.id
-          }
-        }
-        else if(this.doublesPlayer1 != null) {
-          registrationSpec = {
-            playerOneId: this.doublesPlayer1.id,
-            playerTwoId: 0,
-            competitionCategoryId: category.id
-          }
-        }
-        else if(this.doublesPlayer2 != null) {
-          registrationSpec = {
-            playerOneId: 0,
-            playerTwoId: this.doublesPlayer2.id,
-            competitionCategoryId: category.id
-          }
         }
         RegistrationService.registerPlayerDoubles(this.competition.id, registrationSpec).then(() => {
           this.$toasted.show(this.$tc("toasts.playerAdded")).goAway(3000)
+          this.$refs.double1.clearPlayer()
+          this.$refs.double2.clearPlayer()
+          this.selectedSinglesCategories = []
+        }).catch(err => {
+          console.log(err.response.data)
+          this.$toasted.show(err.response.data.message).goAway(3000)
         })
       })
 
-      this.singlesPlayer = null
-      this.selectedSinglesCategories = []
+
     }
   }
 }
@@ -184,7 +174,4 @@ export default {
 
 <style scoped>
 
-#input-form {
-  border: 1px solid gainsboro;
-}
 </style>

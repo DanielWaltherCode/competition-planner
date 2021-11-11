@@ -68,6 +68,7 @@
                 </div>
               </div>
               <br>
+              <!-- If there are groups -->
               <div v-for="group in draw.groupDraw.groups" :key="group.groupName"
                    class="row mb-4 d-flex align-items-start p-3 border rounded">
                 <h4 class="text-start mb-3">{{ $t("draw.main.group") }} {{ group.groupName }}</h4>
@@ -81,11 +82,14 @@
                 </div>
                 <br>
               </div>
+
+              <!-- If there is a playoff/cup -->
+            <playoff-draw v-if="draw != null && draw.playOff != null" :playoff-rounds="draw.playOff.rounds"></playoff-draw>
             </div>
           </div>
         </div>
       </div>
-    </div>>
+    </div>
   </main>
 </template>
 
@@ -95,9 +99,10 @@ import RegistrationService from "@/common/api-services/registration.service";
 import PoolDraw from "@/components/draw/PoolDraw";
 import CategoryService from "@/common/api-services/category.service";
 import MatchListComponent from "@/components/general/MatchListComponent";
+import PlayoffDraw from "@/components/draw/PlayoffDraw";
 
 export default {
-  components: {MatchListComponent, PoolDraw},
+  components: {PlayoffDraw, MatchListComponent, PoolDraw},
   data() {
     return {
       chosenCategory: null,
