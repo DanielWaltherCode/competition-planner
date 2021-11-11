@@ -31,9 +31,8 @@ class RegistrationService(
     val matchService: MatchService
 ) {
 
-    fun registerPlayerSingles(spec: RegistrationSinglesSpec): Int {
-        val registration = registerPlayerToCompetition.execute(spec)
-        return registration.id
+    fun registerPlayerSingles(spec: RegistrationSinglesSpec): RegistrationSinglesDTO {
+        return registerPlayerToCompetition.execute(spec)
     }
 
     fun registerPlayersDoubles(spec: RegistrationDoublesSpec): RegistrationDoublesDTO {

@@ -120,8 +120,9 @@
     "sidebar": {
       "title": "Spelaralternativ",
       "overview": "Anmälda spelare",
-      "addNew": "Lägg till spelare",
-      "detail": "Detaljinfo om enskild spelare"
+      "addNew": "Registrera spelare",
+      "detail": "Detaljinfo om enskild spelare",
+      "create": "Skapa spelare"
     },
     "search": "Sök på spelare",
     "title": "Spelare",
@@ -132,9 +133,13 @@
     "categories": "Klasser",
     "sortBy": "Sortera efter",
     "notFound": "Ingen spelare med det namnet hittades",
+    "addPlayerSingles": "Anmälan singelklass",
+    "addPlayerDoubles": "Anmälan dubbelklass",
+    "doublesPlayer1": "Dubbelspelare 1",
+    "doublesPlayer2": "Dubbelspelare 2",
     "add": {
       "heading": "Registrera en spelare manuellt i tävlingen",
-      "helperText": "Här kan du lägga till en spelare manuellt om denne inte har anmälts av sin klubb online sedan tidigare. Det bästa är att söka fram spelaren så att vi kan autofylla uppgifterna. Om spelaren inte finns i vår databas kan du fylla i uppgifterna manuellt men då finns inga uppgifter om rankingpoäng och seedning",
+      "helperText": "Här kan du lägga till en spelare manuellt om denne inte har anmälts av sin klubb online sedan tidigare. Om spelaren inte finns i databasen behöver den först läggas till under ",
       "search": "Sök på en spelare att lägga till",
       "firstName": "Förnamn",
       "lastName": "Efternamn",
@@ -272,6 +277,8 @@
     "categoryDeleted": "Klassen är borttagen",
     "categoryDrawDeleted": "Lottningen är borttagen",
     "playerAdded": "Spelare tillagd",
+    "playerCouldNotBeAddedToCompetition": "Spelaren du försökte lägga till hittades inte. Prova att söka igen. Finns inte spelaren i databasen behöver den läggas till först",
+    "playerNoCategories": "Inga kategorier att lägga till spelaren i har valts",
     "startTimesSet": "Start",
     "resultRegistered": "Resultatet är sparat",
     "temporaryResultRegistered": "Tillfälligt resultatet är sparat",

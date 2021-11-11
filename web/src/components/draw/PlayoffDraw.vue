@@ -49,23 +49,12 @@
 </template>
 
 <script>
-import DrawService from "@/common/api-services/draw.service";
 import {getClub, getPlayerOne, getPlayerTwo, isPlayerOneWinner, isPlayerTwoWinner} from "@/common/util";
 
 export default {
   name: "PlayoffDraw",
-  data() {
-    return {
-      playoffRounds: []
-    }
-  },
   props: {
-    playoff: Object
-  },
-  mounted() {
-    DrawService.getPlayoffDraw().then(res => {
-      this.playoffRounds = res.data
-    })
+    playoffRounds: Object
   },
   methods: {
     getPlayerOne: getPlayerOne,

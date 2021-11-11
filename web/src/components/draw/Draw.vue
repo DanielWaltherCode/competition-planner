@@ -42,9 +42,10 @@
             <!-- List of registered players if there are any -->
             <div id="registered-players" v-if="!isChosenCategoryDrawn && registeredPlayersLists.length > 0">
               <h3>{{ $t("draw.main.registeredPlayers") }}</h3>
-              <div v-for="(playerList, index) in registeredPlayersLists" :key="index">
-                <div v-for="player in playerList" :key="player.id">
-                  {{ player.firstName + " " + player.lastName + " (" + player.club.name + ")" }}
+              <!-- The innerPlayerList contains two players in case of doubles -->
+              <div v-for="(innerPlayerList, index) in registeredPlayersLists" class="py-2 justify-content-center" :key="index">
+                <div v-for="player in innerPlayerList" :key="player.id">
+                  {{ player.firstName + " " + player.lastName + " " + player.club.name }}
                 </div>
               </div>
             </div>
@@ -67,6 +68,7 @@
                 </div>
               </div>
               <br>
+              <!-- If there are groups -->
               <div v-for="group in draw.groupDraw.groups" :key="group.groupName"
                    class="row mb-4 d-flex align-items-start p-3 border rounded">
                 <h4 class="text-start mb-3">{{ $t("draw.main.group") }} {{ group.groupName }}</h4>
@@ -80,11 +82,14 @@
                 </div>
                 <br>
               </div>
+
+              <!-- If there is a playoff/cup -->
+            <playoff-draw v-if="draw != null && draw.playOff != null" :playoff-rounds="draw.playOff.rounds"></playoff-draw>
             </div>
           </div>
         </div>
       </div>
-    </div>>
+    </div>
   </main>
 </template>
 
@@ -94,9 +99,10 @@ import RegistrationService from "@/common/api-services/registration.service";
 import PoolDraw from "@/components/draw/PoolDraw";
 import CategoryService from "@/common/api-services/category.service";
 import MatchListComponent from "@/components/general/MatchListComponent";
+import PlayoffDraw from "@/components/draw/PlayoffDraw";
 
 export default {
-  components: {MatchListComponent, PoolDraw},
+  components: {PlayoffDraw, MatchListComponent, PoolDraw},
   data() {
     return {
       chosenCategory: null,

@@ -60,17 +60,17 @@ class TestRegistrationService {
     }
 
     @Test
-    fun shouldReturnTheRegistrationId() {
+    fun shouldReturnCorrectRegistrationId() {
         // Setup
         val spec = dataGenerator.newRegistrationSinglesSpec()
         val expected = dataGenerator.newRegistrationSinglesDTO(id = 1456)
         `when`(mockedRegisterPlayerToCompetition.execute(spec)).thenReturn(expected)
 
         // Act
-        val registrationId = service.registerPlayerSingles(spec)
+        val registration = service.registerPlayerSingles(spec)
 
         // Assertions
-        Assertions.assertEquals(expected.id, registrationId)
+        Assertions.assertEquals(expected.id, registration.id)
     }
 
 }

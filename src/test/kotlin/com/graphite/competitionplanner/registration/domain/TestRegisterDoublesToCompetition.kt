@@ -13,6 +13,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Description
+import java.lang.NullPointerException
 
 @SpringBootTest
 class TestRegisterDoublesToCompetition {
@@ -154,7 +155,9 @@ class TestRegisterDoublesToCompetition {
                 category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES.name)))
 
         // Act
-        registerDoubles.execute(spec)
+        Assertions.assertThrows(NullPointerException::class.java) {
+            registerDoubles.execute(spec)
+        }
 
         // Assert
         Mockito.verify(repository, Mockito.never()).storeDoubles(TestHelper.MockitoHelper.anyObject())
@@ -171,7 +174,9 @@ class TestRegisterDoublesToCompetition {
                 category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES.name)))
 
         // Act
-        registerDoubles.execute(spec)
+        Assertions.assertThrows(NullPointerException::class.java) {
+            registerDoubles.execute(spec)
+        }
 
         // Assert
         Mockito.verify(repository, Mockito.never()).storeDoubles(TestHelper.MockitoHelper.anyObject())

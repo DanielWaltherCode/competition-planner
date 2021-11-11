@@ -13,6 +13,7 @@ import Schedule from "@/components/schedule/Schedule";
 import Result from "@/components/result/Result";
 import ScheduleAdvanced from "@/components/schedule/ScheduleAdvanced";
 import PlayoffDraw from "@/components/draw/PlayoffDraw";
+import CreateNewPlayer from "@/components/player/CreateNewPlayer";
 
 Vue.use(Router)
 
@@ -56,6 +57,10 @@ export default new Router({
                     {
                         path: "detail/:id",
                         component: PlayerDetail
+                    },
+                    {
+                        path: "create",
+                        component: CreateNewPlayer
                     }
 
                 ]
