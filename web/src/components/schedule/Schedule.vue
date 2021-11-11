@@ -266,7 +266,7 @@ export default {
       }
       CategoryStartTimeService.updateCategoryStartTime(category.id,
           this.competition.id, category.categoryDTO.categoryId, objectToSave).then(() => {
-        this.$toasted.show(this.$tc("toasts.startTimesSet")).goAway(3000)
+        this.$toasted.success(this.$tc("toasts.startTimesSet")).goAway(3000)
       })
     },
     saveStartTimes() {

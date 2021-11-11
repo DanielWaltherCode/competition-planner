@@ -25,7 +25,7 @@
               {{ competitionCategory.category.name }}
             </label>
           </div>
-          <p class="fs-6 text-danger text-start" v-if="noCategories">{{ $t("toasts.playerNoCategories") }}</p>
+          <p class="fs-6 text-danger text-start" v-if="noCategories">{{ $t("validations.noCategories") }}</p>
         </div>
         <div class="d-flex justify-content-end">
           <button type="button" class="btn btn-primary" @click="addSinglesPlayerToCompetition">
@@ -58,7 +58,7 @@
               {{ competitionCategory.category.name }}
             </label>
           </div>
-          <p class="fs-6 text-danger text-start" v-if="noCategories">{{ $t("toasts.playerNoCategories") }}</p>
+          <p class="fs-6 text-danger text-start" v-if="noCategories">{{ $t("validations.noCategories") }}</p>
         </div>
         <div class="d-flex justify-content-end">
           <button type="button" class="btn btn-primary" @click="registerDoublesPlayers">
@@ -110,7 +110,7 @@ export default {
   methods: {
     addSinglesPlayerToCompetition() {
       if (this.singlesPlayer === null) {
-        this.$toasted.show(this.$tc("toasts.playerCouldNotBeAddedToCompetition")).goAway(5000)
+        this.$toasted.success(this.$tc("toasts.player.couldNotBeAddedToCompetition")).goAway(5000)
         return;
       }
       this.registerSinglesPlayer()
@@ -120,7 +120,6 @@ export default {
 
       if (categoriesToRegisterIn.length === 0) {
         this.noCategories = true;
-        this.$toasted.show(this.$tc("toasts.playerNoCategories")).goAway(3000)
         return;
       }
 
@@ -130,7 +129,7 @@ export default {
           competitionCategoryId: category.id
         }
         RegistrationService.registerPlayerSingles(this.competition.id, registrationSpec).then(() => {
-          this.$toasted.show(this.$tc("toasts.playerAdded")).goAway(3000)
+          this.$toasted.success(this.$tc("toasts.player.added")).goAway(3000)
         })
       })
       this.singlesPlayer = null
@@ -138,14 +137,13 @@ export default {
     },
     registerDoublesPlayers() {
       if (this.doublesPlayer1 === null || this.doublesPlayer2 === null) {
-        this.$toasted.show(this.$tc("toasts.playerCouldNotBeAddedToCompetition")).goAway(5000)
+        this.$toasted.error(this.$tc("toasts.player.doubleRegistrationError")).goAway(5000)
         return;
       }
       const categoriesToRegisterIn = this.competitionCategories.filter(val => this.selectedDoublesCategories.includes(val.category.name))
 
       if (categoriesToRegisterIn.length === 0) {
         this.noCategories = true;
-        this.$toasted.show(this.$tc("toasts.playerNoCategories")).goAway(3000)
         return;
       }
 
@@ -156,13 +154,12 @@ export default {
             competitionCategoryId: category.id
         }
         RegistrationService.registerPlayerDoubles(this.competition.id, registrationSpec).then(() => {
-          this.$toasted.show(this.$tc("toasts.playerAdded")).goAway(3000)
+          this.$toasted.success(this.$tc("toasts.player.added")).goAway(3000)
           this.$refs.double1.clearPlayer()
           this.$refs.double2.clearPlayer()
           this.selectedSinglesCategories = []
         }).catch(err => {
-          console.log(err.response.data)
-          this.$toasted.show(err.response.data.message).goAway(3000)
+          this.$toasted.error(err.response.data.message).goAway(3000)
         })
       })
 
