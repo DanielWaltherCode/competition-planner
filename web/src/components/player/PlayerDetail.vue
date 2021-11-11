@@ -15,12 +15,13 @@
       <h2 class="black"> {{ player.firstName + " " + player.lastName }}</h2>
       <div class="p-4">
         <div class="p-4" v-for="registration in registrations" :key="registration.id">
-          <p>{{ registration.competitionCategory.name }}
-            <span v-if="registration.competitionCategory.type === 'DOUBLES'">
+          <div class="fw-bold pb-2">{{ registration.competitionCategory.name }}
+
+          </div>
+          <div v-if="registration.competitionCategory.type === 'DOUBLES'">
                 {{ $t("player.playingWith") }}
-                {{ registration.accompanyingPlayer.firstName + ' ' + registration.accompanyingPlayer.lastName }} )
-              </span>
-          </p>
+                {{ registration.accompanyingPlayer.firstName + ' ' + registration.accompanyingPlayer.lastName }}
+              </div>
             <match-list-component :matches="registration.matches" />
         </div>
       </div>
@@ -63,9 +64,6 @@ export default {
         this.player = res.data.player
         this.registrations = res.data.registrations
       })
-          .catch(() => {
-            this.$toasted.show(this.$tc("toasts.error.general")).goAway(3000)
-          })
     },
     searchPlayers(input) {
       if (input.length < 1) {

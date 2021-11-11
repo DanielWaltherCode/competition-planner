@@ -127,13 +127,15 @@ export default {
     },
     save() {
       CategoryService.updateCompetitionCategory(this.competition.id, this.activeCategory.id, this.activeCategory).then(() => {
-        this.$toasted.show(this.$tc("toasts.categoryUpdated")).goAway(3000)
+        this.$toasted.success(this.$tc("toasts.categoryUpdated")).goAway(3000)
+      }).catch(() => {
+        this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
       })
     },
     deleteCategory() {
       if(confirm(this.$tc("confirm.deleteCategory"))) {
         CategoryService.deleteCompetitionCategory(this.competition.id, this.activeCategory.id).then(() => {
-          this.$toasted.show(this.$tc("toasts.categoryDeleted")).goAway(3000)
+          this.$toasted.success(this.$tc("toasts.categoryDeleted")).goAway(3000)
           CategoryService.getCompetitionCategories(this.competition.id).then(res => {
             this.competitionCategories = res.data
             if (this.competitionCategories.length > 0) {

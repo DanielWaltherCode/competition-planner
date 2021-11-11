@@ -147,24 +147,30 @@ export default {
     createDraw() {
       if(confirm(this.$tc("confirm.redraw"))) {
         DrawService.createDraw(this.competition.id, this.chosenCategory.id).then(res => {
-          this.$toasted.show(this.$tc("toasts.categoryDrawn")).goAway(3000)
+          this.$toasted.success(this.$tc("toasts.categoryDrawn")).goAway(3000)
           this.draw = res.data
           this.isChosenCategoryDrawn = true
+        }).catch(() => {
+          this.$toasted.error(this.$tc("toasts.error.general"))
         })
       }
     },
     deleteDraw() {
       if(confirm(this.$tc("confirm.deleteDraw"))) {
         DrawService.deleteDraw(this.competition.id, this.chosenCategory.id).then(() => {
-          this.$toasted.show(this.$tc("toasts.categoryDrawDeleted")).goAway(3000)
+          this.$toasted.success(this.$tc("toasts.categoryDrawDeleted")).goAway(3000)
           this.isChosenCategoryDrawn = false
           this.getRegisteredPlayers()
+        }).catch(() => {
+          this.$toasted.error(this.$tc("toasts.error.general"))
         })
       }
     },
     getDraw(categoryId) {
       DrawService.getDraw(this.competition.id, categoryId).then(res => {
         this.draw = res.data
+      }).catch(() => {
+        this.$toasted.error(this.$tc("toasts.error.general"))
       })
     },
     getRegisteredPlayers() {

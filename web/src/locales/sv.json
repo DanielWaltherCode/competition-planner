@@ -124,6 +124,10 @@
       "detail": "Detaljinfo om enskild spelare",
       "create": "Skapa spelare"
     },
+    "create": {
+      "heading": "Skapa spelare",
+      "text": "Om en spelare inte har en giltig svensk licens (och därmed inte finns i vår databas) kan de läggas till manuellt här. De kan sedan registreras för klasser i tävlingen. Notera dock att de inte har någon ranking eller seedning."
+    },
     "search": "Sök på spelare",
     "title": "Spelare",
     "headingHelper": "Här kan du se spelare som är anmälda till tävlingen. Du kan också manuellt lägga till nya spelare. I de flesta fall anmäler dock klubbarna själva sina spelare online och de dyker sedan automatiskt upp här.",
@@ -149,7 +153,7 @@
       "clear": "Rensa spelare"
     },
     "info": "Spelarinfo",
-    "playingWith": "(Tillsammans med "
+    "playingWith": "Spelar med "
   },
   "draw": {
     "sidebar": {
@@ -267,18 +271,21 @@
     "noMatches": "Ingen lottning är gjord än så inga matcher är uppsatta"
   },
   "validations": {
-    "required": "Fältet måste fyllas i"
+    "required": "Fältet måste fyllas i",
+    "noCategories": "Inga kategorier att lägga till spelaren i har valts"
   },
   "toasts": {
+    "player": {
+      "added": "Spelare tillagd",
+      "couldNotBeAddedToCompetition": "Spelaren du försökte lägga till hittades inte. Prova att söka igen. Finns inte spelaren i databasen behöver den läggas till först",
+      "doubleRegistrationError": "Antingen spelare 1 eller spelare 2 verkar inte korrekt ifylld. Kolla uppgifterna eller prova igen senare."
+    },
     "competitionAdded": "Tävlingen är skapad. Du kan nu gå vidare till nästa steg.",
     "competitionUpdated": "Tävlingen uppdaterades",
     "categoryUpdated": "Klassen är uppdaterad",
     "categoryDrawn": "Klassen är nu lottad",
     "categoryDeleted": "Klassen är borttagen",
     "categoryDrawDeleted": "Lottningen är borttagen",
-    "playerAdded": "Spelare tillagd",
-    "playerCouldNotBeAddedToCompetition": "Spelaren du försökte lägga till hittades inte. Prova att söka igen. Finns inte spelaren i databasen behöver den läggas till först",
-    "playerNoCategories": "Inga kategorier att lägga till spelaren i har valts",
     "startTimesSet": "Start",
     "resultRegistered": "Resultatet är sparat",
     "temporaryResultRegistered": "Tillfälligt resultatet är sparat",

@@ -29,7 +29,7 @@
                   </router-link>
                 </li>
                 <li class="nav-item">
-                  <router-link class="nav-link" to="/players" v-if="isLoggedIn && !!competition"
+                  <router-link class="nav-link" to="/players/overview" v-if="isLoggedIn && !!competition"
                                :class="$route.path === '/players' ? 'active' : ''">
                     {{ $t("header.players") }}
                   </router-link>

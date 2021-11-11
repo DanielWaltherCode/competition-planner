@@ -134,9 +134,9 @@ export default {
       })
       ResultService.addPartialResult(this.selectedMatch.id, {gameList: resultsToSubmit}).then(() => {
         this.$emit("closeAndUpdate", this.selectedMatch.id)
-        this.$toasted.show(this.$tc("toasts.temporaryResultRegistered")).goAway(3000)
-      }).catch(err => {
-        console.log(err.data)
+        this.$toasted.success(this.$tc("toasts.temporaryResultRegistered")).goAway(3000)
+      }).catch(() => {
+        this.$toasted.error(this.$tc("toasts.error.general"))
       })
     },
     validateSubmission() {
@@ -155,7 +155,7 @@ export default {
       })
       ResultService.updateFullMatchResult(this.selectedMatch.id, {gameList: resultsToSubmit}).then(() => {
         this.$emit("closeAndUpdate", this.selectedMatch.id)
-        this.$toasted.show(this.$tc("toasts.resultRegistered")).goAway(3000)
+        this.$toasted.success(this.$tc("toasts.resultRegistered")).goAway(3000)
       }).catch(err => {
         const response = err.response.data
         console.log(response)
