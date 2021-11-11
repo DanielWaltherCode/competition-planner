@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Description
+import java.lang.NullPointerException
 
 @SpringBootTest
 class TestRegisterPlayerToCompetition {
@@ -137,11 +138,13 @@ class TestRegisterPlayerToCompetition {
                 category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)))
 
         // Act
-        registerPlayer.execute(spec)
+        Assertions.assertThrows(NullPointerException::class.java) {
+            registerPlayer.execute(spec)
+        }
 
         // Assert
         verify(repository, never()).storeSingles(TestHelper.MockitoHelper.anyObject())
-        verify(repository, times(1)).getRegistrationFor(spec)
+        verify(repository, times(1)).getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)
     }
 
 }
