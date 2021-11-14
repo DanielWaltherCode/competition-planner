@@ -5,7 +5,8 @@ import com.graphite.competitionplanner.util.Util
 
 object SecurityConstants {
     // Access token valid 1 day
-    const val ACCESS_TOKEN_EXPIRATION_TIME: Long = 86400 // Is multiplied by 1000 when used
+    // Both values here are in seconds, and are multiplied by 1000 to get milliseconds when used in SecurityHelper
+    const val ACCESS_TOKEN_EXPIRATION_TIME: Long = 86400
     const val REFRESH_TOKEN_EXPIRATION_TIME: Long = 8640000
     const val TOKEN_PREFIX = "Bearer "
     const val HEADER_STRING = "Authorization"
