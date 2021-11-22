@@ -136,7 +136,7 @@ export default {
         this.$emit("closeAndUpdate", this.selectedMatch.id)
         this.$toasted.success(this.$tc("toasts.temporaryResultRegistered")).goAway(3000)
       }).catch(() => {
-        this.$toasted.error(this.$tc("toasts.error.general"))
+        this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
       })
     },
     validateSubmission() {

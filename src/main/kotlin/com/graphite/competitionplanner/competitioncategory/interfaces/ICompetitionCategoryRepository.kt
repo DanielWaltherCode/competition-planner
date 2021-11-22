@@ -60,4 +60,6 @@ interface ICompetitionCategoryRepository {
      * Set the state of the competition category
      */
     fun setStatus(competitionCategoryId: Int, status: CompetitionCategoryStatus)
+
+    fun getCostForCategories(categoryIds: List<Int>): MutableMap<Int, Float>
 }

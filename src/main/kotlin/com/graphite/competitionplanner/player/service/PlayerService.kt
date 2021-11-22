@@ -4,7 +4,6 @@ import com.graphite.competitionplanner.player.domain.*
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
-import com.graphite.competitionplanner.registration.service.RegistrationService
 import org.springframework.stereotype.Service
 
 @Service
@@ -38,7 +37,7 @@ class PlayerService(
     }
 
     fun findByNameInCompetition(partOfName: String, competitionId: Int): List<PlayerWithClubDTO> {
-        val players = registrationRepository.getRegistrationsInCompetition(competitionId)
+        val players = registrationRepository.getRegistreredPlayersInCompetition(competitionId)
         val matchingPlayers = players.filter {
             it.firstName.startsWith(partOfName, ignoreCase = true)
                     || it.lastName.startsWith(partOfName, ignoreCase = true)

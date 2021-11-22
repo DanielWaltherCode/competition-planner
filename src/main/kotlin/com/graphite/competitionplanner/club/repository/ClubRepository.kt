@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.club.repository
 
+import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
@@ -66,6 +67,21 @@ class ClubRepository(val dslContext: DSLContext) : IClubRepository {
             throw NotFoundException("Could not update. Club with id $clubId not found.")
         }
         return record.toDto()
+    }
+
+    override fun getClubsInCompetition(competitionId: Int): List<ClubDTO> {
+       val clubRecords = dslContext.selectDistinct(CLUB.asterisk())
+           .from(CLUB)
+           .join(PLAYER).on(PLAYER.CLUB_ID.eq(CLUB.ID))
+           .join(PLAYER_REGISTRATION).on(PLAYER_REGISTRATION.PLAYER_ID.eq(PLAYER.ID))
+           .join(COMPETITION_CATEGORY_REGISTRATION).on(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(
+               PLAYER_REGISTRATION.REGISTRATION_ID))
+           .join(COMPETITION_CATEGORY).on(COMPETITION_CATEGORY.ID.eq(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID))
+           .join(COMPETITION).on(COMPETITION.ID.eq(COMPETITION_CATEGORY.COMPETITION_ID))
+           .where(COMPETITION.ID.eq(competitionId))
+           .fetchInto(CLUB)
+
+        return clubRecords.map { it.toDto() }
     }
 
     private fun ClubRecord.toDto(): ClubDTO {

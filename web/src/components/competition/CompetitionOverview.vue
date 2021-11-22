@@ -92,7 +92,7 @@ export default {
         this.competitionUpdated = true
         this.$toasted.success(this.$tc("toasts.competitionUpdated")).goAway(3000)
       }).catch(() => {
-        this.$toasted.error(this.$tc("toasts.error.general"))
+        this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
         }
       )
     }

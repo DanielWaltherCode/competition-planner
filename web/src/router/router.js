@@ -14,6 +14,7 @@ import Result from "@/components/result/Result";
 import ScheduleAdvanced from "@/components/schedule/ScheduleAdvanced";
 import PlayoffDraw from "@/components/draw/PlayoffDraw";
 import CreateNewPlayer from "@/components/player/CreateNewPlayer";
+import Billing from "@/components/billing/Billing";
 
 Vue.use(Router)
 
@@ -84,6 +85,10 @@ export default new Router({
             {
                 path: "/results",
                 component: Result,
+            },
+            {
+                path: "/billing",
+                component: Billing
             }
         ],
         scrollBehavior() {

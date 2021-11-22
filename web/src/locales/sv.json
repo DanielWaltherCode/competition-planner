@@ -270,6 +270,30 @@
     },
     "noMatches": "Ingen lottning är gjord än så inga matcher är uppsatta"
   },
+  "billing": {
+    "title": "Fakturahantering",
+    "sidebarTitle": "Klubbar",
+    "firstHeading": "Kostnadssammanfattning",
+    "firstHelperText": "I tabellen nedan finns en över vilka klasser en klubb haft spelare i och vad deltagandet kostnad. Denna ligger till grund för fakturan som genereras. Varje spelare i en dubbelklass står för hälften av anmälningsavgifter så om spelare från olika klubbar spelar tillsammans får varje klubb 50% av kostnaden",
+    "firstTableHeading": "Kostnadssammanfattning för ",
+    "secondHeading": "Kostnad på spelarnivå",
+    "table1": {
+      "category": "Klass",
+      "nrStarts": "Antal starter",
+      "price": "Kostnad (per spelare)",
+      "total": "Totalt"
+    },
+    "table2": {
+      "player": "Spelare",
+      "category": "Klass",
+      "price": "Kostnad (per spelare)"
+    },
+    "toasts": {
+      "club-error": "Kunde inte hämta deltagande klubbar",
+      "summary-error": "Kunde inte hämta kostnadssammanfattning",
+      "player-error": "Kunde inte hämta kostnadssammanfattning för spelare"
+    }
+  },
   "validations": {
     "required": "Fältet måste fyllas i",
     "noCategories": "Inga kategorier att lägga till spelaren i har valts"
