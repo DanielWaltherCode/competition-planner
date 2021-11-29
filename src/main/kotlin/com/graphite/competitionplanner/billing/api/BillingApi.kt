@@ -1,14 +1,11 @@
 package com.graphite.competitionplanner.billing.api
 
-import com.graphite.competitionplanner.billing.domain.CreatePDF
 import com.graphite.competitionplanner.billing.domain.GetClubsInCompetition
 import com.graphite.competitionplanner.billing.domain.GetCostSummaryForClub
 import com.graphite.competitionplanner.billing.domain.GetCostSummaryForPlayers
 import com.graphite.competitionplanner.billing.interfaces.CostSummaryListDTO
-import com.graphite.competitionplanner.billing.interfaces.PlayerCostSummaryDTO
 import com.graphite.competitionplanner.billing.interfaces.PlayerCostSummaryListDTO
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
-import org.apache.pdfbox.pdmodel.PDDocument
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -20,7 +17,6 @@ class BillingApi(
     val getClubsInCompetition: GetClubsInCompetition,
     val getCostSummaryForClub: GetCostSummaryForClub,
     val getCostSummaryForPlayers: GetCostSummaryForPlayers,
-    val createPDF: CreatePDF
 ) {
 
     @GetMapping

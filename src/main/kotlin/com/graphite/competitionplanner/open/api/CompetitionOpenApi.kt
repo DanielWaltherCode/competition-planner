@@ -1,6 +1,5 @@
 package com.graphite.competitionplanner.open.api
 
-import com.graphite.competitionplanner.billing.domain.CreatePDF
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
 import com.graphite.competitionplanner.competition.service.CompetitionService
@@ -15,10 +14,7 @@ import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import io.swagger.annotations.ApiModelProperty
-import org.apache.pdfbox.pdmodel.PDDocument
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.io.InputStream
 import java.time.LocalDate
 
 @RestController
@@ -29,7 +25,6 @@ class CompetitionOpenApi(
     val registrationService: RegistrationService,
     val competitionCategoryService: CompetitionCategoryService,
     val matchService: MatchService,
-    val createPDF: CreatePDF
 ) {
 
     @GetMapping
