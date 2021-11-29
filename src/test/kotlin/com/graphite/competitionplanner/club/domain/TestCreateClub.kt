@@ -22,7 +22,7 @@ class TestCreateClub {
     @Test
     fun shouldCreateClubIfNameIsAvailable() {
         // Setup
-        val spec = dataGenerator.newClubSpec("ClubA", "Address1")
+        val spec = dataGenerator.newClubSpec("ClubX", "Address1")
         val otherClubs = listOf(
             dataGenerator.newClubDTO(name = "ClubB"),
             dataGenerator.newClubDTO(name = "ClubC"),

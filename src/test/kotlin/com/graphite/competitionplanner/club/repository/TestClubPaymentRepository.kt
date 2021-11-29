@@ -17,7 +17,7 @@ class TestClubPaymentRepository(
     @Test
     fun shouldGetDefaultPaymentInfo() {
         // Setup
-        val spec = dataGenerator.newClubSpec("ClubA", "Address1")
+        val spec = dataGenerator.newClubSpec("ClubY", "Address1")
         val originalPaymentInfoCount = paymentRepository.getCount()
 
         // Act
