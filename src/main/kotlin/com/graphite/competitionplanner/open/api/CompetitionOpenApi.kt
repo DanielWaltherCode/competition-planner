@@ -24,7 +24,7 @@ class CompetitionOpenApi(
     val drawService: DrawService,
     val registrationService: RegistrationService,
     val competitionCategoryService: CompetitionCategoryService,
-    val matchService: MatchService
+    val matchService: MatchService,
 ) {
 
     @GetMapping

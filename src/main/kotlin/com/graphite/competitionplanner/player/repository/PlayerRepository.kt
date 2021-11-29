@@ -160,7 +160,7 @@ class PlayerRepository(val dslContext: DSLContext) : IPlayerRepository {
         }
     }
 
-    fun PlayerRecord.toDto(): PlayerDTO {
+    public fun PlayerRecord.toDto(): PlayerDTO {
         return PlayerDTO(this.id, this.firstName, this.lastName, this.clubId, this.dateOfBirth)
     }
 
