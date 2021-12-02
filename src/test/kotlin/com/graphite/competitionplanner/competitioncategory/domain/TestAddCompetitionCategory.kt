@@ -6,7 +6,7 @@ import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategorySpec
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
-import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions

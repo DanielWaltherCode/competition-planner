@@ -16,7 +16,7 @@ import org.mockito.Mockito
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TestCreateDrawGroupNames {
+class TestCreateDrawPoolNames {
 
     private val mockedGetRegistrationInCompetitionCategory =
         Mockito.mock(GetRegistrationsInCompetitionCategory::class.java)
@@ -60,10 +60,10 @@ class TestCreateDrawGroupNames {
 
         // Record the spec sent to the repository for validation
         Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
-        val result = classCaptor.value as GroupsDrawSpec
+        val result = classCaptor.value as PoolAndCupDrawSpec
 
         // Assert
-        val groupNames = result.groups.map { it.name }
+        val groupNames = result.pools.map { it.name }
         Assertions.assertEquals(3, groupNames.distinct().size)
         Assertions.assertTrue(groupNames.contains("A"))
         Assertions.assertTrue(groupNames.contains("B"))

@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
-import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
 import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCompetitionCategory
@@ -61,7 +61,7 @@ class TestCreateDrawCupOnlyPlaceholderMatches {
 
         // Record the spec sent to the repository for validation
         Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
-        val result = classCaptor.value as PlayOffDrawSpec
+        val result = classCaptor.value as CupDrawSpec
 
         // Assert
         result.matches.assertCorrectNumberOfMatchesInRound(Round.FINAL, 1)
@@ -98,7 +98,7 @@ class TestCreateDrawCupOnlyPlaceholderMatches {
 
         // Record the spec sent to the repository for validation
         Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
-        val result = classCaptor.value as PlayOffDrawSpec
+        val result = classCaptor.value as CupDrawSpec
 
         // Assert
         result.matches.assertMatchOrdersExist(Round.FINAL, (1..1).toList())

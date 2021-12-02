@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.draw.service
 
-import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import org.springframework.stereotype.Service

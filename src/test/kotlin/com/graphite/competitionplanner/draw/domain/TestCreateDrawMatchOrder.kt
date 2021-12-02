@@ -60,7 +60,7 @@ class TestCreateDrawMatchOrder {
 
         // Record the spec sent to the repository for validation
         Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
-        val result = classCaptor.value as PlayOffDrawSpec
+        val result = classCaptor.value as CupDrawSpec
 
         // Assert
         val match = result.matches.first()
@@ -89,7 +89,7 @@ class TestCreateDrawMatchOrder {
 
         // Record the spec sent to the repository for validation
         Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
-        val result = classCaptor.value as PlayOffDrawSpec
+        val result = classCaptor.value as CupDrawSpec
 
         // Assert
         val bestToWorst = registrationRanks.sortedBy { -it.rank }.map { Registration.Real(it.registrationId) }
@@ -121,7 +121,7 @@ class TestCreateDrawMatchOrder {
 
         // Record the spec sent to the repository for validation
         Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
-        val result = classCaptor.value as PlayOffDrawSpec
+        val result = classCaptor.value as CupDrawSpec
 
         // Assert
         val bestToWorst = registrationRanks.sortedBy { -it.rank }.map { Registration.Real(it.registrationId) }

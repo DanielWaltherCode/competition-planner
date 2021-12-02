@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.schedule.domain.interfaces
 
-import com.graphite.competitionplanner.domain.entity.Match
+import com.graphite.competitionplanner.competitioncategory.entity.Match
 import java.time.LocalDateTime
 
 data class MatchDTO(

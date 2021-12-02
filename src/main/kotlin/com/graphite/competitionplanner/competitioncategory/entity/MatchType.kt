@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.domain.entity
+package com.graphite.competitionplanner.competitioncategory.entity
 
 sealed class MatchType {
     abstract val value: String

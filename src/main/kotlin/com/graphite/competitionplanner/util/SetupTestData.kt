@@ -636,8 +636,8 @@ class EventListener(
 
     // Must be in correct order depending on foreign keys
     private fun clearTables() {
-        matchRepository.clearTable()
         competitionDrawRepository.clearTable()
+        matchRepository.clearTable()
         userRepository.clearTable()
         registrationRepository.clearPlayingIn()
         registrationRepository.clearPlayerRegistration()

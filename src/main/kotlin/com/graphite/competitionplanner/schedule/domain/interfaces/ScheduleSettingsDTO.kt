@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.schedule.domain.interfaces
 
-import com.graphite.competitionplanner.domain.entity.ScheduleSettings
+import com.graphite.competitionplanner.competitioncategory.entity.ScheduleSettings
 import java.time.LocalDateTime
 import kotlin.time.Duration
 

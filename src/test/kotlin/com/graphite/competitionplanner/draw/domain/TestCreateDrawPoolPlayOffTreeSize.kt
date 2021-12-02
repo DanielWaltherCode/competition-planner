@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
-import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
 import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCompetitionCategory
@@ -17,7 +17,7 @@ import org.mockito.Mockito
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TestCreateDrawGroupPlayOffTreeSize {
+class TestCreateDrawPoolPlayOffTreeSize {
 
     private val mockedGetRegistrationInCompetitionCategory =
         Mockito.mock(GetRegistrationsInCompetitionCategory::class.java)
@@ -63,7 +63,7 @@ class TestCreateDrawGroupPlayOffTreeSize {
 
         // Record the spec sent to the repository for validation
         Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
-        val result = classCaptor.value as GroupsDrawSpec
+        val result = classCaptor.value as PoolAndCupDrawSpec
 
         // Assert
         Assertions.assertEquals(3, result.matches.size, "Expected in total 3 playoff matches.")
@@ -98,7 +98,7 @@ class TestCreateDrawGroupPlayOffTreeSize {
 
         // Record the spec sent to the repository for validation
         Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
-        val result = classCaptor.value as GroupsDrawSpec
+        val result = classCaptor.value as PoolAndCupDrawSpec
 
         // Assert
         Assertions.assertEquals(3, result.matches.size, "Expected in total 3 playoff matches.")
@@ -133,7 +133,7 @@ class TestCreateDrawGroupPlayOffTreeSize {
 
         // Record the spec sent to the repository for validation
         Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
-        val result = classCaptor.value as GroupsDrawSpec
+        val result = classCaptor.value as PoolAndCupDrawSpec
 
         // Assert
         Assertions.assertEquals(3, result.matches.size, "Expected in total 3 playoff matches.")
@@ -168,7 +168,7 @@ class TestCreateDrawGroupPlayOffTreeSize {
 
         // Record the spec sent to the repository for validation
         Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
-        val result = classCaptor.value as GroupsDrawSpec
+        val result = classCaptor.value as PoolAndCupDrawSpec
 
         // Assert
         Assertions.assertEquals(7, result.matches.size, "Expected in total 7 playoff matches.")

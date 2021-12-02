@@ -8,12 +8,18 @@ import com.graphite.competitionplanner.competition.interfaces.ICompetitionReposi
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
+import com.graphite.competitionplanner.draw.domain.Pool
+import com.graphite.competitionplanner.draw.interfaces.GroupDrawDTO
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
+import com.graphite.competitionplanner.draw.interfaces.PlayOffMatchDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
+import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesDTO
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesDTO
 import com.graphite.competitionplanner.util.DataGenerator
+import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
@@ -36,6 +42,14 @@ class TestCompetitionDrawRepository(
         }.map { registrationRepository.storeSingles(it) }
     }
 
+    fun CompetitionCategoryDTO.registerForDoubles(players: List<PlayerDTO>): RegistrationDoublesDTO {
+        val doubleRegistration = dataGenerator.newRegistrationDoublesSpecWithDate(
+            playerOneId = players.first().id,
+            playerTwoId = players.last().id,
+            competitionCategoryId = this.id)
+        return registrationRepository.storeDoubles(doubleRegistration)
+    }
+
     fun CompetitionDTO.createCategory(): CompetitionCategoryDTO {
         val category = categoryRepository.getAvailableCategories().first()
         return competitionCategoryRepository.store(
@@ -53,5 +67,44 @@ class TestCompetitionDrawRepository(
 
     fun ClubDTO.addPlayers(count: Int): List<PlayerDTO> {
         return (1..count).map { playerRepository.store(dataGenerator.newPlayerSpec(clubId = this.id)) }
+    }
+
+    object AssertionHelper {
+        fun assertDoubleRegistrationPlayOffMatch(
+            match: PlayOffMatchDTO,
+            registrationOne: RegistrationDoublesDTO,
+            registrationTwo: RegistrationDoublesDTO
+        ) {
+            Assertions.assertEquals(2, match.player1.size, "Expected to find 2 players in first team")
+            Assertions.assertEquals(2, match.player2.size, "Expected to find 2 players in second team")
+
+            val player1Ids = match.player1.map { it.id }
+            Assertions.assertTrue(player1Ids.contains(registrationOne.playerOneId),
+                "Expected to find player with id ${registrationOne.playerOneId} in $player1Ids")
+            Assertions.assertTrue(player1Ids.contains(registrationOne.playerTwoId),
+                "Expected to find player with id ${registrationOne.playerTwoId} in $player1Ids")
+
+            val player2Ids = match.player2.map { it.id }
+            Assertions.assertTrue(player2Ids.contains(registrationTwo.playerOneId),
+                "Expected to find player with id ${registrationTwo.playerOneId} in $player2Ids")
+            Assertions.assertTrue(player2Ids.contains(registrationTwo.playerTwoId),
+                "Expected to find player with id ${registrationTwo.playerTwoId} in $player2Ids")
+        }
+
+        fun assertGroupDrawDto(expectedPool: Pool, club: ClubDTO, expectedPlayers: List<PlayerDTO>, dto: GroupDrawDTO) {
+            Assertions.assertEquals(expectedPool.name, dto.name)
+
+            // Validate matches
+            Assertions.assertEquals(expectedPool.matches.size, dto.matches.size)
+            Assertions.assertTrue(dto.matches.all { it.id > 0 }, "At least one match did not have an id larger than 0.")
+
+            // Check that players are equal. Construct comparable players
+            val comparablePlayers = expectedPlayers.map { PlayerWithClubDTO(it.id, it.firstName, it.lastName, club, it.dateOfBirth) }
+            Assertions.assertEquals(
+                comparablePlayers.sortedBy { it.id },
+                dto.players.sortedBy { it.id },
+                "Different players in spec and returned draw."
+            )
+        }
     }
 }

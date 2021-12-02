@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.draw.interfaces
 
-import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 
 /**
@@ -18,11 +18,15 @@ data class CompetitionCategoryDrawDTO(
     /**
      * List of groups including players and matches
      */
-    val groupDraw: List<GroupDrawDTO>
+    val groupDraw: List<GroupDrawDTO>,
+    /**
+     * This is a mapping between the winners in the pool game to the playoff matches
+     */
+    var poolToPlayoffMapping: List<GroupToPlayoff> = emptyList()
 )
 
 /**
- * A match played in play off
+ * A match played in playoff
  */
 data class PlayOffMatchDTO(
     /**
@@ -52,7 +56,7 @@ data class PlayOffMatchDTO(
      * The winner of this match. If list is is empty, then no winner has been decided. Contains two players if it is a
      * double game
      */
-    val winner: List<PlayerWithClubDTO>
+    val winner: List<PlayerWithClubDTO>,
 )
 
 /**
@@ -95,3 +99,57 @@ data class GroupMatchDTO(
      */
     val winner: List<PlayerWithClubDTO>
 )
+
+/**
+ * A position in a group
+ */
+data class GroupPosition(
+    /**
+     * Name of group
+     */
+    val groupName: String,
+    /**
+     * Position in group. Winner is position 1, second best is position 2, etc
+     */
+    val position: Int
+)
+
+/**
+ * A mapping from a position in a group to a play off game
+ */
+data class GroupToPlayoff(
+    /**
+     * Id of the playoff match
+     */
+    val playOffMatchId: Int,
+    /**
+     * A position in a group that will be matched to player 1
+     */
+    val player1: GroupPosition,
+    /**
+     * A position in a group that will be mapped to player 2
+     */
+    val player2: GroupPosition
+)
+
+/*
+A draft for mapping a position in a group to a match in playoff
+
+Table description:
+id: Primary key
+fk_match: Foreign key to match (a playoff match)
+match_reg_position: Can be one of two values referencing one of the two columns in the match-tables first_registration or second_registration
+fk_pool_draw: Foreign key to a pool
+pool_position: Position in the pool that will be placed in the match at match_reg_position
+
+Example:
+First row: Winner in group A is mapped to match with ID 1 and set to second_registration
+Second row: Second best in group D is mapped to match with ID 1 and set to first_registration
+Third row: Second best in group B is mapped to match with ID 2 and set to first_registration
+
+id, fk_match, match_reg_position, fk_pool_draw, pool_position
+0,         1,                  2,        "A",               1
+0,         1,                  1,        "D",               2
+0,         2,                  1,        "B",               2
+
+ */

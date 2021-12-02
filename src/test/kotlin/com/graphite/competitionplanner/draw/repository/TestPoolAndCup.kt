@@ -4,7 +4,7 @@ import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
-import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.draw.domain.*
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.player.repository.PlayerRepository
@@ -12,10 +12,8 @@ import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepo
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 
-@SpringBootTest
-class TestDelete(
+class TestPoolAndCup(
     @Autowired repository: ICompetitionDrawRepository,
     @Autowired clubRepository: IClubRepository,
     @Autowired competitionRepository: ICompetitionRepository,
@@ -31,9 +29,8 @@ class TestDelete(
     playerRepository,
     registrationRepository) {
 
-
     @Test
-    fun canDeleteDraw() {
+    fun canStoreGroupToPlayOfMapping() {
         // Setup
         val club = clubRepository.store(dataGenerator.newClubSpec())
         val competition = club.addCompetition()
@@ -41,53 +38,48 @@ class TestDelete(
         val players = club.addPlayers(4)
         val registrations = competitionCategory.registerPlayers(players)
         val registrationIds = registrations.map { Registration.Real(it.id) }
-        val spec = GroupsDrawSpec(
+        val poolA = Pool(
+            name = "A",
+            registrationIds = registrationIds,
+            matches = listOf(PoolMatch(registrationIds[0], registrationIds[1]))
+        )
+        val final = PlayOffMatch(
+            registrationOneId = Registration.Real(registrations[0].id),
+            registrationTwoId = Registration.Real(registrations[1].id),
+            order = 1,
+            round = Round.FINAL
+        )
+        val spec = PoolAndCupDrawSpec(
             competitionCategoryId = competitionCategory.id,
-            groups = listOf(
-                Group(
-                    name = "A",
-                    registrationIds = registrationIds.take(3),
-                    matches = listOf(
-                        GroupMatch(registrationIds[0], registrationIds[1]),
-                        GroupMatch(registrationIds[0], registrationIds[2]),
-                        GroupMatch(registrationIds[0], registrationIds[3]),
-                        GroupMatch(registrationIds[1], registrationIds[2]),
-                        GroupMatch(registrationIds[1], registrationIds[3]),
-                        GroupMatch(registrationIds[2], registrationIds[3])
-                    )
-                )
-            ),
-            matches = listOf(
-                PlayOffMatch(
-                    registrationOneId = Registration.Real(registrations[0].id),
-                    registrationTwoId = Registration.Real(registrations[1].id),
-                    order = 1,
-                    round = Round.SEMI_FINAL
+            pools = listOf(poolA),
+            matches = listOf(final),
+            poolToPlayoffMap = listOf(
+                PoolToPlayoffSpec(
+                    pool = poolA,
+                    position = 1,
+                    final,
+                    2
                 ),
-                PlayOffMatch(
-                    registrationOneId = Registration.Real(registrations[2].id),
-                    registrationTwoId = Registration.Real(registrations[3].id),
-                    order = 2,
-                    round = Round.SEMI_FINAL
-                ),
-                PlayOffMatch(
-                    registrationOneId = Registration.Placeholder,
-                    registrationTwoId = Registration.Placeholder,
-                    order = 1,
-                    round = Round.FINAL
+                PoolToPlayoffSpec(
+                    pool = poolA,
+                    position = 2,
+                    final,
+                    1
                 )
-
             )
         )
 
-        repository.store(spec)
-
         // Act
-        repository.delete(competitionCategory.id)
+        val result = repository.store(spec)
 
         // Assert
-        val draw = repository.get(competitionCategory.id)
-        Assertions.assertEquals(0, draw.groupDraw.size)
-        Assertions.assertEquals(0, draw.playOff.size)
+        Assertions.assertEquals(1, result.poolToPlayoffMapping.size)
+        val poolToPlayoff = result.poolToPlayoffMapping.first()
+        Assertions.assertTrue(poolToPlayoff.playOffMatchId > 0)
+        Assertions.assertEquals(poolA.name, poolToPlayoff.player1.groupName)
+        Assertions.assertEquals(poolA.name, poolToPlayoff.player2.groupName)
+        Assertions.assertEquals(2, poolToPlayoff.player1.position, "Expected player1 to come from pool position 2")
+        Assertions.assertEquals(1, poolToPlayoff.player2.position, "Expected player2 to come from pool position 1")
     }
+
 }

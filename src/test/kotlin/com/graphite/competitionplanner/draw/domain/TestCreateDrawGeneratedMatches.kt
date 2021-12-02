@@ -60,10 +60,10 @@ class TestCreateDrawGeneratedMatches {
 
         // Record the spec sent to the repository for validation
         Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
-        val result = classCaptor.value as GroupsDrawSpec
+        val result = classCaptor.value as PoolAndCupDrawSpec
 
         // Assert
-        val matches = result.groups.first().matches
+        val matches = result.pools.first().matches
         Assertions.assertEquals(3, matches.size)
 
         for (registration in registrationRanks) {
@@ -94,10 +94,10 @@ class TestCreateDrawGeneratedMatches {
 
         // Record the spec sent to the repository for validation
         Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
-        val result = classCaptor.value as GroupsDrawSpec
+        val result = classCaptor.value as PoolAndCupDrawSpec
 
         // Assert
-        val matches = result.groups.first().matches
+        val matches = result.pools.first().matches
         Assertions.assertEquals(6, matches.size)
 
         for (registration in registrationRanks) {
@@ -128,10 +128,10 @@ class TestCreateDrawGeneratedMatches {
 
         // Record the spec sent to the repository for validation
         Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
-        val result = classCaptor.value as GroupsDrawSpec
+        val result = classCaptor.value as PoolAndCupDrawSpec
 
         // Assert
-        val matches = result.groups.first().matches
+        val matches = result.pools.first().matches
         Assertions.assertEquals(10, matches.size)
 
         for (registration in registrationRanks) {
@@ -141,7 +141,7 @@ class TestCreateDrawGeneratedMatches {
         }
     }
 
-    fun GroupMatch.contains(registration: Registration.Real): Boolean {
+    fun PoolMatch.contains(registration: Registration.Real): Boolean {
         return this.registrationOneId.id == registration.id || this.registrationTwoId.id == registration.id
     }
 }
