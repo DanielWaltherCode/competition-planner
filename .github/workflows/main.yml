@@ -91,6 +91,15 @@ jobs:
           passphrase: ${{secrets.SSH_PASSWORD}}
           privateKey: ${{secrets.SSH_PRIVATE_KEY}}
           port: ${{secrets.SSH_PORT}}  
+      - name: Unzip open dist file
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: cd deploy; unzip open-dist.zip
+          host: ${{secrets.SSH_HOST}}
+          username: ${{secrets.SSH_USERNAME}}
+          passphrase: ${{secrets.SSH_PASSWORD}}
+          privateKey: ${{secrets.SSH_PRIVATE_KEY}}
+          port: ${{secrets.SSH_PORT}}  
       - name: Start competition planner service
         uses: garygrossgarten/github-action-ssh@release
         with:
