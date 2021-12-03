@@ -34,7 +34,7 @@ jobs:
       - name: Create deploy directory and copy jar file  
         run: mkdir $GITHUB_WORKSPACE/deploy && cp target/*.jar $GITHUB_WORKSPACE/deploy/
       
-      # Build frontend
+      # Build logged in frontend
       - name: Install Node
         uses: actions/setup-node@v1
         with:
@@ -45,7 +45,14 @@ jobs:
       - name: Copy dist file to deploy directory 
         run: zip -r dist.zip dist; mv dist.zip $GITHUB_WORKSPACE/deploy/ 
         working-directory: ./web
-    
+        
+      # Build open frontend
+      - name: Build open frontend
+        run: npm install && npm run build
+        working-directory: ./open-web
+      - name: Copy dist file to deploy directory 
+        run: mv dist open-dist; zip -r open-dist.zip open-dist; mv open-dist.zip $GITHUB_WORKSPACE/deploy/ 
+        working-directory: ./open-web
     # Deploy via ssh 
       - name: Stop current competition planner service
         uses: garygrossgarten/github-action-ssh@release
