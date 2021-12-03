@@ -98,7 +98,7 @@ h1, h2, h3 {
 .sidebar {
   min-height: 100vh;
   z-index: 0;
-  background: var(--sidebar-color);
+  background: white;
   margin-top: -18px;
   box-shadow: 3px 3px 2px 1px #efefef;
 }
@@ -129,5 +129,34 @@ h1, h2, h3 {
 
 .sidebar li:hover {
   cursor: pointer;
+}
+
+.clickable:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.custom-select{
+  background: none !important;
+}
+
+.black{
+  color: black;
+}
+
+.bg-grey {
+  background-color: rgba(225, 225, 225, 0.20);
+}
+
+.blue-section {
+  background-color: #e1f1ff;
+}
+
+.blue-section .h1, h2, h3, h4, h5, h6 {
+  color: #8f4570;
+}
+
+.custom-card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 </style>

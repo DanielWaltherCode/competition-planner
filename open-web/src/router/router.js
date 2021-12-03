@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router"
+import PlayerDetail from "../components/competition/PlayerDetail";
 
 Vue.use(Router)
 
@@ -8,43 +9,40 @@ export default new Router({
         routes: [
             {
                 path: "/",
-                name: "home",
                 component: () => import("@/components/Landing"),
             },
             {
                 path: "/landing",
-                name: "landing",
                 component: () => import("@/components/Landing"),
-            },
-            {
-                path: "/competition",
-                name: "competition-landing",
-                component: () => import("@/components/competition/CompetitionLanding"),
             },
             {
                 path: "/competition/:competitionId",
                 component: () => import("@/components/competition/Competition"),
                 children: [
                     {
-                        path: "/competition/:competitionId",
+                        path: "landing",
                         component: () => import("@/components/competition/CompetitionLanding"),
                     },
                     {
-                        path: "/competition/:competitionId/categories",
+                        path: "categories",
                         component: () => import("@/components/competition/CompetitionCategories"),
                     },
                     {
-                        path: "/competition/:competitionId/matches",
+                        path: "matches",
                         component: () => import("@/components/competition/CompetitionMatches"),
                     },
                     {
-                        path: "/competition/:competitionId/players",
-                        component: () => import("@/components/competition/CompetitionPlayers"),
+                        path: "players",
+                        component: () => import("@/components/competition/RegisteredPlayers"),
                     },
                     {
-                        path: "/competition/:competitionId/draw/:categoryId",
+                        path: "draw/:categoryId",
                         component: () => import("@/components/competition/CompetitionDraw"),
                     },
+                    {
+                        path: "player/:playerId/detail",
+                        component: PlayerDetail
+                    }
                 ]
             },
 

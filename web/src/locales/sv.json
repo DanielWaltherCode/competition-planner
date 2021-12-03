@@ -120,7 +120,7 @@
     "sidebar": {
       "title": "Spelaralternativ",
       "overview": "Anmälda spelare",
-      "addNew": "Registrera spelare",
+      "addNew": "Anmäl spelare i tävlingsklass",
       "detail": "Detaljinfo om enskild spelare",
       "create": "Skapa spelare"
     },

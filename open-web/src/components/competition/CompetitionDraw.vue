@@ -1,11 +1,11 @@
 <template>
   <div class="container-fluid">
     <div class="row gx-5">
-      <div id="main">
-        <h1 id="main-title">{{ category.categoryName }}</h1>
+      <div id="main" class="col-sm-11 custom-card p-5">
+        <h1>{{ category.categoryName }}</h1>
 
         <!-- If class is not drawn yet -->
-        <div class="col-sm-4 m-auto text-start" v-if="!isCategoryDrawn ">
+        <div class="col-sm-4 text-start mx-auto" v-if="!isCategoryDrawn ">
           <div class="main-upper" v-if="registeredPlayersLists.length > 0">
             <p> {{ $t("draw.main.notDrawnTitle") }}</p>
           </div>
@@ -22,45 +22,45 @@
             </div>
           </div>
         </div>
-      </div>
-      <!-- If class is drawn -->
-      <div v-if="isCategoryDrawn && draw !== null">
-        <div id="group-section">
-          <div id="main-header">
-            <h2>{{ $t("draw.pool.groups") }}</h2>
-          </div>
-          <br>
-          <div v-for="group in draw.groupDraw.groups" :key="group.groupName" class="row">
-            <h3>{{ $t("draw.main.group") }} {{ group.groupName }}</h3>
-            <div class="col-sm-4">
-              <PoolDraw :group="group"></PoolDraw>
+        <!-- If class is drawn -->
+        <div v-if="isCategoryDrawn && draw !== null">
+          <div id="group-section">
+            <div id="main-header">
+              <h3>{{ $t("draw.pool.groups") }}</h3>
             </div>
-            <div id="matches" class="justify-content-center col-sm-8">
-              <table class="table table-striped table-sm table-bordered">
-                <thead class="thead-dark">
-                <tr>
-                  <th>{{ $t("draw.pool.time") }}</th>
-                  <th></th>
-                  <th></th>
-                  <th>{{ $t("draw.pool.result") }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr class="group-matches" v-for="match in group.matches" :key="match.id">
-                  <td>{{ getTime(match) }}</td>
-                  <td :class="isPlayerOneWinner(match) ? 'fw-bold': ''">{{ getPlayerOne(match) }}</td>
-                  <td :class="isPlayerTwoWinner(match) ? 'fw-bold': ''">{{ getPlayerTwo(match) }}</td>
-                  <td v-if="match !== null">
-                    <p class="pe-2 pb-0" v-for="game in match.result.gameList" :key="game.id">
-                      {{ game.firstRegistrationResult }} - {{ game.secondRegistrationResult }}
-                    </p>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
+            <br>
+            <div v-for="group in draw.groupDraw.groups" :key="group.groupName" class="row custom-card">
+              <h3 class="text-start ms-2">{{ $t("draw.main.group") }} {{ group.groupName }}</h3>
+              <div class="col-md-4">
+                <PoolDraw :group="group"></PoolDraw>
+              </div>
+              <div id="matches" class="justify-content-center col-md-8">
+                <table class="table table-striped table-sm table-bordered">
+                  <thead class="thead-dark">
+                  <tr>
+                    <th>{{ $t("draw.pool.time") }}</th>
+                    <th></th>
+                    <th></th>
+                    <th>{{ $t("draw.pool.result") }}</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr class="group-matches" v-for="match in group.matches" :key="match.id">
+                    <td>{{ getTime(match) }}</td>
+                    <td :class="isPlayerOneWinner(match) ? 'fw-bold': ''">{{ getPlayerOne(match) }}</td>
+                    <td :class="isPlayerTwoWinner(match) ? 'fw-bold': ''">{{ getPlayerTwo(match) }}</td>
+                    <td v-if="match !== null">
+                      <p class="pe-2 pb-0" v-for="game in match.result.gameList" :key="game.id">
+                        {{ game.firstRegistrationResult }} - {{ game.secondRegistrationResult }}
+                      </p>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
+            <br>
           </div>
-          <br>
         </div>
       </div>
     </div>
@@ -82,6 +82,14 @@ export default {
       // Holds a list containing lists of players. They need to be sent as lists since in the case of doubles there
       // are two people for each registration id
       registeredPlayersLists: []
+    }
+  },
+  watch: {
+    categoryId: {
+      immediate: true,
+      handler() {
+        this.getCategoryData()
+      }
     }
   },
   props: {

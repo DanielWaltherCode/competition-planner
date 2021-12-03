@@ -39,16 +39,17 @@
               </div>
             </div>
           </div>
-            <!-- List of registered players if there are any -->
-            <div id="registered-players" v-if="!isChosenCategoryDrawn && registeredPlayersLists.length > 0">
-              <h3>{{ $t("draw.main.registeredPlayers") }}</h3>
-              <!-- The innerPlayerList contains two players in case of doubles -->
-              <div v-for="(innerPlayerList, index) in registeredPlayersLists" class="py-2 justify-content-center" :key="index">
-                <div v-for="player in innerPlayerList" :key="player.id">
-                  {{ player.firstName + " " + player.lastName + " " + player.club.name }}
-                </div>
+          <!-- List of registered players if there are any -->
+          <div id="registered-players" v-if="!isChosenCategoryDrawn && registeredPlayersLists.length > 0">
+            <h3>{{ $t("draw.main.registeredPlayers") }}</h3>
+            <!-- The innerPlayerList contains two players in case of doubles -->
+            <div v-for="(innerPlayerList, index) in registeredPlayersLists" class="py-2 justify-content-center"
+                 :key="index">
+              <div v-for="player in innerPlayerList" :key="player.id">
+                {{ player.firstName + " " + player.lastName + " " + player.club.name }}
               </div>
             </div>
+          </div>
 
           <!-- If class is drawn -->
           <div v-if="isChosenCategoryDrawn && draw !== null">
@@ -60,31 +61,29 @@
                         $t("draw.main.redraw")
                       }}
                     </button>
-                  <button type="button" class="btn btn-danger" @click="deleteDraw">{{
-                      $t("draw.main.deleteDraw")
-                    }}
-                  </button>
+                    <button type="button" class="btn btn-danger" @click="deleteDraw">{{
+                        $t("draw.main.deleteDraw")
+                      }}
+                    </button>
                   </div>
                 </div>
               </div>
-              <br>
               <!-- If there are groups -->
               <div v-for="group in draw.groupDraw.groups" :key="group.groupName"
-                   class="row mb-4 d-flex align-items-start p-3 border rounded">
+                   class="row col-sm-11 mx-auto mt-3 mb-4 d-flex align-items-start p-3 custom-card">
                 <h4 class="text-start mb-3">{{ $t("draw.main.group") }} {{ group.groupName }}</h4>
                 <div class="col-sm-4">
                   <PoolDraw :group="group"/>
                 </div>
                 <div class="col-sm-8">
                   <div id="matches" class="row justify-content-center">
-                    <match-list-component :matches="group.matches" />
+                    <match-list-component :matches="group.matches"/>
                   </div>
                 </div>
-                <br>
               </div>
-
               <!-- If there is a playoff/cup -->
-            <playoff-draw v-if="draw != null && draw.playOff != null" :playoff-rounds="draw.playOff.rounds"></playoff-draw>
+              <playoff-draw v-if="draw != null && draw.playOff != null"
+                            :playoff-rounds="draw.playOff.rounds"></playoff-draw>
             </div>
           </div>
         </div>
@@ -145,7 +144,7 @@ export default {
       })
     },
     createDraw() {
-      if(confirm(this.$tc("confirm.redraw"))) {
+      if (confirm(this.$tc("confirm.redraw"))) {
         DrawService.createDraw(this.competition.id, this.chosenCategory.id).then(res => {
           this.$toasted.success(this.$tc("toasts.categoryDrawn")).goAway(3000)
           this.draw = res.data
@@ -156,7 +155,7 @@ export default {
       }
     },
     deleteDraw() {
-      if(confirm(this.$tc("confirm.deleteDraw"))) {
+      if (confirm(this.$tc("confirm.deleteDraw"))) {
         DrawService.deleteDraw(this.competition.id, this.chosenCategory.id).then(() => {
           this.$toasted.success(this.$tc("toasts.categoryDrawDeleted")).goAway(3000)
           this.isChosenCategoryDrawn = false
