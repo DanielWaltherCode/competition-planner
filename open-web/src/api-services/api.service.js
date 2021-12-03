@@ -38,6 +38,17 @@ const ApiService = {
         })
     },
 
+    getRegistrationsForPlayer(competitionId, playerId) {
+        return Axios.get(`${RESOURCE_NAME}/${competitionId}/player/${playerId}`)
+    },
+
+    findByNameInCompetition(partOfName, competitionId) {
+        return Axios.get(`${RESOURCE_NAME}/name-search/` + competitionId, {
+            params: {
+                partOfName: partOfName
+            }
+        })
+    },
     // Matches/Results
     getMatchesInCompetition(competitionId) {
         return Axios.get(`${RESOURCE_NAME}/${competitionId}/matches`)

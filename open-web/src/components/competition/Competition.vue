@@ -1,7 +1,7 @@
 <template>
   <div>
     <competition-header :competition="competition"> </competition-header>
-    <router-view></router-view>
+    <router-view class="container-fluid"></router-view>
   </div>
 </template>
 
