@@ -45,7 +45,7 @@ class CreateDraw(
                     drawPools(registrationsWithSeeds, it),
                 )
                 DrawType.POOL_AND_CUP -> createPoolAndCupDrawSpec(competitionCategoryId, registrationsWithSeeds, it)
-                DrawType.CUP_ONLY -> createPlayOffs(registrationsWithSeeds)
+                DrawType.CUP_ONLY -> createCupOnlyPlayOff(registrationsWithSeeds)
             }
         }
 
@@ -72,41 +72,41 @@ class CreateDraw(
         generalSettingsSpec: GeneralSettingsSpec
     ): PoolAndCupDrawSpec {
         val pools = drawPools(registrationsWithSeeds, generalSettingsSpec)
-        val playOff = createPlayOffWithOnlyPlaceholder(registrationsWithSeeds, generalSettingsSpec)
-        val poolToPlayoffSpec = createPoolToPlayOffMap(pools, playOff, generalSettingsSpec)
+        val playOff = createPoolAndCupPlayoff(pools, generalSettingsSpec)
         return PoolAndCupDrawSpec(
             competitionCategoryId,
             pools,
             playOff,
-            poolToPlayoffSpec
+            emptyList()
         )
     }
 
-    private fun createPoolToPlayOffMap(
+    /**
+     * Returns a list of play off matches where the name of the registrations in the first round has the name of the
+     * pool positionsthe. E.g. a match with two placeholder matches where the name is A1 and B1 would mean that position
+     * 1 in pool A would go up against position 1 in pool B when pool play is over and play off is starting.
+     *
+     * @return A list of play off matches
+     */
+    private fun createPoolAndCupPlayoff(
         pools: List<Pool>,
-        playOff: List<PlayOffMatch>,
-        generalSettingsSpec: GeneralSettingsSpec
-    ): List<PoolToPlayoffSpec> {
-
-        val res = pools.flatMap { group -> (1 .. generalSettingsSpec.playersToPlayOff).map { index ->  FakePlaceholder(group.name + index) } }
-        val fakeRegistrations = listOf<Registration>()
-
-        return emptyList()
-    }
-
-    data class FakePlaceholder(val name: String)
-
-    private fun createPlayOffWithOnlyPlaceholder(
-        registrations: List<RegistrationSeedDTO>,
         settings: GeneralSettingsSpec
     ): List<PlayOffMatch> {
-        val matchesInFirstRound = ceil(
-            settings.playersToPlayOff.toDouble() * calculateNumberOfPools(
-                registrations.size,
-                settings
-            ).toDouble() / 2.0
-        ).toInt()
-        return buildRemainingPlayOffTree(matchesInFirstRound)
+        val placeholders =
+            pools.flatMap { group -> (1..settings.playersToPlayOff).map { index -> Registration.Placeholder(group.name + index) } }
+                .sortedBy { it.name.reversed() } // Should result in A1, B1, C1, ..., A2, B2, C2, ...
+
+        // If we are not an even power of 2, then we need to add so-called BYE players to the list of registrations
+        // until we reach a number that is a power of 2
+        val placeholdersWithBye = placeholders.tryAddByes()
+        val numberOfRounds = ceil(log2(placeholdersWithBye.size.toDouble())).toInt()
+
+        val firstRoundOfMatches = generatePlayOffMatchesForFirstRound(placeholdersWithBye).map {
+            it.apply {
+                round = numberOfRounds.asRound()
+            }
+        }
+        return firstRoundOfMatches + buildRemainingPlayOffTree(firstRoundOfMatches.size / 2)
     }
 
     private fun calculateNumberOfPools(numberOfRegistrations: Int, settings: GeneralSettingsSpec): Int {
@@ -144,13 +144,15 @@ class CreateDraw(
         return Pool(pool.name, pool.registrationIds + listOf(registration), pool.matches)
     }
 
-    private fun createPlayOffs(registrations: List<RegistrationSeedDTO>): CupDrawSpec {
-        // If we are not an even power of 2, then we need to add so called BYE players to the list of registrations
+    private fun createCupOnlyPlayOff(registrations: List<RegistrationSeedDTO>): CupDrawSpec {
+        // If we are not an even power of 2, then we need to add so-called BYE players to the list of registrations
         // until we reach a number that is a power of 2
-        val numberOfRounds = ceil(log2(registrations.size.toDouble())).toInt()
-        val numberOfByePlayers = (2.0.pow(numberOfRounds.toDouble()) - registrations.size).toInt()
-        val registrationsWithBye =
-            registrations.map { Registration.Real(it.id) } + (1..numberOfByePlayers).map { Registration.Bye }
+        // TODO: Do we randomize the unseeded players?
+//        val seededRegistrations = registrations.filter { it.seed != null }.map { Registration.Real(it.id) }
+//        val unseededRegistrations = registrations.filter { it.seed == null }.map { Registration.Real(it.id) }.shuffled()
+//        val registrationsWithBye = (seededRegistrations + unseededRegistrations).tryAddByes()
+        val registrationsWithBye = registrations.map { Registration.Real(it.id) }.tryAddByes()
+        val numberOfRounds = ceil(log2(registrationsWithBye.size.toDouble())).toInt()
 
         val firstRoundOfMatches = generatePlayOffMatchesForFirstRound(registrationsWithBye).map {
             it.apply {
@@ -164,10 +166,21 @@ class CreateDraw(
     }
 
     /**
+     * Tries to add bye registrations until we hit a power of two registrations.
+     *
+     * @return A list with the original registrations plus additional bye registrations
+     */
+    private fun List<Registration>.tryAddByes(): List<Registration> {
+        val numberOfRounds = ceil(log2(this.size.toDouble())).toInt()
+        val numberOfByePlayers = (2.0.pow(numberOfRounds.toDouble()) - this.size).toInt()
+        return this + (1..numberOfByePlayers).map { Registration.Bye }
+    }
+
+    /**
      * Generates the first round of matches in a play off given a list of registrations.
      *
      * The following properties are true for the generated matches:
-     * - Match order is set so it guarantees that the best and second best players do not meet until final round,
+     * - Match order is set so it guarantees that the best and second-best players do not meet until final round,
      * - Best players are paired against the worse ranked players, where BYE is considered the worst ranked player giving
      * the best players a free game in first round.
      *
@@ -214,13 +227,13 @@ class CreateDraw(
                 emptyList()
             }
             numberOfMatchesInRound == 1 -> {
-                listOf(PlayOffMatch(Registration.Placeholder, Registration.Placeholder, 1, Round.FINAL))
+                listOf(PlayOffMatch(Registration.Placeholder(), Registration.Placeholder(), 1, Round.FINAL))
             }
             else -> {
                 val thisRound = (1..numberOfMatchesInRound).map {
                     PlayOffMatch(
-                        Registration.Placeholder,
-                        Registration.Placeholder,
+                        Registration.Placeholder(),
+                        Registration.Placeholder(),
                         it,
                         numberOfMatchesToRound(numberOfMatchesInRound)
                     )
@@ -362,9 +375,9 @@ sealed class Registration {
         }
     }
 
-    object Placeholder : Registration() {
+    class Placeholder(var name: String = "Placeholder") : Registration() {
         override fun toString(): String {
-            return "Placeholder"
+            return name
         }
     }
 

@@ -118,7 +118,7 @@ class TestCupOnly(
             startingRound = Round.FINAL,
             matches = listOf(
                 PlayOffMatch(
-                    registrationOneId = Registration.Placeholder,
+                    registrationOneId = Registration.Placeholder(),
                     registrationTwoId = Registration.Real(registrations.first().id),
                     order = 1,
                     round = Round.FINAL
@@ -192,7 +192,7 @@ class TestCupOnly(
                 ),
                 PlayOffMatch(
                     registrationOneId = Registration.Bye,
-                    registrationTwoId = Registration.Placeholder,
+                    registrationTwoId = Registration.Placeholder(),
                     order = 1,
                     round = Round.FINAL
                 )
@@ -237,7 +237,7 @@ class TestCupOnly(
                 ),
                 PlayOffMatch(
                     registrationOneId = Registration.Bye,
-                    registrationTwoId = Registration.Placeholder,
+                    registrationTwoId = Registration.Placeholder(),
                     order = 1,
                     round = Round.FINAL
                 )
