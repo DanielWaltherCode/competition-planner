@@ -62,14 +62,65 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
     override fun get(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
         val records = getDataRows(competitionCategoryId)
         val playOffMatches = constructPlayOffMatches(records.filter { it.groupOrRound.isRound() })
+        val updatedPlayoffMatches = updatePlaceholderNamesInFirstRound(competitionCategoryId, playOffMatches)
         val groupDraws = constructGroupDraws(records.filter { !it.groupOrRound.isRound() })
-        val poolToPlayOffMap = constructPoolToPlayoffMap(competitionCategoryId)
 
         return CompetitionCategoryDrawDTO(
             competitionCategoryId,
-            playOffMatches,
-            groupDraws,
-            poolToPlayOffMap
+            updatedPlayoffMatches,
+            groupDraws
+        )
+    }
+
+    /**
+     * Update the name of all placeholder matches in the first round with the name of the group position.
+     */
+    private fun updatePlaceholderNamesInFirstRound(
+        competitionCategoryId: Int,
+        playOffMatches: List<PlayOffMatchDTO>
+    ): List<PlayOffMatchDTO> {
+        val poolToPlayOffMap = constructPoolToPlayoffMap(competitionCategoryId)
+        val potentialMatchUpdateIds = poolToPlayOffMap.map { it.playoffPosition.matchId }
+        val matchesThatCanBeUpdated = playOffMatches.filter { potentialMatchUpdateIds.contains(it.id) }
+        val matchesThatCannotBeUpdated = playOffMatches.filterNot { potentialMatchUpdateIds.contains(it.id) }
+
+        val placeholder = Registration.Placeholder()
+        val updatedMatches = mutableListOf<PlayOffMatchDTO>()
+        for (match in matchesThatCanBeUpdated) {
+            var player1 = match.player1
+            var player2 = match.player2
+            if (match.player1.any { it.firstName == placeholder.toString() }) {
+                val player1Map = poolToPlayOffMap.first { it.playoffPosition.matchId == match.id && it.playoffPosition.position == 1}
+                player1 = match.player1.map { updateNameOfPlaceholder(it, player1Map) }
+            }
+            if (match.player2.any { it.firstName == placeholder.toString() }) {
+                val player2Map = poolToPlayOffMap.first { it.playoffPosition.matchId == match.id && it.playoffPosition.position == 2}
+                player2 = match.player2.map { updateNameOfPlaceholder(it, player2Map) }
+            }
+
+            updatedMatches.add(
+                PlayOffMatchDTO(
+                    match.id,
+                    player1,
+                    player2,
+                    match.order,
+                    match.round,
+                    match.winner
+                )
+            )
+
+        }
+
+        return matchesThatCannotBeUpdated + updatedMatches
+    }
+
+    private fun updateNameOfPlaceholder(player: PlayerWithClubDTO, groupToPlayoff: GroupToPlayoff): PlayerWithClubDTO {
+        return PlayerWithClubDTO(
+            player.id,
+            "${groupToPlayoff.groupPosition.groupName}${groupToPlayoff.groupPosition.position}",
+            player.lastName,
+            player.club,
+            player.dateOfBirth
         )
     }
 
@@ -83,21 +134,18 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
         return processPoolToPlayoffMapRecords(records)
     }
 
-    private fun processPoolToPlayoffMapRecords(records: List<Record>) : List<GroupToPlayoff> {
-        return if (records.isEmpty()) {
-            emptyList()
-        }else {
-            val rows = records.take(2)
-            val matchId = rows.first().get(POOL_TO_PLAYOFF_MAP.MATCH_ID)
-            val player1 = rows.first { it.get(POOL_TO_PLAYOFF_MAP.MATCH_REGISTRATION_POSITION) == 1 }
-            val player2 = rows.first { it.get(POOL_TO_PLAYOFF_MAP.MATCH_REGISTRATION_POSITION) == 2 }
-
-            val result = GroupToPlayoff(
-                playOffMatchId = matchId,
-                player1 = GroupPosition(player1.getValue(POOL.NAME), player1.getValue(POOL_TO_PLAYOFF_MAP.POOL_POSITION)),
-                player2 = GroupPosition(player2.getValue(POOL.NAME), player2.getValue(POOL_TO_PLAYOFF_MAP.POOL_POSITION))
+    private fun processPoolToPlayoffMapRecords(records: List<Record>): List<GroupToPlayoff> {
+        return records.map {
+            GroupToPlayoff(
+                PlayoffPosition(
+                    it.get(POOL_TO_PLAYOFF_MAP.MATCH_ID),
+                    it.get(POOL_TO_PLAYOFF_MAP.MATCH_REGISTRATION_POSITION),
+                ),
+                GroupPosition(
+                    it.getValue(POOL.NAME),
+                    it.getValue(POOL_TO_PLAYOFF_MAP.POOL_POSITION)
+                )
             )
-            listOf(result) + processPoolToPlayoffMapRecords(records.drop(2))
         }
     }
 
@@ -316,21 +364,39 @@ class CompetitionDrawRepository(val dslContext: DSLContext) : ICompetitionDrawRe
     private fun createPoolToPlayoffMapRecords(draw: PoolAndCupDrawSpec): List<PoolToPlayoffMapRecord> {
         val poolRecords =
             dslContext.selectFrom(POOL).where(POOL.COMPETITION_CATEGORY_ID.eq(draw.competitionCategoryId)).fetch()
-        val firstRound = draw.poolToPlayoffMap.first().playOffMatch.round
+        val firstRound = draw.matches.maxByOrNull { it.round }!!.round
         val matchesFirstRound = dslContext.selectFrom(MATCH).where(
             MATCH.COMPETITION_CATEGORY_ID.eq(draw.competitionCategoryId).and(MATCH.GROUP_OR_ROUND.eq(firstRound.name))
         ).fetch()
 
-        return draw.poolToPlayoffMap.map<PoolToPlayoffSpec, @NotNull PoolToPlayoffMapRecord> { mapSpec ->
-            dslContext.newRecord(POOL_TO_PLAYOFF_MAP).apply<@NotNull PoolToPlayoffMapRecord> {
-                competitionCategoryId = draw.competitionCategoryId
-                poolId = poolRecords.first { it.name == mapSpec.pool.name }.id
-                poolPosition = mapSpec.position
-                matchId =
-                    matchesFirstRound.first { it.groupOrRound == mapSpec.playOffMatch.round.name && it.matchOrderNumber == mapSpec.playOffMatch.order }.id
-                matchRegistrationPosition = mapSpec.playOffPosition
+        val poc1 = draw.matches.filter { it.round == firstRound }.filterNot { it.registrationOneId is Registration.Bye }
+            .map { playOffMatch ->
+                dslContext.newRecord(POOL_TO_PLAYOFF_MAP).apply<@NotNull PoolToPlayoffMapRecord> {
+                    competitionCategoryId = draw.competitionCategoryId
+                    poolId =
+                        poolRecords.first {
+                            playOffMatch.registrationOneId.toString().first().toString() == it.name
+                        }.id
+                    poolPosition = playOffMatch.registrationOneId.toString().last().digitToInt()
+                    matchId = matchesFirstRound.first { it.matchOrderNumber == playOffMatch.order }.id
+                    matchRegistrationPosition = 1 // registrationOneId
+                }
             }
-        }
+        val poc2 = draw.matches.filter { it.round == firstRound }.filterNot { it.registrationTwoId is Registration.Bye }
+            .map { playOffMatch ->
+                dslContext.newRecord(POOL_TO_PLAYOFF_MAP).apply<@NotNull PoolToPlayoffMapRecord> {
+                    competitionCategoryId = draw.competitionCategoryId
+                    poolId =
+                        poolRecords.first {
+                            playOffMatch.registrationTwoId.toString().first().toString() == it.name
+                        }.id
+                    poolPosition = playOffMatch.registrationTwoId.toString().last().digitToInt()
+                    matchId = matchesFirstRound.first { it.matchOrderNumber == playOffMatch.order }.id
+                    matchRegistrationPosition = 2 // registrationTwoId
+                }
+            }
+
+        return poc1 + poc2
     }
 
     private fun Pool.toRecord(competitionCategoryId: Int): PoolRecord {

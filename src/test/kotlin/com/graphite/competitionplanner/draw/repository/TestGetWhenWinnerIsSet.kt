@@ -32,6 +32,7 @@ class TestGetWhenWinnerIsSet(
 
     @Test
     fun canGetSinglesPlayOff() {
+        // TODO: Fix test
 //        // Setup
 //        val club = clubRepository.store(dataGenerator.newClubSpec())
 //        val competition = club.addCompetition()

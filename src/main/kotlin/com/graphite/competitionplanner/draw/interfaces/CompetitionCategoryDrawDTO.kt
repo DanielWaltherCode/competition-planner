@@ -19,10 +19,6 @@ data class CompetitionCategoryDrawDTO(
      * List of groups including players and matches
      */
     val groupDraw: List<GroupDrawDTO>,
-    /**
-     * This is a mapping between the winners in the pool game to the playoff matches
-     */
-    var poolToPlayoffMapping: List<GroupToPlayoff> = emptyList()
 )
 
 /**
@@ -115,41 +111,30 @@ data class GroupPosition(
 )
 
 /**
- * A mapping from a position in a group to a play off game
+ * A position in playoff
+ */
+data class PlayoffPosition(
+    /**
+     * ID of the playoff match
+     */
+    val matchId: Int,
+
+    /**
+     * Player1 or Player2
+     */
+    val position: Int
+)
+
+/**
+ * A mapping between a position in a group to a position in playoff
  */
 data class GroupToPlayoff(
     /**
-     * Id of the playoff match
+     * A position in the playoff
      */
-    val playOffMatchId: Int,
+    val playoffPosition: PlayoffPosition,
     /**
-     * A position in a group that will be matched to player 1
+     * A position in a group
      */
-    val player1: GroupPosition,
-    /**
-     * A position in a group that will be mapped to player 2
-     */
-    val player2: GroupPosition
+    val groupPosition: GroupPosition
 )
-
-/*
-A draft for mapping a position in a group to a match in playoff
-
-Table description:
-id: Primary key
-fk_match: Foreign key to match (a playoff match)
-match_reg_position: Can be one of two values referencing one of the two columns in the match-tables first_registration or second_registration
-fk_pool_draw: Foreign key to a pool
-pool_position: Position in the pool that will be placed in the match at match_reg_position
-
-Example:
-First row: Winner in group A is mapped to match with ID 1 and set to second_registration
-Second row: Second best in group D is mapped to match with ID 1 and set to first_registration
-Third row: Second best in group B is mapped to match with ID 2 and set to first_registration
-
-id, fk_match, match_reg_position, fk_pool_draw, pool_position
-0,         1,                  2,        "A",               1
-0,         1,                  1,        "D",               2
-0,         2,                  1,        "B",               2
-
- */

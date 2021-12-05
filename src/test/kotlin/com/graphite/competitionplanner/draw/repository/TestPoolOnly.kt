@@ -143,7 +143,6 @@ class TestPoolOnly(
 
         // Assert
         val draw = repository.get(competitionCategory.id)
-        Assertions.assertEquals(0, draw.poolToPlayoffMapping.size)
         Assertions.assertEquals(0, draw.groupDraw.size)
         Assertions.assertEquals(0, draw.playOff.size)
     }
