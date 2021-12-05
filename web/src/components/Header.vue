@@ -15,7 +15,7 @@
                   class="fw-bolder"> {{ competition.name }}</span></p>
             </div>
             <div class="d-flex align-items-center">
-              <ul id="main-ul" class="navbar-nav me-auto ms-4 mb-2 mb-lg-0">
+              <ul id="main-ul" class="navbar-nav ms-4 me-1 mb-2 mb-lg-0">
                 <li class="nav-item">
                   <router-link class="nav-link" to="/overview" v-if="isLoggedIn && !!competition"
                                :class="$route.path === '/overview' ? 'active' : ''">
@@ -30,7 +30,7 @@
                 </li>
                 <li class="nav-item">
                   <router-link class="nav-link" to="/players/overview" v-if="isLoggedIn && !!competition"
-                               :class="$route.path === '/players' ? 'active' : ''">
+                               :class="$route.path.includes('/players') ? 'active' : ''">
                     {{ $t("header.players") }}
                   </router-link>
                 </li>
@@ -80,7 +80,7 @@
                     </li>
                   </ul>
                 </li> -->
-                <li class="nav-item" v-if="isLoggedIn">
+                <li class="nav-item ms-2" v-if="isLoggedIn">
                   <button class="btn btn-light" @click="logout"> {{ $t("header.logout") }}</button>
                 </li>
               </ul>

@@ -23,7 +23,7 @@
         <div class="py-5">
           <h5> {{ $t("categories.alreadyAddedCategories") }}</h5>
           <ul class="list-group list-group-flush">
-            <li v-for="category in competitionCategories" :key="category.id" class="list-group-item"
+            <li v-for="category in competitionCategories" :key="category.id" class="list-group-item" :class="activeCategory.id === category.id ? 'active' : 'none'"
                 @click="chooseCategory(category)">
               {{ category.category.name }}
             </li>
@@ -32,7 +32,7 @@
       </div>
 
       <!-- Main -->
-        <div v-if="activeCategory !== null" class="col-md-9 pt-5 ps-md-5">
+        <div v-if="activeCategory !== null" class="col-md-9 pt-5 px-md-4">
           <h2> {{activeCategory.name}}</h2>
           <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
@@ -47,11 +47,11 @@
             </li>
           </ul>
           <div class="text-start row">
-            <div class="tab-content" id="myTabContent">
+            <div class="tab-content custom-card" id="myTabContent">
 
               <h2 class="p-3">{{activeCategory.category.name}}</h2>
               <div class="d-flex col-12 p-2 justify-content-end">
-                <div class="p-2 border border-1 rounded">
+                <div class="p-2 custom-card">
                   <button class="btn btn-primary m-1" type="button" @click="save">{{ $t("general.saveChanges") }}</button>
                   <button class="btn btn-danger" type="button" @click="deleteCategory">{{ $t("categories.delete") }}</button>
                 </div>

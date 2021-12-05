@@ -107,6 +107,7 @@ h1, h2, h3 {
 @media only screen and (max-width: 768px) {
   .sidebar {
     min-height: fit-content;
+    padding-bottom: 20px;
   }
 }
 
