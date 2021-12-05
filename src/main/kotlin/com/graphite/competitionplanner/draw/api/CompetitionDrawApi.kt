@@ -29,8 +29,8 @@ class CompetitionDrawApi(
 
     // Can be used both to create initial draw and to make a new draw if desired
     @PutMapping
-    fun makeDraw(@PathVariable competitionCategoryId: Int): CompetitionCategoryDrawDTO {
-        return createDraw.execute(competitionCategoryId)
+    fun makeDraw(@PathVariable competitionCategoryId: Int): DrawDTO {
+        return drawService.createDraw(competitionCategoryId)
     }
 
     @GetMapping
