@@ -2,7 +2,7 @@
   <main>
     <h1 class="p-4">{{ $t("schedule.main.heading") }}</h1>
     <div class="container-fluid">
-      <div class="row gx-5">
+      <div class="row">
 
         <!-- Sidebar -->
         <div class="sidebar col-md-3">

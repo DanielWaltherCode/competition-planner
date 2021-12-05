@@ -5,8 +5,8 @@
       {{ $t("draw.main.title") }}
       <i @click="$router.push('/schedule')" class="fas fa-arrow-right" style="float: right"></i>
     </h1>
-    <div class="container-fluid">
-      <div class="row gx-5">
+    <div>
+      <div class="row">
 
         <!-- Sidebar -->
         <div class="sidebar col-md-3">
@@ -28,9 +28,9 @@
             <div class="top-content col-md-10 mx-auto">
               <h3 class="p-4">{{ chosenCategory.category.name }}</h3>
               <!-- If class is not drawn yet -->
-              <div v-if="!isChosenCategoryDrawn " class="pb-4">
+              <div v-if="!isChosenCategoryDrawn " class="pb-4 ms-3 ms-md-0">
                 <div v-if="registeredPlayersLists.length > 0">
-                  <p> {{ $t("draw.main.notDrawnTitle") }} {{ $t("draw.main.notDrawnBody") }}</p>
+                  <p class="text-start text-md-center"> {{ $t("draw.main.notDrawnTitle") }} {{ $t("draw.main.notDrawnBody") }}</p>
                   <button class="btn btn-primary" @click="createDraw">{{ $t("draw.main.drawNow") }}</button>
                 </div>
                 <div v-if="registeredPlayersLists.length === 0">
@@ -56,7 +56,7 @@
             <div id="group-section">
               <div id="main-header">
                 <div class="d-flex justify-content-end p-3">
-                  <div class="p-2 border border-1 rounded">
+                  <div class="p-2 custom-card">
                     <button type="button" class="btn btn-warning me-3" @click="createDraw">{{
                         $t("draw.main.redraw")
                       }}
@@ -76,7 +76,7 @@
                   <PoolDraw :group="group"/>
                 </div>
                 <div class="col-sm-8">
-                  <div id="matches" class="row justify-content-center">
+                  <div id="matches" class="row justify-content-center ms-0">
                     <match-list-component :matches="group.matches"/>
                   </div>
                 </div>

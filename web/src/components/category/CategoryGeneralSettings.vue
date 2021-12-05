@@ -1,5 +1,5 @@
 <template>
-  <div v-if="category.settings != null">
+  <div v-if="category.settings != null" class="p-2 p-md-3">
     <div class="row">
       <div class="col-sm-12 col-md-6 mb-3">
         <label class="h5 form-label" for="inputCost">{{ $t("categorySettings.cost") }}</label>

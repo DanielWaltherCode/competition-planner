@@ -183,6 +183,7 @@
   },
   "schedule": {
     "sidebar": {
+      "alternatives": "Alternativ",
       "overview": "Översikt",
       "advanced": "Avancerat"
     },
@@ -261,7 +262,7 @@
       "savePartialExplanation": "Används för att rapportera in delresultat löpande under en match. Dessa valideras inte och det registeras ingen vinnare.",
       "registerFinishedMatch": "Spara slutgiltigt resultat",
       "helperTexts": "Hjälp",
-      "registerFinishedMatchExplanation": "Används när matchen är klar och resultaten ska sparas permanent. Validering sker",
+      "registerFinishedMatchExplanation": "Används när matchen är klar och resultaten ska sparas permanent. Validering sker.",
       "info": "Inställningarna för hur många set matchen innehåller och hur många poäng som krävs för att vinna ställs in för klassen som helhet. Du kan ändra inställningarna under ",
       "linkToCategorySettings": "klassinställningar",
       "add": "Lägg till set",

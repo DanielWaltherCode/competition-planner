@@ -1,16 +1,18 @@
 <template>
   <main>
-    <h1 class="p-4">
+    <h1 class="p-4 fs-3 fs-md-1">
       <i @click="$router.push('/draw')" class="fas fa-arrow-left" style="float: left"></i>
       {{ $t("schedule.main.heading") }}
       <i @click="$router.push('/results')" class="fas fa-arrow-right" style="float: right"></i>
     </h1>
-    <div class="container-fluid">
-      <div class="row gx-5">
+    <div>
+      <div class="row">
 
         <!-- Sidebar -->
         <div class="sidebar col-md-3">
-          <br>
+          <div class="sidebar-header">
+            <h4> {{ $t("schedule.sidebar.alternatives") }}</h4>
+          </div>
           <ul class="list-group list-group-flush">
             <li class="list-group-item active"> {{ $t("schedule.sidebar.overview") }}
             </li>
@@ -22,9 +24,9 @@
 
         <!-- Main content -->
         <div id="main" class="col-md-9 ps-0">
-          <div id="categories" class="row">
+          <div id="categories" class="row custom-card m-md-2">
             <div>
-              <h3 class="p-4 blue-section">{{ $t("schedule.main.categoryStartTimes") }}</h3>
+              <h3 class="p-4">{{ $t("schedule.main.categoryStartTimes") }}</h3>
               <p class="w-75 mx-auto p-2"> {{ $t("schedule.main.helperText") }}</p>
             </div>
             <div id="table-container" class="col-sm-12 mx-auto my-4">
@@ -77,8 +79,9 @@
                 <button type="button" class="btn btn-primary" @click="saveStartTime">{{$t("general.saveChanges")}}</button>
               </div>
             </div>
+            </div>
             <!-- General information about competition -->
-            <div class="row blue-section p-3">
+            <div class="row p-3 m-md-2 custom-card">
               <div>
                 <h3 class="p-3">{{ $t("schedule.generalInfo.heading") }}</h3>
                 <!-- Daily start end -->
@@ -170,7 +173,6 @@
                   </div>
                 </div>
               </div>
-            </div>
           </div>
         </div>
       </div>
