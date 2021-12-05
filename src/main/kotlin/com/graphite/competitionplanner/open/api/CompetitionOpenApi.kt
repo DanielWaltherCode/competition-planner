@@ -11,6 +11,8 @@ import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.player.service.PlayerService
+import com.graphite.competitionplanner.registration.interfaces.PlayerRegistrationDTO
 import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import io.swagger.annotations.ApiModelProperty
@@ -24,11 +26,12 @@ class CompetitionOpenApi(
     val drawService: DrawService,
     val registrationService: RegistrationService,
     val competitionCategoryService: CompetitionCategoryService,
-    val matchService: MatchService
+    val matchService: MatchService,
+    val playerService: PlayerService
 ) {
 
     @GetMapping
-    fun getAll(
+    fun getAllCompetitions(
         @RequestParam(required = false) weekStartDate: LocalDate?,
         @RequestParam(required = false) weekEndDate: LocalDate?
     ): List<CompetitionWithClubDTO> {
@@ -42,7 +45,8 @@ class CompetitionOpenApi(
 
     @GetMapping("/{competitionId}/categories")
     fun getCompetitionCategories(@PathVariable competitionId: Int): List<CompetitionCategoryDTO> {
-        return competitionCategoryService.getCompetitionCategoriesFor(competitionId)
+        val competitionCategories = competitionCategoryService.getCompetitionCategoriesFor(competitionId)
+        return competitionCategories.sortedBy { c -> c.category.name }
     }
 
     @GetMapping("/{competitionId}/draw/{competitionCategoryId}")
@@ -66,6 +70,19 @@ class CompetitionOpenApi(
         @RequestParam searchType: String
     ): RegisteredPlayersDTO {
         return registrationService.getRegisteredPlayers(competitionId, searchType)
+    }
+
+    // Retrieves player information and all the categories and player is registered in
+    // in a given competition (including who they are playing with in doubles)
+    @GetMapping("/{competitionId}/player/{playerId}")
+    fun getRegistrationsForPlayer(@PathVariable competitionId: Int,
+                                  @PathVariable playerId: Int): PlayerRegistrationDTO {
+        return registrationService.getRegistrationsForPlayerInCompetition(competitionId, playerId)
+    }
+
+    @GetMapping("name-search/{competitionId}")
+    fun searchPlayerInCompetition(@PathVariable competitionId: Int, @RequestParam partOfName: String): List<PlayerWithClubDTO> {
+        return playerService.findByNameInCompetition(partOfName, competitionId)
     }
 
     @GetMapping("/{competitionId}/categories/{categoryId}")

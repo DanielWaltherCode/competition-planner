@@ -120,7 +120,7 @@
     "sidebar": {
       "title": "Spelaralternativ",
       "overview": "Anmälda spelare",
-      "addNew": "Registrera spelare",
+      "addNew": "Anmäl spelare i tävlingsklass",
       "detail": "Detaljinfo om enskild spelare",
       "create": "Skapa spelare"
     },
@@ -183,6 +183,7 @@
   },
   "schedule": {
     "sidebar": {
+      "alternatives": "Alternativ",
       "overview": "Översikt",
       "advanced": "Avancerat"
     },
@@ -261,7 +262,7 @@
       "savePartialExplanation": "Används för att rapportera in delresultat löpande under en match. Dessa valideras inte och det registeras ingen vinnare.",
       "registerFinishedMatch": "Spara slutgiltigt resultat",
       "helperTexts": "Hjälp",
-      "registerFinishedMatchExplanation": "Används när matchen är klar och resultaten ska sparas permanent. Validering sker",
+      "registerFinishedMatchExplanation": "Används när matchen är klar och resultaten ska sparas permanent. Validering sker.",
       "info": "Inställningarna för hur många set matchen innehåller och hur många poäng som krävs för att vinna ställs in för klassen som helhet. Du kan ändra inställningarna under ",
       "linkToCategorySettings": "klassinställningar",
       "add": "Lägg till set",
@@ -269,6 +270,56 @@
       "delete": "Ta bort resultat"
     },
     "noMatches": "Ingen lottning är gjord än så inga matcher är uppsatta"
+  },
+  "billing": {
+    "title": "Fakturahantering",
+    "sidebarTitle": "Klubbar",
+    "firstHeading": "Kostnadssammanfattning",
+    "firstHelperText": "I tabellen nedan finns en över vilka klasser en klubb haft spelare i och vad deltagandet kostnad. Denna ligger till grund för fakturan som genereras. Varje spelare i en dubbelklass står för hälften av anmälningsavgifter så om spelare från olika klubbar spelar tillsammans får varje klubb 50% av kostnaden",
+    "firstTableHeading": "Kostnadssammanfattning för ",
+    "secondHeading": "Kostnad på spelarnivå",
+    "createPdf": "Skapa faktura",
+    "updatePaymentInfo": "Uppdatera betalinformation",
+    "table1": {
+      "category": "Klass",
+      "nrStarts": "Antal starter",
+      "price": "Kostnad (per spelare)",
+      "total": "Totalt"
+    },
+    "table2": {
+      "player": "Spelare",
+      "category": "Klass",
+      "price": "Kostnad (per spelare)"
+    },
+    "toasts": {
+      "club-error": "Kunde inte hämta deltagande klubbar",
+      "summary-error": "Kunde inte hämta kostnadssammanfattning",
+      "player-error": "Kunde inte hämta kostnadssammanfattning för spelare"
+    },
+    "pdf": {
+      "title": "Faktura",
+      "to": "Till: ",
+      "helperText": "För deltagande i ",
+      "addendum": "Bilaga 1",
+      "addendumHelper": "Kostnad per spelare från ",
+      "billDate": "Fakturadatum",
+      "paymentDate": "Sista betalningsdag",
+      "address": "Adress"
+    },
+    "paymentInfo": {
+      "title": "Betalningsinformation",
+      "helperText": "Här kan du lägga in de betalningsuppgifter som klubbar som har varit med i tävlingen ska betala in till. De här uppgifterna skrivs ut i sidfoten på alla genererade fakturor. Notera att alla fält är valfria - om ni bara använder bankgiro behöver man inte fylla i något för plusgiro eller bankkontonummer.",
+      "recipient": "Betalningsmottagare",
+      "street": "Gata",
+      "postcode": "Postnummer",
+      "city": "Postort",
+      "plusgiro": "Plusgiro",
+      "bankgiro": "Bankgiro",
+      "bankAccountNr": "Bankkontonummer",
+      "toastErrorFetch": "Kunde inte hämta nuvarande betalningsinformation",
+      "toastErrorUpdate": "Kunde inte uppdatera betalningsinformation",
+      "toastSaveSuccess": "Betalningsuppgifter sparade"
+    }
   },
   "validations": {
     "required": "Fältet måste fyllas i",

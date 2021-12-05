@@ -107,6 +107,7 @@ h1, h2, h3 {
 @media only screen and (max-width: 768px) {
   .sidebar {
     min-height: fit-content;
+    padding-bottom: 20px;
   }
 }
 
@@ -160,5 +161,9 @@ h1, h2, h3 {
 
 .bg-grey {
   background-color: rgba(225, 225, 225, 0.20);
+}
+
+.custom-card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 </style>

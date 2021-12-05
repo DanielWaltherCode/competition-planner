@@ -3,10 +3,10 @@
     <h1 class="p-4">
       <i @click="$router.push('/schedule')" class="fas fa-arrow-left" style="float: left"></i>
       {{ $t("results.title") }}
-      <i @click="$router.push('/nothing')" class="fas fa-arrow-right" style="float: right"></i>
+      <i @click="$router.push('/billing')" class="fas fa-arrow-right" style="float: right"></i>
     </h1>
     <div class="container-fluid">
-      <div class="row gx-5">
+      <div class="row">
         <!-- Main content -->
         <div id="main" class="p-4">
           <div id="table-container" class="table-responsive" v-if="matches.length > 0">

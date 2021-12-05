@@ -62,7 +62,7 @@ class RegistrationService(
 
     fun getRegisteredPlayers(competitionId: Int, searchType: String): RegisteredPlayersDTO {
         if (searchType.uppercase() == SearchType.NAME.name) {
-            val players = registrationRepository.getRegistrationsInCompetition(competitionId)
+            val players = registrationRepository.getRegistreredPlayersInCompetition(competitionId)
             val initialsAndPlayersMap = mutableMapOf<String, MutableSet<PlayerWithClubDTO>>()
             for (player in players) {
                 val playerDtoWithClub = playerService.getPlayer(player.id)
@@ -78,7 +78,7 @@ class RegistrationService(
             }
             return RegisteredPlayersDTO(SearchType.NAME, initialsAndPlayersMap)
         } else if (searchType.uppercase() == SearchType.CLUB.name) {
-            val players = registrationRepository.getRegistrationsInCompetition(competitionId)
+            val players = registrationRepository.getRegistreredPlayersInCompetition(competitionId)
             val clubsAndPlayersMap = mutableMapOf<String, MutableSet<PlayerWithClubDTO>>()
             for (player in players) {
                 val playerDtoWithClub = playerService.getPlayer(player.id)

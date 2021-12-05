@@ -1,9 +1,11 @@
 <template>
-  <div v-if="this.competition !== null">
-    <h2>{{ $t("competitionLanding.welcomeTo") }} {{this.competition.name}}</h2>
-    <div>
-    <h4>{{ $t("competitionLanding.about") }}</h4>
-    <p>{{this.competition.welcomeText}}</p>
+  <div class="row">
+    <div v-if="this.competition !== null" class="custom-card col-sm-8 mx-auto mt-3 bg-white py-5">
+      <h2>{{ $t("competitionLanding.welcomeTo") }} {{ this.competition.name }}</h2>
+      <div class="text-start px-3">
+        <h4 class="text-uppercase">{{ $t("competitionLanding.about") }}</h4>
+        <p>{{ this.competition.welcomeText }}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -21,7 +23,7 @@ export default {
   },
   mounted() {
     this.competitionId = this.$route.params.competitionId
-    ApiService.getCompetition(this.competitionId).then( res => {
+    ApiService.getCompetition(this.competitionId).then(res => {
       this.competition = res.data
     })
   }

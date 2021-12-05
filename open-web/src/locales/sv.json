@@ -3,10 +3,14 @@
     "overview": "Hem",
     "firstText": "Allt du behöver veta om dina tävlingar",
     "draws": "Tävlingar",
-    "schedule": "Klubbar"
+    "schedule": "Schema",
+    "search": "Sök på en spelare, klubb eller tävling"
   },
   "landing": {
     "choice": "Välj en tävling",
+    "earlier": "Tidigare",
+    "thisWeek": "Den här veckan",
+    "coming": "Kommande",
     "sidebar": {
       "competition": "Tävlingar",
       "series": "Serier",
@@ -38,14 +42,15 @@
   },
   "player": {
     "sidebarTitle": "Sortera spelare på",
-    "search": "Sök på spelare",
+    "search": "Sök på en spelare i tävlingen",
     "heading": "Spelare",
     "headingHelper": "Här under spelarhantering kan du se spelare som är anmälda till tävlingen. Du kan också manuellt lägga till nya spelare. I de flesta fall anmäler dock klubbarna själva sina spelare online och de dyker sedan automatiskt upp här.",
     "registeredPlayers": "Anmälda spelare",
     "name": "Namn",
     "club": "Klubb",
     "categories": "Klasser",
-    "sortBy": "Sortera efter"
+    "sortBy": "Sortera efter",
+    "playingWith": "Spelar med "
   },
   "newCompetition": {
     "title": "Tävlingsöversikt",

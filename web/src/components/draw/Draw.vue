@@ -5,8 +5,8 @@
       {{ $t("draw.main.title") }}
       <i @click="$router.push('/schedule')" class="fas fa-arrow-right" style="float: right"></i>
     </h1>
-    <div class="container-fluid">
-      <div class="row gx-5">
+    <div>
+      <div class="row">
 
         <!-- Sidebar -->
         <div class="sidebar col-md-3">
@@ -28,9 +28,9 @@
             <div class="top-content col-md-10 mx-auto">
               <h3 class="p-4">{{ chosenCategory.category.name }}</h3>
               <!-- If class is not drawn yet -->
-              <div v-if="!isChosenCategoryDrawn " class="pb-4">
+              <div v-if="!isChosenCategoryDrawn " class="pb-4 ms-3 ms-md-0">
                 <div v-if="registeredPlayersLists.length > 0">
-                  <p> {{ $t("draw.main.notDrawnTitle") }} {{ $t("draw.main.notDrawnBody") }}</p>
+                  <p class="text-start text-md-center"> {{ $t("draw.main.notDrawnTitle") }} {{ $t("draw.main.notDrawnBody") }}</p>
                   <button class="btn btn-primary" @click="createDraw">{{ $t("draw.main.drawNow") }}</button>
                 </div>
                 <div v-if="registeredPlayersLists.length === 0">
@@ -39,52 +39,51 @@
               </div>
             </div>
           </div>
-            <!-- List of registered players if there are any -->
-            <div id="registered-players" v-if="!isChosenCategoryDrawn && registeredPlayersLists.length > 0">
-              <h3>{{ $t("draw.main.registeredPlayers") }}</h3>
-              <!-- The innerPlayerList contains two players in case of doubles -->
-              <div v-for="(innerPlayerList, index) in registeredPlayersLists" class="py-2 justify-content-center" :key="index">
-                <div v-for="player in innerPlayerList" :key="player.id">
-                  {{ player.firstName + " " + player.lastName + " " + player.club.name }}
-                </div>
+          <!-- List of registered players if there are any -->
+          <div id="registered-players" v-if="!isChosenCategoryDrawn && registeredPlayersLists.length > 0">
+            <h3>{{ $t("draw.main.registeredPlayers") }}</h3>
+            <!-- The innerPlayerList contains two players in case of doubles -->
+            <div v-for="(innerPlayerList, index) in registeredPlayersLists" class="py-2 justify-content-center"
+                 :key="index">
+              <div v-for="player in innerPlayerList" :key="player.id">
+                {{ player.firstName + " " + player.lastName + " " + player.club.name }}
               </div>
             </div>
+          </div>
 
           <!-- If class is drawn -->
           <div v-if="isChosenCategoryDrawn && draw !== null">
             <div id="group-section">
               <div id="main-header">
                 <div class="d-flex justify-content-end p-3">
-                  <div class="p-2 border border-1 rounded">
+                  <div class="p-2 custom-card">
                     <button type="button" class="btn btn-warning me-3" @click="createDraw">{{
                         $t("draw.main.redraw")
                       }}
                     </button>
-                  <button type="button" class="btn btn-danger" @click="deleteDraw">{{
-                      $t("draw.main.deleteDraw")
-                    }}
-                  </button>
+                    <button type="button" class="btn btn-danger" @click="deleteDraw">{{
+                        $t("draw.main.deleteDraw")
+                      }}
+                    </button>
                   </div>
                 </div>
               </div>
-              <br>
               <!-- If there are groups -->
               <div v-for="group in draw.groupDraw.groups" :key="group.groupName"
-                   class="row mb-4 d-flex align-items-start p-3 border rounded">
+                   class="row col-sm-11 mx-auto mt-3 mb-4 d-flex align-items-start p-3 custom-card">
                 <h4 class="text-start mb-3">{{ $t("draw.main.group") }} {{ group.groupName }}</h4>
                 <div class="col-sm-4">
                   <PoolDraw :group="group"/>
                 </div>
                 <div class="col-sm-8">
-                  <div id="matches" class="row justify-content-center">
-                    <match-list-component :matches="group.matches" />
+                  <div id="matches" class="row justify-content-center ms-0">
+                    <match-list-component :matches="group.matches"/>
                   </div>
                 </div>
-                <br>
               </div>
-
               <!-- If there is a playoff/cup -->
-            <playoff-draw v-if="draw != null && draw.playOff != null" :playoff-rounds="draw.playOff.rounds"></playoff-draw>
+              <playoff-draw v-if="draw != null && draw.playOff != null"
+                            :playoff-rounds="draw.playOff.rounds"></playoff-draw>
             </div>
           </div>
         </div>
@@ -145,24 +144,24 @@ export default {
       })
     },
     createDraw() {
-      if(confirm(this.$tc("confirm.redraw"))) {
+      if (confirm(this.$tc("confirm.redraw"))) {
         DrawService.createDraw(this.competition.id, this.chosenCategory.id).then(res => {
           this.$toasted.success(this.$tc("toasts.categoryDrawn")).goAway(3000)
           this.draw = res.data
           this.isChosenCategoryDrawn = true
         }).catch(() => {
-          this.$toasted.error(this.$tc("toasts.error.general"))
+          this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
         })
       }
     },
     deleteDraw() {
-      if(confirm(this.$tc("confirm.deleteDraw"))) {
+      if (confirm(this.$tc("confirm.deleteDraw"))) {
         DrawService.deleteDraw(this.competition.id, this.chosenCategory.id).then(() => {
           this.$toasted.success(this.$tc("toasts.categoryDrawDeleted")).goAway(3000)
           this.isChosenCategoryDrawn = false
           this.getRegisteredPlayers()
         }).catch(() => {
-          this.$toasted.error(this.$tc("toasts.error.general"))
+          this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
         })
       }
     },
@@ -170,7 +169,7 @@ export default {
       DrawService.getDraw(this.competition.id, categoryId).then(res => {
         this.draw = res.data
       }).catch(() => {
-        this.$toasted.error(this.$tc("toasts.error.general"))
+        this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
       })
     },
     getRegisteredPlayers() {

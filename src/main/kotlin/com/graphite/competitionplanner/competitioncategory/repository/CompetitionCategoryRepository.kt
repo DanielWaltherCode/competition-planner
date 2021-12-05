@@ -190,6 +190,8 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         }
     }
 
+
+
     override fun getAll(competitionId: Int): List<CompetitionCategoryDTO> {
         val records = dslContext.select()
             .from(COMPETITION_CATEGORY)
@@ -268,6 +270,13 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             .set(COMPETITION_CATEGORY.STATUS, status.name)
             .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
             .execute()
+    }
+
+    override fun getCostForCategories(categoryIds: List<Int>): MutableMap<Int, Float> {
+       return dslContext
+           .selectFrom(COMPETITION_CATEGORY_METADATA)
+           .where(COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID.`in`(categoryIds))
+           .fetchMap(COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID, COMPETITION_CATEGORY_METADATA.COST)
     }
 
     private fun toCompetitionCategoryDto(records: SelectConditionStep<Record>): List<CompetitionCategoryDTO> {

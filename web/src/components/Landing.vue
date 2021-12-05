@@ -34,7 +34,7 @@
                 <div>
                   <div class="form-group">
                     <label class="form-label d-flex justify-content-start ms-1" for="competition-selection"> {{ getString("landing.heading.competitionChoice") }} </label>
-                    <select name="competition-selection" id="competition-selection" class="form-control"
+                    <select id="competition-selection" class="form-control"
                             v-on:change="setCompetition" v-model="selectedCompetition">
                       <option value="none"> {{ getString("landing.heading.noCompetitionSelected") }}</option>
                       <option v-for="comp in competitions" v-bind:key="comp.id" :value="comp">

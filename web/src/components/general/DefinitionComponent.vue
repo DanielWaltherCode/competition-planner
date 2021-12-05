@@ -19,6 +19,7 @@ export default {
 }
 
 #explanation {
-  width: 60%;
+  width: 70%;
+  margin-left: 10px;
 }
 </style>

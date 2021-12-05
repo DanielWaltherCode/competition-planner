@@ -13,7 +13,7 @@ import store from "@/store/store";
 import 'vue2-timepicker/dist/VueTimepicker.css'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import Toasted from 'vue-toasted';
-import { vfmPlugin } from 'vue-final-modal'
+import {vfmPlugin} from 'vue-final-modal'
 
 Vue.use(vfmPlugin)
 import VModal from 'vue-js-modal'
@@ -21,9 +21,7 @@ import VModal from 'vue-js-modal'
 Vue.use(VModal)
 Vue.use(Toasted)
 
-// import UserService from "@/common/api-services/user.service";
-
-
+import UserService from "@/common/api-services/user.service";
 
 
 Vue.config.productionTip = false
@@ -41,7 +39,7 @@ Axios.defaults.baseURL = process.env.VUE_APP_BASE_URL
 // Add a request interceptor
 Axios.interceptors.request.use(
     config => {
-        if(config.withCredentials) {
+        if (config.withCredentials) {
             const token = store.getters.accessToken;
             if (token) {
                 config.headers['Authorization'] = 'Bearer ' + token;
@@ -55,32 +53,43 @@ Axios.interceptors.request.use(
     });
 
 // Response interceptor
-/*Axios.interceptors.response.use((response) => {
+Axios.interceptors.response.use((response) => {
         return response
     },
     function (error) {
         const originalRequest = error.config
         const refreshToken = store.getters.refreshToken
         console.log(error)
-        if (error.response.status === 401 && refreshToken != null ){
-            // If previous request tried to refresh token but failed, abort here
-           console.log("original request: " + originalRequest.url)
-            if (originalRequest.url.includes("request-token") ) {
-                store.commit("logout")
-                router.push('/landing');
-                return Promise.reject(error);
+        if (error.response.status === 401) {
+            if (refreshToken != null) {
+                // If previous request tried to refresh token but failed, abort here
+                console.log("original request: " + originalRequest.url)
+                if (originalRequest.url.includes("request-token")) {
+                   logout(error)
+                }
+                return UserService.refreshToken(refreshToken).then(res => {
+                    // 1) put token to LocalStorage
+                    console.log("Token refreshed, updating!")
+                    store.commit("auth_success", res.data)
+                    // 3) return originalRequest object with Axios.
+                    return Axios(originalRequest);
+                }).catch(() => {
+                    // Failed to refresh token
+                    logout(error)
+                })
             }
-
-            return UserService.refreshToken(refreshToken).then(res => {
-                // 1) put token to LocalStorage
-                console.log("Token refreshed, updating!")
-                store.commit("auth_success", res.data)
-                // 3) return originalRequest object with Axios.
-                return Axios(originalRequest);
-            })
+            // If there is no refresh token
+            else {
+               logout(error)
+            }
         }
-    })*/
+    })
 
+function logout(error) {
+    store.commit("logout")
+    router.push('/landing');
+    return Promise.reject(error);
+}
 
 new Vue({
     render: h => h(App),

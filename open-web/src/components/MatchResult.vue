@@ -1,6 +1,6 @@
 <template>
-  <div v-if="match" class="card">
-    <div class="card-header">
+  <div v-if="match" class="card custom-card">
+    <div class="card-header light-grey">
       <h2 class="fs-5"> {{ getTitle() }}</h2>
     </div>
     <div class="card-body">
@@ -30,9 +30,9 @@ export default {
   methods: {
     getTitle() {
       if (this.match.matchType === 'GROUP') {
-        return this.match.competitionCategory.categoryName + " | " + this.$t("results.group") + " " + this.match.groupOrRound
+        return this.match.competitionCategory.name + " | " + this.$t("results.group") + " " + this.match.groupOrRound
       } else {
-        return this.match.competitionCategory.categoryName
+        return this.match.competitionCategory.name
       }
     },
     getPlayerOne(match) {

@@ -54,6 +54,13 @@ interface IClubRepository {
     fun update(clubId: Int, spec: ClubSpec): ClubDTO
 
     /**
+     * Returns all clubs participating in a competition (mostly used for billing purposes)
+     * @param competitionId Id of competition
+     * @return list of participating clubs
+     */
+    fun getClubsInCompetition(competitionId: Int): List<ClubDTO>
+
+    /**
      * Returns all stored Clubs
      */
     fun getAll(): List<ClubDTO>

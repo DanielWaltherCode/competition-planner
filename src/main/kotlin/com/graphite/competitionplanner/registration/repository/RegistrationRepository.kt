@@ -50,8 +50,8 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategory)))
     }
 
-    fun getRegistrationsInCompetition(competitionId: Int): List<PlayerRecord> {
-        return dslContext.select()
+    fun getRegistreredPlayersInCompetition(competitionId: Int): List<PlayerRecord> {
+        return dslContext.selectDistinct(PLAYER.asterisk())
             .from(COMPETITION)
             .join(COMPETITION_CATEGORY).on(
                 COMPETITION_CATEGORY.COMPETITION_ID.eq(

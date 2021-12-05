@@ -5,7 +5,7 @@
       <h4 class="text-start">{{ $t("player.create.heading") }}</h4>
       <p class="text-start col-sm-8">{{ $t("player.create.text") }}</p>
     </div>
-    <div class="row">
+    <div class="row custom-card m-sm-1">
       <form id="input-form" class="rounded row p-3">
         <div class="col-md-11">
           <div class="row mx-auto">

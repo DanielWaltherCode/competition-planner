@@ -11,7 +11,7 @@
       </autocomplete>
     </div>
     <p class="fs-6 text-danger" v-if="playerNotFound">{{ $t("player.notFound") }}</p>
-    <div class="p-4" v-if="player !== null">
+    <div class="p-4 custom-card" v-if="player !== null">
       <h2 class="black"> {{ player.firstName + " " + player.lastName }}</h2>
       <div class="p-4">
         <div class="p-4" v-for="registration in registrations" :key="registration.id">
@@ -19,8 +19,9 @@
 
           </div>
           <div v-if="registration.competitionCategory.type === 'DOUBLES'">
-                {{ $t("player.playingWith") }}
-                {{ registration.accompanyingPlayer.firstName + ' ' + registration.accompanyingPlayer.lastName }}
+                <p>{{ $t("player.playingWith") }}
+                  <span class="clickable" @click="getRegistrations(competition.id, registration.accompanyingPlayer.id)">{{ registration.accompanyingPlayer.firstName + ' ' + registration.accompanyingPlayer.lastName }}</span>
+                </p>
               </div>
             <match-list-component :matches="registration.matches" />
         </div>

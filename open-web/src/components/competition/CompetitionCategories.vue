@@ -5,15 +5,15 @@
         <div class="sidebar-header">
           <h4> {{ $t("competition.categories.header") }}</h4>
         </div>
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item" v-for="category in categories"
-              @click="chooseCategory(category.id)" :key="category.id"
-              :class="chosenCategoryId === category.id ? 'active' : ''">
-            {{ category.name }}
+        <ul class="list-group">
+          <li class="list-group-item" v-for="competitionCategory in categories"
+              @click="chosenCategoryId = competitionCategory.id" :key="competitionCategory.id"
+              :class="chosenCategoryId === competitionCategory.id ? 'active' : ''">
+            {{ competitionCategory.category.name }}
           </li>
         </ul>
       </div>
-      <competition-draw v-if="chosenCategoryId !== 0" :category-id="chosenCategoryId" :key="chosenCategoryId" class="col-md-9"></competition-draw>
+      <competition-draw v-if="chosenCategoryId !== 0" :category-id="chosenCategoryId" class="col-md-9"></competition-draw>
     </div>
   </div>
 </template>
@@ -35,17 +35,13 @@ export default {
   mounted() {
     const competitionId = this.$route.params.competitionId
     ApiService.getCompetitionCategories(competitionId).then(res => {
-      this.categories = res.data.categories
+      console.log(res.data)
+      this.categories = res.data
       if(this.categories.length > 0) {
-        this.chooseCategory(this.categories[0].id)
+        this.chosenCategoryId = this.categories[0].id
       }
     })
   },
-  methods: {
-    chooseCategory(categoryId) {
-      this.chosenCategoryId = categoryId
-    }
-  }
 }
 </script>
 
