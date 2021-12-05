@@ -35,7 +35,7 @@
       </div>
     </div>
     <!-- Add players to doubles categories -->
-    <div class="row light-grey custom-card mt-5">
+    <div class="row custom-card mt-5">
       <h2 class="p-3">{{ $t("player.addPlayerDoubles") }}</h2>
       <div class="d-flex justify-content-start px-4">
         <p class="mb-0">{{ $t("player.doublesPlayer1") }}</p>
