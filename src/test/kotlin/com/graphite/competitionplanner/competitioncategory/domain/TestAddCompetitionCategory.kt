@@ -80,7 +80,8 @@ class TestAddCompetitionCategory {
             numberOfSetsFinal = 7,
             winScoreFinal = 11,
             winMarginFinal = 2,
-            winScoreTiebreak = 2,
+            tiebreakInFinalGame = false,
+            winScoreTiebreak = 7,
             winMarginTieBreak = 2,
             useDifferentRulesInEndGame = false
         )
