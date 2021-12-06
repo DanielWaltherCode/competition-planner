@@ -10,7 +10,6 @@ import com.graphite.competitionplanner.draw.interfaces.PlayOffMatchDTO
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.anyInt
 import org.mockito.Mockito.times
@@ -52,7 +51,7 @@ class TestGetDraw {
     }
 
     @Test
-    fun shouldMapDisplayNameOfPlaceholderMatches() {
+    fun shouldReturnWhatRepositoryReturns() {
         // Setup
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 15236,
@@ -83,7 +82,7 @@ class TestGetDraw {
         val result = getDraw.execute(competitionCategory.id)
 
         // Act
-        Assertions.assertTrue(true)
+        Assertions.assertEquals(drawDto, result)
     }
 
     private fun newPlaceholderMatch(round: Round, order: Int): PlayOffMatchDTO {
