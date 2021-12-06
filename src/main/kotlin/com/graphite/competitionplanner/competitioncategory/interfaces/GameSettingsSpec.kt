@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.competitioncategory.interfaces
 
-import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.competitioncategory.entity.Round
 
 data class GameSettingsSpec(
     val numberOfSets: Int,

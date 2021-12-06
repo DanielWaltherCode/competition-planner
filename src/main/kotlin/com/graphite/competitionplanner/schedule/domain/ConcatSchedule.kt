@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.schedule.domain
 
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleDTO
-import com.graphite.competitionplanner.domain.entity.Schedule
-import com.graphite.competitionplanner.domain.entity.Timeslot
+import com.graphite.competitionplanner.competitioncategory.entity.Schedule
+import com.graphite.competitionplanner.competitioncategory.entity.Timeslot
 import org.springframework.stereotype.Component
 
 @Component

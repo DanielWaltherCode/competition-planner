@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.draw.domain
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsSpec
-import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.draw.interfaces.CompetitionCategoryDrawDTO
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
@@ -40,85 +40,119 @@ class CreateDraw(
 
         val spec = competitionCategory.settings.let {
             when (it.drawType) {
-                DrawType.POOL_ONLY -> GroupsDrawSpec(
+                DrawType.POOL_ONLY -> PoolDrawSpec(
                     competitionCategory.id,
-                    drawGroups(registrationsWithSeeds, it),
-                    emptyList()
+                    drawPools(registrationsWithSeeds, it),
                 )
-                DrawType.POOL_AND_CUP
-                -> GroupsDrawSpec(
-                    competitionCategory.id,
-                    drawGroups(registrationsWithSeeds, it),
-                    createPlayOffWithOnlyPlaceholder(registrationsWithSeeds, it)
-                )
-                DrawType.CUP_ONLY -> createPlayOffs(registrationsWithSeeds)
+                DrawType.POOL_AND_CUP -> createPoolAndCupDrawSpec(competitionCategoryId, registrationsWithSeeds, it)
+                DrawType.CUP_ONLY -> createCupOnlyPlayOff(registrationsWithSeeds)
             }
         }
 
         return drawRepository.store(spec)
     }
 
-    private fun drawGroups(registrations: List<RegistrationSeedDTO>, settings: GeneralSettingsSpec): List<Group> {
-        val numberOfGroups = calculateNumberOfGroups(registrations.size, settings)
-        val groups = createEmptyGroups(numberOfGroups)
+    private fun drawPools(registrations: List<RegistrationSeedDTO>, settings: GeneralSettingsSpec): List<Pool> {
+        val numberOfPools = calculateNumberOfPools(registrations.size, settings)
+        val pools = createEmptyPools(numberOfPools)
 
         val seededRegistrations =
             registrations.filter { it.seed != null }.sortedBy { it.seed!! }.map { Registration.Real(it.id) }
         val nonSeededRegistrations = registrations.filter { it.seed == null }.map { Registration.Real(it.id) }
 
-        return addRoundRobin(groups, seededRegistrations + nonSeededRegistrations.shuffled())
+        return addRoundRobin(pools, seededRegistrations + nonSeededRegistrations.shuffled())
             .map {
                 it.apply { this.matches = generateMatchesFor(this.registrationIds) }
             }
     }
 
-    private fun createPlayOffWithOnlyPlaceholder(registrations: List<RegistrationSeedDTO>, settings: GeneralSettingsSpec): List<PlayOffMatch> {
-        val matchesInFirstRound = ceil(settings.playersToPlayOff.toDouble() * calculateNumberOfGroups(registrations.size, settings).toDouble() / 2.0).toInt()
-        return buildRemainingPlayOffTree(matchesInFirstRound)
+    private fun createPoolAndCupDrawSpec(
+        competitionCategoryId: Int,
+        registrationsWithSeeds: List<RegistrationSeedDTO>,
+        generalSettingsSpec: GeneralSettingsSpec
+    ): PoolAndCupDrawSpec {
+        val pools = drawPools(registrationsWithSeeds, generalSettingsSpec)
+        val playOff = createPoolAndCupPlayoff(pools, generalSettingsSpec)
+        return PoolAndCupDrawSpec(
+            competitionCategoryId,
+            pools,
+            playOff,
+            emptyList()
+        )
     }
 
-    private fun calculateNumberOfGroups(numberOfRegistrations: Int, settings: GeneralSettingsSpec): Int {
+    /**
+     * Returns a list of play off matches where the name of the registrations in the first round has the name of the
+     * pool positionsthe. E.g. a match with two placeholder matches where the name is A1 and B1 would mean that position
+     * 1 in pool A would go up against position 1 in pool B when pool play is over and play off is starting.
+     *
+     * @return A list of play off matches
+     */
+    private fun createPoolAndCupPlayoff(
+        pools: List<Pool>,
+        settings: GeneralSettingsSpec
+    ): List<PlayOffMatch> {
+        val placeholders =
+            pools.flatMap { group -> (1..settings.playersToPlayOff).map { index -> Registration.Placeholder(group.name + index) } }
+                .sortedBy { it.name.reversed() } // Should result in A1, B1, C1, ..., A2, B2, C2, ...
+
+        // If we are not an even power of 2, then we need to add so-called BYE players to the list of registrations
+        // until we reach a number that is a power of 2
+        val placeholdersWithBye = placeholders.tryAddByes()
+        val numberOfRounds = ceil(log2(placeholdersWithBye.size.toDouble())).toInt()
+
+        val firstRoundOfMatches = generatePlayOffMatchesForFirstRound(placeholdersWithBye).map {
+            it.apply {
+                round = numberOfRounds.asRound()
+            }
+        }
+        return firstRoundOfMatches + buildRemainingPlayOffTree(firstRoundOfMatches.size / 2)
+    }
+
+    private fun calculateNumberOfPools(numberOfRegistrations: Int, settings: GeneralSettingsSpec): Int {
         return ceil((numberOfRegistrations.toDouble() / settings.playersPerGroup.toDouble())).toInt()
     }
 
-    private fun createEmptyGroups(numberOfGroups: Int): List<Group> {
-        return (1..numberOfGroups).toList().map {
-            Group(it.asPoolName(), emptyList(), emptyList())
+    private fun createEmptyPools(numberOfPools: Int): List<Pool> {
+        return (1..numberOfPools).toList().map {
+            Pool(it.asPoolName(), emptyList(), emptyList())
         }
     }
 
     /**
-     * Adds a set of registrations in a round-robin fashion to a set of groups. The first registration is added to
-     * the first group, then the second registration is added to the second group and so on. When all groups have
+     * Adds a set of registrations in a round-robin fashion to a set of pools. The first registration is added to
+     * the first pool, then the second registration is added to the second pool and so on. When all pools have
      * received their first round of registration, the process repeats.
      */
-    private fun addRoundRobin(groups: List<Group>, registrations: List<Registration.Real>): List<Group> {
+    private fun addRoundRobin(pools: List<Pool>, registrations: List<Registration.Real>): List<Pool> {
         return if (registrations.isEmpty()) {
-            groups
+            pools
         } else {
-            return if (registrations.size <= groups.size) {
+            return if (registrations.size <= pools.size) {
                 val first = registrations.first()
-                val group = addRegistrationToGroup(groups.first(), first)
+                val pool = addRegistrationToPool(pools.first(), first)
                 val remaining = registrations.takeLast(registrations.size - 1)
-                listOf(group) + addRoundRobin(groups.takeLast(groups.size - 1), remaining)
+                listOf(pool) + addRoundRobin(pools.takeLast(pools.size - 1), remaining)
             } else {
-                val round = addRoundRobin(groups, registrations.take(groups.size))
-                addRoundRobin(round, registrations.takeLast(registrations.size - groups.size))
+                val round = addRoundRobin(pools, registrations.take(pools.size))
+                addRoundRobin(round, registrations.takeLast(registrations.size - pools.size))
             }
         }
     }
 
-    private fun addRegistrationToGroup(group: Group, registration: Registration.Real): Group {
-        return Group(group.name, group.registrationIds + listOf(registration), group.matches)
+    private fun addRegistrationToPool(pool: Pool, registration: Registration.Real): Pool {
+        return Pool(pool.name, pool.registrationIds + listOf(registration), pool.matches)
     }
 
-    private fun createPlayOffs(registrations: List<RegistrationSeedDTO>): PlayOffDrawSpec {
-        // If we are not an even power of 2, then we need to add so called BYE players to the list of registrations
+    private fun createCupOnlyPlayOff(registrations: List<RegistrationSeedDTO>): CupDrawSpec {
+        // If we are not an even power of 2, then we need to add so-called BYE players to the list of registrations
         // until we reach a number that is a power of 2
-        val numberOfRounds = ceil(log2(registrations.size.toDouble())).toInt()
-        val numberOfByePlayers = (2.0.pow(numberOfRounds.toDouble()) - registrations.size).toInt()
-        val registrationsWithBye =
-            registrations.map { Registration.Real(it.id) } + (1..numberOfByePlayers).map { Registration.Bye }
+        // TODO: Do we randomize the unseeded players?
+//        val seededRegistrations = registrations.filter { it.seed != null }.map { Registration.Real(it.id) }
+//        val unseededRegistrations = registrations.filter { it.seed == null }.map { Registration.Real(it.id) }.shuffled()
+//        val registrationsWithBye = (seededRegistrations + unseededRegistrations).tryAddByes()
+        val registrationsWithBye = registrations.map { Registration.Real(it.id) }.tryAddByes()
+        val numberOfRounds = ceil(log2(registrationsWithBye.size.toDouble())).toInt()
 
         val firstRoundOfMatches = generatePlayOffMatchesForFirstRound(registrationsWithBye).map {
             it.apply {
@@ -128,14 +162,25 @@ class CreateDraw(
 
         val placeholderMatches = buildRemainingPlayOffTree(firstRoundOfMatches.size / 2)
 
-        return PlayOffDrawSpec(1, numberOfRounds.asRound(), firstRoundOfMatches + placeholderMatches)
+        return CupDrawSpec(1, numberOfRounds.asRound(), firstRoundOfMatches + placeholderMatches)
+    }
+
+    /**
+     * Tries to add bye registrations until we hit a power of two registrations.
+     *
+     * @return A list with the original registrations plus additional bye registrations
+     */
+    private fun List<Registration>.tryAddByes(): List<Registration> {
+        val numberOfRounds = ceil(log2(this.size.toDouble())).toInt()
+        val numberOfByePlayers = (2.0.pow(numberOfRounds.toDouble()) - this.size).toInt()
+        return this + (1..numberOfByePlayers).map { Registration.Bye }
     }
 
     /**
      * Generates the first round of matches in a play off given a list of registrations.
      *
      * The following properties are true for the generated matches:
-     * - Match order is set so it guarantees that the best and second best players do not meet until final round,
+     * - Match order is set so it guarantees that the best and second-best players do not meet until final round,
      * - Best players are paired against the worse ranked players, where BYE is considered the worst ranked player giving
      * the best players a free game in first round.
      *
@@ -182,13 +227,13 @@ class CreateDraw(
                 emptyList()
             }
             numberOfMatchesInRound == 1 -> {
-                listOf(PlayOffMatch(Registration.Placeholder, Registration.Placeholder, 1, Round.FINAL))
+                listOf(PlayOffMatch(Registration.Placeholder(), Registration.Placeholder(), 1, Round.FINAL))
             }
             else -> {
                 val thisRound = (1..numberOfMatchesInRound).map {
                     PlayOffMatch(
-                        Registration.Placeholder,
-                        Registration.Placeholder,
+                        Registration.Placeholder(),
+                        Registration.Placeholder(),
                         it,
                         numberOfMatchesToRound(numberOfMatchesInRound)
                     )
@@ -210,7 +255,7 @@ class CreateDraw(
      * Generate a list of matches where every registration in the list will go up against every other registration
      * exactly once. Example a list of registration 1, 2, 3 would result in the match ups 1 - 2, 1 - 3, and 2 - 3
      */
-    private fun generateMatchesFor(registrations: List<Registration.Real>): List<GroupMatch> {
+    private fun generateMatchesFor(registrations: List<Registration.Real>): List<PoolMatch> {
         with(registrations) {
             return if (isEmpty()) {
                 emptyList()
@@ -228,8 +273,8 @@ class CreateDraw(
      * Example: Given registration id is 1, and others contain ids 2, 3, 4. Then returned matches are:
      * 1 - 2, 1 - 3, and 1 - 4
      */
-    private fun generateMatchesFor(registration: Registration.Real, others: List<Registration.Real>): List<GroupMatch> {
-        return (1..others.size).map { registration }.zip(others).map { GroupMatch(it.first, it.second) }
+    private fun generateMatchesFor(registration: Registration.Real, others: List<Registration.Real>): List<PoolMatch> {
+        return (1..others.size).map { registration }.zip(others).map { PoolMatch(it.first, it.second) }
     }
 
     /**
@@ -285,22 +330,28 @@ sealed class CompetitionCategoryDrawSpec(
     val competitionCategoryId: Int
 )
 
-class PlayOffDrawSpec(
+class CupDrawSpec(
     competitionCategoryId: Int,
     val startingRound: Round,
     val matches: List<PlayOffMatch>
 ) : CompetitionCategoryDrawSpec(competitionCategoryId)
 
-class GroupsDrawSpec(
+class PoolDrawSpec(
     competitionCategoryId: Int,
-    val groups: List<Group>,
-    val matches: List<PlayOffMatch>
+    val pools: List<Pool>
 ) : CompetitionCategoryDrawSpec(competitionCategoryId)
 
-data class Group(
+class PoolAndCupDrawSpec(
+    competitionCategoryId: Int,
+    val pools: List<Pool>,
+    val matches: List<PlayOffMatch> = emptyList(),
+    val poolToPlayoffMap: List<PoolToPlayoffSpec>
+) : CompetitionCategoryDrawSpec(competitionCategoryId)
+
+data class Pool(
     val name: String,
     val registrationIds: List<Registration.Real>,
-    var matches: List<GroupMatch>
+    var matches: List<PoolMatch>
 )
 
 data class PlayOffMatch(
@@ -310,6 +361,13 @@ data class PlayOffMatch(
     var round: Round
 )
 
+data class PoolToPlayoffSpec(
+    val pool: Pool,
+    val position: Int,
+    val playOffMatch: PlayOffMatch,
+    val playOffPosition: Int
+)
+
 sealed class Registration {
     class Real(val id: Int) : Registration() {
         override fun toString(): String {
@@ -317,9 +375,9 @@ sealed class Registration {
         }
     }
 
-    object Placeholder : Registration() {
+    class Placeholder(var name: String = "Placeholder") : Registration() {
         override fun toString(): String {
-            return "Placeholder"
+            return name
         }
     }
 
@@ -330,7 +388,7 @@ sealed class Registration {
     }
 }
 
-data class GroupMatch(
+data class PoolMatch(
     val registrationOneId: Registration.Real,
     val registrationTwoId: Registration.Real
 )

@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.competition.api
 
 import com.graphite.competitionplanner.competition.interfaces.*
 import com.graphite.competitionplanner.competition.service.CompetitionService
-import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.competitioncategory.entity.Round
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 

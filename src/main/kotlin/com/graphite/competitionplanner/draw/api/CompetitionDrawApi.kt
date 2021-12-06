@@ -1,7 +1,9 @@
 package com.graphite.competitionplanner.draw.api
 
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
-import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.competitioncategory.entity.Round
+import com.graphite.competitionplanner.draw.domain.CreateDraw
+import com.graphite.competitionplanner.draw.interfaces.CompetitionCategoryDrawDTO
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.draw.service.GroupDrawDTO
 import com.graphite.competitionplanner.draw.service.PlayoffDTO
@@ -19,8 +21,11 @@ import java.time.temporal.ChronoUnit
 
 @RestController
 @RequestMapping("competition/{competitionId}/draw/{competitionCategoryId}")
-class CompetitionDrawApi(val drawService: DrawService,
-val playerService: PlayerService) {
+class CompetitionDrawApi(
+    val drawService: DrawService,
+    val playerService: PlayerService,
+    val createDraw: CreateDraw
+) {
 
     // Can be used both to create initial draw and to make a new draw if desired
     @PutMapping
@@ -209,7 +214,8 @@ val playerService: PlayerService) {
 
         for (round in distinctRounds) {
             playoffRoundList.add(
-                PlayoffRoundDTO(Round.valueOf(round),
+                PlayoffRoundDTO(
+                    Round.valueOf(round),
                     matches.filter { it.groupOrRound == round }
                 )
             )

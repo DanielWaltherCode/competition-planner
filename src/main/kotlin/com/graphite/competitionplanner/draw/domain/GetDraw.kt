@@ -12,9 +12,8 @@ class GetDraw(
 ) {
 
     fun execute(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
-        // Validate that competition category exist
         competitionCategoryRepository.get(competitionCategoryId)
-
         return drawRepository.get(competitionCategoryId)
     }
+
 }

@@ -15,11 +15,10 @@ class TestScheduleSettings {
     val dataGenerator = DataGenerator()
 
     @Test
-    @Disabled
     fun averageMatchTimeCannotBeLessThanOne() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             dataGenerator.newScheduleSettings(
-                averageMatchTime = Duration.minutes(8)
+                averageMatchTime = Duration.minutes(0)
             )
         }
     }

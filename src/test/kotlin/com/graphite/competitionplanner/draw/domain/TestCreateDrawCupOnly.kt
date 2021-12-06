@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
-import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
 import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCompetitionCategory
@@ -62,7 +62,7 @@ class TestCreateDrawCupOnly {
 
         // Record the spec sent to the repository for validation
         verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
-        val result = classCaptor.value as PlayOffDrawSpec
+        val result = classCaptor.value as CupDrawSpec
 
         // Assert
         val matches = result.matches
@@ -106,7 +106,7 @@ class TestCreateDrawCupOnly {
 
         // Record the spec sent to the repository for validation
         verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
-        val result = classCaptor.value as PlayOffDrawSpec
+        val result = classCaptor.value as CupDrawSpec
 
         // Assert
         val matches = result.matches
@@ -184,7 +184,7 @@ class TestCreateDrawCupOnly {
 
         // Record the spec sent to the repository for validation
         verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
-        val result = classCaptor.value as PlayOffDrawSpec
+        val result = classCaptor.value as CupDrawSpec
 
         // Assert
         val expectedNumberOfMatches =

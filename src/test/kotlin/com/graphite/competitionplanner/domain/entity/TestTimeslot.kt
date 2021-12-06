@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.domain.entity
 
+import com.graphite.competitionplanner.competitioncategory.entity.Timeslot
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

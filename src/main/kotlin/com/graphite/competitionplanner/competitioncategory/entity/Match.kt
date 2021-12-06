@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.domain.entity
+package com.graphite.competitionplanner.competitioncategory.entity
 
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import java.time.LocalDateTime

@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.draw.interfaces
 
-import com.graphite.competitionplanner.domain.entity.Round
+import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 
 /**
@@ -18,11 +18,11 @@ data class CompetitionCategoryDrawDTO(
     /**
      * List of groups including players and matches
      */
-    val groupDraw: List<GroupDrawDTO>
+    val groupDraw: List<GroupDrawDTO>,
 )
 
 /**
- * A match played in play off
+ * A match played in playoff
  */
 data class PlayOffMatchDTO(
     /**
@@ -52,7 +52,7 @@ data class PlayOffMatchDTO(
      * The winner of this match. If list is is empty, then no winner has been decided. Contains two players if it is a
      * double game
      */
-    val winner: List<PlayerWithClubDTO>
+    val winner: List<PlayerWithClubDTO>,
 )
 
 /**
@@ -94,4 +94,47 @@ data class GroupMatchDTO(
      * double game
      */
     val winner: List<PlayerWithClubDTO>
+)
+
+/**
+ * A position in a group
+ */
+data class GroupPosition(
+    /**
+     * Name of group
+     */
+    val groupName: String,
+    /**
+     * Position in group. Winner is position 1, second best is position 2, etc
+     */
+    val position: Int
+)
+
+/**
+ * A position in playoff
+ */
+data class PlayoffPosition(
+    /**
+     * ID of the playoff match
+     */
+    val matchId: Int,
+
+    /**
+     * Player1 or Player2
+     */
+    val position: Int
+)
+
+/**
+ * A mapping between a position in a group to a position in playoff
+ */
+data class GroupToPlayoff(
+    /**
+     * A position in the playoff
+     */
+    val playoffPosition: PlayoffPosition,
+    /**
+     * A position in a group
+     */
+    val groupPosition: GroupPosition
 )
