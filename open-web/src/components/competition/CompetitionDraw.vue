@@ -1,11 +1,11 @@
 <template>
   <div class="container-fluid">
-    <div class="row gx-5">
-      <div id="main" class="col-sm-11 custom-card p-5">
+    <div class="row gx-md-5">
+      <div id="main" class="col-md-11 mx-auto custom-card p-3 p-md-5">
         <h1>{{ category.categoryName }}</h1>
 
         <!-- If class is not drawn yet -->
-        <div class="col-sm-4 text-start mx-auto" v-if="!isCategoryDrawn ">
+        <div class="col-md-4 text-start mx-auto" v-if="!isCategoryDrawn ">
           <div class="main-upper" v-if="registeredPlayersLists.length > 0">
             <p> {{ $t("draw.main.notDrawnTitle") }}</p>
           </div>

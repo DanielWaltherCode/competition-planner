@@ -1,6 +1,6 @@
 <template>
-  <div class="row">
-    <div class="col-md-10 mx-auto">
+  <div class="row mx-1">
+    <div class="col-md-10 mx-auto custom-card p-2 p-md-5">
       <!-- Show currently registered players -->
       <div id="registered-players" class="row m-auto">
         <h3> {{ $t("player.registeredPlayers") }}</h3>

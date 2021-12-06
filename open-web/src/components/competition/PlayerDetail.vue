@@ -11,19 +11,17 @@
       </autocomplete>
     </div>
     <p class="fs-6 text-danger" v-if="playerNotFound">{{ $t("player.notFound") }}</p>
-    <div class="p-4 custom-card w-75 mx-auto" v-if="player !== null">
+    <div class="p-4 custom-card col-11 col-md-8 mx-auto" v-if="player !== null">
       <h2 class="black"> {{ player.firstName + " " + player.lastName }}</h2>
-      <div class="p-4">
-        <div class="p-4" v-for="registration in registrations" :key="registration.id">
-          <div class="fw-bold pb-2">{{ registration.competitionCategory.name }}
-
-          </div>
-          <div v-if="registration.competitionCategory.type === 'DOUBLES'">
-                {{ $t("player.playingWith") }}
-                {{ registration.accompanyingPlayer.firstName + ' ' + registration.accompanyingPlayer.lastName }}
-              </div>
-            <match-list-component :matches="registration.matches" />
+      <div class="p-4" v-for="registration in registrations" :key="registration.id">
+        <div class="fw-bold pb-2">
+          {{ registration.competitionCategory.name }}
         </div>
+        <div v-if="registration.competitionCategory.type === 'DOUBLES'">
+          {{ $t("player.playingWith") }}
+          {{ registration.accompanyingPlayer.firstName + ' ' + registration.accompanyingPlayer.lastName }}
+        </div>
+        <match-list-component :matches="registration.matches"/>
       </div>
     </div>
   </div>

@@ -1,9 +1,9 @@
 <template>
-  <div v-if="match" class="card custom-card">
-    <div class="card-header light-grey">
-      <h2 class="fs-5"> {{ getTitle() }}</h2>
+  <div v-if="match" class="custom-card">
+    <div class="bg-grey p-1 d-flex justify-content-center">
+      <h2 class="fs-6 text-uppercase"> {{ getTitle() }}</h2>
     </div>
-    <div class="card-body">
+    <div class="p-2">
       <div class="row">
         <p class="col-5 text-start" :class="isPlayerOneWinner(match) ? 'fw-bold': ''">{{ getPlayerOne(match) }}</p>
         <p class="col-1 p-0" v-for="game in match.result.gameList" :key="game.id">
@@ -11,7 +11,7 @@
         </p>
       </div>
       <div class="row">
-        <p class="col-5 text-start" :class="isPlayerTwoWinner(match) ? 'fw-bold': ''">{{ getPlayerTwo(match) }}</p>
+        <p class="col-5 mb-1 text-start" :class="isPlayerTwoWinner(match) ? 'fw-bold': ''">{{ getPlayerTwo(match) }}</p>
         <p class="col-1 p-0" v-for="game in match.result.gameList" :key="game.id">
           {{ game.secondRegistrationResult }}
         </p>

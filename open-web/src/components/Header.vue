@@ -2,7 +2,7 @@
   <header id="header" class="header">
     <div class="d-flex justify-content-around align-items-center">
       <div>
-        <p>
+        <p class="mb-0 ms-1">
           {{ $t("header.firstText") }}
         </p>
       </div>
@@ -11,7 +11,7 @@
       </router-link>
     </div>
     <div>
-      <input type="text" class="form-control rounded w-50 mb-2 mx-auto" :placeholder="$t('header.search')">
+      <input id="searchBox" type="text" class="form-control rounded mb-2 mx-auto" :placeholder="$t('header.search')">
     </div>
   </header>
 </template>
@@ -41,6 +41,17 @@ nav {
 .navbar {
   background-color: white !important;
 }
+
+#searchBox {
+  width: 50%;
+}
+
+@media only screen and (max-width: 600px) {
+  #searchBox {
+     min-width: 75%;
+  }
+}
+
 
 /*
 #search {

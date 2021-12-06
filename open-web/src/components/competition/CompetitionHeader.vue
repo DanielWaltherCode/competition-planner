@@ -1,6 +1,6 @@
 <template>
   <div id="competition-header">
-    <div id="nav-top" class="d-flex align-items-center justify-content-center">
+    <div id="nav-top" class="d-flex align-items-center justify-content-center pt-3">
       <i class="fas fa-tag fa-2x text-white me-2"></i>
       <h2 class="text-white">{{ competition.name }}</h2>
     </div>
