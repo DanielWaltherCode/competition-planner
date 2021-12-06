@@ -79,7 +79,7 @@ class RegistrationService(
                     initialsAndPlayersMap[initial]?.add(playerDtoWithClub)
                 }
             }
-            return RegisteredPlayersDTO(SearchType.NAME, initialsAndPlayersMap)
+            return RegisteredPlayersDTO(SearchType.NAME, initialsAndPlayersMap.toSortedMap())
         } else if (searchType.uppercase() == SearchType.CLUB.name) {
             val clubsAndPlayersMap = mutableMapOf<String, MutableSet<PlayerWithClubDTO>>()
             for (player in players) {
@@ -93,10 +93,10 @@ class RegistrationService(
                     clubsAndPlayersMap[clubName]?.add(playerDtoWithClub)
                 }
             }
-            return RegisteredPlayersDTO(SearchType.CLUB, clubsAndPlayersMap)
+            return RegisteredPlayersDTO(SearchType.CLUB, clubsAndPlayersMap.toSortedMap())
         } else {
             val groupingsAndPlayers = getPlayersInCategories(competitionId)
-            return RegisteredPlayersDTO(SearchType.CATEGORY, groupingsAndPlayers)
+            return RegisteredPlayersDTO(SearchType.CATEGORY, groupingsAndPlayers.toSortedMap())
         }
     }
 
@@ -175,10 +175,6 @@ class RegistrationService(
             )
         }
         return PlayerRegistrationDTO(player, registrationDTOs)
-    }
-
-    fun getSeed(): Int {
-        return Random.nextInt(0, 16)
     }
 }
 
