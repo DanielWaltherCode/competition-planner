@@ -148,5 +148,71 @@ class TestSearchRegistrations {
         Assertions.assertTrue(playersInCategoryTwo!!.contains(player1))
         Assertions.assertTrue(playersInCategoryTwo.contains(player4))
     }
+
+    @Test
+    fun shouldFilterOutByePlayerWhenGroupingByName() {
+        // Setup
+        val playerBye = dataGenerator.newPlayerWithClubDTO(lastName = "BYE")
+        val playerAB = dataGenerator.newPlayerWithClubDTO(lastName = "AB")
+        val playerC = dataGenerator.newPlayerWithClubDTO(lastName = "C")
+        val playerD = dataGenerator.newPlayerWithClubDTO(lastName = "D")
+        val players = listOf(playerBye, playerC, playerD, playerAB)
+        val competition = dataGenerator.newCompetitionDTO()
+        `when`(mockedRegistrationRepository.getAllRegisteredPlayersInCompetition(competition.id)).thenReturn(players)
+
+        // Act
+        val result = searchRegistrations.execute(dataGenerator.newCompetitionDTO(), SearchType.NAME)
+
+        // Assert
+        val actualPlayers = result.groupingsAndPlayers.flatMap { it.value.map { player -> player } }
+        Assertions.assertFalse(actualPlayers.contains(playerBye), "BYE player was returned in search result. It should not be the case.")
+    }
+
+    @Test
+    fun shouldFilterOutByePlayerWhenGroupingByClub() {
+        val clubA = dataGenerator.newClubDTO(name = "Alle")
+        val clubF = dataGenerator.newClubDTO(name = "Fishers")
+        val playerBye = dataGenerator.newPlayerWithClubDTO(lastName = "BYE", clubDTO = clubA)
+        val player2A = dataGenerator.newPlayerWithClubDTO(clubDTO = clubA)
+        val player3A = dataGenerator.newPlayerWithClubDTO(clubDTO = clubA)
+        val player1F = dataGenerator.newPlayerWithClubDTO(clubDTO = clubF)
+        val players = listOf(player2A, player1F, player3A, playerBye)
+        val competition = dataGenerator.newCompetitionDTO()
+        `when`(mockedRegistrationRepository.getAllRegisteredPlayersInCompetition(competition.id)).thenReturn(players)
+
+        // Act
+        val result = searchRegistrations.execute(dataGenerator.newCompetitionDTO(), SearchType.CLUB)
+
+        // Assert
+        val actualPlayers = result.groupingsAndPlayers.flatMap { it.value.map { player -> player } }
+        Assertions.assertFalse(actualPlayers.contains(playerBye), "BYE player was returned in search result. It should not be the case.")
+    }
+
+    @Test
+    fun shouldFilterOutByePlayerWhenGroupingByCategory() {
+        // Setup
+        val categoryOne = dataGenerator.newCategoryDTO(name = "HERRAR1")
+        val categoryTwo = dataGenerator.newCategoryDTO(name = "DAMER1")
+        val playerBye = dataGenerator.newPlayerWithClubDTO(lastName = "BYE")
+        val player2 = dataGenerator.newPlayerWithClubDTO()
+        val player3 = dataGenerator.newPlayerWithClubDTO()
+        val player4 = dataGenerator.newPlayerWithClubDTO()
+        val categoriesAndPlayers = listOf(
+            Pair(categoryOne, playerBye),
+            Pair(categoryOne, player2),
+            Pair(categoryOne, player3),
+            Pair(categoryTwo, playerBye),
+            Pair(categoryTwo, player4),
+        )
+        val competition = dataGenerator.newCompetitionDTO()
+        `when`(mockedRegistrationRepository.getCategoriesAndPlayersInCompetition(competition.id)).thenReturn(categoriesAndPlayers)
+
+        // Act
+        val result = searchRegistrations.execute(dataGenerator.newCompetitionDTO(), SearchType.CATEGORY)
+
+        // Assert
+        val actualPlayers = result.groupingsAndPlayers.flatMap { it.value.map { player -> player } }
+        Assertions.assertFalse(actualPlayers.contains(playerBye), "BYE player was returned in search result. It should not be the case.")
+    }
 }
 
