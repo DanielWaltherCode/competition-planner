@@ -1,8 +1,10 @@
 package com.graphite.competitionplanner.registration.interfaces
 
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 
 
 interface IRegistrationRepository {
@@ -27,6 +29,16 @@ interface IRegistrationRepository {
      * @return A list of player ids
      */
     fun getAllPlayerIdsRegisteredTo(competitionCategoryId: Int): List<Int>
+
+    /**
+     * Get all players that are currently registered in the given competition
+     */
+    fun getAllRegisteredPlayersInCompetition(competitionId: Int): List<PlayerWithClubDTO>
+
+    /**
+     * Get all player and their respective competition category that are currently registered in a given competition
+     */
+    fun getCategoriesAndPlayersInCompetition(competitionId: Int): List<Pair<CategoryDTO, PlayerWithClubDTO>>
 
     /**
      * Return the registration for the given player and competition category

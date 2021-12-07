@@ -1,18 +1,23 @@
 package com.graphite.competitionplanner.registration.repository
 
+import com.graphite.competitionplanner.Tables
 import com.graphite.competitionplanner.Tables.*
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
+import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
 import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.PlayerRegistration.PLAYER_REGISTRATION
 import com.graphite.competitionplanner.tables.Registration.REGISTRATION
 import com.graphite.competitionplanner.tables.records.*
 import org.jooq.DSLContext
+import org.jooq.Record
 import org.jooq.Record4
 import org.jooq.TableField
 import org.jooq.impl.DSL.partitionBy
@@ -133,6 +138,53 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             .fetchInto(PLAYER)
 
         return records.map { it.id }
+    }
+
+    override fun getAllRegisteredPlayersInCompetition(competitionId: Int): List<PlayerWithClubDTO> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getCategoriesAndPlayersInCompetition(competitionId: Int): List<Pair<CategoryDTO, PlayerWithClubDTO>> {
+        val records: List<Record> =
+            dslContext.select(COMPETITION_CATEGORY.ID, CATEGORY.CATEGORY_NAME, PLAYER.ID)
+                .from(Competition.COMPETITION)
+                .join(COMPETITION_CATEGORY).on(
+                    COMPETITION_CATEGORY.COMPETITION_ID.eq(
+                        Competition.COMPETITION.ID
+                    )
+                )
+                .join(CATEGORY).on(
+                    CATEGORY.ID.eq(
+                        COMPETITION_CATEGORY.CATEGORY
+                    )
+                )
+                .join(COMPETITION_CATEGORY_REGISTRATION).on(
+                    COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(
+                        COMPETITION_CATEGORY.ID
+                    )
+                )
+                .join(Tables.PLAYER_REGISTRATION)
+                .on(Tables.PLAYER_REGISTRATION.REGISTRATION_ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+                .join(PLAYER).on(PLAYER.ID.eq(Tables.PLAYER_REGISTRATION.PLAYER_ID))
+                .where(Competition.COMPETITION.ID.eq(competitionId))
+                .fetch()
+
+        return records.map {
+            Pair(
+                CategoryDTO(
+                    1,
+                    "Herrar1",
+                    "SINGLES"
+                ),
+                PlayerWithClubDTO(
+                    1,
+                    "firstname",
+                    "lastname",
+                    ClubDTO(1, "clubname", "Address"),
+                    LocalDate.now()
+                )
+            )
+        }
     }
 
     override fun getRegistrationFor(spec: RegistrationSinglesSpec): RegistrationSinglesDTO {

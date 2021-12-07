@@ -88,7 +88,8 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         return records.map {
             CategoriesAndPlayers(
                 it.getValue(COMPETITION_CATEGORY.ID),
-                it.getValue(CATEGORY.CATEGORY_NAME), it.getValue(PLAYER.ID)
+                it.getValue(CATEGORY.CATEGORY_NAME),
+                it.getValue(PLAYER.ID)
             )
         }
 

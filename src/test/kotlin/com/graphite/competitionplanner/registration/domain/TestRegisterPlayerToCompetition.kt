@@ -17,9 +17,9 @@ import java.lang.NullPointerException
 @SpringBootTest
 class TestRegisterPlayerToCompetition {
 
-    private final val findPlayer = mock(FindPlayer::class.java)
-    private final val findCompetitionCategory = mock(FindCompetitionCategory::class.java)
-    private final val repository = mock(IRegistrationRepository::class.java)
+    private val findPlayer = mock(FindPlayer::class.java)
+    private val findCompetitionCategory = mock(FindCompetitionCategory::class.java)
+    private val repository = mock(IRegistrationRepository::class.java)
     private val registerPlayer = RegisterPlayerToCompetition(findPlayer, findCompetitionCategory, repository)
     val dataGenerator = DataGenerator()
 
