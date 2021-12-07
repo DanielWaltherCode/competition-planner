@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.registration.repository
 
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.repository.ClubRepository
@@ -28,6 +29,7 @@ open class BaseTestRegistration(
     protected lateinit var club: ClubDTO
     protected lateinit var competition: CompetitionDTO
     protected lateinit var competitionCategory: CompetitionCategoryDTO
+    protected lateinit var category: CategoryDTO
 
     @BeforeEach
     fun setup() {
@@ -37,7 +39,7 @@ open class BaseTestRegistration(
     }
 
     open fun setupCompetitionCategory() {
-        val category = categoryRepository.getAvailableCategories().first()
+        category = categoryRepository.getAvailableCategories().first()
         competitionCategory = competitionCategoryRepository.store(
             competitionId = competition.id,
             spec = dataGenerator.newCompetitionCategorySpec(category = dataGenerator.newCategorySpec(id = category.id)))

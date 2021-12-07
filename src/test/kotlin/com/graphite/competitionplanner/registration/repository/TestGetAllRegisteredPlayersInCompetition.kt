@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TestGetRegistrationRankForSingles(
+class TestGetAllRegisteredPlayersInCompetition(
     @Autowired clubRepository: ClubRepository,
     @Autowired playerRepository: PlayerRepository,
     @Autowired competitionRepository: CompetitionRepository,
@@ -29,31 +29,27 @@ class TestGetRegistrationRankForSingles(
     registrationRepository
 ) {
 
-    override fun setupCompetitionCategory() {
-        // Override this so we set up competition category as a singles
-        category = categoryRepository.getAvailableCategories().first { it.type == CategoryType.SINGLES.name }
-        competitionCategory = competitionCategoryRepository.store(
-            competitionId = competition.id,
-            spec = dataGenerator.newCompetitionCategorySpec(
-                category = dataGenerator.newCategorySpec(id = category.id, name = category.name, type = category.type)))
-    }
-
     @Test
-    fun shouldGetCorrectRanksForSingles() {
+    fun getsAllPlayersWithTheirCorrectClubs() {
         // Setup
         val reg1 = setupSingleRegistration()
         val reg2 = setupSingleRegistration()
-
-        playerRepository.addPlayerRanking(reg1.playerId, 39, CategoryType.SINGLES.name)
-        playerRepository.addPlayerRanking(reg2.playerId, 98, CategoryType.SINGLES.name)
+        val reg3 = setupDoubleRegistration()
 
         // Act
-        val registrationRanks = registrationRepository.getRegistrationRank(competitionCategory)
+        val players = registrationRepository.getAllRegisteredPlayersInCompetition(competition.id)
 
         // Assert
-        val actualReg1 = registrationRanks.first { it.registrationId == reg1.id }
-        Assertions.assertEquals(39, actualReg1.rank)
-        val actualReg2 = registrationRanks.first { it.registrationId == reg2.id }
-        Assertions.assertEquals(98, actualReg2.rank)
+        val actualPlayerIds = players.map { it.id }.sorted()
+        val expectedPlayerIds = listOf(reg1.playerId, reg2.playerId, reg3.playerOneId, reg3.playerTwoId).sorted()
+        Assertions.assertEquals(
+            expectedPlayerIds,
+            actualPlayerIds,
+            "There were some missing player IDs of registered players."
+        )
+
+        for (p in players) {
+            Assertions.assertEquals(p.club, club, "Player $p not beloning to the expected club $club")
+        }
     }
 }

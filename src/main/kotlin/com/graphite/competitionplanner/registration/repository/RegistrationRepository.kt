@@ -51,8 +51,10 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
     fun clearPlayerRegistration() = dslContext.deleteFrom(PLAYER_REGISTRATION).execute()
 
     fun checkIfCategoryHasRegistrations(competitionCategory: Int): Boolean {
-        return dslContext.fetchExists(dslContext.selectFrom(COMPETITION_CATEGORY_REGISTRATION)
-            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategory)))
+        return dslContext.fetchExists(
+            dslContext.selectFrom(COMPETITION_CATEGORY_REGISTRATION)
+                .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategory))
+        )
     }
 
     fun getRegistreredPlayersInCompetition(competitionId: Int): List<PlayerRecord> {
@@ -60,14 +62,21 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             .from(COMPETITION)
             .join(COMPETITION_CATEGORY).on(
                 COMPETITION_CATEGORY.COMPETITION_ID.eq(
-                    Competition.COMPETITION.ID))
+                    Competition.COMPETITION.ID
+                )
+            )
             .join(CATEGORY).on(
                 CATEGORY.ID.eq(
-                    COMPETITION_CATEGORY.CATEGORY))
+                    COMPETITION_CATEGORY.CATEGORY
+                )
+            )
             .join(COMPETITION_CATEGORY_REGISTRATION).on(
                 COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(
-                    COMPETITION_CATEGORY.ID))
-            .join(PLAYER_REGISTRATION).on(PLAYER_REGISTRATION.REGISTRATION_ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+                    COMPETITION_CATEGORY.ID
+                )
+            )
+            .join(PLAYER_REGISTRATION)
+            .on(PLAYER_REGISTRATION.REGISTRATION_ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
             .join(PLAYER).on(PLAYER.ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
             .where(Competition.COMPETITION.ID.eq(competitionId))
             .fetchInto(PLAYER)
@@ -88,20 +97,25 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             .fetchInto(PLAYER)
     }
 
-    fun setSeed(registrationId: Int, competitionCategoryId: Int, seed: Int){
+    fun setSeed(registrationId: Int, competitionCategoryId: Int, seed: Int) {
         dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
-                .set(COMPETITION_CATEGORY_REGISTRATION.SEED, seed)
-                .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
-                        .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(registrationId)))
-                .execute()
+            .set(COMPETITION_CATEGORY_REGISTRATION.SEED, seed)
+            .where(
+                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
+                    .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(registrationId))
+            )
+            .execute()
     }
 
     // Get seeds in competition category
     fun getSeeds(competitionCategoryId: Int): List<CompetitionCategoryRegistrationRecord> {
         return dslContext.select()
             .from(COMPETITION_CATEGORY_REGISTRATION)
-            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId).and(
-                COMPETITION_CATEGORY_REGISTRATION.SEED.isNotNull))
+            .where(
+                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId).and(
+                    COMPETITION_CATEGORY_REGISTRATION.SEED.isNotNull
+                )
+            )
             .fetchInto(COMPETITION_CATEGORY_REGISTRATION)
     }
 
@@ -121,11 +135,13 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         registerPlayer(registrationRecord.id, spec.playerTwoId)
         registerInCategory(registrationRecord.id, null, spec.competitionCategoryId)
 
-        return RegistrationDoublesDTO(registrationRecord.id,
+        return RegistrationDoublesDTO(
+            registrationRecord.id,
             spec.playerOneId,
             spec.playerTwoId,
             spec.competitionCategoryId,
-            spec.date)
+            spec.date
+        )
     }
 
     override fun getAllPlayerIdsRegisteredTo(competitionCategoryId: Int): List<Int> {
@@ -141,47 +157,89 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
     }
 
     override fun getAllRegisteredPlayersInCompetition(competitionId: Int): List<PlayerWithClubDTO> {
-        TODO("Not yet implemented")
+        val records = dslContext.select(
+            PLAYER.ID,
+            PLAYER.FIRST_NAME,
+            PLAYER.LAST_NAME,
+            PLAYER.DATE_OF_BIRTH,
+            CLUB.ID,
+            CLUB.NAME,
+            CLUB.ADDRESS
+        )
+            .from(COMPETITION)
+            .join(COMPETITION_CATEGORY).on(COMPETITION_CATEGORY.COMPETITION_ID.eq(COMPETITION.ID))
+            .join(COMPETITION_CATEGORY_REGISTRATION).on(
+                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(
+                    COMPETITION_CATEGORY.ID
+                )
+            )
+            .join(PLAYER_REGISTRATION)
+            .on(PLAYER_REGISTRATION.REGISTRATION_ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+            .join(PLAYER).on(PLAYER.ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
+            .join(CLUB).on(CLUB.ID.eq(PLAYER.CLUB_ID))
+            .where(COMPETITION.ID.eq(competitionId))
+            .fetch()
+
+        return records.map {
+            PlayerWithClubDTO(
+                it.getValue(PLAYER.ID),
+                it.getValue(PLAYER.FIRST_NAME),
+                it.getValue(PLAYER.LAST_NAME),
+                ClubDTO(
+                    it.getValue(CLUB.ID),
+                    it.getValue(CLUB.NAME),
+                    it.getValue(CLUB.ADDRESS)
+                ),
+                it.getValue(PLAYER.DATE_OF_BIRTH)
+            )
+        }
     }
 
     override fun getCategoriesAndPlayersInCompetition(competitionId: Int): List<Pair<CategoryDTO, PlayerWithClubDTO>> {
-        val records: List<Record> =
-            dslContext.select(COMPETITION_CATEGORY.ID, CATEGORY.CATEGORY_NAME, PLAYER.ID)
-                .from(Competition.COMPETITION)
-                .join(COMPETITION_CATEGORY).on(
-                    COMPETITION_CATEGORY.COMPETITION_ID.eq(
-                        Competition.COMPETITION.ID
-                    )
+        val records = dslContext.select(
+            PLAYER.ID,
+            PLAYER.FIRST_NAME,
+            PLAYER.LAST_NAME,
+            PLAYER.DATE_OF_BIRTH,
+            CLUB.ID,
+            CLUB.NAME,
+            CLUB.ADDRESS,
+            CATEGORY.ID,
+            CATEGORY.CATEGORY_NAME,
+            CATEGORY.CATEGORY_TYPE
+        )
+            .from(COMPETITION)
+            .join(COMPETITION_CATEGORY).on(COMPETITION_CATEGORY.COMPETITION_ID.eq(COMPETITION.ID))
+            .join(COMPETITION_CATEGORY_REGISTRATION).on(
+                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(
+                    COMPETITION_CATEGORY.ID
                 )
-                .join(CATEGORY).on(
-                    CATEGORY.ID.eq(
-                        COMPETITION_CATEGORY.CATEGORY
-                    )
-                )
-                .join(COMPETITION_CATEGORY_REGISTRATION).on(
-                    COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(
-                        COMPETITION_CATEGORY.ID
-                    )
-                )
-                .join(Tables.PLAYER_REGISTRATION)
-                .on(Tables.PLAYER_REGISTRATION.REGISTRATION_ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
-                .join(PLAYER).on(PLAYER.ID.eq(Tables.PLAYER_REGISTRATION.PLAYER_ID))
-                .where(Competition.COMPETITION.ID.eq(competitionId))
-                .fetch()
+            )
+            .join(CATEGORY).on(CATEGORY.ID.eq(COMPETITION_CATEGORY.CATEGORY))
+            .join(PLAYER_REGISTRATION)
+            .on(PLAYER_REGISTRATION.REGISTRATION_ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+            .join(PLAYER).on(PLAYER.ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
+            .join(CLUB).on(CLUB.ID.eq(PLAYER.CLUB_ID))
+            .where(COMPETITION.ID.eq(competitionId))
+            .fetch()
 
         return records.map {
             Pair(
                 CategoryDTO(
-                    1,
-                    "Herrar1",
-                    "SINGLES"
+                    it.getValue(CATEGORY.ID),
+                    it.getValue(CATEGORY.CATEGORY_NAME),
+                    it.getValue(CATEGORY.CATEGORY_TYPE)
                 ),
                 PlayerWithClubDTO(
-                    1,
-                    "firstname",
-                    "lastname",
-                    ClubDTO(1, "clubname", "Address"),
-                    LocalDate.now()
+                    it.getValue(PLAYER.ID),
+                    it.getValue(PLAYER.FIRST_NAME),
+                    it.getValue(PLAYER.LAST_NAME),
+                    ClubDTO(
+                        it.getValue(CLUB.ID),
+                        it.getValue(CLUB.NAME),
+                        it.getValue(CLUB.ADDRESS)
+                    ),
+                    it.getValue(PLAYER.DATE_OF_BIRTH)
                 )
             )
         }
@@ -206,7 +264,8 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             registrationOne.getValue(PLAYER_REGISTRATION.PLAYER_ID),
             registrationTwo.getValue(PLAYER_REGISTRATION.PLAYER_ID),
             registrationOne.getValue(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID),
-            registrationOne.getValue(REGISTRATION.REGISTRATION_DATE))
+            registrationOne.getValue(REGISTRATION.REGISTRATION_DATE)
+        )
     }
 
     override fun getRegistrationsIn(competitionCategoryId: Int): List<RegistrationDTO> {
@@ -220,10 +279,15 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
     }
 
     override fun getPlayersFrom(registrationId: Int): List<PlayerDTO> {
-        val records = dslContext.select().from(REGISTRATION).join(PLAYER_REGISTRATION).on(REGISTRATION.ID.eq(
-            PLAYER_REGISTRATION.REGISTRATION_ID)).join(PLAYER).on(PLAYER_REGISTRATION.PLAYER_ID.eq(PLAYER.ID)).where(
-            REGISTRATION.ID.eq(registrationId)).fetchInto(
-            PLAYER)
+        val records = dslContext.select().from(REGISTRATION).join(PLAYER_REGISTRATION).on(
+            REGISTRATION.ID.eq(
+                PLAYER_REGISTRATION.REGISTRATION_ID
+            )
+        ).join(PLAYER).on(PLAYER_REGISTRATION.PLAYER_ID.eq(PLAYER.ID)).where(
+            REGISTRATION.ID.eq(registrationId)
+        ).fetchInto(
+            PLAYER
+        )
 
         return records.map { PlayerDTO(it.id, it.firstName, it.lastName, it.clubId, it.dateOfBirth) }
     }
@@ -241,7 +305,8 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         val records = dslContext.select(
             REGISTRATION.ID,
             COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID,
-            sum(getRankField(competitionCategory.category)).over(partitionBy(REGISTRATION.ID)).`as`(rankFieldName))
+            sum(getRankField(competitionCategory.category)).over(partitionBy(REGISTRATION.ID)).`as`(rankFieldName)
+        )
             .distinctOn(REGISTRATION.ID)
             .from(REGISTRATION)
             .join(COMPETITION_CATEGORY_REGISTRATION)
@@ -272,14 +337,18 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
      * Will return one row as RegistrationId, RegistrationDate, PlayerId, CompetitionCategoryId
      */
     private fun getRegistration(playerId: Int, competitionCategoryId: Int): Record4<Int, LocalDate, Int, Int> {
-        return dslContext.select(REGISTRATION.ID, REGISTRATION.REGISTRATION_DATE, PLAYER_REGISTRATION.PLAYER_ID,
-            COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID)
+        return dslContext.select(
+            REGISTRATION.ID, REGISTRATION.REGISTRATION_DATE, PLAYER_REGISTRATION.PLAYER_ID,
+            COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID
+        )
             .from(REGISTRATION)
             .join(PLAYER_REGISTRATION).on(REGISTRATION.ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
             .join(COMPETITION_CATEGORY_REGISTRATION)
             .on(REGISTRATION.ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
-            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
-                .and(PLAYER_REGISTRATION.PLAYER_ID.eq(playerId)))
+            .where(
+                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
+                    .and(PLAYER_REGISTRATION.PLAYER_ID.eq(playerId))
+            )
             .fetchOne() ?: throw NotFoundException("Combination of $playerId and $competitionCategoryId not found.")
     }
 
@@ -309,8 +378,10 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         for (registration in registrationSeeds) {
             dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
                 .set(COMPETITION_CATEGORY_REGISTRATION.SEED, registration.seed)
-                .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(registration.competitionCategoryId)
-                    .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(registration.id)))
+                .where(
+                    COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(registration.competitionCategoryId)
+                        .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(registration.id))
+                )
                 .execute()
         }
     }
