@@ -2,10 +2,8 @@ package com.graphite.competitionplanner.competition.service
 
 import com.graphite.competitionplanner.competition.domain.CreateCompetition
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
-import com.graphite.competitionplanner.competition.domain.UpdateCompetition
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
-import com.graphite.competitionplanner.competition.interfaces.CompetitionUpdateSpec
 import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
 import com.graphite.competitionplanner.schedule.api.AvailableTablesWholeCompetitionSpec
 import com.graphite.competitionplanner.schedule.service.ScheduleService
@@ -16,8 +14,7 @@ import java.time.LocalDate
 class CompetitionService(
     val scheduleService: ScheduleService,
     val findCompetitions: FindCompetitions,
-    val createCompetition: CreateCompetition,
-    val updateCompetition: UpdateCompetition
+    val createCompetition: CreateCompetition
 ) {
 
     fun addCompetition(competitionSpec: CompetitionSpec): CompetitionDTO {

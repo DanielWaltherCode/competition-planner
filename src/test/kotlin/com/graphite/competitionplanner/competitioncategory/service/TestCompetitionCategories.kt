@@ -1,7 +1,6 @@
 package com.graphite.competitionplanner.competitioncategory.service
 
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
-import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.player.service.PlayerService
@@ -17,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException
 
 @SpringBootTest
 class TestCompetitionCategories(
-    @Autowired val competitionService: CompetitionService,
     @Autowired val util: Util,
     @Autowired val playerService: PlayerService,
     @Autowired val registrationService: RegistrationService,

@@ -2,7 +2,6 @@ package com.graphite.competitionplanner.competition.service
 
 import com.graphite.competitionplanner.competition.domain.CreateCompetition
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
-import com.graphite.competitionplanner.competition.domain.UpdateCompetition
 import com.graphite.competitionplanner.schedule.api.AvailableTablesWholeCompetitionSpec
 import com.graphite.competitionplanner.schedule.service.ScheduleService
 import com.graphite.competitionplanner.util.DataGenerator
@@ -14,15 +13,13 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest
 class TestCompetitionsService {
 
-    private final val mockedCreateCompetition = mock(CreateCompetition::class.java)
-    private final val mockedUpdateCompetition = mock(UpdateCompetition::class.java)
-    private final val mockedFindCompetitions = mock(FindCompetitions::class.java)
-    private final val mockedSchedulingService = mock(ScheduleService::class.java)
-    private final val service = CompetitionService(
+    private val mockedCreateCompetition = mock(CreateCompetition::class.java)
+    private val mockedFindCompetitions = mock(FindCompetitions::class.java)
+    private val mockedSchedulingService = mock(ScheduleService::class.java)
+    private val service = CompetitionService(
         mockedSchedulingService,
         mockedFindCompetitions,
-        mockedCreateCompetition,
-        mockedUpdateCompetition
+        mockedCreateCompetition
     )
 
     val dataGenerator = DataGenerator()

@@ -154,21 +154,6 @@ class EventListener(
     }
 
     fun setUpBYEPlayer() {
-        // Needs club, player, competition, competition category, registration
-        // Should be ID 0 in all of them
-        categoryRepository.addCategoryWithId(0, "BYE", "BYE")
-        competitionRepository.addCompetitionWithId(
-            0,
-            CompetitionSpec(
-                location = LocationSpec("BYE"),
-                name = "BYE",
-                welcomeText = "BYE",
-                organizingClubId = util.getClubIdOrDefault("Övriga"),
-                startDate = LocalDate.now(),
-                endDate = LocalDate.now().plusYears(10)
-            )
-        )
-        competitionCategoryService.addCompetitionCategory(0, CategorySpec(0, "BYE", "BYE"))
         playerRepository.addPlayerWithId(
             0,
             PlayerSpec(
