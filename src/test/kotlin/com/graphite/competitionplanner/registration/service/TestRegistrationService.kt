@@ -1,14 +1,12 @@
 package com.graphite.competitionplanner.registration.service
 
+import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.domain.FindPlayer
 import com.graphite.competitionplanner.player.service.PlayerService
-import com.graphite.competitionplanner.registration.domain.GetPlayersFromRegistration
-import com.graphite.competitionplanner.registration.domain.RegisterDoubleToCompetition
-import com.graphite.competitionplanner.registration.domain.RegisterPlayerToCompetition
-import com.graphite.competitionplanner.registration.domain.Unregister
+import com.graphite.competitionplanner.registration.domain.*
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
@@ -30,6 +28,8 @@ class TestRegistrationService {
     private val mockedGetPlayersFromRegistration = mock(GetPlayersFromRegistration::class.java)
     private val mockedFindPlayer = mock(FindPlayer::class.java)
     private val mockedMatchService = mock(MatchService::class.java)
+    private val mockedSearchRegistrations = mock(SearchRegistrations::class.java)
+    private val mockedFindCompetitions = mock(FindCompetitions::class.java)
     private val service = RegistrationService(
         mockedRegistrationRepository,
         mockedCompetitionService,
@@ -40,7 +40,9 @@ class TestRegistrationService {
         mockedUnregister,
         mockedGetPlayersFromRegistration,
         mockedFindPlayer,
-        mockedMatchService
+        mockedMatchService,
+        mockedSearchRegistrations,
+        mockedFindCompetitions
     )
 
     private val dataGenerator = DataGenerator()

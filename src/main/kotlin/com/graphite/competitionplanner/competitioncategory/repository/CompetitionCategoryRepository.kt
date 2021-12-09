@@ -60,39 +60,6 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
 
     }
 
-    fun getCategoriesAndPlayers(competitionId: Int): List<CategoriesAndPlayers> {
-        val records: List<Record> =
-            dslContext.select(COMPETITION_CATEGORY.ID, CATEGORY.CATEGORY_NAME, PLAYER.ID)
-                .from(Competition.COMPETITION)
-                .join(COMPETITION_CATEGORY).on(
-                    COMPETITION_CATEGORY.COMPETITION_ID.eq(
-                        Competition.COMPETITION.ID
-                    )
-                )
-                .join(CATEGORY).on(
-                    CATEGORY.ID.eq(
-                        COMPETITION_CATEGORY.CATEGORY
-                    )
-                )
-                .join(COMPETITION_CATEGORY_REGISTRATION).on(
-                    COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(
-                        COMPETITION_CATEGORY.ID
-                    )
-                )
-                .join(PLAYER_REGISTRATION)
-                .on(PLAYER_REGISTRATION.REGISTRATION_ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
-                .join(PLAYER).on(PLAYER.ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
-                .where(Competition.COMPETITION.ID.eq(competitionId))
-                .fetch()
-
-        return records.map {
-            CategoriesAndPlayers(
-                it.getValue(COMPETITION_CATEGORY.ID),
-                it.getValue(CATEGORY.CATEGORY_NAME), it.getValue(PLAYER.ID)
-            )
-        }
-
-    }
     // Returns registrations ids for the players registered in a given competition category
     fun getRegistrationsInCategory(categoryId: Int): List<Int> {
         return dslContext
@@ -345,12 +312,6 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         return record
     }
 }
-
-data class CategoriesAndPlayers(
-    val categoryId: Int,
-    val categoryName: String,
-    val playerId: Int
-)
 
 data class CompetitionAndCategories(
     val competitionId: Int,

@@ -24,8 +24,8 @@
               <p class="mx-2 d-inline" @click="makeSortingChoice('club')" :class="sortingChoice === 'club' ? 'active' : ''">
                 {{ $t("player.club") }}
               </p>
-              <p class="d-inline" @click="makeSortingChoice('categories')"
-                 :class="sortingChoice === 'categories' ? 'active' : ''">
+              <p class="d-inline" @click="makeSortingChoice('category')"
+                 :class="sortingChoice === 'category' ? 'active' : ''">
                 {{ $t("player.categories") }}
               </p>
             </div>

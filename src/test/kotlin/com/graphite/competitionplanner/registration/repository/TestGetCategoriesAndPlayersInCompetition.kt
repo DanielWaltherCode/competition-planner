@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.registration.repository
 
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.repository.ClubRepository
@@ -13,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TestGetRegistrationRankForDoubles(
+class TestGetCategoriesAndPlayersInCompetition(
     @Autowired clubRepository: ClubRepository,
     @Autowired playerRepository: PlayerRepository,
     @Autowired competitionRepository: CompetitionRepository,
@@ -39,25 +40,26 @@ class TestGetRegistrationRankForDoubles(
     }
 
     @Test
-    fun shouldGetCorrectRanksForDoubles() {
+    fun getsAllCategoriesAndPlayers() {
         // Setup
-        val reg1 = setupDoubleRegistration()
-        val reg2 = setupDoubleRegistration()
-
-        playerRepository.addPlayerRanking(reg1.playerOneId, 31, CategoryType.DOUBLES.name)
-        playerRepository.addPlayerRanking(reg1.playerTwoId, 22, CategoryType.DOUBLES.name)
-
-        playerRepository.addPlayerRanking(reg2.playerOneId, 15, CategoryType.DOUBLES.name)
-        playerRepository.addPlayerRanking(reg2.playerTwoId, 12, CategoryType.DOUBLES.name)
+        val reg1 = setupSingleRegistration()
+        val reg2 = setupSingleRegistration()
+        val reg3 = setupDoubleRegistration()
 
         // Act
-        val registrationRanks = registrationRepository.getRegistrationRank(competitionCategory)
+        val categoriesAndPlayers = registrationRepository.getCategoriesAndPlayersInCompetition(competition.id)
 
         // Assert
-        Assertions.assertTrue(registrationRanks.size == 2, "We only registered two doubles")
-        val actualReg1 = registrationRanks.first { it.registrationId == reg1.id }
-        Assertions.assertEquals(31 + 22, actualReg1.rank)
-        val actualReg2 = registrationRanks.first { it.registrationId == reg2.id }
-        Assertions.assertEquals(15 + 12, actualReg2.rank)
+        for ((actualCategory, p) in categoriesAndPlayers) {
+            Assertions.assertEquals(category, actualCategory)
+        }
+
+        val actualPlayerIds = categoriesAndPlayers.map { (_, player) -> player.id }.sorted()
+        val expectedPlayerIds = listOf(reg1.playerId, reg2.playerId, reg3.playerOneId, reg3.playerTwoId).sorted()
+        Assertions.assertEquals(
+            expectedPlayerIds,
+            actualPlayerIds,
+            "There were some missing player IDs of registered players."
+        )
     }
 }
