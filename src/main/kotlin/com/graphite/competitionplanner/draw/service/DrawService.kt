@@ -1,6 +1,5 @@
 package com.graphite.competitionplanner.draw.service
 
-import com.graphite.competitionplanner.category.service.CategoryService
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsSpec
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
@@ -25,7 +24,6 @@ import java.time.LocalDateTime
 
 @Service
 class DrawService(
-    val categoryService: CategoryService,
     val registrationService: RegistrationService,
     val registrationRepository: RegistrationRepository,
     val matchRepository: MatchRepository,
@@ -99,7 +97,7 @@ class DrawService(
         }
 
         val sortedRankings = rankings.toList()
-            .sortedBy { (key, value) -> -value }
+            .sortedBy { (_, value) -> -value }
             .toMap()
 
         val numberOfSeeds = drawUtil.getNumberOfSeeds(categoryMetadata.playersPerGroup, sortedRankings.size)
