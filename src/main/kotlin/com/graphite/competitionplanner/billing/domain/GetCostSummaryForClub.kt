@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.billing.domain
 
 import com.graphite.competitionplanner.billing.interfaces.CostSummaryDTO
 import com.graphite.competitionplanner.billing.interfaces.CostSummaryListDTO
-import com.graphite.competitionplanner.club.service.ClubService
+import com.graphite.competitionplanner.club.domain.FindClub
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.competitioncategory.repository.RegistrationsInCompetition
@@ -14,7 +14,7 @@ class GetCostSummaryForClub(
     val registrationRepository: RegistrationRepository,
     val competitionCategoryRepository: CompetitionCategoryRepository,
     val getCompetitionCategory: GetCompetitionCategory,
-    val clubService: ClubService
+    val findClub: FindClub
 ) {
 
     fun execute(competitionId: Int, clubId: Int): CostSummaryListDTO {
@@ -58,6 +58,6 @@ class GetCostSummaryForClub(
                    totalPrice = start.value * pricePerPlayer))
         }
         val totalCostForClub = costSummaryList.map{ it.totalPrice }.sum()
-        return CostSummaryListDTO(clubService.findClub.byId(clubId), costSummaryList, totalCostForClub)
+        return CostSummaryListDTO(findClub.byId(clubId), costSummaryList, totalCostForClub)
     }
 }

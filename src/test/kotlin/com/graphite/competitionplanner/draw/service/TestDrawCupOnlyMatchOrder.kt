@@ -2,8 +2,8 @@ package com.graphite.competitionplanner.draw.service
 
 import com.graphite.competitionplanner.category.api.CategoryApi
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
+import com.graphite.competitionplanner.club.domain.CreateClub
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
-import com.graphite.competitionplanner.club.service.ClubService
 import com.graphite.competitionplanner.competition.api.CompetitionApi
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
@@ -39,7 +39,7 @@ class TestDrawCupOnlyMatchOrder(
     @Autowired val competitionApi: CompetitionApi,
     @Autowired val playerApi: PlayerApi,
     @Autowired val categoryApi: CategoryApi,
-    @Autowired val clubService: ClubService
+    @Autowired val createClub: CreateClub
 ) {
     lateinit var club: ClubDTO
     lateinit var competition: CompetitionDTO
@@ -49,7 +49,7 @@ class TestDrawCupOnlyMatchOrder(
 
     @BeforeEach
     fun setUp() {
-        club = clubService.addClub(dataGenerator.newClubSpec())
+        club = createClub.execute(dataGenerator.newClubSpec())
         competition = setupCompetitionFor(club.id)
         competitionCategory = addCompetitionCategoryTo(competition)
         setModeToCupOnlyFor(competitionCategory.id)
