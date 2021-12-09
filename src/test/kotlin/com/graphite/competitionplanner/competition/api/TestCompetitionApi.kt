@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.competition.api
 
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
+import com.graphite.competitionplanner.competition.domain.GetDaysOfCompetition
 import com.graphite.competitionplanner.competition.domain.UpdateCompetition
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.entity.Round
@@ -18,7 +19,8 @@ class TestCompetitionApi {
     private val service = mock(CompetitionService::class.java)
     private val updateCompetition = mock(UpdateCompetition::class.java)
     private val findCompetition = mock(FindCompetitions::class.java)
-    private val api = CompetitionApi(service, updateCompetition, findCompetition)
+    private val getDaysOfCompetition = mock(GetDaysOfCompetition::class.java)
+    private val api = CompetitionApi(service, updateCompetition, findCompetition, getDaysOfCompetition)
     val dataGenerator = DataGenerator()
 
     @Test
@@ -80,13 +82,17 @@ class TestCompetitionApi {
     }
 
     @Test
-    fun shouldCallServiceWhenGettingDates() {
+    fun shouldCallDomainWhenGettingDates() {
+        // Setup
+        val competition = dataGenerator.newCompetitionDTO(id = 10)
+        `when`(findCompetition.byId(competition.id)).thenReturn(competition)
+
         // Act
-        api.getDaysInCompetition(10)
+        api.getDaysInCompetition(competition.id)
 
         // Assert
-        verify(service, times(1)).getDaysOfCompetition(10)
-        verify(service, times(1)).getDaysOfCompetition(anyInt())
+        verify(getDaysOfCompetition, times(1)).execute(competition)
+        verify(getDaysOfCompetition, times(1)).execute(TestHelper.MockitoHelper.anyObject())
     }
 
     @Test

@@ -7,7 +7,6 @@ import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
 import com.graphite.competitionplanner.schedule.api.AvailableTablesWholeCompetitionSpec
 import com.graphite.competitionplanner.schedule.service.ScheduleService
 import org.springframework.stereotype.Service
-import java.time.LocalDate
 
 @Service
 class CompetitionService(
@@ -28,18 +27,5 @@ class CompetitionService(
         )
 
         return competition
-    }
-
-    fun getDaysOfCompetition(competitionId: Int): List<LocalDate> {
-        val competition = findCompetitions.byId(competitionId)
-        val dates = mutableListOf<LocalDate>()
-
-        var currentDate = competition.startDate
-
-        while (currentDate <= competition.endDate) {
-            dates.add(LocalDate.from(currentDate))
-            currentDate = currentDate.plusDays(1)
-        }
-        return dates
     }
 }

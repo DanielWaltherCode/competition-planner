@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.competition.api
 
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
+import com.graphite.competitionplanner.competition.domain.GetDaysOfCompetition
 import com.graphite.competitionplanner.competition.domain.UpdateCompetition
 import com.graphite.competitionplanner.competition.interfaces.*
 import com.graphite.competitionplanner.competition.service.CompetitionService
@@ -14,7 +15,8 @@ import java.time.LocalDate
 class CompetitionApi(
     val competitionService: CompetitionService,
     val updateCompetition: UpdateCompetition,
-    val findCompetitions: FindCompetitions
+    val findCompetitions: FindCompetitions,
+    val getDaysOfCompetition: GetDaysOfCompetition
 ) {
 
     @PostMapping
@@ -45,7 +47,8 @@ class CompetitionApi(
 
     @GetMapping("/{competitionId}/days")
     fun getDaysInCompetition(@PathVariable competitionId: Int): CompetitionDays {
-        val dates = competitionService.getDaysOfCompetition(competitionId)
+        val competition = findCompetitions.byId(competitionId)
+        val dates = getDaysOfCompetition.execute(competition)
         return CompetitionDays(dates)
     }
 
