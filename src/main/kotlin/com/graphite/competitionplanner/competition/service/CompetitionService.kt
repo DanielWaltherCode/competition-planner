@@ -46,10 +46,6 @@ class CompetitionService(
         return findCompetitions.thatStartOrEndWithin(start, end)
     }
 
-    fun getByClubId(clubId: Int): List<CompetitionDTO> {
-        return findCompetitions.thatBelongsTo(clubId)
-    }
-
     fun getDaysOfCompetition(competitionId: Int): List<LocalDate> {
         val competition = findCompetitions.byId(competitionId)
         val dates = mutableListOf<LocalDate>()

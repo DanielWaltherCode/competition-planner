@@ -6,6 +6,7 @@ import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.domain.CreateClub
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.club.repository.ClubRepository
+import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
 import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
@@ -50,7 +51,8 @@ class EventListener(
     val registrationService: RegistrationService,
     val userService: UserService,
     val matchRepository: MatchRepository,
-    val createClub: CreateClub
+    val createClub: CreateClub,
+    val findCompetitions: FindCompetitions
 ) {
 
     @EventListener
@@ -403,7 +405,7 @@ class EventListener(
 
     fun competitionCategorySetup() {
         val lugiId = util.getClubIdOrDefault("Lugi")
-        val lugiCompetitions = competitionService.getByClubId(lugiId)
+        val lugiCompetitions = findCompetitions.thatBelongsTo(lugiId)
         val lugiCompetitionId = lugiCompetitions[0].id
         val categories = categoryRepository.getAvailableCategories()
 
@@ -437,7 +439,7 @@ class EventListener(
         )
 
         val umeaId = util.getClubIdOrDefault("Umeå IK")
-        val umeaCompetitions = competitionService.getByClubId(umeaId)
+        val umeaCompetitions = findCompetitions.thatBelongsTo(umeaId)
         val umeaCompetitionId = umeaCompetitions[0].id
         competitionCategoryService.addCompetitionCategory(
             umeaCompetitionId,
