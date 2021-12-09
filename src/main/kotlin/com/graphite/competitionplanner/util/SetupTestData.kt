@@ -6,10 +6,11 @@ import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.domain.CreateClub
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.club.repository.ClubRepository
+import com.graphite.competitionplanner.competition.domain.CreateCompetition
+import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
 import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
-import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
@@ -42,7 +43,7 @@ class EventListener(
     val categoryRepository: CategoryRepository,
     val competitionCategoryRepository: CompetitionCategoryRepository,
     val registrationRepository: RegistrationRepository,
-    val competitionService: CompetitionService,
+    val createCompetition: CreateCompetition,
     val competitionCategoryService: CompetitionCategoryService,
     val competitionDrawRepository: CompetitionDrawRepository,
     val userRepository: UserRepository,
@@ -50,7 +51,8 @@ class EventListener(
     val registrationService: RegistrationService,
     val userService: UserService,
     val matchRepository: MatchRepository,
-    val createClub: CreateClub
+    val createClub: CreateClub,
+    val findCompetitions: FindCompetitions
 ) {
 
     @EventListener
@@ -152,21 +154,6 @@ class EventListener(
     }
 
     fun setUpBYEPlayer() {
-        // Needs club, player, competition, competition category, registration
-        // Should be ID 0 in all of them
-        categoryRepository.addCategoryWithId(0, "BYE", "BYE")
-        competitionRepository.addCompetitionWithId(
-            0,
-            CompetitionSpec(
-                location = LocationSpec("BYE"),
-                name = "BYE",
-                welcomeText = "BYE",
-                organizingClubId = util.getClubIdOrDefault("Övriga"),
-                startDate = LocalDate.now(),
-                endDate = LocalDate.now().plusYears(10)
-            )
-        )
-        competitionCategoryService.addCompetitionCategory(0, CategorySpec(0, "BYE", "BYE"))
         playerRepository.addPlayerWithId(
             0,
             PlayerSpec(
@@ -369,7 +356,7 @@ class EventListener(
     }
 
     fun competitionSetup() {
-        competitionService.addCompetition(
+        createCompetition.execute(
             CompetitionSpec(
                 location = LocationSpec("Lund"),
                 name = "Eurofinans 2021",
@@ -379,7 +366,7 @@ class EventListener(
                 endDate = LocalDate.now().plusDays(3)
             )
         )
-        competitionService.addCompetition(
+        createCompetition.execute(
             CompetitionSpec(
                 location = LocationSpec("Umeå"),
                 name = "Bollstadion Cup",
@@ -389,7 +376,7 @@ class EventListener(
                 endDate = LocalDate.now().plusDays(2)
             )
         )
-        competitionService.addCompetition(
+        createCompetition.execute(
             CompetitionSpec(
                 location = LocationSpec("Svedala"),
                 name = "Svedala Open",
@@ -403,7 +390,7 @@ class EventListener(
 
     fun competitionCategorySetup() {
         val lugiId = util.getClubIdOrDefault("Lugi")
-        val lugiCompetitions = competitionService.getByClubId(lugiId)
+        val lugiCompetitions = findCompetitions.thatBelongsTo(lugiId)
         val lugiCompetitionId = lugiCompetitions[0].id
         val categories = categoryRepository.getAvailableCategories()
 
@@ -437,7 +424,7 @@ class EventListener(
         )
 
         val umeaId = util.getClubIdOrDefault("Umeå IK")
-        val umeaCompetitions = competitionService.getByClubId(umeaId)
+        val umeaCompetitions = findCompetitions.thatBelongsTo(umeaId)
         val umeaCompetitionId = umeaCompetitions[0].id
         competitionCategoryService.addCompetitionCategory(
             umeaCompetitionId,

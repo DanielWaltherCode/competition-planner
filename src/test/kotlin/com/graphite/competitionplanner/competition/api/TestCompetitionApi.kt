@@ -1,6 +1,9 @@
 package com.graphite.competitionplanner.competition.api
 
-import com.graphite.competitionplanner.competition.service.CompetitionService
+import com.graphite.competitionplanner.competition.domain.CreateCompetition
+import com.graphite.competitionplanner.competition.domain.FindCompetitions
+import com.graphite.competitionplanner.competition.domain.GetDaysOfCompetition
+import com.graphite.competitionplanner.competition.domain.UpdateCompetition
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
@@ -13,8 +16,11 @@ import java.time.LocalDate
 @SpringBootTest
 class TestCompetitionApi {
 
-    private final val service = mock(CompetitionService::class.java)
-    private final val api = CompetitionApi(service)
+    private val createCompetition = mock(CreateCompetition::class.java)
+    private val updateCompetition = mock(UpdateCompetition::class.java)
+    private val findCompetition = mock(FindCompetitions::class.java)
+    private val getDaysOfCompetition = mock(GetDaysOfCompetition::class.java)
+    private val api = CompetitionApi(createCompetition, updateCompetition, findCompetition, getDaysOfCompetition)
     val dataGenerator = DataGenerator()
 
     @Test
@@ -26,12 +32,12 @@ class TestCompetitionApi {
         api.addCompetition(spec)
 
         // Assert
-        verify(service, times(1)).addCompetition(spec)
-        verify(service, times(1)).addCompetition(TestHelper.MockitoHelper.anyObject())
+        verify(createCompetition, times(1)).execute(spec)
+        verify(createCompetition, times(1)).execute(TestHelper.MockitoHelper.anyObject())
     }
 
     @Test
-    fun shouldCallServiceWhenUpdatingCompetition() {
+    fun shouldCallDomainWhenUpdatingCompetition() {
         // Setup
         val updateSpec = dataGenerator.newCompetitionUpdateSpec()
 
@@ -39,21 +45,31 @@ class TestCompetitionApi {
         api.updateCompetition(1, updateSpec)
 
         // Assert
-        verify(service, times(1)).updateCompetition(1, updateSpec)
-        verify(service, times(1)).updateCompetition(anyInt(), TestHelper.MockitoHelper.anyObject())
+        verify(updateCompetition, times(1)).execute(1, updateSpec)
+        verify(updateCompetition, times(1)).execute(anyInt(), TestHelper.MockitoHelper.anyObject())
     }
 
     @Test
-    fun shouldCallServiceWithNullArguments() {
+    fun shouldCallDomainWhenFindingCompetition() {
+        // Act
+        api.getCompetition(1)
+
+        // Assert
+        verify(findCompetition, times(1)).byId(1)
+        verify(findCompetition, times(1)).byId(anyInt())
+    }
+
+    @Test
+    fun shouldCallWithNullArguments() {
         // Act
         api.getAll(null, null)
 
         // Assert
-        verify(service, times(1)).getByDate(null, null)
+        verify(findCompetition, times(1)).thatStartOrEndWithin(null, null)
     }
 
     @Test
-    fun shouldCallServiceWithSpecifiedArguments() {
+    fun shouldCallWithSpecifiedArguments() {
         // Setup
         val start = LocalDate.now()
         val end = start.plusMonths(1)
@@ -62,17 +78,21 @@ class TestCompetitionApi {
         api.getAll(start, end)
 
         // Assert
-        verify(service, times(1)).getByDate(start, end)
+        verify(findCompetition, times(1)).thatStartOrEndWithin(start, end)
     }
 
     @Test
-    fun shouldCallServiceWhenGettingDates() {
+    fun shouldCallDomainWhenGettingDates() {
+        // Setup
+        val competition = dataGenerator.newCompetitionDTO(id = 10)
+        `when`(findCompetition.byId(competition.id)).thenReturn(competition)
+
         // Act
-        api.getDaysInCompetition(10)
+        api.getDaysInCompetition(competition.id)
 
         // Assert
-        verify(service, times(1)).getDaysOfCompetition(10)
-        verify(service, times(1)).getDaysOfCompetition(anyInt())
+        verify(getDaysOfCompetition, times(1)).execute(competition)
+        verify(getDaysOfCompetition, times(1)).execute(TestHelper.MockitoHelper.anyObject())
     }
 
     @Test

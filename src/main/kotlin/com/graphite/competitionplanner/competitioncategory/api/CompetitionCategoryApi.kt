@@ -1,7 +1,6 @@
 package com.graphite.competitionplanner.competitioncategory.api
 
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
-import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import org.springframework.web.bind.annotation.*
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/competition/{competitionId}/category")
 class CompetitionCategoryApi(
-    val competitionService: CompetitionService,
     val competitionCategoryService: CompetitionCategoryService
 ) {
 

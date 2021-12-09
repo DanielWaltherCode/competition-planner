@@ -1,6 +1,5 @@
 package com.graphite.competitionplanner.competition.domain
 
-import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
 import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
@@ -14,18 +13,22 @@ class FindCompetitions(
 ) {
 
     fun thatBelongsTo(clubId: Int): List<CompetitionDTO> {
-        return repository.findCompetitionsThatBelongsTo(clubId).filter { it.name != "BYE" }
+        return repository.findCompetitionsThatBelongsTo(clubId)
     }
 
-    fun thatStartOrEndWithin(start: LocalDate, end: LocalDate): List<CompetitionWithClubDTO> {
-        return repository.findCompetitions(start, end).filter { it.name != "BYE" }
+    fun thatStartOrEndWithin(weekStartDate: LocalDate?, weekEndDate: LocalDate?): List<CompetitionWithClubDTO> {
+        var start = LocalDate.now()
+        if (weekStartDate != null) {
+            start = weekStartDate
+        }
+        var end = LocalDate.now().plusMonths(1)
+        if (weekEndDate != null) {
+            end = weekEndDate
+        }
+        return repository.findCompetitions(start, end)
     }
 
     fun byId(competitionId: Int): CompetitionDTO {
-        val competition = repository.findById(competitionId)
-        if (competition.name == "BYE") {
-            throw NotFoundException("Competition with id $competitionId was not found.")
-        }
-        return competition
+        return repository.findById(competitionId)
     }
 }

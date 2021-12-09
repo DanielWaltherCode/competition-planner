@@ -1,7 +1,10 @@
 package com.graphite.competitionplanner.competition.api
 
+import com.graphite.competitionplanner.competition.domain.CreateCompetition
+import com.graphite.competitionplanner.competition.domain.FindCompetitions
+import com.graphite.competitionplanner.competition.domain.GetDaysOfCompetition
+import com.graphite.competitionplanner.competition.domain.UpdateCompetition
 import com.graphite.competitionplanner.competition.interfaces.*
-import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
@@ -10,12 +13,15 @@ import java.time.LocalDate
 @RestController
 @RequestMapping("/competition")
 class CompetitionApi(
-    val competitionService: CompetitionService
-    ) {
+    val createCompetition: CreateCompetition,
+    val updateCompetition: UpdateCompetition,
+    val findCompetitions: FindCompetitions,
+    val getDaysOfCompetition: GetDaysOfCompetition
+) {
 
     @PostMapping
     fun addCompetition(@RequestBody competitionSpec: CompetitionSpec): CompetitionDTO {
-        return competitionService.addCompetition(competitionSpec)
+        return createCompetition.execute(competitionSpec)
     }
 
     @PutMapping("/{competitionId}")
@@ -23,12 +29,12 @@ class CompetitionApi(
         @PathVariable competitionId: Int,
         @RequestBody competitionSpec: CompetitionUpdateSpec
     ): CompetitionDTO {
-        return competitionService.updateCompetition(competitionId, competitionSpec)
+        return updateCompetition.execute(competitionId, competitionSpec)
     }
 
     @GetMapping("/{competitionId}")
     fun getCompetition(@PathVariable competitionId: Int): CompetitionDTO {
-        return competitionService.getById(competitionId)
+        return findCompetitions.byId(competitionId)
     }
 
     @GetMapping
@@ -36,12 +42,13 @@ class CompetitionApi(
         @RequestParam(required = false) weekStartDate: LocalDate?,
         @RequestParam(required = false) weekEndDate: LocalDate?
     ): List<CompetitionWithClubDTO> {
-        return competitionService.getByDate(weekStartDate, weekEndDate)
+        return findCompetitions.thatStartOrEndWithin(weekStartDate, weekEndDate)
     }
 
     @GetMapping("/{competitionId}/days")
     fun getDaysInCompetition(@PathVariable competitionId: Int): CompetitionDays {
-        val dates = competitionService.getDaysOfCompetition(competitionId)
+        val competition = findCompetitions.byId(competitionId)
+        val dates = getDaysOfCompetition.execute(competition)
         return CompetitionDays(dates)
     }
 

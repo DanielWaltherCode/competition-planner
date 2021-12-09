@@ -1,7 +1,8 @@
 package com.graphite.competitionplanner.schedule.service
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.graphite.competitionplanner.competition.service.CompetitionService
+import com.graphite.competitionplanner.competition.domain.FindCompetitions
+import com.graphite.competitionplanner.competition.domain.GetDaysOfCompetition
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.schedule.api.*
@@ -11,7 +12,6 @@ import com.graphite.competitionplanner.tables.records.ScheduleCategoryRecord
 import com.graphite.competitionplanner.tables.records.ScheduleDailyTimesRecord
 import com.graphite.competitionplanner.tables.records.ScheduleMetadataRecord
 import org.jooq.exception.NoDataFoundException
-import org.springframework.context.annotation.Lazy
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
@@ -23,8 +23,8 @@ import java.time.temporal.ChronoUnit
 class ScheduleService(
     val scheduleRepository: ScheduleRepository,
     val competitionCategoryService: CompetitionCategoryService,
-    // Lazy needed because otherwise there is a circular dependency
-    @Lazy val competitionService: CompetitionService
+    val findCompetitions: FindCompetitions,
+    val getDaysOfCompetition: GetDaysOfCompetition
 ) {
 
     // Schedule metadata methods
@@ -98,7 +98,8 @@ class ScheduleService(
      * Then the number can no longer be changed in the simple table.
      */
     fun getTablesAvailableForMainTable(competitionId: Int): List<AvailableTablesDayDTO> {
-        val competitionDays = competitionService.getDaysOfCompetition(competitionId)
+        val competition = findCompetitions.byId(competitionId)
+        val competitionDays = getDaysOfCompetition.execute(competition)
         val availableTablesDayList = mutableListOf<AvailableTablesDayDTO>()
         for (day in competitionDays) {
             val availableTablesDTOs = getTablesAvailableByDay(competitionId, day)
@@ -121,7 +122,8 @@ class ScheduleService(
         competitionId: Int,
         availableTablesWholeCompetitionSpec: AvailableTablesWholeCompetitionSpec
     ) {
-        val competitionDays = competitionService.getDaysOfCompetition(competitionId)
+        val competition = findCompetitions.byId(competitionId)
+        val competitionDays = getDaysOfCompetition.execute(competition)
         for (day in competitionDays) {
             registerTablesAvailableFullDay(
                 competitionId, AvailableTablesFullDaySpec(
@@ -135,7 +137,8 @@ class ScheduleService(
         competitionId: Int,
         availableTablesWholeCompetitionSpec: AvailableTablesWholeCompetitionSpec
     ) {
-        val competitionDays = competitionService.getDaysOfCompetition(competitionId)
+        val competition = findCompetitions.byId(competitionId)
+        val competitionDays = getDaysOfCompetition.execute(competition)
         for (day in competitionDays) {
             updateTablesAvailableFullDay(
                 competitionId, AvailableTablesFullDaySpec(
@@ -246,7 +249,7 @@ class ScheduleService(
     fun addDailyStartAndEndForWholeCompetition(
         competitionId: Int
     ) {
-        val competition = competitionService.getById(competitionId)
+        val competition = findCompetitions.byId(competitionId)
 
         if (ChronoUnit.DAYS.between(competition.startDate, competition.endDate) < 30) {
             var currentDate = competition.startDate
@@ -281,12 +284,14 @@ class ScheduleService(
     fun getDailyStartAndEndForWholeCompetition(competitionId: Int): DailyStartAndEndWithOptionsDTO {
         val records = scheduleRepository.getDailyStartAndEndForCompetition(competitionId)
         val startEndDTOList = records.map { dailyStartEndRecordToDTO(it) }
-        return DailyStartAndEndWithOptionsDTO(startEndDTOList, competitionService.getDaysOfCompetition(competitionId))
+        val competition = findCompetitions.byId(competitionId)
+        return DailyStartAndEndWithOptionsDTO(startEndDTOList, getDaysOfCompetition.execute(competition))
     }
 
     private fun getStartTimeFormOptions(competitionId: Int): StartTimeFormOptions {
+        val competition = findCompetitions.byId(competitionId)
         return StartTimeFormOptions(
-            competitionService.getDaysOfCompetition(competitionId),
+            getDaysOfCompetition.execute(competition),
             StartInterval.values().asList()
         )
     }

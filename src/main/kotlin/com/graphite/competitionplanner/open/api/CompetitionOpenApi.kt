@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.open.api
 
+import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
-import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
@@ -22,12 +22,12 @@ import java.time.LocalDate
 @RestController
 @RequestMapping("/open/competition")
 class CompetitionOpenApi(
-    val competitionService: CompetitionService,
     val drawService: DrawService,
     val registrationService: RegistrationService,
     val competitionCategoryService: CompetitionCategoryService,
     val matchService: MatchService,
-    val playerService: PlayerService
+    val playerService: PlayerService,
+    val findCompetitions: FindCompetitions
 ) {
 
     @GetMapping
@@ -35,12 +35,12 @@ class CompetitionOpenApi(
         @RequestParam(required = false) weekStartDate: LocalDate?,
         @RequestParam(required = false) weekEndDate: LocalDate?
     ): List<CompetitionWithClubDTO> {
-        return competitionService.getByDate(weekStartDate, weekEndDate)
+        return findCompetitions.thatStartOrEndWithin(weekStartDate, weekEndDate)
     }
 
     @GetMapping("/{competitionId}")
     fun getCompetition(@PathVariable competitionId: Int): CompetitionDTO {
-        return competitionService.getById(competitionId)
+        return findCompetitions.byId(competitionId)
     }
 
     @GetMapping("/{competitionId}/categories")

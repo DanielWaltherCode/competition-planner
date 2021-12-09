@@ -1,6 +1,5 @@
 package com.graphite.competitionplanner.registration.api
 
-import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/competition/{competitionId}/registration")
 class CompetitionRegistrationApi(
-    val competitionService: CompetitionService,
     val registrationService: RegistrationService
 ) {
 
