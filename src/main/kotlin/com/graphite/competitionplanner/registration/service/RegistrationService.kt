@@ -2,7 +2,6 @@ package com.graphite.competitionplanner.registration.service
 
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
-import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.domain.FindPlayer
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service
 @Service
 class RegistrationService(
     val registrationRepository: RegistrationRepository,
-    val competitionService: CompetitionService,
     val playerService: PlayerService,
     val competitionCategoryRepository: CompetitionCategoryRepository,
     val registerPlayerToCompetition: RegisterPlayerToCompetition,
@@ -136,12 +134,6 @@ data class CompetitionAndCategoriesDTO(
 data class RegisteredPlayersDTO(
     val groupingType: SearchType,
     val groupingsAndPlayers: Map<String, Set<PlayerWithClubDTO>>
-)
-
-
-data class CompetitionRegistrationsDTO(
-    val competition: CompetitionDTO,
-    val registrations: List<CategoryRegistrations>
 )
 
 data class CategoryRegistrations(

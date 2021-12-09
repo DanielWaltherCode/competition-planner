@@ -1,9 +1,9 @@
 package com.graphite.competitionplanner.competition.api
 
+import com.graphite.competitionplanner.competition.domain.CreateCompetition
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.domain.GetDaysOfCompetition
 import com.graphite.competitionplanner.competition.domain.UpdateCompetition
-import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
@@ -16,11 +16,11 @@ import java.time.LocalDate
 @SpringBootTest
 class TestCompetitionApi {
 
-    private val service = mock(CompetitionService::class.java)
+    private val createCompetition = mock(CreateCompetition::class.java)
     private val updateCompetition = mock(UpdateCompetition::class.java)
     private val findCompetition = mock(FindCompetitions::class.java)
     private val getDaysOfCompetition = mock(GetDaysOfCompetition::class.java)
-    private val api = CompetitionApi(service, updateCompetition, findCompetition, getDaysOfCompetition)
+    private val api = CompetitionApi(createCompetition, updateCompetition, findCompetition, getDaysOfCompetition)
     val dataGenerator = DataGenerator()
 
     @Test
@@ -32,8 +32,8 @@ class TestCompetitionApi {
         api.addCompetition(spec)
 
         // Assert
-        verify(service, times(1)).addCompetition(spec)
-        verify(service, times(1)).addCompetition(TestHelper.MockitoHelper.anyObject())
+        verify(createCompetition, times(1)).execute(spec)
+        verify(createCompetition, times(1)).execute(TestHelper.MockitoHelper.anyObject())
     }
 
     @Test

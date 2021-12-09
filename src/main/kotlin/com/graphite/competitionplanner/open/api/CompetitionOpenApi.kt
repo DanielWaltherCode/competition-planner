@@ -3,7 +3,6 @@ package com.graphite.competitionplanner.open.api
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
-import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
@@ -23,7 +22,6 @@ import java.time.LocalDate
 @RestController
 @RequestMapping("/open/competition")
 class CompetitionOpenApi(
-    val competitionService: CompetitionService,
     val drawService: DrawService,
     val registrationService: RegistrationService,
     val competitionCategoryService: CompetitionCategoryService,

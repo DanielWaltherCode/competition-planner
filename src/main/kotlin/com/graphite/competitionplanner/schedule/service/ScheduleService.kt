@@ -3,7 +3,6 @@ package com.graphite.competitionplanner.schedule.service
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.domain.GetDaysOfCompetition
-import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.schedule.api.*
@@ -13,7 +12,6 @@ import com.graphite.competitionplanner.tables.records.ScheduleCategoryRecord
 import com.graphite.competitionplanner.tables.records.ScheduleDailyTimesRecord
 import com.graphite.competitionplanner.tables.records.ScheduleMetadataRecord
 import org.jooq.exception.NoDataFoundException
-import org.springframework.context.annotation.Lazy
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
@@ -26,9 +24,7 @@ class ScheduleService(
     val scheduleRepository: ScheduleRepository,
     val competitionCategoryService: CompetitionCategoryService,
     val findCompetitions: FindCompetitions,
-    val getDaysOfCompetition: GetDaysOfCompetition,
-    // Lazy needed because otherwise there is a circular dependency
-    @Lazy val competitionService: CompetitionService
+    val getDaysOfCompetition: GetDaysOfCompetition
 ) {
 
     // Schedule metadata methods

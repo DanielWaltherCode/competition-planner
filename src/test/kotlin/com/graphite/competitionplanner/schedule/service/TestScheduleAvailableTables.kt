@@ -1,9 +1,9 @@
 package com.graphite.competitionplanner.schedule.service
 
+import com.graphite.competitionplanner.competition.domain.CreateCompetition
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
 import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
-import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.schedule.api.AvailableTablesFullDaySpec
 import com.graphite.competitionplanner.schedule.api.AvailableTablesSpec
 import com.graphite.competitionplanner.util.Util
@@ -19,15 +19,15 @@ import java.time.LocalDate
 class TestScheduleAvailableTables(
     @Autowired val util: Util,
     @Autowired val scheduleService: ScheduleService,
-    @Autowired val competitionService: CompetitionService,
-    @Autowired val competitionRepository: CompetitionRepository
+    @Autowired val competitionRepository: CompetitionRepository,
+    @Autowired val createCompetition: CreateCompetition
 ) {
     var competitionId = 0
     var registeredTables = listOf<AvailableTablesDTO>()
 
     @BeforeEach
     fun addCompetition() {
-        competitionId = competitionService.addCompetition(
+        competitionId = createCompetition.execute(
             CompetitionSpec(
                 location = LocationSpec("Lund"),
                 name = "Ein Testturnament",

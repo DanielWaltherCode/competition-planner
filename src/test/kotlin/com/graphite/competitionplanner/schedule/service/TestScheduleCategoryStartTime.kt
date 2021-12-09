@@ -2,10 +2,10 @@ package com.graphite.competitionplanner.schedule.service
 
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.repository.CategoryRepository
+import com.graphite.competitionplanner.competition.domain.CreateCompetition
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
 import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
-import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.schedule.api.CategoryStartTimeSpec
 import com.graphite.competitionplanner.schedule.repository.ScheduleRepository
@@ -25,8 +25,8 @@ class TestScheduleCategoryStartTime(
     @Autowired val scheduleRepository: ScheduleRepository,
     @Autowired val competitionCategoryService: CompetitionCategoryService,
     @Autowired val categoryRepository: CategoryRepository,
-    @Autowired val competitionService: CompetitionService,
-    @Autowired val competitionRepository: CompetitionRepository
+    @Autowired val competitionRepository: CompetitionRepository,
+    @Autowired val createCompetition: CreateCompetition
 ) {
 
     var competitionId = 0
@@ -36,7 +36,7 @@ class TestScheduleCategoryStartTime(
 
     @BeforeEach
     fun addCompetition() {
-        competitionId = competitionService.addCompetition(
+        competitionId = createCompetition.execute(
             CompetitionSpec(
                 location = LocationSpec("Lund"),
                 name = "Eurofinans 2021",

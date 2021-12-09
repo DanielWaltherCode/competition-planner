@@ -1,10 +1,10 @@
 package com.graphite.competitionplanner.competition.api
 
+import com.graphite.competitionplanner.competition.domain.CreateCompetition
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.domain.GetDaysOfCompetition
 import com.graphite.competitionplanner.competition.domain.UpdateCompetition
 import com.graphite.competitionplanner.competition.interfaces.*
-import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
@@ -13,7 +13,7 @@ import java.time.LocalDate
 @RestController
 @RequestMapping("/competition")
 class CompetitionApi(
-    val competitionService: CompetitionService,
+    val createCompetition: CreateCompetition,
     val updateCompetition: UpdateCompetition,
     val findCompetitions: FindCompetitions,
     val getDaysOfCompetition: GetDaysOfCompetition
@@ -21,7 +21,7 @@ class CompetitionApi(
 
     @PostMapping
     fun addCompetition(@RequestBody competitionSpec: CompetitionSpec): CompetitionDTO {
-        return competitionService.addCompetition(competitionSpec)
+        return createCompetition.execute(competitionSpec)
     }
 
     @PutMapping("/{competitionId}")

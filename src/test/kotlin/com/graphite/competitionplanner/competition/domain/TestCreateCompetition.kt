@@ -3,6 +3,8 @@ package com.graphite.competitionplanner.competition.domain
 import com.graphite.competitionplanner.club.domain.FindClub
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
+import com.graphite.competitionplanner.schedule.api.AvailableTablesWholeCompetitionSpec
+import com.graphite.competitionplanner.schedule.service.ScheduleService
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
@@ -14,9 +16,10 @@ import org.springframework.boot.test.context.SpringBootTest
 class TestCreateCompetition {
 
     val dataGenerator = DataGenerator()
-    private final val mockedFindClub = mock(FindClub::class.java)
-    private final val mockedRepository = mock(ICompetitionRepository::class.java)
-    val createCompetition = CreateCompetition(mockedRepository, mockedFindClub)
+    private val mockedFindClub = mock(FindClub::class.java)
+    private val mockedRepository = mock(ICompetitionRepository::class.java)
+    private val mockedScheduleService = mock(ScheduleService::class.java)
+    val createCompetition = CreateCompetition(mockedRepository, mockedFindClub, mockedScheduleService)
 
     @Test
     fun shouldStoreCompetitionIfEntityIsOk() {
@@ -63,5 +66,56 @@ class TestCreateCompetition {
 
         // Assert
         verify(mockedRepository, never()).store(TestHelper.MockitoHelper.anyObject())
+    }
+
+    @Test
+    fun whenCreatingCompetitionDefaultSchedulingDataShallBeSet() {
+        // Setup
+        val spec = dataGenerator.newCompetitionSpec()
+        val dto = dataGenerator.newCompetitionDTO()
+        `when`(mockedRepository.store(spec)).thenReturn(dto)
+
+        // Act
+        createCompetition.execute(spec)
+
+        // Assert
+        verify(mockedScheduleService, times(1)).addDefaultScheduleMetadata(dto.id)
+        verify(mockedScheduleService, times(1)).addDefaultScheduleMetadata(anyInt())
+    }
+
+    @Test
+    fun whenCreatingCompetitionDailyStartAndEndTimesShallBeSet() {
+        // Setup
+        val spec = dataGenerator.newCompetitionSpec()
+        val dto = dataGenerator.newCompetitionDTO()
+        `when`(mockedRepository.store(spec)).thenReturn(dto)
+
+        // Act
+        createCompetition.execute(spec)
+
+        // Assert
+        verify(mockedScheduleService, times(1)).addDailyStartAndEndForWholeCompetition(dto.id)
+        verify(mockedScheduleService, times(1)).addDailyStartAndEndForWholeCompetition(anyInt())
+    }
+
+    @Test
+    fun whenCreatingCompetitionAvailableTablesShouldBeSetToZero() {
+        // Setup
+        val spec = dataGenerator.newCompetitionSpec()
+        val dto = dataGenerator.newCompetitionDTO()
+        `when`(mockedRepository.store(spec)).thenReturn(dto)
+
+        // Act
+        createCompetition.execute(spec)
+
+        // Assert
+        verify(mockedScheduleService, times(1)).registerTablesAvailableForWholeCompetition(
+            dto.id,
+            AvailableTablesWholeCompetitionSpec(0)
+        )
+        verify(mockedScheduleService, times(1)).registerTablesAvailableForWholeCompetition(
+            anyInt(),
+            TestHelper.MockitoHelper.anyObject()
+        )
     }
 }
