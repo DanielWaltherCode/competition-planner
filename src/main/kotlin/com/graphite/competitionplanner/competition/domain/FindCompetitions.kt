@@ -16,7 +16,15 @@ class FindCompetitions(
         return repository.findCompetitionsThatBelongsTo(clubId)
     }
 
-    fun thatStartOrEndWithin(start: LocalDate, end: LocalDate): List<CompetitionWithClubDTO> {
+    fun thatStartOrEndWithin(weekStartDate: LocalDate?, weekEndDate: LocalDate?): List<CompetitionWithClubDTO> {
+        var start = LocalDate.now()
+        if (weekStartDate != null) {
+            start = weekStartDate
+        }
+        var end = LocalDate.now().plusMonths(1)
+        if (weekEndDate != null) {
+            end = weekEndDate
+        }
         return repository.findCompetitions(start, end)
     }
 

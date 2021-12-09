@@ -4,7 +4,6 @@ import com.graphite.competitionplanner.competition.domain.CreateCompetition
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
-import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
 import com.graphite.competitionplanner.schedule.api.AvailableTablesWholeCompetitionSpec
 import com.graphite.competitionplanner.schedule.service.ScheduleService
 import org.springframework.stereotype.Service
@@ -29,18 +28,6 @@ class CompetitionService(
         )
 
         return competition
-    }
-
-    fun getByDate(weekStartDate: LocalDate?, weekEndDate: LocalDate?): List<CompetitionWithClubDTO> {
-        var start = LocalDate.now()
-        if (weekStartDate != null) {
-            start = weekStartDate
-        }
-        var end = LocalDate.now().plusMonths(1)
-        if (weekEndDate != null) {
-            end = weekEndDate
-        }
-        return findCompetitions.thatStartOrEndWithin(start, end)
     }
 
     fun getDaysOfCompetition(competitionId: Int): List<LocalDate> {

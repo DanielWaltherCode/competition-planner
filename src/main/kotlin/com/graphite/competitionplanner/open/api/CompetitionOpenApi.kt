@@ -37,7 +37,7 @@ class CompetitionOpenApi(
         @RequestParam(required = false) weekStartDate: LocalDate?,
         @RequestParam(required = false) weekEndDate: LocalDate?
     ): List<CompetitionWithClubDTO> {
-        return competitionService.getByDate(weekStartDate, weekEndDate)
+        return findCompetitions.thatStartOrEndWithin(weekStartDate, weekEndDate)
     }
 
     @GetMapping("/{competitionId}")

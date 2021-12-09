@@ -58,16 +58,16 @@ class TestCompetitionApi {
     }
 
     @Test
-    fun shouldCallServiceWithNullArguments() {
+    fun shouldCallWithNullArguments() {
         // Act
         api.getAll(null, null)
 
         // Assert
-        verify(service, times(1)).getByDate(null, null)
+        verify(findCompetition, times(1)).thatStartOrEndWithin(null, null)
     }
 
     @Test
-    fun shouldCallServiceWithSpecifiedArguments() {
+    fun shouldCallWithSpecifiedArguments() {
         // Setup
         val start = LocalDate.now()
         val end = start.plusMonths(1)
@@ -76,7 +76,7 @@ class TestCompetitionApi {
         api.getAll(start, end)
 
         // Assert
-        verify(service, times(1)).getByDate(start, end)
+        verify(findCompetition, times(1)).thatStartOrEndWithin(start, end)
     }
 
     @Test
