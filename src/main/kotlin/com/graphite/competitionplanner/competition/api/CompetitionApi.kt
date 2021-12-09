@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.competition.api
 
+import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.domain.UpdateCompetition
 import com.graphite.competitionplanner.competition.interfaces.*
 import com.graphite.competitionplanner.competition.service.CompetitionService
@@ -12,7 +13,8 @@ import java.time.LocalDate
 @RequestMapping("/competition")
 class CompetitionApi(
     val competitionService: CompetitionService,
-    val updateCompetition: UpdateCompetition
+    val updateCompetition: UpdateCompetition,
+    val findCompetitions: FindCompetitions
 ) {
 
     @PostMapping
@@ -30,7 +32,7 @@ class CompetitionApi(
 
     @GetMapping("/{competitionId}")
     fun getCompetition(@PathVariable competitionId: Int): CompetitionDTO {
-        return competitionService.getById(competitionId)
+        return findCompetitions.byId(competitionId)
     }
 
     @GetMapping

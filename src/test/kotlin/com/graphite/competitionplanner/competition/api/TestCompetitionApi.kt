@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.competition.api
 
+import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.domain.UpdateCompetition
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.entity.Round
@@ -16,7 +17,8 @@ class TestCompetitionApi {
 
     private val service = mock(CompetitionService::class.java)
     private val updateCompetition = mock(UpdateCompetition::class.java)
-    private val api = CompetitionApi(service, updateCompetition)
+    private val findCompetition = mock(FindCompetitions::class.java)
+    private val api = CompetitionApi(service, updateCompetition, findCompetition)
     val dataGenerator = DataGenerator()
 
     @Test
@@ -33,7 +35,7 @@ class TestCompetitionApi {
     }
 
     @Test
-    fun shouldCallServiceWhenUpdatingCompetition() {
+    fun shouldCallDomainWhenUpdatingCompetition() {
         // Setup
         val updateSpec = dataGenerator.newCompetitionUpdateSpec()
 
@@ -43,6 +45,16 @@ class TestCompetitionApi {
         // Assert
         verify(updateCompetition, times(1)).execute(1, updateSpec)
         verify(updateCompetition, times(1)).execute(anyInt(), TestHelper.MockitoHelper.anyObject())
+    }
+
+    @Test
+    fun shouldCallDomainWhenFindingCompetition() {
+        // Act
+        api.getCompetition(1)
+
+        // Assert
+        verify(findCompetition, times(1)).byId(1)
+        verify(findCompetition, times(1)).byId(anyInt())
     }
 
     @Test

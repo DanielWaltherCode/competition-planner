@@ -46,10 +46,6 @@ class CompetitionService(
         return findCompetitions.thatStartOrEndWithin(start, end)
     }
 
-    fun getById(competitionId: Int): CompetitionDTO {
-        return findCompetitions.byId(competitionId)
-    }
-
     fun getByClubId(clubId: Int): List<CompetitionDTO> {
         return findCompetitions.thatBelongsTo(clubId)
     }

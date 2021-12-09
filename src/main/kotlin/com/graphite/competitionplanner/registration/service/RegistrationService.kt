@@ -27,7 +27,7 @@ class RegistrationService(
     val findPlayer: FindPlayer,
     val matchService: MatchService,
     val searchRegistrations: SearchRegistrations,
-    val findCompetitions: FindCompetitions
+    val findCompetitions: FindCompetitions,
 ) {
 
     fun registerPlayerSingles(spec: RegistrationSinglesSpec): RegistrationSinglesDTO {
@@ -73,7 +73,7 @@ class RegistrationService(
 
         for (id in uniqueCompetitionIds) {
             // Get playing categories for each competitions and add player data to dto
-            val competition = competitionService.getById(id)
+            val competition = findCompetitions.byId(id)
             val categories = competitionPlayingCategories.filter { it.competitionId == id }
             playerCompetitions.add(
                 CompetitionAndCategoriesDTO(

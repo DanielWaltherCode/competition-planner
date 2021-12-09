@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.schedule.service
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
@@ -23,6 +24,7 @@ import java.time.temporal.ChronoUnit
 class ScheduleService(
     val scheduleRepository: ScheduleRepository,
     val competitionCategoryService: CompetitionCategoryService,
+    val findCompetitions: FindCompetitions,
     // Lazy needed because otherwise there is a circular dependency
     @Lazy val competitionService: CompetitionService
 ) {
@@ -246,7 +248,7 @@ class ScheduleService(
     fun addDailyStartAndEndForWholeCompetition(
         competitionId: Int
     ) {
-        val competition = competitionService.getById(competitionId)
+        val competition = findCompetitions.byId(competitionId)
 
         if (ChronoUnit.DAYS.between(competition.startDate, competition.endDate) < 30) {
             var currentDate = competition.startDate
