@@ -3,9 +3,9 @@ package com.graphite.competitionplanner.util
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.repository.CategoryRepository
+import com.graphite.competitionplanner.club.domain.CreateClub
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.club.repository.ClubRepository
-import com.graphite.competitionplanner.club.service.ClubService
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
 import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
@@ -50,7 +50,7 @@ class EventListener(
     val registrationService: RegistrationService,
     val userService: UserService,
     val matchRepository: MatchRepository,
-    val clubService: ClubService
+    val createClub: CreateClub
 ) {
 
     @EventListener
@@ -96,11 +96,11 @@ class EventListener(
     }
 
     fun setUpClub() {
-        clubService.addClub(ClubSpec("Övriga", "Empty"))
-        clubService.addClub(ClubSpec("Lugi", "Lund"))
-        clubService.addClub(ClubSpec("Umeå IK", "Umeå Ersboda"))
-        clubService.addClub(ClubSpec("Malmö", "Malmö"))
-        clubService.addClub(ClubSpec("Landskrona", "Landskrona Byaväg 9"))
+        createClub.execute(ClubSpec("Övriga", "Empty"))
+        createClub.execute(ClubSpec("Lugi", "Lund"))
+        createClub.execute(ClubSpec("Umeå IK", "Umeå Ersboda"))
+        createClub.execute(ClubSpec("Malmö", "Malmö"))
+        createClub.execute(ClubSpec("Landskrona", "Landskrona Byaväg 9"))
     }
 
     fun categorySetup() {

@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.user.service
 
+import com.graphite.competitionplanner.club.domain.FindClub
 import com.graphite.competitionplanner.club.interfaces.ClubNoAddressDTO
-import com.graphite.competitionplanner.club.service.ClubService
 import com.graphite.competitionplanner.security.SecurityHelper
 import com.graphite.competitionplanner.tables.records.UserTableRecord
 import com.graphite.competitionplanner.user.api.LoginDTO
@@ -19,7 +19,7 @@ import org.springframework.web.server.ResponseStatusException
 class UserService(
     val userRepository: UserRepository,
     val bCryptPasswordEncoder: BCryptPasswordEncoder,
-    val clubService: ClubService
+    val findClub: FindClub
 ) : UserDetailsService {
 
     fun addUser(userSpec: UserSpec): UserDTO {
@@ -78,7 +78,7 @@ class UserService(
     }
 
     fun recordToDTO(userRecord: UserTableRecord): UserDTO {
-        val club = clubService.findById(userRecord.clubid)
+        val club = findClub.byId(userRecord.clubid)
         return UserDTO(
             userRecord.id,
             userRecord.username,
