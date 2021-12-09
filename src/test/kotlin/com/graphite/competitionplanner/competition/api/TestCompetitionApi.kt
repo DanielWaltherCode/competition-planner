@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.competition.api
 
+import com.graphite.competitionplanner.competition.domain.UpdateCompetition
 import com.graphite.competitionplanner.competition.service.CompetitionService
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.util.DataGenerator
@@ -13,8 +14,9 @@ import java.time.LocalDate
 @SpringBootTest
 class TestCompetitionApi {
 
-    private final val service = mock(CompetitionService::class.java)
-    private final val api = CompetitionApi(service)
+    private val service = mock(CompetitionService::class.java)
+    private val updateCompetition = mock(UpdateCompetition::class.java)
+    private val api = CompetitionApi(service, updateCompetition)
     val dataGenerator = DataGenerator()
 
     @Test
@@ -39,8 +41,8 @@ class TestCompetitionApi {
         api.updateCompetition(1, updateSpec)
 
         // Assert
-        verify(service, times(1)).updateCompetition(1, updateSpec)
-        verify(service, times(1)).updateCompetition(anyInt(), TestHelper.MockitoHelper.anyObject())
+        verify(updateCompetition, times(1)).execute(1, updateSpec)
+        verify(updateCompetition, times(1)).execute(anyInt(), TestHelper.MockitoHelper.anyObject())
     }
 
     @Test

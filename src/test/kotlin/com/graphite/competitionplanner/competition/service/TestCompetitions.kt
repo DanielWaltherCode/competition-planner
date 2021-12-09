@@ -91,17 +91,4 @@ class TestCompetitionsService {
             TestHelper.MockitoHelper.anyObject()
         )
     }
-
-    @Test
-    fun shouldCallUpdateUseCase() {
-        // Setup
-        val spec = dataGenerator.newCompetitionUpdateSpec()
-
-        // Act
-        service.updateCompetition(1, spec)
-
-        // Assert
-        verify(mockedUpdateCompetition, times(1)).execute(1, spec)
-        verify(mockedUpdateCompetition, times(1)).execute(anyInt(), TestHelper.MockitoHelper.anyObject())
-    }
 }

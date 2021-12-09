@@ -34,10 +34,6 @@ class CompetitionService(
         return competition
     }
 
-    fun updateCompetition(competitionId: Int, competitionSpec: CompetitionUpdateSpec): CompetitionDTO {
-        return updateCompetition.execute(competitionId, competitionSpec)
-    }
-
     fun getByDate(weekStartDate: LocalDate?, weekEndDate: LocalDate?): List<CompetitionWithClubDTO> {
         var start = LocalDate.now()
         if (weekStartDate != null) {
