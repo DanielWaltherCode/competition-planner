@@ -38,7 +38,7 @@ class AddCompetitionCategory(
     private fun getDefaultGeneralSettings(): GeneralSettingsSpec {
         return GeneralSettingsSpec(
             150f,
-            DrawType.POOL_ONLY,
+            DrawType.POOL_AND_CUP,
             4,
             2,
             PoolDrawStrategy.NORMAL

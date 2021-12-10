@@ -79,5 +79,5 @@ interface IRegistrationRepository {
     /**
      * Return the rankings of each registration for the given competition category
      */
-    fun getRegistrationRank(competitionCategory: CompetitionCategoryDTO): List<RegistrationRankDTO>
+    fun getRegistrationRanking(competitionCategory: CompetitionCategoryDTO): List<RegistrationRankingDTO>
 }

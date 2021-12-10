@@ -12,6 +12,7 @@ import com.graphite.competitionplanner.draw.domain.Pool
 import com.graphite.competitionplanner.draw.interfaces.GroupDrawDTO
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.PlayOffMatchDTO
+import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.player.repository.PlayerRepository
@@ -71,38 +72,44 @@ class TestCompetitionDrawRepository(
 
     object AssertionHelper {
         fun assertDoubleRegistrationPlayOffMatch(
-            match: PlayOffMatchDTO,
+            match: MatchAndResultDTO,
             registrationOne: RegistrationDoublesDTO,
             registrationTwo: RegistrationDoublesDTO
         ) {
-            Assertions.assertEquals(2, match.player1.size, "Expected to find 2 players in first team")
-            Assertions.assertEquals(2, match.player2.size, "Expected to find 2 players in second team")
+            Assertions.assertEquals(2, match.firstPlayer.size, "Expected to find 2 players in first team")
+            Assertions.assertEquals(2, match.secondPlayer.size, "Expected to find 2 players in second team")
 
-            val player1Ids = match.player1.map { it.id }
+            val player1Ids = match.firstPlayer.map { it.id }
             Assertions.assertTrue(player1Ids.contains(registrationOne.playerOneId),
                 "Expected to find player with id ${registrationOne.playerOneId} in $player1Ids")
             Assertions.assertTrue(player1Ids.contains(registrationOne.playerTwoId),
                 "Expected to find player with id ${registrationOne.playerTwoId} in $player1Ids")
 
-            val player2Ids = match.player2.map { it.id }
+            val player2Ids = match.secondPlayer.map { it.id }
             Assertions.assertTrue(player2Ids.contains(registrationTwo.playerOneId),
                 "Expected to find player with id ${registrationTwo.playerOneId} in $player2Ids")
             Assertions.assertTrue(player2Ids.contains(registrationTwo.playerTwoId),
                 "Expected to find player with id ${registrationTwo.playerTwoId} in $player2Ids")
         }
 
-        fun assertGroupDrawDto(expectedPool: Pool, club: ClubDTO, expectedPlayers: List<PlayerDTO>, dto: GroupDrawDTO) {
-            Assertions.assertEquals(expectedPool.name, dto.name)
+        fun assertGroupDrawDto(expectedPool: Pool, club: ClubDTO, expectedPlayers: List<PlayerDTO>, groupDrawDTO: GroupDrawDTO) {
+            Assertions.assertEquals(expectedPool.name, groupDrawDTO.name)
 
             // Validate matches
-            Assertions.assertEquals(expectedPool.matches.size, dto.matches.size)
-            Assertions.assertTrue(dto.matches.all { it.id > 0 }, "At least one match did not have an id larger than 0.")
+            Assertions.assertEquals(expectedPool.matches.size, groupDrawDTO.matches.size)
+            Assertions.assertTrue(groupDrawDTO.matches.all { it.id > 0 }, "At least one match did not have an id larger than 0.")
 
             // Check that players are equal. Construct comparable players
             val comparablePlayers = expectedPlayers.map { PlayerWithClubDTO(it.id, it.firstName, it.lastName, club, it.dateOfBirth) }
+            val actualPlayers: MutableList<PlayerWithClubDTO> = mutableListOf()
+            for (playerList in groupDrawDTO.players) {
+               for (player in playerList.playerDTOs) {
+                    actualPlayers.add(player)
+                }
+            }
             Assertions.assertEquals(
                 comparablePlayers.sortedBy { it.id },
-                dto.players.sortedBy { it.id },
+                actualPlayers.sortedBy { it.id },
                 "Different players in spec and returned draw."
             )
         }

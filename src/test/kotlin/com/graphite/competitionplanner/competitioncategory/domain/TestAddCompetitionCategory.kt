@@ -7,6 +7,7 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.Competitio
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.competitioncategory.entity.Round
+import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
@@ -53,9 +54,15 @@ class TestAddCompetitionCategory {
         // Setup
         val spec = dataGenerator.newCategorySpec(id = 0, name = "HERRDUBBEL")
         val competitionId = 1
-        `when`(mockedCategoryRepository.getAvailableCategories()).thenReturn(listOf(CategoryDTO(spec.id,
-            spec.name,
-            spec.type)))
+        `when`(mockedCategoryRepository.getAvailableCategories()).thenReturn(
+            listOf(
+                CategoryDTO(
+                    spec.id,
+                    spec.name,
+                    spec.type
+                )
+            )
+        )
         `when`(mockedRepository.getAll(competitionId))
             .thenReturn(
                 listOf(dataGenerator.newCompetitionCategoryDTO(category = spec))
@@ -71,7 +78,12 @@ class TestAddCompetitionCategory {
     fun shouldCallRepositoryToStoreWithDefaultSettings() {
         // Setup
         val spec = dataGenerator.newCategorySpec(id = 0, name = "HERRDUBBEL")
-        val settings = dataGenerator.newGeneralSettingsSpec(cost = 150f, playersPerGroup = 4, playersToPlayOff = 2)
+        val settings = dataGenerator.newGeneralSettingsSpec(
+            cost = 150f,
+            playersPerGroup = 4,
+            playersToPlayOff = 2,
+            drawType = DrawType.POOL_AND_CUP
+        )
         val gameSettings = dataGenerator.newGameSettingsSpec(
             numberOfSets = 5,
             winScore = 11,
@@ -87,9 +99,15 @@ class TestAddCompetitionCategory {
         )
 
         val competitionId = 1
-        `when`(mockedCategoryRepository.getAvailableCategories()).thenReturn(listOf(CategoryDTO(spec.id,
-            spec.name,
-            spec.type)))
+        `when`(mockedCategoryRepository.getAvailableCategories()).thenReturn(
+            listOf(
+                CategoryDTO(
+                    spec.id,
+                    spec.name,
+                    spec.type
+                )
+            )
+        )
         `when`(mockedRepository.getAll(competitionId)).thenReturn(emptyList())
 
         // Act
@@ -97,10 +115,12 @@ class TestAddCompetitionCategory {
 
         // Assert
         val expected =
-            CompetitionCategorySpec(CompetitionCategoryStatus.ACTIVE,
+            CompetitionCategorySpec(
+                CompetitionCategoryStatus.ACTIVE,
                 CategorySpec(spec.id, spec.name, spec.type),
                 settings,
-                gameSettings)
+                gameSettings
+            )
         verify(mockedRepository, Mockito.times(1)).store(competitionId, expected)
         verify(mockedRepository, Mockito.times(1)).store(
             anyInt(),

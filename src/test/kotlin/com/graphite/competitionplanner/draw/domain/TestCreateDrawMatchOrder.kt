@@ -52,7 +52,7 @@ class TestCreateDrawMatchOrder {
             dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
         }
         Mockito.`when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
-        Mockito.`when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory))
+        Mockito.`when`(mockedRegistrationRepository.getRegistrationRanking(competitionCategory))
             .thenReturn(registrationRanks)
 
         // Act
@@ -81,7 +81,7 @@ class TestCreateDrawMatchOrder {
             dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
         }
         Mockito.`when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
-        Mockito.`when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory))
+        Mockito.`when`(mockedRegistrationRepository.getRegistrationRanking(competitionCategory))
             .thenReturn(registrationRanks)
 
         // Act
@@ -113,7 +113,7 @@ class TestCreateDrawMatchOrder {
             dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
         }
         Mockito.`when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
-        Mockito.`when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory))
+        Mockito.`when`(mockedRegistrationRepository.getRegistrationRanking(competitionCategory))
             .thenReturn(registrationRanks)
 
         // Act

@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
-import com.graphite.competitionplanner.registration.interfaces.RegistrationRankDTO
+import com.graphite.competitionplanner.registration.interfaces.RegistrationRankingDTO
 import org.springframework.stereotype.Component
 import kotlin.math.floor
 import kotlin.math.log2
@@ -23,7 +23,7 @@ import kotlin.math.log2
 @Component
 class CreateSeed {
 
-    fun execute(registrations: List<RegistrationRankDTO>): List<RegistrationSeedDTO> {
+    fun execute(registrations: List<RegistrationRankingDTO>): List<RegistrationSeedDTO> {
 
         val sortedHighestRankFirst = registrations.toList().sortedBy { -it.rank }
         val numberOfSeeds = calculateNumberOfSeeds(registrations)
@@ -37,7 +37,7 @@ class CreateSeed {
         }
     }
 
-    private fun calculateNumberOfSeeds(registrations: List<RegistrationRankDTO>): Int {
+    private fun calculateNumberOfSeeds(registrations: List<RegistrationRankingDTO>): Int {
         return with(registrations) {
             if (isEmpty()) 0
             else floor(log2(size.toDouble())).toInt()

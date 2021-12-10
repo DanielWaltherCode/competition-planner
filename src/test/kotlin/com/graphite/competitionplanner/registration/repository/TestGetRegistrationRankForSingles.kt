@@ -48,7 +48,7 @@ class TestGetRegistrationRankForSingles(
         playerRepository.addPlayerRanking(reg2.playerId, 98, CategoryType.SINGLES.name)
 
         // Act
-        val registrationRanks = registrationRepository.getRegistrationRank(competitionCategory)
+        val registrationRanks = registrationRepository.getRegistrationRanking(competitionCategory)
 
         // Assert
         val actualReg1 = registrationRanks.first { it.registrationId == reg1.id }

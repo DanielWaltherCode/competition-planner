@@ -54,7 +54,7 @@ import {getClub, getPlayerOne, getPlayerTwo, isPlayerOneWinner, isPlayerTwoWinne
 export default {
   name: "PlayoffDraw",
   props: {
-    playoffRounds: Object
+    playoffRounds: Array
   },
   methods: {
     getPlayerOne: getPlayerOne,

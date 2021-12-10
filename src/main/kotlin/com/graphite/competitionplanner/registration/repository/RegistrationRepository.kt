@@ -1,6 +1,5 @@
 package com.graphite.competitionplanner.registration.repository
 
-import com.graphite.competitionplanner.Tables
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
@@ -17,7 +16,6 @@ import com.graphite.competitionplanner.tables.PlayerRegistration.PLAYER_REGISTRA
 import com.graphite.competitionplanner.tables.Registration.REGISTRATION
 import com.graphite.competitionplanner.tables.records.*
 import org.jooq.DSLContext
-import org.jooq.Record
 import org.jooq.Record4
 import org.jooq.TableField
 import org.jooq.impl.DSL.partitionBy
@@ -300,7 +298,7 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         }
     }
 
-    override fun getRegistrationRank(competitionCategory: CompetitionCategoryDTO): List<RegistrationRankDTO> {
+    override fun getRegistrationRanking(competitionCategory: CompetitionCategoryDTO): List<RegistrationRankingDTO> {
         val rankFieldName = "rank"
         val records = dslContext.select(
             REGISTRATION.ID,
@@ -317,7 +315,7 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             .fetch()
 
         return records.map {
-            RegistrationRankDTO(
+            RegistrationRankingDTO(
                 it.getValue(REGISTRATION.ID),
                 it.getValue(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID),
                 it.getValue(rankFieldName).toString().toInt()
@@ -378,10 +376,8 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         for (registration in registrationSeeds) {
             dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
                 .set(COMPETITION_CATEGORY_REGISTRATION.SEED, registration.seed)
-                .where(
-                    COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(registration.competitionCategoryId)
-                        .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(registration.id))
-                )
+                .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(registration.competitionCategoryId)
+                    .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(registration.registrationId)))
                 .execute()
         }
     }

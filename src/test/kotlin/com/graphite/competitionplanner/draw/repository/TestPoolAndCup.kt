@@ -8,6 +8,8 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetiti
 import com.graphite.competitionplanner.draw.domain.*
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.PlayOffMatchDTO
+import com.graphite.competitionplanner.draw.interfaces.PlayoffRoundDTO
+import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import org.junit.jupiter.api.Assertions
@@ -81,30 +83,30 @@ class TestPoolAndCup(
 
         // Assert
         val actualFinal = result.playOff.inRound(Round.FINAL)
-        Assertions.assertEquals(1, actualFinal.size, "There should only be one final.")
-        Assertions.assertEquals(1, actualFinal.first().player1.size)
-        Assertions.assertEquals(1, actualFinal.first().player2.size)
-        Assertions.assertEquals(Registration.Placeholder().toString(), actualFinal.first().player1.first().firstName)
-        Assertions.assertEquals(Registration.Placeholder().toString(), actualFinal.first().player2.first().firstName)
+        Assertions.assertEquals(1, actualFinal.matches.size, "There should only be one final.")
+        Assertions.assertEquals(1, actualFinal.matches.first().firstPlayer.size)
+        Assertions.assertEquals(1, actualFinal.matches.first().secondPlayer.size)
+        Assertions.assertEquals(Registration.Placeholder().toString(), actualFinal.matches.first().firstPlayer.first().firstName)
+        Assertions.assertEquals(Registration.Placeholder().toString(), actualFinal.matches.first().secondPlayer.first().firstName)
 
         val actualSemifinals = result.playOff.inRound(Round.SEMI_FINAL)
-        Assertions.assertEquals(2, actualSemifinals.size, "There should only be two semi finals")
+        Assertions.assertEquals(2, actualSemifinals.matches.size, "There should only be two semi finals")
 
-        val firstSemi = actualSemifinals.first { it.order == 1 }
-        Assertions.assertEquals(1, firstSemi.player1.size)
-        Assertions.assertEquals(1, firstSemi.player2.size)
-        Assertions.assertEquals("A1", firstSemi.player1.first().firstName)
-        Assertions.assertEquals(Registration.Bye.toString(), firstSemi.player2.first().firstName)
+        val firstSemi = actualSemifinals.matches.first { it.matchOrderNumber == 1 }
+        Assertions.assertEquals(1, firstSemi.firstPlayer.size)
+        Assertions.assertEquals(1, firstSemi.secondPlayer.size)
+        Assertions.assertEquals("A1", firstSemi.firstPlayer.first().firstName)
+        Assertions.assertEquals(Registration.Bye.toString(), firstSemi.secondPlayer.first().firstName)
 
-        val secondSemi = actualSemifinals.first { it.order == 2 }
-        Assertions.assertEquals(1, secondSemi.player1.size)
-        Assertions.assertEquals(1, secondSemi.player2.size)
-        Assertions.assertEquals("B1", secondSemi.player1.first().firstName)
-        Assertions.assertEquals("A2", secondSemi.player2.first().firstName)
+        val secondSemi = actualSemifinals.matches.first{ it.matchOrderNumber == 2 }
+        Assertions.assertEquals(1, secondSemi.firstPlayer.size)
+        Assertions.assertEquals(1, secondSemi.secondPlayer.size)
+        Assertions.assertEquals("B1", secondSemi.firstPlayer.first().firstName)
+        Assertions.assertEquals("A2", secondSemi.secondPlayer.first().firstName)
     }
 
-    private fun List<PlayOffMatchDTO>.inRound(round: Round): List<PlayOffMatchDTO> {
-        return this.filter { it.round == round }
+    private fun List<PlayoffRoundDTO>.inRound(round: Round): PlayoffRoundDTO {
+        return this.filter { it.round == round }.first()
     }
 
 }
