@@ -114,9 +114,6 @@ class DrawService(
         registrationIds: List<Int>,
         competitionCategoryId: Int
     ) {
-        // Get seedings
-        val competitionSeedings = registrationRepository.getSeeds(competitionCategoryId)
-
         val matches = drawUtil.createDirectToPlayoff(competitionCategoryId, registrationIds)
         for (match in matches) {
             matchRepository.addMatch(match)

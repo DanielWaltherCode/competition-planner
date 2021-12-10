@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.registration.interfaces
 
-data class RegistrationRankDTO(
+data class RegistrationRankingDTO(
 
     /**
      * The registration id

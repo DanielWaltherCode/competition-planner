@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.draw.api
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.draw.domain.CreateDraw
+import com.graphite.competitionplanner.draw.domain.GetDraw
 import com.graphite.competitionplanner.draw.interfaces.CompetitionCategoryDrawDTO
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.draw.service.GroupDrawDTO
@@ -24,18 +25,19 @@ import java.time.temporal.ChronoUnit
 class CompetitionDrawApi(
     val drawService: DrawService,
     val playerService: PlayerService,
-    val createDraw: CreateDraw
+    val createDraw: CreateDraw,
+    val getDraw: GetDraw
 ) {
 
     // Can be used both to create initial draw and to make a new draw if desired
     @PutMapping
-    fun makeDraw(@PathVariable competitionCategoryId: Int): DrawDTO {
-        return drawService.createDraw(competitionCategoryId)
+    fun makeDraw(@PathVariable competitionCategoryId: Int): CompetitionCategoryDrawDTO {
+        return createDraw.execute(competitionCategoryId)
     }
 
     @GetMapping
-    fun getDraw(@PathVariable competitionCategoryId: Int): DrawDTO {
-        return drawService.getDraw(competitionCategoryId)
+    fun getDraw(@PathVariable competitionCategoryId: Int): CompetitionCategoryDrawDTO {
+        return getDraw.execute(competitionCategoryId)
     }
 
     @GetMapping("/pool")
@@ -56,6 +58,7 @@ class CompetitionDrawApi(
         return drawService.isDrawMade(competitionCategoryId)
     }
 
+    /*
     @GetMapping("mock")
     fun getMockPlayoffDraw(): List<PlayoffRoundDTO> {
         // Create matches for quarter finals, semifinals, leaving final empty
@@ -221,7 +224,7 @@ class CompetitionDrawApi(
             )
         }
         return playoffRoundList
-    }
+    }*/
 
 }
 

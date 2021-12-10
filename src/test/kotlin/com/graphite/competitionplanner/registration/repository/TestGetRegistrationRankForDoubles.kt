@@ -51,7 +51,7 @@ class TestGetRegistrationRankForDoubles(
         playerRepository.addPlayerRanking(reg2.playerTwoId, 12, CategoryType.DOUBLES.name)
 
         // Act
-        val registrationRanks = registrationRepository.getRegistrationRank(competitionCategory)
+        val registrationRanks = registrationRepository.getRegistrationRanking(competitionCategory)
 
         // Assert
         Assertions.assertTrue(registrationRanks.size == 2, "We only registered two doubles")

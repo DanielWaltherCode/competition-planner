@@ -7,7 +7,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr v-for="(playerInGroup, index) in group.poolDraw" :key="index">
+    <tr v-for="(playerInGroup, index) in group.players" :key="index">
       <td> {{getClub(playerInGroup.playerDTOs)}}</td>
       <td>{{getName(playerInGroup.playerDTOs)}}</td>
 

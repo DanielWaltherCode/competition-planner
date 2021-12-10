@@ -4,7 +4,7 @@ data class RegistrationSeedDTO(
     /**
      * Id of the registration
      */
-    val id: Int,
+    val registrationId: Int,
     /**
      * Id of the competition category
      */

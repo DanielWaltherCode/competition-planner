@@ -53,7 +53,7 @@ class TestCreateDrawPoolSizes {
             dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
         }
         `when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
-        `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
+        `when`(mockedRegistrationRepository.getRegistrationRanking(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
         createDraw.execute(competitionCategory.id)
@@ -83,7 +83,7 @@ class TestCreateDrawPoolSizes {
             dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
         }
         `when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
-        `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
+        `when`(mockedRegistrationRepository.getRegistrationRanking(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
         createDraw.execute(competitionCategory.id)
@@ -113,7 +113,7 @@ class TestCreateDrawPoolSizes {
             dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
         }
         `when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
-        `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
+        `when`(mockedRegistrationRepository.getRegistrationRanking(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
         createDraw.execute(competitionCategory.id)
@@ -141,7 +141,7 @@ class TestCreateDrawPoolSizes {
             dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
         }
         `when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
-        `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
+        `when`(mockedRegistrationRepository.getRegistrationRanking(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
         createDraw.execute(competitionCategory.id)
@@ -173,7 +173,7 @@ class TestCreateDrawPoolSizes {
             dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
         }
         `when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
-        `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
+        `when`(mockedRegistrationRepository.getRegistrationRanking(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
         createDraw.execute(competitionCategory.id)
@@ -201,7 +201,7 @@ class TestCreateDrawPoolSizes {
             dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
         }
         `when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
-        `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
+        `when`(mockedRegistrationRepository.getRegistrationRanking(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
         createDraw.execute(competitionCategory.id)
@@ -229,7 +229,7 @@ class TestCreateDrawPoolSizes {
             dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
         }
         `when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
-        `when`(mockedRegistrationRepository.getRegistrationRank(competitionCategory)).thenReturn(registrationRanks)
+        `when`(mockedRegistrationRepository.getRegistrationRanking(competitionCategory)).thenReturn(registrationRanks)
 
         // Act
         createDraw.execute(competitionCategory.id)

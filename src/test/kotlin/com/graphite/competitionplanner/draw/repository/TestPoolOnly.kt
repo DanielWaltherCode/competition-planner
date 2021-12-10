@@ -62,7 +62,7 @@ class TestPoolOnly(
         // Assert
         Assertions.assertEquals(competitionCategory.id, result.competitionCategoryId)
 
-        val groups = result.groupDraw
+        val groups = result.groups
 
         Assertions.assertEquals(2, groups.size, "Expected to find 2 groups.")
 
@@ -104,7 +104,7 @@ class TestPoolOnly(
         // Assert
         Assertions.assertEquals(competitionCategory.id, result.competitionCategoryId)
 
-        val groups = result.groupDraw
+        val groups = result.groups
 
         Assertions.assertEquals(1, groups.size, "Expected to find 1 groups.")
         Assertions.assertNotNull(groups.find { it.name == "Z" })
@@ -143,7 +143,7 @@ class TestPoolOnly(
 
         // Assert
         val draw = repository.get(competitionCategory.id)
-        Assertions.assertEquals(0, draw.groupDraw.size)
+        Assertions.assertEquals(0, draw.groups.size)
         Assertions.assertEquals(0, draw.playOff.size)
     }
 

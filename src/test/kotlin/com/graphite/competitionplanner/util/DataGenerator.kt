@@ -10,21 +10,19 @@ import com.graphite.competitionplanner.competitioncategory.entity.Match
 import com.graphite.competitionplanner.competitioncategory.entity.MatchType
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.competitioncategory.entity.ScheduleSettings
-import com.graphite.competitionplanner.draw.interfaces.CompetitionCategoryDrawDTO
-import com.graphite.competitionplanner.draw.interfaces.GroupDrawDTO
-import com.graphite.competitionplanner.draw.interfaces.GroupMatchDTO
 import com.graphite.competitionplanner.draw.interfaces.PlayOffMatchDTO
+import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.interfaces.*
+import com.graphite.competitionplanner.result.service.ResultDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.random.Random
 import kotlin.time.Duration
-import kotlin.time.minutes
 
 class DataGenerator {
 
@@ -134,7 +132,33 @@ class DataGenerator {
         groupOrRound
     )
 
-    fun newScheduleSettingsDTO(
+    fun newMatchAndResultDTO(
+        id: Int = matchId++,
+        competitionCategoryId: Int = 0,
+        competitionCategoryName: String = "Herrar 9",
+        startTime: LocalDateTime = LocalDateTime.now(),
+        endTime: LocalDateTime = LocalDateTime.now().plusMinutes(15),
+        matchType: String = "POOL",
+        firstPlayer: List<PlayerWithClubDTO> = listOf(newPlayerWithClubDTO(firstName = "Lars", lastName = "Åkesson")),
+        secondPlayer: List<PlayerWithClubDTO> = listOf(newPlayerWithClubDTO(firstName = "Lars", lastName = "Åkesson")),
+        orderNumber: Int = 0,
+        groupOrRound: String = "GROUP A"
+    ) = MatchAndResultDTO(
+        id,
+        startTime,
+        endTime,
+        com.graphite.competitionplanner.registration.service.CompetitionCategoryDTO(competitionCategoryId, competitionCategoryName),
+        matchType,
+        firstPlayer,
+        secondPlayer,
+        orderNumber,
+        groupOrRound,
+        firstPlayer,
+        ResultDTO(emptyList())
+    )
+
+
+        fun newScheduleSettingsDTO(
         averageMatchTime: Duration = Duration.minutes(15),
                 numberOfTables: Int = 8,
         startTime: LocalDateTime = LocalDateTime.now(),
@@ -222,7 +246,7 @@ class DataGenerator {
         id: Int = this.registrationId++,
         competitionCategoryId: Int = this.competitionCategoryId++,
         rank: Int = 99
-    ) = RegistrationRankDTO(
+    ) = RegistrationRankingDTO(
         id,
         competitionCategoryId,
         rank

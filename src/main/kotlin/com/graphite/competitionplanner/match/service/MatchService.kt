@@ -43,9 +43,9 @@ class MatchService(
         return matchRecords.map { recordToMatchAndResultDTO(it) }
     }
 
-    fun getMatchesInCategory(competitionCategoryId: Int): List<MatchDTO> {
+    fun getMatchesInCategory(competitionCategoryId: Int): List<MatchAndResultDTO> {
         val matchRecords = matchRepository.getMatchesInCategory(competitionCategoryId)
-        return matchRecords.map { matchRecordToDTO(it) }
+        return matchRecords.map { recordToMatchAndResultDTO(it) }
     }
 
     fun getGroupMatchesInCategory(competitionCategoryId: Int): List<MatchAndResultDTO> {
@@ -107,7 +107,7 @@ class MatchService(
             registrationService.getPlayersWithClubFromRegistrationId(match.secondRegistrationId),
             match.matchOrderNumber,
             match.groupOrRound,
-            registrationService.getPlayersFromRegistrationId(match.winner),
+            registrationService.getPlayersWithClubFromRegistrationId(match.winner),
             result
         )
     }
@@ -143,6 +143,6 @@ data class MatchAndResultDTO(
     val secondPlayer: List<PlayerWithClubDTO>,
     val matchOrderNumber: Int,
     val groupOrRound: String, // Either group name (e.g. Group "A") or the round like Round of 64, Quarterfinals
-    val winner: List<PlayerDTO>,
+    val winner: List<PlayerWithClubDTO>,
     val result: ResultDTO
 )

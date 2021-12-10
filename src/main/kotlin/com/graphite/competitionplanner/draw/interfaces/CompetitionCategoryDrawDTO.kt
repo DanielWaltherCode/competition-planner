@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.draw.interfaces
 
 import com.graphite.competitionplanner.competitioncategory.entity.Round
+import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 
 /**
@@ -14,11 +15,24 @@ data class CompetitionCategoryDrawDTO(
     /**
      * List of matches played in play off
      */
-    val playOff: List<PlayOffMatchDTO>,
+    val playOff: List<PlayoffRoundDTO>,
     /**
      * List of groups including players and matches
      */
-    val groupDraw: List<GroupDrawDTO>,
+    val groups: List<GroupDrawDTO>,
+
+    /**
+     * Shows link between position in group and position in playoff
+     */
+    val poolToPlayoffMap: List<GroupToPlayoff>
+)
+
+/**
+ * Playoff match rounds to return to website
+ */
+data class PlayoffRoundDTO(
+    val round: Round,
+    val matches: List<MatchAndResultDTO>
 )
 
 /**
@@ -32,11 +46,11 @@ data class PlayOffMatchDTO(
     /**
      * List of players in team one. Contains two players if it is a double game
      */
-    val player1: List<PlayerWithClubDTO>,
+    val firstPlayer: List<PlayerWithClubDTO>,
     /**
      * List of players in team two. Contains two players if it is a double game
      */
-    val player2: List<PlayerWithClubDTO>,
+    val secondPlayer: List<PlayerWithClubDTO>,
     /**
      * Match order. Starts at 1 and ends at the number equal to the total matches for this round.
      *
@@ -64,13 +78,18 @@ data class GroupDrawDTO(
      */
     val name: String,
     /**
-     * List of players in this group
+     * List of players in this group. Each sublist contains two players if it's a doubles class
      */
-    val players: List<PlayerWithClubDTO>,
+    val players: List<PlayerInPoolDTO>,
     /**
      * Matches in this group
      */
-    val matches: List<GroupMatchDTO>
+    val matches: List<MatchAndResultDTO>
+)
+
+data class PlayerInPoolDTO(
+    val playerDTOs: List<PlayerWithClubDTO>,
+    val playerNumber: Int
 )
 
 /**
@@ -84,11 +103,11 @@ data class GroupMatchDTO(
     /**
      * List of players in team one. Contains two players if it is a double game
      */
-    val player1: List<PlayerWithClubDTO>,
+    val firstPlayer: List<PlayerWithClubDTO>,
     /**
      * List of players in team two. Contains two players if it is a double game
      */
-    val player2: List<PlayerWithClubDTO>,
+    val secondPlayer: List<PlayerWithClubDTO>,
     /**
      * The winner of this match. If list is is empty, then no winner has been decided. Contains two players if it is a
      * double game

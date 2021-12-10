@@ -69,9 +69,9 @@
                 </div>
               </div>
               <!-- If there are groups -->
-              <div v-for="group in draw.groupDraw.groups" :key="group.groupName"
+              <div v-for="group in draw.groups" :key="group.name"
                    class="row col-sm-11 mx-auto mt-3 mb-4 d-flex align-items-start p-3 custom-card">
-                <h4 class="text-start mb-3">{{ $t("draw.main.group") }} {{ group.groupName }}</h4>
+                <h4 class="text-start mb-3">{{ $t("draw.main.group") }} {{ group.name }}</h4>
                 <div class="col-sm-4">
                   <PoolDraw :group="group"/>
                 </div>
@@ -83,7 +83,7 @@
               </div>
               <!-- If there is a playoff/cup -->
               <playoff-draw v-if="draw != null && draw.playOff != null"
-                            :playoff-rounds="draw.playOff.rounds"></playoff-draw>
+                            :playoff-rounds="draw.playOff"></playoff-draw>
             </div>
           </div>
         </div>
