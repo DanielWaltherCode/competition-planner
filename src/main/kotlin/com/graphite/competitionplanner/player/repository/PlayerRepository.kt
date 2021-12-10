@@ -8,6 +8,7 @@ import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.tables.Club
+import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.Player.PLAYER
 import com.graphite.competitionplanner.tables.records.PlayerRankingRecord
 import com.graphite.competitionplanner.tables.records.PlayerRecord
@@ -122,6 +123,34 @@ class PlayerRepository(val dslContext: DSLContext) : IPlayerRepository {
         return records.map { transformIntoPlayerWithClubDto(it) }
     }
 
+    override fun findByNameInCompetition(startOfName: String, competitionId: Int): List<PlayerWithClubDTO> {
+        val records = dslContext.select(PLAYER.ID, PLAYER.FIRST_NAME, PLAYER.LAST_NAME, PLAYER.DATE_OF_BIRTH, CLUB.ID, CLUB.NAME, CLUB.ADDRESS)
+            .from(COMPETITION)
+            .join(COMPETITION_CATEGORY).on(
+                COMPETITION_CATEGORY.COMPETITION_ID.eq(
+                    Competition.COMPETITION.ID
+                )
+            )
+            .join(CATEGORY).on(
+                CATEGORY.ID.eq(
+                    COMPETITION_CATEGORY.CATEGORY
+                )
+            )
+            .join(COMPETITION_CATEGORY_REGISTRATION).on(
+                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(
+                    COMPETITION_CATEGORY.ID
+                )
+            )
+            .join(PLAYER_REGISTRATION).on(PLAYER_REGISTRATION.REGISTRATION_ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+            .join(PLAYER).on(PLAYER.ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
+            .join(CLUB).on(CLUB.ID.eq(PLAYER.CLUB_ID))
+            .where(PLAYER.FIRST_NAME.startsWithIgnoreCase(startOfName)
+                .or(PLAYER.LAST_NAME.startsWithIgnoreCase(startOfName))
+                .and(COMPETITION.ID.eq(competitionId))).fetch()
+
+        return records.map { transformIntoPlayerWithClubDto(it) }
+    }
+
     private fun transformIntoPlayerWithClubDto(playerClubRecord: Record): PlayerWithClubDTO {
         val player = playerClubRecord.into(PLAYER)
         val club = playerClubRecord.into(Club.CLUB)
@@ -160,7 +189,7 @@ class PlayerRepository(val dslContext: DSLContext) : IPlayerRepository {
         }
     }
 
-    public fun PlayerRecord.toDto(): PlayerDTO {
+    fun PlayerRecord.toDto(): PlayerDTO {
         return PlayerDTO(this.id, this.firstName, this.lastName, this.clubId, this.dateOfBirth)
     }
 

@@ -15,9 +15,9 @@ import com.graphite.competitionplanner.competitioncategory.repository.Competitio
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
+import com.graphite.competitionplanner.player.domain.ListAllPlayersInClub
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.repository.PlayerRepository
-import com.graphite.competitionplanner.player.service.PlayerService
 import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesSpec
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
@@ -39,7 +39,7 @@ class EventListener(
     val playerRepository: PlayerRepository,
     val competitionRepository: CompetitionRepository,
     val clubRepository: ClubRepository,
-    val playerService: PlayerService,
+    val listAllPlayersInClub: ListAllPlayersInClub,
     val categoryRepository: CategoryRepository,
     val competitionCategoryRepository: CompetitionCategoryRepository,
     val registrationRepository: RegistrationRepository,
@@ -454,9 +454,9 @@ class EventListener(
 
     fun registerPlayersDoubles() {
         val lugiId = util.getClubIdOrDefault("Lugi")
-        val lugiPlayers = playerService.getPlayersByClubId(lugiId)
-        val umePlayers = playerService.getPlayersByClubId(util.getClubIdOrDefault("Umeå IK"))
-        val otherPlayers = playerService.getPlayersByClubId(util.getClubIdOrDefault("Övriga"))
+        val lugiPlayers = listAllPlayersInClub.execute(lugiId)
+        val umePlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Umeå IK"))
+        val otherPlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Övriga"))
         val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
         val competitionCategories = competitionCategoryService.getCompetitionCategoriesFor(lugiCompetitionId)
 
@@ -506,9 +506,9 @@ class EventListener(
 
     fun registerPlayersSingles() {
         val lugiId = util.getClubIdOrDefault("Lugi")
-        val lugiPlayers = playerService.getPlayersByClubId(lugiId)
-        val umePlayers = playerService.getPlayersByClubId(util.getClubIdOrDefault("Umeå IK"))
-        val otherPlayers = playerService.getPlayersByClubId(util.getClubIdOrDefault("Övriga"))
+        val lugiPlayers = listAllPlayersInClub.execute(lugiId)
+        val umePlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Umeå IK"))
+        val otherPlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Övriga"))
         val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
         val competitionCategories = competitionCategoryService.getCompetitionCategoriesFor(lugiCompetitionId)
 

@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.competitioncategory.service
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
-import com.graphite.competitionplanner.player.service.PlayerService
+import com.graphite.competitionplanner.player.domain.ListAllPlayersInClub
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.util.TestUtil
@@ -17,7 +17,7 @@ import org.springframework.web.server.ResponseStatusException
 @SpringBootTest
 class TestCompetitionCategories(
     @Autowired val util: Util,
-    @Autowired val playerService: PlayerService,
+    @Autowired val listAllPlayersInClub: ListAllPlayersInClub,
     @Autowired val registrationService: RegistrationService,
     @Autowired val competitionCategoryRepository: CompetitionCategoryRepository,
     @Autowired val competitionCategoryService: CompetitionCategoryService,
@@ -53,7 +53,7 @@ class TestCompetitionCategories(
         val newCategoryId = testUtil.addCompetitionCategory("Herrar 4")
 
         // Register players
-        val umePlayers = playerService.getPlayersByClubId(util.getClubIdOrDefault("Umeå IK"))
+        val umePlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Umeå IK"))
         registrationService.registerPlayerSingles(RegistrationSinglesSpec(umePlayers[0].id, newCategoryId))
 
         // Try deleting after players have registered, should fail

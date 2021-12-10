@@ -18,9 +18,9 @@ interface IPlayerRepository {
     fun playersInClub(clubId: Int): List<PlayerWithClubDTO>
 
     /**
-     * Return the Player with the given Id
+     * Return the Player with the given ID
      *
-     * @param id: Id of the player
+     * @param id: ID of the player
      * @return Player
      * @throws NotFoundException If the Player with the given ID cannot be found
      */
@@ -42,14 +42,24 @@ interface IPlayerRepository {
      * starts with the given search string
      *
      * @param startOfName: Search string
-     * @Return List of Players
+     * @return List of Players
      */
     fun findByName(startOfName: String): List<PlayerWithClubDTO>
 
     /**
+     * Return a list of players where the first name or last name starts with the given search string, and the player
+     * is registered to the competition with the given id.
+     *
+     * @param startOfName: Search string
+     * @param competitionId: ID of the competition
+     * @return List of players
+     */
+    fun findByNameInCompetition(startOfName: String, competitionId: Int): List<PlayerWithClubDTO>
+
+    /**
      * Updates the Player with the given id
      *
-     * @param id: Id of the player to update
+     * @param id: ID of the player to update
      * @param spec: Specification that will be used to update the player
      * @return The updated player
      * @throws NotFoundException If the Player to updated cannot be found
@@ -60,7 +70,7 @@ interface IPlayerRepository {
     /**
      * Deletes the Player
      *
-     * @param id: Id of the player to delete
+     * @param id: ID of the player to delete
      * @return The deleted player
      * @throws NotFoundException If the Player to delete cannot be found
      */
