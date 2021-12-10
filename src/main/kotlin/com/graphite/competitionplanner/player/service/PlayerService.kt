@@ -16,10 +16,6 @@ class PlayerService(
     val registrationRepository: RegistrationRepository
 ) {
 
-    fun getPlayersByClubId(clubId: Int): List<PlayerWithClubDTO> {
-        return listAllPlayersInClub.execute(clubId)
-    }
-
     fun addPlayer(player: PlayerSpec): PlayerWithClubDTO {
         return createPlayer.execute(player)
     }

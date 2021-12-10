@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.billing.domain
 
 import com.graphite.competitionplanner.club.repository.ClubRepository
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
+import com.graphite.competitionplanner.player.domain.ListAllPlayersInClub
 import com.graphite.competitionplanner.player.service.PlayerService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -14,7 +15,7 @@ class TestGetCostSummaryForPlayers(
     @Autowired val findCompetitions: FindCompetitions,
     @Autowired val clubRepository: ClubRepository,
     @Autowired val getCostSummaryForPlayers: GetCostSummaryForPlayers,
-    @Autowired val playerService: PlayerService
+    @Autowired val listAllPlayersInClub: ListAllPlayersInClub
 ) {
 
     @Test
@@ -29,7 +30,7 @@ class TestGetCostSummaryForPlayers(
         val originalTotalPrice = costSummary.totalPrice
 
         // Add players and check that price goes up
-        val players = playerService.getPlayersByClubId(clubsInCompetition[0].id)
+        val players = listAllPlayersInClub.execute(clubsInCompetition[0].id)
 
     }
 }

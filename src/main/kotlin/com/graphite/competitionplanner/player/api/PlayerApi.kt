@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.player.api
 
+import com.graphite.competitionplanner.player.domain.ListAllPlayersInClub
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.player.service.PlayerService
@@ -11,7 +12,8 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/player")
 class PlayerApi(
-    val playerService: PlayerService
+    val playerService: PlayerService,
+    val listAllPlayersInClub: ListAllPlayersInClub
 ) {
     @PostMapping
     fun addPlayer(@Valid @RequestBody playerSpec: PlayerSpec): PlayerWithClubDTO {
@@ -40,7 +42,7 @@ class PlayerApi(
 
     @GetMapping
     fun getPlayersByClubId(@RequestParam clubId: Int): List<PlayerWithClubDTO> {
-        return playerService.getPlayersByClubId(clubId)
+        return listAllPlayersInClub.execute(clubId)
     }
 
     @DeleteMapping("/{playerId}")
