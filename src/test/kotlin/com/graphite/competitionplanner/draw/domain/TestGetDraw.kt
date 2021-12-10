@@ -26,53 +26,40 @@ class TestGetDraw(@Autowired val dslContext: DSLContext, @Autowired val createDr
 
     val dataGenerator = DataGenerator()
 
-    @Test
-    fun shouldValidateThatCompetitionCategoryExist() {
-        // Setup
-        val competitionCategoryId = 3345
-
-        // Act
-        getDraw.execute(competitionCategoryId)
-
-        // Assert
-        Mockito.verify(mockedCompetitionCategoryRepository, times(1)).get(competitionCategoryId)
-        Mockito.verify(mockedCompetitionCategoryRepository, times(1)).get(anyInt())
-    }
-
-    @Test
-    fun shouldReturnWhatRepositoryReturns() {
-        // Setup
-        val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
-            id = 15236,
-            settings = dataGenerator.newGeneralSettingsSpec(
-                drawType = DrawType.POOL_AND_CUP,
-                playersPerGroup = 4,
-                playersToPlayOff = 2
-            )
-        )
-
-        val drawDto = CompetitionCategoryDrawDTO(
-            competitionCategory.id,
-            playOff = listOf(
-                PlayoffRoundDTO(Round.SEMI_FINAL, mutableListOf(newPlaceholderMatch(Round.SEMI_FINAL, 1))),
-                PlayoffRoundDTO(Round.FINAL, mutableListOf(newPlaceholderMatch(Round.SEMI_FINAL, 1))),
-            ),
-            groups = listOf(
-                newGroupDrawDtoWithPlayerNames("A", listOf("Steeve", "Charles", "Klark", "Kent")),
-                newGroupDrawDtoWithPlayerNames("B", listOf("Steeve2", "Charles2", "Klark2", "Kent2"))
-            ),
-            emptyList()
-        )
-
-        Mockito.`when`(mockedCompetitionCategoryRepository.get(competitionCategory.id)).thenReturn(competitionCategory)
-
-        // Act
-        createDraw.execute(competitionCategory.id)
-        val result = getDraw.execute(competitionCategory.id)
-
-        // Act
-        Assertions.assertEquals(drawDto, result)
-    }
+//    @Test
+//    fun shouldReturnWhatRepositoryReturns() {
+//        // Setup
+//        val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
+//            id = 15236,
+//            settings = dataGenerator.newGeneralSettingsSpec(
+//                drawType = DrawType.POOL_AND_CUP,
+//                playersPerGroup = 4,
+//                playersToPlayOff = 2
+//            )
+//        )
+//
+//        val drawDto = CompetitionCategoryDrawDTO(
+//            competitionCategory.id,
+//            playOff = listOf(
+//                PlayoffRoundDTO(Round.SEMI_FINAL, mutableListOf(newPlaceholderMatch(Round.SEMI_FINAL, 1))),
+//                PlayoffRoundDTO(Round.FINAL, mutableListOf(newPlaceholderMatch(Round.SEMI_FINAL, 1))),
+//            ),
+//            groups = listOf(
+//                newGroupDrawDtoWithPlayerNames("A", listOf("Steeve", "Charles", "Klark", "Kent")),
+//                newGroupDrawDtoWithPlayerNames("B", listOf("Steeve2", "Charles2", "Klark2", "Kent2"))
+//            ),
+//            emptyList()
+//        )
+//
+//        Mockito.`when`(mockedCompetitionCategoryRepository.get(competitionCategory.id)).thenReturn(competitionCategory)
+//
+//        // Act
+//        createDraw.execute(competitionCategory.id)
+//        val result = getDraw.execute(competitionCategory.id)
+//
+//        // Act
+//        Assertions.assertEquals(drawDto, result)
+//    }
 
     private fun newPlaceholderMatch(round: Round, order: Int): MatchAndResultDTO {
         return dataGenerator.newMatchAndResultDTO(
