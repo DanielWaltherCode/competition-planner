@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.player.domain
 
 import com.graphite.competitionplanner.club.domain.FindClub
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import org.springframework.stereotype.Component
@@ -30,5 +31,9 @@ class FindPlayer(
 
     fun byPartName(partName: String): List<PlayerWithClubDTO> {
         return repository.findByName(partName)
+    }
+
+    fun byPartNameInCompetition(partName: String, competition: CompetitionDTO): List<PlayerWithClubDTO> {
+        return repository.findByNameInCompetition(partName, competition.id)
     }
 }

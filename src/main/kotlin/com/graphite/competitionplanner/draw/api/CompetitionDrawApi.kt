@@ -1,30 +1,17 @@
 package com.graphite.competitionplanner.draw.api
 
-import com.graphite.competitionplanner.club.interfaces.ClubDTO
-import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.draw.domain.CreateDraw
 import com.graphite.competitionplanner.draw.domain.GetDraw
 import com.graphite.competitionplanner.draw.interfaces.CompetitionCategoryDrawDTO
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.draw.service.GroupDrawDTO
 import com.graphite.competitionplanner.draw.service.PlayoffDTO
-import com.graphite.competitionplanner.draw.service.PlayoffRoundDTO
-import com.graphite.competitionplanner.match.service.MatchAndResultDTO
-import com.graphite.competitionplanner.player.interfaces.PlayerDTO
-import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
-import com.graphite.competitionplanner.player.service.PlayerService
-import com.graphite.competitionplanner.registration.service.CompetitionCategoryDTO
-import com.graphite.competitionplanner.result.service.GameDTO
-import com.graphite.competitionplanner.result.service.ResultDTO
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 @RestController
 @RequestMapping("competition/{competitionId}/draw/{competitionCategoryId}")
 class CompetitionDrawApi(
     val drawService: DrawService,
-    val playerService: PlayerService,
     val createDraw: CreateDraw,
     val getDraw: GetDraw
 ) {

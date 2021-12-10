@@ -10,8 +10,8 @@ import com.graphite.competitionplanner.draw.api.DrawDTO
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService
+import com.graphite.competitionplanner.player.domain.FindPlayer
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
-import com.graphite.competitionplanner.player.service.PlayerService
 import com.graphite.competitionplanner.registration.interfaces.PlayerRegistrationDTO
 import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
@@ -26,7 +26,7 @@ class CompetitionOpenApi(
     val registrationService: RegistrationService,
     val competitionCategoryService: CompetitionCategoryService,
     val matchService: MatchService,
-    val playerService: PlayerService,
+    val findPlayer: FindPlayer,
     val findCompetitions: FindCompetitions
 ) {
 
@@ -82,7 +82,8 @@ class CompetitionOpenApi(
 
     @GetMapping("name-search/{competitionId}")
     fun searchPlayerInCompetition(@PathVariable competitionId: Int, @RequestParam partOfName: String): List<PlayerWithClubDTO> {
-        return playerService.findByNameInCompetition(partOfName, competitionId)
+        val competition = findCompetitions.byId(competitionId)
+        return findPlayer.byPartNameInCompetition(partOfName, competition)
     }
 
     @GetMapping("/{competitionId}/categories/{categoryId}")

@@ -13,8 +13,8 @@ class TestFindPlayer {
 
     val dataGenerator = DataGenerator()
 
-    private final val mockedPlayerRepository = mock(IPlayerRepository::class.java)
-    private final val mockedFindClub = mock(FindClub::class.java)
+    private val mockedPlayerRepository = mock(IPlayerRepository::class.java)
+    private val mockedFindClub = mock(FindClub::class.java)
     private val findPlayer = FindPlayer(mockedPlayerRepository, mockedFindClub)
 
     @Test
@@ -43,5 +43,19 @@ class TestFindPlayer {
         // Verify
         verify(mockedPlayerRepository, times(1)).findByName(searchString)
         verify(mockedPlayerRepository, times(1)).findByName(anyString())
+    }
+
+    @Test
+    fun shouldCallRepositoryWhenSearchingForNameInCompetition() {
+        // Setup
+        val searchString = "partName"
+        val competition = dataGenerator.newCompetitionDTO()
+
+        // Act
+        findPlayer.byPartNameInCompetition(searchString, competition)
+
+        // Verify
+        verify(mockedPlayerRepository, times(1)).findByNameInCompetition(searchString, competition.id)
+        verify(mockedPlayerRepository, times(1)).findByNameInCompetition(anyString(), anyInt())
     }
 }

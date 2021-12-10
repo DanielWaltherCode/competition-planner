@@ -7,7 +7,6 @@ import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.domain.FindPlayer
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
-import com.graphite.competitionplanner.player.service.PlayerService
 import com.graphite.competitionplanner.registration.domain.*
 import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service
 @Service
 class RegistrationService(
     val registrationRepository: RegistrationRepository,
-    val playerService: PlayerService,
     val competitionCategoryRepository: CompetitionCategoryRepository,
     val registerPlayerToCompetition: RegisterPlayerToCompetition,
     val registerDoubleToCompetition: RegisterDoubleToCompetition,
@@ -65,7 +63,7 @@ class RegistrationService(
     fun getRegistrationByPlayerId(playerId: Int): PlayerCompetitionDTO {
         // Get player and competitions
         val playerCompetitions = mutableListOf<CompetitionAndCategoriesDTO>()
-        val player = playerService.getPlayer(playerId)
+        val player = findPlayer.byId(playerId)
         val competitionPlayingCategories = competitionCategoryRepository.getByPlayerId(playerId)
         val uniqueCompetitionIds = competitionPlayingCategories.map { it.competitionId }.distinct()
 
@@ -92,7 +90,7 @@ class RegistrationService(
     }
 
     fun getRegistrationsForPlayerInCompetition(competitionId: Int, playerId: Int): PlayerRegistrationDTO {
-        val player = playerService.getPlayer(playerId)
+        val player = findPlayer.byId(playerId)
         val registrationsInCompetition =
             competitionCategoryRepository.getRegistrationsForPlayerInCompetition(competitionId, playerId)
         val registrationDTOs = mutableListOf<CategoryRegistrationDTO>()
@@ -103,7 +101,7 @@ class RegistrationService(
                 val accompanyingPlayerId =
                     competitionCategoryRepository.getAccompanyingPlayerId(registration.registrationId, playerId)
                 if (accompanyingPlayerId != null) {
-                    accompanyingPlayer = playerService.findPlayer.byId(accompanyingPlayerId)
+                    accompanyingPlayer = findPlayer.byId(accompanyingPlayerId)
                 }
             }
             // Get matches

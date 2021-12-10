@@ -18,7 +18,6 @@ import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.player.domain.ListAllPlayersInClub
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.repository.PlayerRepository
-import com.graphite.competitionplanner.player.service.PlayerService
 import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesSpec
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
@@ -40,7 +39,6 @@ class EventListener(
     val playerRepository: PlayerRepository,
     val competitionRepository: CompetitionRepository,
     val clubRepository: ClubRepository,
-    val playerService: PlayerService,
     val listAllPlayersInClub: ListAllPlayersInClub,
     val categoryRepository: CategoryRepository,
     val competitionCategoryRepository: CompetitionCategoryRepository,

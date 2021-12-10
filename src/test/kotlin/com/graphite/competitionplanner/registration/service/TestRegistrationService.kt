@@ -4,7 +4,6 @@ import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.domain.FindPlayer
-import com.graphite.competitionplanner.player.service.PlayerService
 import com.graphite.competitionplanner.registration.domain.*
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.util.DataGenerator
@@ -18,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest
 class TestRegistrationService {
 
     private val mockedRegistrationRepository = mock(RegistrationRepository::class.java)
-    private val mockedPlayerService = mock(PlayerService::class.java)
     private val mockedCompetitionCategoryRepository = mock(CompetitionCategoryRepository::class.java)
     private val mockedRegisterPlayerToCompetition = mock(RegisterPlayerToCompetition::class.java)
     private val mockedRegisterDoublesToCompetition = mock(RegisterDoubleToCompetition::class.java)
@@ -30,7 +28,6 @@ class TestRegistrationService {
     private val mockedFindCompetitions = mock(FindCompetitions::class.java)
     private val service = RegistrationService(
         mockedRegistrationRepository,
-        mockedPlayerService,
         mockedCompetitionCategoryRepository,
         mockedRegisterPlayerToCompetition,
         mockedRegisterDoublesToCompetition,

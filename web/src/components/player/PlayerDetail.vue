@@ -77,6 +77,7 @@ export default {
         }).catch(() => {
           this.playerNotFound = true;
         })
+
       })
     },
     getSearchResult(searchResult) {

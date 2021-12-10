@@ -1,9 +1,9 @@
 package com.graphite.competitionplanner.player.api
 
-import com.graphite.competitionplanner.player.domain.ListAllPlayersInClub
+import com.graphite.competitionplanner.competition.domain.FindCompetitions
+import com.graphite.competitionplanner.player.domain.*
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
-import com.graphite.competitionplanner.player.service.PlayerService
 import com.graphite.competitionplanner.registration.service.PlayerCompetitionDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import org.springframework.web.bind.annotation.*
@@ -12,32 +12,37 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/player")
 class PlayerApi(
-    val playerService: PlayerService,
-    val listAllPlayersInClub: ListAllPlayersInClub
+    val listAllPlayersInClub: ListAllPlayersInClub,
+    val createPlayer: CreatePlayer,
+    val updatePlayer: UpdatePlayer,
+    val findPlayer: FindPlayer,
+    val deletePlayer: DeletePlayer,
+    val findCompetitions: FindCompetitions
 ) {
     @PostMapping
     fun addPlayer(@Valid @RequestBody playerSpec: PlayerSpec): PlayerWithClubDTO {
-        return playerService.addPlayer(playerSpec)
+        return createPlayer.execute(playerSpec)
     }
 
     @PutMapping("/{playerId}")
     fun updatePlayer(@PathVariable playerId: Int, @Valid @RequestBody playerSpec: PlayerSpec): PlayerWithClubDTO {
-        return playerService.updatePlayer(playerId, playerSpec)
+        return updatePlayer.execute(playerId, playerSpec)
     }
 
     @GetMapping("/{playerId}")
     fun getPlayer(@PathVariable playerId: Int): PlayerWithClubDTO {
-        return playerService.getPlayer(playerId)
+        return findPlayer.byId(playerId)
     }
 
     @GetMapping("name-search")
     fun searchByPartOfName(@RequestParam partOfName: String): List<PlayerWithClubDTO> {
-        return playerService.findByName(partOfName)
+        return findPlayer.byPartName(partOfName)
     }
 
     @GetMapping("name-search/{competitionId}")
     fun searchPlayerInCompetition(@PathVariable competitionId: Int, @RequestParam partOfName: String): List<PlayerWithClubDTO> {
-        return playerService.findByNameInCompetition(partOfName, competitionId)
+        val competition = findCompetitions.byId(competitionId)
+        return findPlayer.byPartNameInCompetition(partOfName, competition)
     }
 
     @GetMapping
@@ -47,7 +52,8 @@ class PlayerApi(
 
     @DeleteMapping("/{playerId}")
     fun deletePlayer(@PathVariable playerId: Int): Boolean {
-        return playerService.deletePlayer(playerId)
+        deletePlayer.execute(playerId)
+        return true
     }
 }
 

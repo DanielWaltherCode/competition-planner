@@ -4,7 +4,6 @@ import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.player.domain.ListAllPlayersInClub
-import com.graphite.competitionplanner.player.service.PlayerService
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.util.TestUtil

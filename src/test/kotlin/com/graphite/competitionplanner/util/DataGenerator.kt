@@ -5,12 +5,11 @@ import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.competition.interfaces.*
-import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.competitioncategory.entity.Match
 import com.graphite.competitionplanner.competitioncategory.entity.MatchType
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.competitioncategory.entity.ScheduleSettings
-import com.graphite.competitionplanner.draw.interfaces.PlayOffMatchDTO
+import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
@@ -24,6 +23,9 @@ import java.time.LocalDateTime
 import kotlin.random.Random
 import kotlin.time.Duration
 
+/**
+ * A class that help with the creation of DTOs and Specs
+ */
 class DataGenerator {
 
     private var playerId = 0
@@ -188,24 +190,6 @@ class DataGenerator {
         endDate
     )
 
-    fun newCompetitionWithClubDTO(
-        id: Int = 1,
-        location: LocationDTO = LocationDTO("Arena IK"),
-        name: String = "Test Competition",
-        welcomeText: String = "Välkommna till TestCompetition",
-        club: ClubDTO = newClubDTO(),
-        startDate: LocalDate = LocalDate.now(),
-        endDate: LocalDate = LocalDate.now().plusDays(3)
-    ) = CompetitionWithClubDTO(
-        id,
-        location,
-        name,
-        welcomeText,
-        club,
-        startDate,
-        endDate
-    )
-
     fun newCategoryDTO(
         id: Int = 1,
         name: String = "A Custom Category",
@@ -250,22 +234,6 @@ class DataGenerator {
         id,
         competitionCategoryId,
         rank
-    )
-
-    fun newPlayOffMatchDto(
-        id: Int = this.matchId++,
-        player1: List<PlayerWithClubDTO> = listOf(newPlayerWithClubDTO()),
-        player2: List<PlayerWithClubDTO> = listOf(newPlayerWithClubDTO()),
-        order: Int = 1,
-        round: Round = Round.FINAL,
-        winner: List<PlayerWithClubDTO> = emptyList()
-    ) = PlayOffMatchDTO(
-        id,
-        player1,
-        player2,
-        order,
-        round,
-        winner
     )
 
     fun newCompetitionCategoryUpdateSpec(

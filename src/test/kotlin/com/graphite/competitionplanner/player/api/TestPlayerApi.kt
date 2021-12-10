@@ -1,8 +1,7 @@
 package com.graphite.competitionplanner.player.api
 
+import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.player.domain.*
-import com.graphite.competitionplanner.player.service.PlayerService
-import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Test
@@ -19,20 +18,15 @@ class TestPlayerApi {
     private val listAllPlayersInClub = mock(ListAllPlayersInClub::class.java)
     private val deletePlayer = mock(DeletePlayer::class.java)
     private val findPlayer = mock(FindPlayer::class.java)
-    private val registrationRepository = mock(RegistrationRepository::class.java)
-
-    val playerService = PlayerService(
-        createPlayer,
-        updatePlayer,
-        listAllPlayersInClub,
-        deletePlayer,
-        findPlayer,
-        registrationRepository
-    )
+    private val findCompetitions = mock(FindCompetitions::class.java)
 
     val api = PlayerApi(
-        playerService,
-        listAllPlayersInClub
+        listAllPlayersInClub,
+        createPlayer,
+        updatePlayer,
+        findPlayer,
+        deletePlayer,
+        findCompetitions
     )
 
     @Test
@@ -51,7 +45,7 @@ class TestPlayerApi {
         val spec = dataGenerator.newPlayerSpec()
 
         // Act
-        playerService.addPlayer(spec)
+        api.addPlayer(spec)
 
         // Assert
         verify(createPlayer, times(1)).execute(spec)
@@ -64,7 +58,7 @@ class TestPlayerApi {
         val spec = dataGenerator.newPlayerSpec()
 
         // ACt
-        playerService.updatePlayer(1, spec)
+        api.updatePlayer(1, spec)
 
         // Assert
         verify(updatePlayer, times(1)).execute(1, spec)
@@ -74,7 +68,7 @@ class TestPlayerApi {
     @Test
     fun shouldDelegateToFindByIdUserCase() {
         // Act
-        playerService.getPlayer(10)
+        api.getPlayer(10)
 
         // Assert
         verify(findPlayer, times(1)).byId(10)
@@ -87,7 +81,7 @@ class TestPlayerApi {
         val searchString = "Niklas"
 
         // Act
-        playerService.findByName(searchString)
+        api.searchByPartOfName(searchString)
 
         // Assert
         verify(findPlayer, times(1)).byPartName(searchString)
@@ -95,11 +89,27 @@ class TestPlayerApi {
     }
 
     @Test
-    fun shouldDelegateToDeleteUseCase() {
+    fun shouldDelegateToFindByNameInCompetitionUseCase() {
+        // Setup
+        val searchString = "Niklas"
+        val competition = dataGenerator.newCompetitionDTO()
+        `when`(findCompetitions.byId(competition.id)).thenReturn(competition)
+
         // Act
-        playerService.deletePlayer(19)
+        api.searchPlayerInCompetition(competition.id, searchString)
 
         // Assert
+        verify(findPlayer, times(1)).byPartNameInCompetition(searchString, competition)
+        verify(findPlayer, times(1)).byPartNameInCompetition(anyString(), TestHelper.MockitoHelper.anyObject())
+    }
+
+    @Test
+    fun shouldDelegateToDeleteUseCase() {
+        // Act
+        api.deletePlayer(19)
+
+        // Assert
+        verify(deletePlayer, times(1)).execute(19)
         verify(deletePlayer, times(1)).execute(anyInt())
     }
 

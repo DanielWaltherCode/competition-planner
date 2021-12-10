@@ -3,7 +3,6 @@ package com.graphite.competitionplanner.billing.domain
 import com.graphite.competitionplanner.club.repository.ClubRepository
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.player.domain.ListAllPlayersInClub
-import com.graphite.competitionplanner.player.service.PlayerService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
