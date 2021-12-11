@@ -21,14 +21,14 @@ class JWTAuthorizationFilter : OncePerRequestFilter() {
         filterChain: FilterChain
     ) {
         try {
-            val header = request.getHeader(SecurityConstants.HEADER_STRING)
+            val header: String? = request.getHeader(SecurityConstants.HEADER_STRING)
             // Warning, as long as a bearer token is sent in, an attempt will made to validate it, even if the endpoint
             // doesn't actually require authentication. Solution, don't send bearer token for those endpoints.
             if (header == null || !header.startsWith(SecurityConstants.TOKEN_PREFIX)) {
                 filterChain.doFilter(request, response)
                 return
             }
-            val authToken = getAuthentication(request)
+            val authToken: UsernamePasswordAuthenticationToken? = getAuthentication(request)
             SecurityContextHolder.getContext().authentication = authToken
             filterChain.doFilter(request, response)
         } catch (exception: AuthenticationException) {
@@ -38,7 +38,7 @@ class JWTAuthorizationFilter : OncePerRequestFilter() {
     }
 
     private fun getAuthentication(req: HttpServletRequest): UsernamePasswordAuthenticationToken? {
-        var token = req.getHeader(SecurityConstants.HEADER_STRING)
+        var token: String? = req.getHeader(SecurityConstants.HEADER_STRING)
         if (token != null) {
             token = token.replace(SecurityConstants.TOKEN_PREFIX, "")
             if (SecurityHelper.validateToken(token)) {

@@ -4,9 +4,11 @@ import com.graphite.competitionplanner.billing.interfaces.CostSummaryDTO
 import com.graphite.competitionplanner.billing.interfaces.CostSummaryListDTO
 import com.graphite.competitionplanner.club.domain.FindClub
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.competitioncategory.repository.RegistrationsInCompetition
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
+import com.graphite.competitionplanner.tables.records.PlayerRecord
 import org.springframework.stereotype.Component
 
 @Component
@@ -19,8 +21,8 @@ class GetCostSummaryForClub(
 
     fun execute(competitionId: Int, clubId: Int): CostSummaryListDTO {
         // Get all players in the competition for a given club
-        val registeredPlayers = registrationRepository.getRegistreredPlayersInCompetition(competitionId)
-        val playersFromClub = registeredPlayers.filter { it.clubId == clubId }
+        val registeredPlayers: List<PlayerRecord> = registrationRepository.getRegistreredPlayersInCompetition(competitionId)
+        val playersFromClub: List<PlayerRecord>  = registeredPlayers.filter { it.clubId == clubId }
 
         // Get categories they were registered in
         val playerRegistrationLists = mutableListOf<List<RegistrationsInCompetition>>()
@@ -34,7 +36,7 @@ class GetCostSummaryForClub(
         val startsInCategory = mutableMapOf<Int, Float>()
         for (registrationList in playerRegistrationLists) {
             for (registration in registrationList) {
-                val currentCategory = registration.categoryId
+                val currentCategory: Int = registration.categoryId
                 if (startsInCategory.containsKey(currentCategory)) {
                     startsInCategory[currentCategory] = startsInCategory[currentCategory]!!.plus(1f)
                 }
@@ -48,7 +50,7 @@ class GetCostSummaryForClub(
         val costSummaryList = mutableListOf<CostSummaryDTO>()
 
         for (start in startsInCategory.entries) {
-            val category = getCompetitionCategory.execute(start.key)
+            val category: CompetitionCategoryDTO = getCompetitionCategory.execute(start.key)
             val pricePerPlayer = if (category.category.type.equals("singles", ignoreCase = true)) category.settings.cost else category.settings.cost * 0.5f
             costSummaryList.add(
                 CostSummaryDTO(
@@ -57,7 +59,7 @@ class GetCostSummaryForClub(
                    price = pricePerPlayer ,
                    totalPrice = start.value * pricePerPlayer))
         }
-        val totalCostForClub = costSummaryList.map{ it.totalPrice }.sum()
+        val totalCostForClub: Float = costSummaryList.map{ it.totalPrice }.sum()
         return CostSummaryListDTO(findClub.byId(clubId), costSummaryList, totalCostForClub)
     }
 }

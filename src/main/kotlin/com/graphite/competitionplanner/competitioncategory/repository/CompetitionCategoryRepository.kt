@@ -6,7 +6,6 @@ import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.competitioncategory.entity.Round
-import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.records.CategoryRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryGameRulesRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryMetadataRecord
@@ -256,14 +255,14 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
                     it.getValue(CATEGORY.CATEGORY_NAME),
                     it.getValue(CATEGORY.CATEGORY_TYPE)
                 ),
-                GeneralSettingsSpec(
+                GeneralSettingsDTO(
                     it.getValue(COMPETITION_CATEGORY_METADATA.COST),
                     DrawType.valueOf(it.getValue(COMPETITION_CATEGORY_METADATA.DRAW_TYPE)),
                     it.getValue(COMPETITION_CATEGORY_METADATA.NR_PLAYERS_PER_GROUP),
                     it.getValue(COMPETITION_CATEGORY_METADATA.NR_PLAYERS_TO_PLAYOFF),
                     PoolDrawStrategy.valueOf(it.getValue(COMPETITION_CATEGORY_METADATA.POOL_DRAW_STRATEGY))
                 ),
-                GameSettingsSpec(
+                GameSettingsDTO(
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.NR_SETS),
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_SCORE),
                     it.getValue(COMPETITION_CATEGORY_GAME_RULES.WIN_MARGIN),
@@ -280,7 +279,7 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         }
     }
 
-    private fun GameSettingsSpec.toRecord(competitionCategoryId: Int): CompetitionCategoryGameRulesRecord {
+    private fun GameSettingsDTO.toRecord(competitionCategoryId: Int): CompetitionCategoryGameRulesRecord {
         val record = dslContext.newRecord(COMPETITION_CATEGORY_GAME_RULES)
         record.let {
             it.competitionCategoryId = competitionCategoryId
@@ -299,7 +298,7 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         return record
     }
 
-    private fun GeneralSettingsSpec.toRecord(competitionCategoryId: Int): CompetitionCategoryMetadataRecord {
+    private fun GeneralSettingsDTO.toRecord(competitionCategoryId: Int): CompetitionCategoryMetadataRecord {
         val record = dslContext.newRecord(COMPETITION_CATEGORY_METADATA)
         record.let {
             it.competitionCategoryId = competitionCategoryId

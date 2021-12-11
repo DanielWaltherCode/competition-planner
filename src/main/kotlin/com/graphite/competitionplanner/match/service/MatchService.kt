@@ -6,7 +6,7 @@ import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
-import com.graphite.competitionplanner.registration.service.CompetitionCategoryDTO
+import com.graphite.competitionplanner.registration.service.SimpleCompetitionCategoryDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.result.service.ResultDTO
 import com.graphite.competitionplanner.result.service.ResultService
@@ -82,7 +82,7 @@ class MatchService(
             record.id,
             record.startTime,
             record.endTime,
-            CompetitionCategoryDTO(record.competitionCategoryId,
+            SimpleCompetitionCategoryDTO(record.competitionCategoryId,
                 competitionCategoryRepository.getCategoryType(record.competitionCategoryId).categoryName),
             record.matchType,
             registrationService.getPlayersWithClubFromRegistrationId(record.firstRegistrationId),
@@ -100,7 +100,7 @@ class MatchService(
             match.id,
             match.startTime,
             match.endTime,
-            CompetitionCategoryDTO(match.competitionCategoryId,
+            SimpleCompetitionCategoryDTO(match.competitionCategoryId,
                 competitionCategoryRepository.getCategoryType(match.competitionCategoryId).categoryName),
             match.matchType,
             registrationService.getPlayersWithClubFromRegistrationId(match.firstRegistrationId),
@@ -124,7 +124,7 @@ data class MatchDTO(
     val id: Int,
     val startTime: LocalDateTime?,
     val endTime: LocalDateTime?,
-    val competitionCategory: CompetitionCategoryDTO,
+    val competitionCategory: SimpleCompetitionCategoryDTO,
     val matchType: String,
     val firstPlayer: List<PlayerWithClubDTO>,
     val secondPlayer: List<PlayerWithClubDTO>,
@@ -137,7 +137,7 @@ data class MatchAndResultDTO(
     val id: Int,
     val startTime: LocalDateTime?,
     val endTime: LocalDateTime?,
-    val competitionCategory: CompetitionCategoryDTO,
+    val competitionCategory: SimpleCompetitionCategoryDTO,
     val matchType: String,
     val firstPlayer: List<PlayerWithClubDTO>,
     val secondPlayer: List<PlayerWithClubDTO>,

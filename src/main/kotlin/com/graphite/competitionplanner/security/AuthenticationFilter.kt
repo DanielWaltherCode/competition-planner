@@ -12,6 +12,7 @@ import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import java.io.IOException
+import java.io.PrintWriter
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
@@ -24,7 +25,7 @@ class AuthenticationFilter(authenticationManager: AuthenticationManager) : Usern
     @Throws(AuthenticationException::class)
     override fun attemptAuthentication(req: HttpServletRequest, res: HttpServletResponse): Authentication {
         return try {
-            val loginCredentials = ObjectMapper().readValue(req.inputStream, UserLogin::class.java)
+            val loginCredentials: UserLogin = ObjectMapper().readValue(req.inputStream, UserLogin::class.java)
 
             // Spring automatically connects to the database, validates the password, and returns the user object
             // This works because we implemented the loadUserByUsername method in UserService
@@ -44,20 +45,20 @@ class AuthenticationFilter(authenticationManager: AuthenticationManager) : Usern
         chain: FilterChain,
         auth: Authentication
     ) {
-        val username = (auth.principal as User).username
-        val accessToken = SecurityHelper.generateAccessToken(username)
-        val refreshToken = SecurityHelper.generateRefreshToken(username)
+        val username: String = (auth.principal as User).username
+        val accessToken: String = SecurityHelper.generateAccessToken(username)
+        val refreshToken: String = SecurityHelper.generateRefreshToken(username)
 
         // Store refresh token with user
-        val userService = SpringApplicationContext.getBean("userService") as UserService
+        val userService: UserService = SpringApplicationContext.getBean("userService") as UserService
         userService.storeRefreshToken(refreshToken, username)
 
         // Add access and refresh tokens to response body
-        val out = res.writer
+        val out: PrintWriter = res.writer
         res.contentType = "application/json"
         res.characterEncoding = "UTF-8"
         val loginDTO = LoginDTO(accessToken, refreshToken)
-        val jsonBody = ObjectMapper().writeValueAsString(loginDTO)
+        val jsonBody: String = ObjectMapper().writeValueAsString(loginDTO)
         out.print(jsonBody)
         out.flush()
     }

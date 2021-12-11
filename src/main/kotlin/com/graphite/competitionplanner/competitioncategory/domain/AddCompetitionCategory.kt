@@ -14,13 +14,13 @@ class AddCompetitionCategory(
 ) {
 
     fun execute(competitionId: Int, category: CategorySpec): CompetitionCategoryDTO {
-        val availableCategories = categoryRepository.getAvailableCategories()
+        val availableCategories: List<CategoryDTO> = categoryRepository.getAvailableCategories()
         val categoryDto = CategoryDTO(category.id, category.name, category.type)
         if (availableCategories.none { it == categoryDto }) {
             throw IllegalArgumentException("Not a valid category: $category")
         }
 
-        val addedCategories = repository.getAll(competitionId)
+        val addedCategories: List<CompetitionCategoryDTO> = repository.getAll(competitionId)
         if (addedCategories.any { it.category == category }) {
             throw IllegalArgumentException("The category $category has already been added")
         }
@@ -35,8 +35,8 @@ class AddCompetitionCategory(
         return repository.store(competitionId, spec)
     }
 
-    private fun getDefaultGeneralSettings(): GeneralSettingsSpec {
-        return GeneralSettingsSpec(
+    private fun getDefaultGeneralSettings(): GeneralSettingsDTO {
+        return GeneralSettingsDTO(
             150f,
             DrawType.POOL_AND_CUP,
             4,
@@ -45,8 +45,8 @@ class AddCompetitionCategory(
         )
     }
 
-    private fun getDefaultGameSettings(): GameSettingsSpec {
-        return GameSettingsSpec(
+    private fun getDefaultGameSettings(): GameSettingsDTO {
+        return GameSettingsDTO(
             5,
             11,
             2,

@@ -1,7 +1,9 @@
 package com.graphite.competitionplanner.registration.domain
 
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.draw.domain.Registration
+import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
 import com.graphite.competitionplanner.registration.service.SearchType
@@ -21,11 +23,11 @@ class SearchRegistrations(
     }
 
     fun getResultGroupedByClub(competition: CompetitionDTO) : RegisteredPlayersDTO {
-        val players = registrationRepository.getAllRegisteredPlayersInCompetition(competition.id)
+        val players: List<PlayerWithClubDTO> = registrationRepository.getAllRegisteredPlayersInCompetition(competition.id)
             .filter { it.lastName.uppercase() != Registration.Bye.toString().uppercase() } // Ignore bye players
             .sortedBy { it.club.name }
-        val clubNames = players.map { it.club.name }.distinct()
-        val pairs = clubNames.associateWith { clubName ->
+        val clubNames: List<String> = players.map { it.club.name }.distinct()
+        val pairs: Map<String, Set<PlayerWithClubDTO>> = clubNames.associateWith { clubName ->
             players.filter { player ->
                 player.club.name.uppercase() == clubName.uppercase()
             }.toSet()
@@ -34,11 +36,11 @@ class SearchRegistrations(
     }
 
     fun getResultGroupedByLastName(competition: CompetitionDTO) : RegisteredPlayersDTO {
-        val players = registrationRepository.getAllRegisteredPlayersInCompetition(competition.id)
+        val players: List<PlayerWithClubDTO> = registrationRepository.getAllRegisteredPlayersInCompetition(competition.id)
             .filter { it.lastName.uppercase() != Registration.Bye.toString().uppercase() } // Ignore bye players
             .sortedBy { it.lastName }
-        val initials = players.map { it.lastName.first().uppercase() }.distinct()
-        val pairs = initials.associateWith { initial ->
+        val initials: List<String> = players.map { it.lastName.first().uppercase() }.distinct()
+        val pairs: Map<String, Set<PlayerWithClubDTO>> = initials.associateWith { initial ->
             players.filter { player ->
                 player.lastName.first().uppercase() == initial.uppercase()
             }.toSet()
@@ -47,10 +49,11 @@ class SearchRegistrations(
     }
 
     fun getResultGroupedByCompetitionCategory(competition: CompetitionDTO): RegisteredPlayersDTO {
-        val categoriesAndPlayers = registrationRepository.getCategoriesAndPlayersInCompetition(competition.id)
+        val categoriesAndPlayers: List<Pair<CategoryDTO, PlayerWithClubDTO>> =
+            registrationRepository.getCategoriesAndPlayersInCompetition(competition.id)
             .filter { (_, player) -> player.lastName.uppercase() != Registration.Bye.toString().uppercase() } // Ignore bye players
-        val categoryNames = categoriesAndPlayers.map { (category, _) -> category.name  }
-        val pairs = categoryNames.associateWith { categoryName ->
+        val categoryNames: List<String> = categoriesAndPlayers.map { (category, _) -> category.name  }
+        val pairs: Map<String, Set<PlayerWithClubDTO>> = categoryNames.associateWith { categoryName ->
             categoriesAndPlayers.filter { (category, _) ->
                 category.name == categoryName
             }.map { (_, player) -> player }.toSet()

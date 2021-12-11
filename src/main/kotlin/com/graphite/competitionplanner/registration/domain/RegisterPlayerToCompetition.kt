@@ -2,7 +2,9 @@ package com.graphite.competitionplanner.registration.domain
 
 import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.player.domain.FindPlayer
+import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesDTO
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
@@ -21,15 +23,15 @@ class RegisterPlayerToCompetition(
 ) {
 
     fun execute(spec: RegistrationSinglesSpec): RegistrationSinglesDTO {
-        val player = findPlayer.byId(spec.playerId)
+        val player: PlayerWithClubDTO = findPlayer.byId(spec.playerId)
 
-        val competitionCategory = findCompetitionCategory.byId(spec.competitionCategoryId)
+        val competitionCategory: CompetitionCategoryDTO = findCompetitionCategory.byId(spec.competitionCategoryId)
         if (competitionCategory.category.type != CategoryType.SINGLES.name) {
             throw IllegalArgumentException("The given competition category id ${spec.competitionCategoryId} does not " +
                     "correspond to a category of type ${CategoryType.SINGLES} ")
         }
 
-        val playerIds = repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)
+        val playerIds: List<Int> = repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)
         if (playerIds.contains(spec.playerId)) {
             throw ResponseStatusException(
                 HttpStatus.BAD_REQUEST,

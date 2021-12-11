@@ -24,7 +24,7 @@ class PlayerRepository(val dslContext: DSLContext) : IPlayerRepository {
     }
 
     //TODO: Take CategoryType instead of string
-    fun addPlayerRanking(playerId: Int, rankToAdd: Int, categoryType: String) {
+    override fun addPlayerRanking(playerId: Int, rankToAdd: Int, categoryType: String) {
         val currentRecord = getPlayerRanking(playerId)
 
         if (currentRecord != null) {

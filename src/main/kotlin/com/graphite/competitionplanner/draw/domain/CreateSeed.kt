@@ -25,8 +25,8 @@ class CreateSeed {
 
     fun execute(registrations: List<RegistrationRankingDTO>): List<RegistrationSeedDTO> {
 
-        val sortedHighestRankFirst = registrations.toList().sortedBy { -it.rank }
-        val numberOfSeeds = calculateNumberOfSeeds(registrations)
+        val sortedHighestRankFirst: List<RegistrationRankingDTO> = registrations.toList().sortedBy { -it.rank }
+        val numberOfSeeds: Int = calculateNumberOfSeeds(registrations)
 
         return sortedHighestRankFirst.mapIndexed { index, it ->
             RegistrationSeedDTO(

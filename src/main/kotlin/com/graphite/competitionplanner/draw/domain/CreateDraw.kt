@@ -2,8 +2,9 @@ package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
-import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsSpec
+import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsDTO
 import com.graphite.competitionplanner.competitioncategory.entity.Round
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.draw.interfaces.CompetitionCategoryDrawDTO
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
@@ -30,7 +31,7 @@ class CreateDraw(
      * Creates a draw for the given competition category
      */
     fun execute(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
-        val competitionCategory = findCompetitionCategory.byId(competitionCategoryId)
+        val competitionCategory: CompetitionCategoryDTO = findCompetitionCategory.byId(competitionCategoryId)
 
         // TODO: We should check the state of this competition category.
         // TODO: Has drawn been made? Has a match already been played? Etc.
@@ -53,7 +54,7 @@ class CreateDraw(
         return drawRepository.store(spec)
     }
 
-    private fun drawPools(registrations: List<RegistrationSeedDTO>, settings: GeneralSettingsSpec): List<Pool> {
+    private fun drawPools(registrations: List<RegistrationSeedDTO>, settings: GeneralSettingsDTO): List<Pool> {
         val numberOfPools: Int = calculateNumberOfPools(registrations.size, settings)
         val pools: List<Pool> = createEmptyPools(numberOfPools)
 
@@ -70,7 +71,7 @@ class CreateDraw(
     private fun createPoolAndCupDrawSpec(
         competitionCategoryId: Int,
         registrationsWithSeeds: List<RegistrationSeedDTO>,
-        generalSettingsSpec: GeneralSettingsSpec
+        generalSettingsSpec: GeneralSettingsDTO
     ): PoolAndCupDrawSpec {
         val pools: List<Pool> = drawPools(registrationsWithSeeds, generalSettingsSpec)
         val playOffMatches: List<PlayOffMatch> = createPoolAndCupPlayoff(pools, generalSettingsSpec)
@@ -91,9 +92,9 @@ class CreateDraw(
      */
     private fun createPoolAndCupPlayoff(
         pools: List<Pool>,
-        settings: GeneralSettingsSpec
+        settings: GeneralSettingsDTO
     ): List<PlayOffMatch> {
-        val placeholders =
+        val placeholders: List<Registration.Placeholder> =
             pools.flatMap { group -> (1..settings.playersToPlayOff).map { index -> Registration.Placeholder(group.name + index) } }
                 .sortedBy { it.name.reversed() } // Should result in A1, B1, C1, ..., A2, B2, C2, ...
 
@@ -110,7 +111,7 @@ class CreateDraw(
         return firstRoundOfMatches + buildRemainingPlayOffTree(firstRoundOfMatches.size / 2)
     }
 
-    private fun calculateNumberOfPools(numberOfRegistrations: Int, settings: GeneralSettingsSpec): Int {
+    private fun calculateNumberOfPools(numberOfRegistrations: Int, settings: GeneralSettingsDTO): Int {
         return ceil((numberOfRegistrations.toDouble() / settings.playersPerGroup.toDouble())).toInt()
     }
 
@@ -202,11 +203,11 @@ class CreateDraw(
                 )
             )
         } else {
-            val best = registrations.take(2)
-            val remaining = registrations.drop(2)
-            val first = generatePlayOffMatchesForFirstRound(listOf(best.first()) +
+            val best: List<Registration> = registrations.take(2)
+            val remaining: List<Registration> = registrations.drop(2)
+            val first: List<PlayOffMatch> = generatePlayOffMatchesForFirstRound(listOf(best.first()) +
                     remaining.filterIndexed { index, _ -> index % 2 == 1 })
-            val second = generatePlayOffMatchesForFirstRound(listOf(best.last()) +
+            val second: List<PlayOffMatch> = generatePlayOffMatchesForFirstRound(listOf(best.last()) +
                     remaining.filterIndexed { index, _ -> index % 2 == 0 })
             first + second.shiftOrderBy(first.size)
         }
@@ -231,7 +232,7 @@ class CreateDraw(
                 listOf(PlayOffMatch(Registration.Placeholder(), Registration.Placeholder(), 1, Round.FINAL))
             }
             else -> {
-                val thisRound = (1..numberOfMatchesInRound).map {
+                val thisRound: List<PlayOffMatch> = (1..numberOfMatchesInRound).map {
                     PlayOffMatch(
                         Registration.Placeholder(),
                         Registration.Placeholder(),
@@ -239,7 +240,7 @@ class CreateDraw(
                         numberOfMatchesToRound(numberOfMatchesInRound)
                     )
                 }
-                val nextRound = buildRemainingPlayOffTree(numberOfMatchesInRound / 2)
+                val nextRound: List<PlayOffMatch> = buildRemainingPlayOffTree(numberOfMatchesInRound / 2)
                 thisRound + nextRound
             }
         }

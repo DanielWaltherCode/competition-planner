@@ -6,6 +6,7 @@ import com.graphite.competitionplanner.competitioncategory.domain.GetCompetition
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
+import com.graphite.competitionplanner.tables.records.PlayerRecord
 import org.springframework.stereotype.Component
 
 @Component
@@ -17,7 +18,7 @@ class GetCostSummaryForPlayers(
 
     fun execute(competitionId: Int, clubId: Int): PlayerCostSummaryListDTO {
         // Get all players in the competition for a given club
-        val registeredPlayers = registrationRepository.getRegistreredPlayersInCompetition(competitionId)
+        val registeredPlayers: List<PlayerRecord> = registrationRepository.getRegistreredPlayersInCompetition(competitionId)
         val playersFromClub = registeredPlayers.filter { it.clubId == clubId }
         val playerDTOs = playersFromClub.map { PlayerDTO(it.id, it.firstName, it.lastName, it.clubId, it.dateOfBirth) }
 

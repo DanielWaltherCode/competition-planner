@@ -6,6 +6,6 @@ data class CompetitionCategoryDTO(
     val id: Int,
     val status: String,
     val category: CategorySpec,
-    val settings: GeneralSettingsSpec,
-    val gameSettings: GameSettingsSpec
+    val settings: GeneralSettingsDTO,
+    val gameSettings: GameSettingsDTO
 )

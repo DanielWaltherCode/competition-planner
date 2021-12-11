@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.draw.service
 
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
-import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsSpec
+import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsDTO
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.competitioncategory.entity.Round
@@ -43,7 +43,7 @@ class DrawService(
         // players after the draw is made
 
         val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
-        val categoryMetadata: GeneralSettingsSpec
+        val categoryMetadata: GeneralSettingsDTO
         try {
             categoryMetadata = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId).settings
         } catch (ex: IllegalStateException) {
@@ -70,7 +70,7 @@ class DrawService(
         return getDraw(competitionCategoryId)
     }
 
-    private fun createSeed(competitionCategoryId: Int, categoryMetadata: GeneralSettingsSpec) {
+    private fun createSeed(competitionCategoryId: Int, categoryMetadata: GeneralSettingsDTO) {
         val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
         val playerList = mutableMapOf<Int, List<PlayerDTO>>()
         for (id in registrationIds) {
@@ -122,7 +122,7 @@ class DrawService(
 
     fun createPoolDraw(
         registrationIds: List<Int>,
-        categoryMetadata: GeneralSettingsSpec,
+        categoryMetadata: GeneralSettingsDTO,
         competitionCategoryId: Int
     ) {
         // If draw has already been made, first remove old matches

@@ -74,7 +74,7 @@ class RegistrationService(
             playerCompetitions.add(
                 CompetitionAndCategoriesDTO(
                     competition = competition,
-                    categories = categories.map { CompetitionCategoryDTO(it.categoryId, it.categoryName) }
+                    categories = categories.map { SimpleCompetitionCategoryDTO(it.categoryId, it.categoryName) }
                 )
             )
         }
@@ -126,7 +126,7 @@ data class PlayerCompetitionDTO(
 
 data class CompetitionAndCategoriesDTO(
     val competition: CompetitionDTO,
-    val categories: List<CompetitionCategoryDTO>
+    val categories: List<SimpleCompetitionCategoryDTO>
 )
 
 data class RegisteredPlayersDTO(
@@ -135,11 +135,11 @@ data class RegisteredPlayersDTO(
 )
 
 data class CategoryRegistrations(
-    val category: CompetitionCategoryDTO,
+    val category: SimpleCompetitionCategoryDTO,
     val registeredPlayers: List<PlayerWithClubDTO>
 )
 
-data class CompetitionCategoryDTO(
+data class SimpleCompetitionCategoryDTO(
     val id: Int,
     val name: String
 )

@@ -45,7 +45,7 @@ class CompetitionCategoryApi(
     }
 
     @GetMapping("/{competitionCategoryId}/metadata")
-    fun getCategoryGeneralSettings(@PathVariable competitionCategoryId: Int): GeneralSettingsSpec {
+    fun getCategoryGeneralSettings(@PathVariable competitionCategoryId: Int): GeneralSettingsDTO {
         return competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId).settings
     }
 
@@ -58,7 +58,7 @@ class CompetitionCategoryApi(
     }
 
     @GetMapping("/{competitionCategoryId}/game-rules")
-    fun getCategoryGameSettings(@PathVariable competitionCategoryId: Int): GameSettingsSpec {
+    fun getCategoryGameSettings(@PathVariable competitionCategoryId: Int): GameSettingsDTO {
         return competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId).gameSettings
     }
 }

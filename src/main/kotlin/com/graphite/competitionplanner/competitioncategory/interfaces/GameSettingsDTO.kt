@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.competitioncategory.interfaces
 
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 
-data class GameSettingsSpec(
+data class GameSettingsDTO(
     val numberOfSets: Int,
     val winScore: Int,
     val winMargin: Int,

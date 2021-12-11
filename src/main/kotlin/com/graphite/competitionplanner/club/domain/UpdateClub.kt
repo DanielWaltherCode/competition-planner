@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component
 class UpdateClub(val clubRepository: IClubRepository) {
 
     fun execute(clubId: Int, spec: ClubSpec): ClubDTO {
-        val allOtherClubs = clubRepository.getAll().filter { it.id != clubId }
-        val nameIsAvailable = allOtherClubs.none { it.name == spec.name }
+        val allOtherClubs: List<ClubDTO> = clubRepository.getAll().filter { it.id != clubId }
+        val nameIsAvailable: Boolean = allOtherClubs.none { it.name == spec.name }
 
         if (nameIsAvailable) {
             return clubRepository.update(clubId, spec)

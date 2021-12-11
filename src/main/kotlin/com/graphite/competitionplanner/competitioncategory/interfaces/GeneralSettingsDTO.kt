@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.competitioncategory.interfaces
 
-data class GeneralSettingsSpec(
+data class GeneralSettingsDTO(
     val cost: Float,
     val drawType: DrawType,
     val playersPerGroup: Int,

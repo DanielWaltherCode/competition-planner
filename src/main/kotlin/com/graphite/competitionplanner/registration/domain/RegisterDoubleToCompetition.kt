@@ -2,7 +2,9 @@ package com.graphite.competitionplanner.registration.domain
 
 import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.player.domain.FindPlayer
+import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesDTO
 import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesSpec
@@ -21,16 +23,16 @@ class RegisterDoubleToCompetition(
 ) {
 
     fun execute(spec: RegistrationDoublesSpec): RegistrationDoublesDTO {
-        val playerOne = findPlayer.byId(spec.playerOneId)
-        val playerTwo = findPlayer.byId(spec.playerTwoId)
+        val playerOne: PlayerWithClubDTO = findPlayer.byId(spec.playerOneId)
+        val playerTwo: PlayerWithClubDTO = findPlayer.byId(spec.playerTwoId)
 
-        val competitionCategory = findCompetitionCategory.byId(spec.competitionCategoryId)
+        val competitionCategory: CompetitionCategoryDTO = findCompetitionCategory.byId(spec.competitionCategoryId)
         if (competitionCategory.category.type != CategoryType.DOUBLES.name) {
             throw IllegalArgumentException("The given competition category id ${spec.competitionCategoryId} does not " +
                     "correspond to a category of type ${CategoryType.DOUBLES} ")
         }
 
-        val playerIds = repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)
+        val playerIds: List<Int> = repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)
         if (playerIds.contains(spec.playerOneId)) {
             // Todo - gör om till nytt exception med en egen felkod som webben kan mappa till ett felmeddelande
             throw ResponseStatusException(HttpStatus.BAD_REQUEST,

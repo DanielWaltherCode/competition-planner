@@ -149,7 +149,7 @@ class DataGenerator {
         id,
         startTime,
         endTime,
-        com.graphite.competitionplanner.registration.service.CompetitionCategoryDTO(competitionCategoryId, competitionCategoryName),
+        com.graphite.competitionplanner.registration.service.SimpleCompetitionCategoryDTO(competitionCategoryId, competitionCategoryName),
         matchType,
         firstPlayer,
         secondPlayer,
@@ -204,8 +204,8 @@ class DataGenerator {
         id: Int = 1,
         status: String = CompetitionCategoryStatus.ACTIVE.name,
         category: CategorySpec = newCategorySpec(),
-        settings: GeneralSettingsSpec = newGeneralSettingsSpec(),
-        gameSettings: GameSettingsSpec = newGameSettingsSpec()
+        settings: GeneralSettingsDTO = newGeneralSettingsSpec(),
+        gameSettings: GameSettingsDTO = newGameSettingsSpec()
     ) = CompetitionCategoryDTO(
         id,
         status,
@@ -237,8 +237,8 @@ class DataGenerator {
     )
 
     fun newCompetitionCategoryUpdateSpec(
-        settings: GeneralSettingsSpec = newGeneralSettingsSpec(),
-        gameSettings: GameSettingsSpec = newGameSettingsSpec()
+        settings: GeneralSettingsDTO = newGeneralSettingsSpec(),
+        gameSettings: GameSettingsDTO = newGameSettingsSpec()
     ) = CompetitionCategoryUpdateSpec(
         settings,
         gameSettings
@@ -247,8 +247,8 @@ class DataGenerator {
     fun newCompetitionCategorySpec(
         status: CompetitionCategoryStatus = CompetitionCategoryStatus.ACTIVE,
         category: CategorySpec = newCategorySpec(),
-        settings: GeneralSettingsSpec = newGeneralSettingsSpec(),
-        gameSettings: GameSettingsSpec = newGameSettingsSpec()
+        settings: GeneralSettingsDTO = newGeneralSettingsSpec(),
+        gameSettings: GameSettingsDTO = newGameSettingsSpec()
     ) = CompetitionCategorySpec(
         status,
         category,
@@ -262,7 +262,7 @@ class DataGenerator {
         playersPerGroup: Int = 4,
         playersToPlayOff: Int = 2,
         poolDrawStrategy: PoolDrawStrategy = PoolDrawStrategy.NORMAL
-    ) = GeneralSettingsSpec(
+    ) = GeneralSettingsDTO(
         cost,
         drawType,
         playersPerGroup,
@@ -282,7 +282,7 @@ class DataGenerator {
         winScoreTiebreak: Int = 3,
         winMarginTieBreak: Int = 3,
         useDifferentRulesInEndGame: Boolean = false
-    ) = GameSettingsSpec(
+    ) = GameSettingsDTO(
         numberOfSets,
         winScore,
         winMargin,

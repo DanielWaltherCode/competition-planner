@@ -5,6 +5,7 @@ import org.springframework.http.MediaType
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.AuthenticationEntryPoint
 import java.io.IOException
+import java.io.PrintWriter
 import java.util.*
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
@@ -21,15 +22,14 @@ class JwtAuthenticationEntryPoint : AuthenticationEntryPoint {
         // TODO: Distinguish 401 from 403 (i.e. listen to actual exception)
         response.status = HttpServletResponse.SC_UNAUTHORIZED
         response.contentType = MediaType.APPLICATION_JSON_VALUE
-        val message: String?
-        message = if (exception.cause != null) {
+        val message: String? = if (exception.cause != null) {
             exception.cause!!.message
         } else {
             exception.message
         }
-        val body = ObjectMapper()
+        val body: String = ObjectMapper()
             .writeValueAsString(Collections.singletonMap("error", message))
-        val out = response.writer
+        val out: PrintWriter = response.writer
         out.print(body)
     }
 }

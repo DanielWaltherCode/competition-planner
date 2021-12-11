@@ -77,4 +77,8 @@ interface IPlayerRepository {
     @Throws(NotFoundException::class)
     fun delete(id: Int): PlayerDTO
 
+    /**
+     * Add ranking
+     */
+    fun addPlayerRanking(playerId: Int, rankToAdd: Int, categoryType: String)
 }

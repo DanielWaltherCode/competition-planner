@@ -15,8 +15,6 @@ class CreateCompetition(
     val scheduleService: ScheduleService
 ) {
     fun execute(spec: CompetitionSpec): CompetitionDTO {
-        findClub.byId(spec.organizingClubId)
-
         val competition = repository.store(spec)
 
         // Add default competition schedule metadata

@@ -5,7 +5,6 @@ import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.club.interfaces.PaymentInfoSpec
 import com.graphite.competitionplanner.club.repository.ClubPaymentRepository
-import com.graphite.competitionplanner.common.exception.NotFoundException
 import org.springframework.stereotype.Component
 
 @Component
@@ -15,12 +14,12 @@ class CreateClub(
 ) {
 
     fun execute(spec: ClubSpec): ClubDTO {
-        val nameIsAvailable = clubRepository.getAll().none { it.name == spec.name }
+        val nameIsAvailable: Boolean = clubRepository.getAll().none { it.name == spec.name }
         if (nameIsAvailable) {
-            val clubDTO = clubRepository.store(spec)
+            val club: ClubDTO = clubRepository.store(spec)
             // Set up empty paymentinfo for each club
-            clubPaymentRepository.add(clubDTO.id, getEmptyPaymentInfo())
-            return clubDTO
+            clubPaymentRepository.add(club.id, getEmptyPaymentInfo())
+            return club
         } else {
             throw IllegalArgumentException("Cannot add club. Club with name ${spec.name} already exist ")
         }
