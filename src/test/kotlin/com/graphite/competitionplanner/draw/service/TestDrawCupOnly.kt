@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.draw.service
 
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.competitioncategory.entity.Round
@@ -31,7 +32,8 @@ class TestDrawCupOnly(
     @Autowired val competitionCategoryService: CompetitionCategoryService,
     @Autowired val registrationRepository: RegistrationRepository,
     @Autowired val competitionDrawRepository: CompetitionDrawRepository,
-    @Autowired val drawService: DrawService
+    @Autowired val drawService: DrawService,
+    @Autowired val findCompetitionCategory: FindCompetitionCategory
 ) {
     var competitionCategoryId = 0
     lateinit var draw : DrawDTO
@@ -43,7 +45,7 @@ class TestDrawCupOnly(
 
         competitionCategoryId = testUtil.addCompetitionCategory("Flickor 13")
 
-        val original = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
+        val original = findCompetitionCategory.byId(competitionCategoryId)
 
         val updatedSettings = dataGenerator.newCompetitionCategoryUpdateSpec(
             settings = dataGenerator.newGeneralSettingsSpec(

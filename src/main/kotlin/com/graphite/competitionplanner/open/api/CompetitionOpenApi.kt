@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.open.api
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
@@ -27,7 +28,8 @@ class CompetitionOpenApi(
     val competitionCategoryService: CompetitionCategoryService,
     val matchService: MatchService,
     val findPlayer: FindPlayer,
-    val findCompetitions: FindCompetitions
+    val findCompetitions: FindCompetitions,
+    val findCompetitionCategory: FindCompetitionCategory
 ) {
 
     @GetMapping
@@ -88,7 +90,7 @@ class CompetitionOpenApi(
 
     @GetMapping("/{competitionId}/categories/{categoryId}")
     fun getCategory(@PathVariable categoryId: Int): CompetitionCategory {
-        val dto = competitionCategoryService.getByCompetitionCategoryId(categoryId)
+        val dto = findCompetitionCategory.byId(categoryId)
         return CompetitionCategory(dto.id, dto.category.name, dto.status)
     }
 

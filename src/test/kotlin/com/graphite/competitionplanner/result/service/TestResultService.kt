@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.result.service
 
 import com.graphite.competitionplanner.common.exception.GameValidationException
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.draw.service.DrawService
@@ -33,7 +34,8 @@ class TestResultService(
     @Autowired val playerRepository: PlayerRepository,
     @Autowired val drawService: DrawService,
     @Autowired val resultRepository: ResultRepository,
-    @Autowired val util: Util
+    @Autowired val util: Util,
+    @Autowired val findCompetitionCategory: FindCompetitionCategory
 ) {
 
     var competitionCategoryId = 0
@@ -49,7 +51,7 @@ class TestResultService(
     @BeforeEach
     fun setUpDataForEachTest() {
         // Update competition category so that it's groups of 3 instead with one proceeding
-        val original = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
+        val original = findCompetitionCategory.byId(competitionCategoryId)
 
         val updatedSettings = dataGenerator.newCompetitionCategoryUpdateSpec(
             settings = dataGenerator.newGeneralSettingsSpec(

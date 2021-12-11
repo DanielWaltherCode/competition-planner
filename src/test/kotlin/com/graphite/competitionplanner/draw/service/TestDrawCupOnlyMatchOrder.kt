@@ -8,6 +8,7 @@ import com.graphite.competitionplanner.competition.api.CompetitionApi
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
 import com.graphite.competitionplanner.competition.interfaces.LocationSpec
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
@@ -39,7 +40,8 @@ class TestDrawCupOnlyMatchOrder(
     @Autowired val competitionApi: CompetitionApi,
     @Autowired val playerApi: PlayerApi,
     @Autowired val categoryApi: CategoryApi,
-    @Autowired val createClub: CreateClub
+    @Autowired val createClub: CreateClub,
+    @Autowired val findCompetitionCategory: FindCompetitionCategory
 ) {
     lateinit var club: ClubDTO
     lateinit var competition: CompetitionDTO
@@ -75,7 +77,7 @@ class TestDrawCupOnlyMatchOrder(
     }
 
     private fun setModeToCupOnlyFor(competitionCategoryId: Int) {
-        val original = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
+        val original = findCompetitionCategory.byId(competitionCategoryId)
 
         val updatedSettings = dataGenerator.newCompetitionCategoryUpdateSpec(
             settings = dataGenerator.newGeneralSettingsSpec(

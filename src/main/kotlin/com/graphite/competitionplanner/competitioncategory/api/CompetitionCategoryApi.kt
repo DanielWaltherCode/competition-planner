@@ -1,6 +1,8 @@
 package com.graphite.competitionplanner.competitioncategory.api
 
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
+import com.graphite.competitionplanner.competitioncategory.domain.CancelCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import org.springframework.web.bind.annotation.*
@@ -9,7 +11,9 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/competition/{competitionId}/category")
 class CompetitionCategoryApi(
-    val competitionCategoryService: CompetitionCategoryService
+    val competitionCategoryService: CompetitionCategoryService,
+    val cancelCompetitionCategory: CancelCompetitionCategory,
+    val findCompetitionCategory: FindCompetitionCategory,
 ) {
 
     @PostMapping
@@ -28,7 +32,8 @@ class CompetitionCategoryApi(
 
     @DeleteMapping("/{competitionCategoryId}/cancel")
     fun cancelCompetitionCategory(@PathVariable competitionId: Int, @PathVariable competitionCategoryId: Int) {
-        return competitionCategoryService.cancelCategoryInCompetition(competitionCategoryId)
+        val competitionCategory = findCompetitionCategory.byId(competitionCategoryId)
+        return cancelCompetitionCategory.execute(competitionCategory)
     }
     @DeleteMapping("/{competitionCategoryId}")
     fun deleteCompetitionCategory(@PathVariable competitionId: Int, @PathVariable competitionCategoryId: Int) {
@@ -46,7 +51,12 @@ class CompetitionCategoryApi(
 
     @GetMapping("/{competitionCategoryId}/metadata")
     fun getCategoryGeneralSettings(@PathVariable competitionCategoryId: Int): GeneralSettingsDTO {
-        return competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId).settings
+        return findCompetitionCategory.byId(competitionCategoryId).settings
+    }
+
+    @GetMapping("/{competitionCategoryId}/game-rules")
+    fun getCategoryGameSettings(@PathVariable competitionCategoryId: Int): GameSettingsDTO {
+        return findCompetitionCategory.byId(competitionCategoryId).gameSettings
     }
 
     @GetMapping("/metadata/possible-values")
@@ -55,10 +65,5 @@ class CompetitionCategoryApi(
             DrawType.values().asList(),
             PoolDrawStrategy.values().asList()
         )
-    }
-
-    @GetMapping("/{competitionCategoryId}/game-rules")
-    fun getCategoryGameSettings(@PathVariable competitionCategoryId: Int): GameSettingsDTO {
-        return competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId).gameSettings
     }
 }

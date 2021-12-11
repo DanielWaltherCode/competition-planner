@@ -1,7 +1,6 @@
 package com.graphite.competitionplanner.competitioncategory.service
 
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
-import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.player.domain.ListAllPlayersInClub
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
@@ -65,17 +64,5 @@ class TestCompetitionCategories(
         val newLength = competitionCategoryRepository.getCompetitionCategories().size
         Assertions.assertEquals(originalLength + 1, newLength)
     }
-
-    @Test
-    fun cancelCompetitionCategory() {
-        val newCategoryId = testUtil.addCompetitionCategory("Herrar 6")
-
-        competitionCategoryService.cancelCategoryInCompetition(newCategoryId)
-
-        val competitionCategory = competitionCategoryRepository.getById(newCategoryId)
-        Assertions.assertEquals(CompetitionCategoryStatus.CANCELLED.name, competitionCategory.status)
-
-    }
-
 
 }

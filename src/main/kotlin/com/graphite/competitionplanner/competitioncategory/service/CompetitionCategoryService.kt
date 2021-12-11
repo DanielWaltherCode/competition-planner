@@ -19,20 +19,10 @@ class CompetitionCategoryService(
     @Lazy val scheduleService: ScheduleService,
     val registrationRepository: RegistrationRepository,
     val addCompetitionCategory: AddCompetitionCategory,
-    val getCompetitionCategory: GetCompetitionCategory,
     val getCompetitionCategories: GetCompetitionCategories,
     val updateCompetitionCategory: UpdateCompetitionCategory,
     val deleteCompetitionCategory: DeleteCompetitionCategory,
-    val cancelCompetitionCategory: CancelCompetitionCategory
 ) {
-    /**
-     * Cancel competition category. This is used when players have already
-     * signed up for category. Then we shouldn't delete data but just the category to
-     * cancelled
-     */
-    fun cancelCategoryInCompetition(competitionCategoryId: Int) {
-        cancelCompetitionCategory.execute(competitionCategoryId)
-    }
 
     /**
      * Categories can be deleted if no players are registered yet
@@ -48,10 +38,6 @@ class CompetitionCategoryService(
             )
         }
         deleteCompetitionCategory.execute(categoryId)
-    }
-
-    fun getByCompetitionCategoryId(competitionCategoryId: Int): CompetitionCategoryDTO {
-        return getCompetitionCategory.execute(competitionCategoryId)
     }
 
     fun addCompetitionCategory(

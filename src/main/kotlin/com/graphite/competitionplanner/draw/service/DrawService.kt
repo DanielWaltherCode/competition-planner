@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.draw.service
 
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsDTO
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
@@ -33,7 +34,8 @@ class DrawService(
     val drawUtil: DrawUtil,
     val drawUtilTwoProceed: DrawUtilTwoProceed,
     val playerRepository: PlayerRepository,
-    val competitionCategoryRepository: CompetitionCategoryRepository
+    val competitionCategoryRepository: CompetitionCategoryRepository,
+    val findCompetitionCategory: FindCompetitionCategory
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -45,7 +47,7 @@ class DrawService(
         val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
         val categoryMetadata: GeneralSettingsDTO
         try {
-            categoryMetadata = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId).settings
+            categoryMetadata = findCompetitionCategory.byId(competitionCategoryId).settings
         } catch (ex: IllegalStateException) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Category metadata not found for that id")
         }
@@ -223,7 +225,7 @@ class DrawService(
     }
 
     fun getDraw(competitionCategoryId: Int): DrawDTO {
-        val metadata = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId).settings
+        val metadata = findCompetitionCategory.byId(competitionCategoryId).settings
         if (DrawType.valueOf(metadata.drawType.name) == DrawType.CUP_ONLY) {
             return getCupOnlyDraw(competitionCategoryId)
         }
@@ -281,7 +283,7 @@ class DrawService(
      * stage actual players name will be entered.
      */
     fun getPlayoffForGroups(competitionCategoryId: Int): PlayoffDTO {
-        val categoryMetadata = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId).settings
+        val categoryMetadata = findCompetitionCategory.byId(competitionCategoryId).settings
         val groupMatches = matchService.getGroupMatchesInCategory(competitionCategoryId)
         if (groupMatches.isEmpty()) {
             logger.error("No group matches found before attempt to make playoff draw")
@@ -364,9 +366,4 @@ data class PlayoffDTO(
 data class PlayoffRound(
     val round: Round,
     val matches: List<MatchUp>
-)
-
-data class PlayoffRoundDTO(
-    val round: Round,
-    val matches: List<MatchAndResultDTO>
 )

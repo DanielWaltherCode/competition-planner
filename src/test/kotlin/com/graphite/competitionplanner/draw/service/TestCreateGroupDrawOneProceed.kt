@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.draw.service
 
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
@@ -25,7 +26,8 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
                                     @Autowired val playerRepository: PlayerRepository,
                                     @Autowired val competitionDrawRepository: CompetitionDrawRepository,
                                     @Autowired val drawService: DrawService,
-                                    @Autowired val competitionCategoryService: CompetitionCategoryService
+                                    @Autowired val competitionCategoryService: CompetitionCategoryService,
+                                    @Autowired val findCompetitionCategory: FindCompetitionCategory
 ) {
     var competitionCategoryId = 0
     val dataGenerator = DataGenerator()
@@ -35,7 +37,7 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
         competitionCategoryId = testUtil.addCompetitionCategory("Flickor 13")
 
         // Update competition category so that it's groups of 3 instead with one proceeding
-        val original = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
+        val original = findCompetitionCategory.byId(competitionCategoryId)
 
         val updatedSettings = dataGenerator.newCompetitionCategoryUpdateSpec(
             settings = dataGenerator.newGeneralSettingsSpec(

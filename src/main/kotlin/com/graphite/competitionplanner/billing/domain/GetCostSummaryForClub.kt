@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.billing.domain
 import com.graphite.competitionplanner.billing.interfaces.CostSummaryDTO
 import com.graphite.competitionplanner.billing.interfaces.CostSummaryListDTO
 import com.graphite.competitionplanner.club.domain.FindClub
-import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.competitioncategory.repository.RegistrationsInCompetition
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component
 class GetCostSummaryForClub(
     val registrationRepository: RegistrationRepository,
     val competitionCategoryRepository: CompetitionCategoryRepository,
-    val getCompetitionCategory: GetCompetitionCategory,
+    val findCompetitionCategory: FindCompetitionCategory,
     val findClub: FindClub
 ) {
 
@@ -50,7 +50,7 @@ class GetCostSummaryForClub(
         val costSummaryList = mutableListOf<CostSummaryDTO>()
 
         for (start in startsInCategory.entries) {
-            val category: CompetitionCategoryDTO = getCompetitionCategory.execute(start.key)
+            val category: CompetitionCategoryDTO = findCompetitionCategory.byId(start.key)
             val pricePerPlayer = if (category.category.type.equals("singles", ignoreCase = true)) category.settings.cost else category.settings.cost * 0.5f
             costSummaryList.add(
                 CostSummaryDTO(
