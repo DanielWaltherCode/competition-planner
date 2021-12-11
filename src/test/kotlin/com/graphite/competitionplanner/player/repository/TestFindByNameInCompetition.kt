@@ -52,8 +52,8 @@ class TestFindByNameInCompetition(
         val players = playerRepository.findByNameInCompetition("Nis", competition1.id)
 
         // Assert
-        val expectedPlayerIds = listOf(player1, player2).map { it.id }
-        val actualPlayerIds = players.map { it.id }
+        val expectedPlayerIds = listOf(player1, player2).map { it.id }.sorted()
+        val actualPlayerIds = players.map { it.id }.sorted()
         Assertions.assertEquals(expectedPlayerIds, actualPlayerIds)
     }
 
