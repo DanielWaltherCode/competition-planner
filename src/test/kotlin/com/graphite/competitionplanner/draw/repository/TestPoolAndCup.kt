@@ -7,9 +7,7 @@ import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.*
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
-import com.graphite.competitionplanner.draw.interfaces.PlayOffMatchDTO
 import com.graphite.competitionplanner.draw.interfaces.PlayoffRoundDTO
-import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import org.junit.jupiter.api.Assertions
@@ -75,7 +73,6 @@ class TestPoolAndCup(
             competitionCategoryId = competitionCategory.id,
             pools = listOf(poolA, poolB),
             matches = semifinals + listOf(final),
-            poolToPlayoffMap = emptyList()
         )
 
         // Act

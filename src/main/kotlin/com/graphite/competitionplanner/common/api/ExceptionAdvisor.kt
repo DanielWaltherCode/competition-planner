@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.common.api
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.competitioncategory.domain.CannotDeleteCompetitionCategoryException
+import com.graphite.competitionplanner.draw.interfaces.NotEnoughRegistrationsException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -27,7 +28,11 @@ class ExceptionAdvisor {
     }
 
     @ResponseBody
-    @ExceptionHandler(IllegalArgumentException::class, GameValidationException::class, CannotDeleteCompetitionCategoryException::class)
+    @ExceptionHandler(
+        IllegalArgumentException::class,
+        GameValidationException::class,
+        CannotDeleteCompetitionCategoryException::class,
+        NotEnoughRegistrationsException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun entityValidationError(exception: IllegalArgumentException, request: WebRequest): ResponseEntity<Any> {
         val body = mutableMapOf<String, Any>()

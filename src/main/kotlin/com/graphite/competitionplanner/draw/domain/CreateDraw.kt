@@ -5,10 +5,7 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsDTO
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
-import com.graphite.competitionplanner.draw.interfaces.CompetitionCategoryDrawDTO
-import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
-import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
-import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
+import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCompetitionCategory
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.registration.interfaces.RegistrationRankingDTO
@@ -29,15 +26,21 @@ class CreateDraw(
 
     /**
      * Creates a draw for the given competition category
+     *
+     * @throws NotEnoughRegistrationsException
      */
     fun execute(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
         val competitionCategory: CompetitionCategoryDTO = findCompetitionCategory.byId(competitionCategoryId)
+
 
         // TODO: We should check the state of this competition category.
         // TODO: Has drawn been made? Has a match already been played? Etc.
 
         val registrationRankings: List<RegistrationRankingDTO> = repository.getRegistrationRanking(competitionCategory)
         val registrationsWithSeeds: List<RegistrationSeedDTO> = createSeed.execute(registrationRankings)
+
+        throwExceptionIfNotEnoughRegistrations(registrationsWithSeeds, competitionCategory.settings)
+
         seedRepository.setSeeds(registrationsWithSeeds)
 
         val spec = competitionCategory.settings.let {
@@ -60,7 +63,8 @@ class CreateDraw(
 
         val seededRegistrations: List<Registration.Real> =
             registrations.filter { it.seed != null }.sortedBy { it.seed!! }.map { Registration.Real(it.registrationId) }
-        val nonSeededRegistrations: List<Registration.Real> = registrations.filter { it.seed == null }.map { Registration.Real(it.registrationId) }
+        val nonSeededRegistrations: List<Registration.Real> =
+            registrations.filter { it.seed == null }.map { Registration.Real(it.registrationId) }
 
         return addRoundRobin(pools, seededRegistrations + nonSeededRegistrations.shuffled())
             .map {
@@ -71,16 +75,28 @@ class CreateDraw(
     private fun createPoolAndCupDrawSpec(
         competitionCategoryId: Int,
         registrationsWithSeeds: List<RegistrationSeedDTO>,
-        generalSettingsSpec: GeneralSettingsDTO
+        generalSettings: GeneralSettingsDTO
     ): PoolAndCupDrawSpec {
-        val pools: List<Pool> = drawPools(registrationsWithSeeds, generalSettingsSpec)
-        val playOffMatches: List<PlayOffMatch> = createPoolAndCupPlayoff(pools, generalSettingsSpec)
+        val pools: List<Pool> = drawPools(registrationsWithSeeds, generalSettings)
+        val playOffMatches: List<PlayOffMatch> = createPoolAndCupPlayoff(pools, generalSettings)
         return PoolAndCupDrawSpec(
             competitionCategoryId,
             pools,
             playOffMatches,
-            emptyList()
         )
+    }
+
+    private fun throwExceptionIfNotEnoughRegistrations(
+        registrations: List<RegistrationSeedDTO>,
+        settings: GeneralSettingsDTO
+    ) {
+        when (settings.drawType) {
+            DrawType.POOL_ONLY -> if (registrations.size < 2) throw NotEnoughRegistrationsException("Failed to draw pool only. Requires atleast two registrations.")
+            DrawType.CUP_ONLY -> if (registrations.size < 2) throw NotEnoughRegistrationsException("Failed to draw cup only. Requires atleast two registrations.")
+            DrawType.POOL_AND_CUP -> if ((settings.playersToPlayOff == 1 && registrations.size <= settings.playersPerGroup) || (registrations.size < 2)) throw NotEnoughRegistrationsException(
+                "Failed to draw pool and cup. Too few people would have advanced to playoff."
+            )
+        }
     }
 
     /**
@@ -347,7 +363,6 @@ class PoolAndCupDrawSpec(
     competitionCategoryId: Int,
     val pools: List<Pool>,
     val matches: List<PlayOffMatch> = emptyList(),
-    val poolToPlayoffMap: List<PoolToPlayoffSpec>
 ) : CompetitionCategoryDrawSpec(competitionCategoryId)
 
 data class Pool(
@@ -361,13 +376,6 @@ data class PlayOffMatch(
     val registrationTwoId: Registration,
     var order: Int,
     var round: Round
-)
-
-data class PoolToPlayoffSpec(
-    val pool: Pool,
-    val position: Int,
-    val playOffMatch: PlayOffMatch,
-    val playOffPosition: Int
 )
 
 sealed class Registration {

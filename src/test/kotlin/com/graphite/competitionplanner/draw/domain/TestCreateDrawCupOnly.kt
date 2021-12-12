@@ -1,10 +1,11 @@
 package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
-import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.entity.Round
+import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
+import com.graphite.competitionplanner.draw.interfaces.NotEnoughRegistrationsException
 import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCompetitionCategory
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.util.DataGenerator
@@ -129,6 +130,28 @@ class TestCreateDrawCupOnly {
 
         val fourthBestRegistration = bestToWorst[3]
         matches.assertThereIsMatchWith(fourthBestRegistration, byePlayerID)
+    }
+
+    @Test
+    fun onePlayer() {
+        val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
+            id = 33,
+            settings = dataGenerator.newGeneralSettingsSpec(
+                drawType = DrawType.CUP_ONLY,
+                playersPerGroup = 3
+            )
+        )
+        val registrationRanks = (1..1).toList().map {
+            dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
+        }
+        Mockito.`when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
+        Mockito.`when`(mockedRegistrationRepository.getRegistrationRanking(competitionCategory))
+            .thenReturn(registrationRanks)
+
+        // Act & Assert
+        Assertions.assertThrows(NotEnoughRegistrationsException::class.java) {
+            createDraw.execute(competitionCategory.id)
+        }
     }
 
     @Test

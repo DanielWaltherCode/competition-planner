@@ -2,7 +2,9 @@ package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
+import com.graphite.competitionplanner.draw.interfaces.NotEnoughRegistrationsException
 import com.graphite.competitionplanner.util.TestHelper
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.springframework.boot.test.context.SpringBootTest
@@ -18,6 +20,22 @@ class TestAdvancementPoolToPlayoffWhenOneProceed : TestAdvancementPoolToPlayoff(
             playersToPlayOff = 1
         )
     )
+
+    @Test
+    fun whenThereAreOnePool() {
+        // Setup
+        val registrationRanks = (1..2).toList().map {
+            dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
+        }
+        Mockito.`when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
+        Mockito.`when`(mockedRegistrationRepository.getRegistrationRanking(competitionCategory))
+            .thenReturn(registrationRanks)
+
+        // Act & Assert
+        Assertions.assertThrows(NotEnoughRegistrationsException::class.java) {
+            createDraw.execute(competitionCategory.id) // There are too few that advance to playoff
+        }
+    }
 
     @Test
     fun whenThereAreTwoPools() {
