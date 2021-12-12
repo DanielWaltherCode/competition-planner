@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
+import com.graphite.competitionplanner.draw.interfaces.NotEnoughRegistrationsException
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -19,6 +20,45 @@ class TestAdvancementPoolToPlayoffWhenTwoProceed : TestAdvancementPoolToPlayoff(
             playersToPlayOff = 2
         )
     )
+
+    @Test
+    fun whenThereAreTooFewThatAdvanceToPlayoff() {
+        // Setup
+        val registrationRanks = (1..1).toList().map {
+            dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
+        }
+        Mockito.`when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
+        Mockito.`when`(mockedRegistrationRepository.getRegistrationRanking(competitionCategory))
+            .thenReturn(registrationRanks)
+
+        // Act & Assert
+        Assertions.assertThrows(NotEnoughRegistrationsException::class.java) {
+            createDraw.execute(competitionCategory.id)
+        }
+    }
+
+    @Test
+    fun whenThereAreOnePool() {
+        // Setup
+        val registrationRanks = (1..4).toList().map {
+            dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
+        }
+        Mockito.`when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
+        Mockito.`when`(mockedRegistrationRepository.getRegistrationRanking(competitionCategory))
+            .thenReturn(registrationRanks)
+
+        // Act
+        createDraw.execute(competitionCategory.id)
+
+        // Record the spec sent to the repository for validation
+        Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
+        val result = classCaptor.value as PoolAndCupDrawSpec
+
+        // Assert
+        val final = result.matches.inRound(Round.FINAL)
+        val matchUps = final.map { Pair(it.registrationOneId.toString(), it.registrationTwoId.toString()) }
+        matchUps.assertMatchUpExist(Pair("A1", "A2"))
+    }
 
     @Test
     fun whenThereAreTwoPools() {

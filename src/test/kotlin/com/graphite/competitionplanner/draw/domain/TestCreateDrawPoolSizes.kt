@@ -4,6 +4,7 @@ import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitio
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
+import com.graphite.competitionplanner.draw.interfaces.NotEnoughRegistrationsException
 import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCompetitionCategory
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.util.DataGenerator
@@ -39,6 +40,27 @@ class TestCreateDrawPoolSizes {
 
     @Captor
     lateinit var classCaptor: ArgumentCaptor<CompetitionCategoryDrawSpec>
+
+    @Test
+    fun tooFewRegistrations() {
+        val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
+            id = 33,
+            settings = dataGenerator.newGeneralSettingsSpec(
+                drawType = DrawType.POOL_ONLY,
+                playersPerGroup = 4
+            )
+        )
+        val registrationRanks = (1..1).toList().map {
+            dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
+        }
+        `when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
+        `when`(mockedRegistrationRepository.getRegistrationRanking(competitionCategory)).thenReturn(registrationRanks)
+
+        // Act & Assert
+        Assertions.assertThrows(NotEnoughRegistrationsException::class.java) {
+            createDraw.execute(competitionCategory.id) // Need at least two registrations to make a valid pool
+        }
+    }
 
     @Test
     fun competitionWithTenPlayersAndGroupsOfFour() {
