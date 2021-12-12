@@ -80,7 +80,8 @@ class TestCreateGroupDrawOneProceed(
         for (id in registrationIds) {
             registrationService.unregister(id)
         }
-        deleteCompetitionCategory.execute(competitionCategoryId)
+
+        deleteCompetitionCategory.execute(findCompetitionCategory.byId(competitionCategoryId))
     }
 
     @Test

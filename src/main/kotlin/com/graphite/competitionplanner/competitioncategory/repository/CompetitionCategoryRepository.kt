@@ -12,7 +12,6 @@ import com.graphite.competitionplanner.tables.records.CompetitionCategoryMetadat
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryRecord
 import org.jooq.DSLContext
 import org.jooq.Record
-import org.jooq.Record2
 import org.jooq.SelectConditionStep
 import org.springframework.stereotype.Repository
 
@@ -32,22 +31,6 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
 
     fun getCompetitionCategories(): List<CompetitionCategoryRecord> {
         return dslContext.selectFrom(COMPETITION_CATEGORY).fetch()
-    }
-
-    fun getById(competitionCategoryId: Int): CompetitionCategory {
-        val record: Record2<String, String> = dslContext.select(
-            COMPETITION_CATEGORY.STATUS,
-            CATEGORY.CATEGORY_NAME
-        ).from(COMPETITION_CATEGORY)
-            .join(CATEGORY).on(CATEGORY.ID.eq(COMPETITION_CATEGORY.CATEGORY))
-            .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
-            .fetchOne() ?: throw NotFoundException("No competition category data found for categoryId $competitionCategoryId")
-
-        return CompetitionCategory(
-            competitionCategoryId,
-            record.getValue(CATEGORY.CATEGORY_NAME),
-            record.getValue(COMPETITION_CATEGORY.STATUS)
-        )
     }
 
     fun getCategoryType(competitionCategoryId: Int) : CategoryRecord {
@@ -188,7 +171,6 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         )
     }
 
-    @Throws(NotFoundException::class)
     override fun delete(competitionCategoryId: Int) {
         dslContext.delete(COMPETITION_CATEGORY_METADATA)
             .where(COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
@@ -196,12 +178,9 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         dslContext.delete(COMPETITION_CATEGORY_GAME_RULES)
             .where(COMPETITION_CATEGORY_GAME_RULES.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
             .execute()
-        val deletedRows = dslContext.deleteFrom(COMPETITION_CATEGORY)
+        dslContext.deleteFrom(COMPETITION_CATEGORY)
             .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
             .execute()
-        if (deletedRows < 1) {
-            throw NotFoundException("Could not delete. Competition category with id $competitionCategoryId not found.")
-        }
     }
 
     @Throws(NotFoundException::class)

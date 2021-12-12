@@ -155,7 +155,7 @@ class TestDrawCupOnlyMatchOrder(
         for (id in registrationIds) {
             registrationService.unregister(id)
         }
-        deleteCompetitionCategory.execute(competitionCategory.id)
+        deleteCompetitionCategory.execute(findCompetitionCategory.byId(competitionCategory.id))
 
     }
 
