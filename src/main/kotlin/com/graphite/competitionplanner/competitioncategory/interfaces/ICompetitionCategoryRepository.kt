@@ -33,10 +33,8 @@ interface ICompetitionCategoryRepository {
     /**
      * Delete the given competition category, as well as all associated general- and game settings
      *
-     * @param competitionCategoryId Id of the competition category to delete
-     * @throws NotFoundException - If a competition category with the given id cannot be found
+     * @param competitionCategoryId ID of the competition category to delete
      */
-    @Throws(NotFoundException::class)
     fun delete(competitionCategoryId: Int)
 
     /**

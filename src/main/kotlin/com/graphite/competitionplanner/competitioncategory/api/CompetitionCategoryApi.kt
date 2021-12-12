@@ -38,7 +38,8 @@ class CompetitionCategoryApi(
     }
     @DeleteMapping("/{competitionCategoryId}")
     fun deleteCompetitionCategory(@PathVariable competitionId: Int, @PathVariable competitionCategoryId: Int) {
-        return deleteCompetitionCategory.execute(competitionCategoryId)
+        val competitionCategory = findCompetitionCategory.byId(competitionCategoryId)
+        return deleteCompetitionCategory.execute(competitionCategory)
     }
 
     @PutMapping("/{competitionCategoryId}")

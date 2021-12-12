@@ -137,11 +137,12 @@ class TestCompetitionCategoryApi {
     fun deleteCompetitionCategory_shouldDelegateToDomain() {
         // Setup
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(1231)
+        `when`(findCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
 
         // Act
         api.deleteCompetitionCategory(181, competitionCategory.id)
 
-        verify(deleteCompetitionCategory, times(1)).execute(competitionCategory.id)
-        verify(deleteCompetitionCategory, times(1)).execute(anyInt())
+        verify(deleteCompetitionCategory, times(1)).execute(competitionCategory)
+        verify(deleteCompetitionCategory, times(1)).execute(TestHelper.MockitoHelper.anyObject())
     }
 }

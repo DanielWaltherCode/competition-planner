@@ -8,6 +8,7 @@ import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
 import com.graphite.competitionplanner.competitioncategory.domain.AddCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.domain.DeleteCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.schedule.api.CategoryStartTimeSpec
 import com.graphite.competitionplanner.schedule.repository.ScheduleRepository
 import com.graphite.competitionplanner.util.Util
@@ -28,7 +29,8 @@ class TestScheduleCategoryStartTime(
     @Autowired val competitionRepository: CompetitionRepository,
     @Autowired val createCompetition: CreateCompetition,
     @Autowired val addCompetitionCategory: AddCompetitionCategory,
-    @Autowired val deleteCompetitionCategory: DeleteCompetitionCategory
+    @Autowired val deleteCompetitionCategory: DeleteCompetitionCategory,
+    @Autowired val findCompetitionCategory: FindCompetitionCategory
 ) {
 
     var competitionId = 0
@@ -69,8 +71,8 @@ class TestScheduleCategoryStartTime(
 
     @AfterEach
     fun deleteCompetition() {
-        deleteCompetitionCategory.execute(competitionCategory1)
-        deleteCompetitionCategory.execute(competitionCategory2)
+        deleteCompetitionCategory.execute(findCompetitionCategory.byId(competitionCategory1))
+        deleteCompetitionCategory.execute(findCompetitionCategory.byId(competitionCategory2))
         competitionRepository.deleteCompetition(competitionId)
     }
 

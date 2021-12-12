@@ -1,10 +1,9 @@
 package com.graphite.competitionplanner.competitioncategory.domain
 
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import org.springframework.web.server.ResponseStatusException
 
 @Component
 class DeleteCompetitionCategory(
@@ -12,14 +11,17 @@ class DeleteCompetitionCategory(
     val registrationRepository: IRegistrationRepository
 ) {
 
-    fun execute(competitionCategoryId: Int) {
-        val registrations = registrationRepository.getRegistrationsIn(competitionCategoryId)
+    /**
+     * Delete the competition category.
+     *
+     * @param competitionCategory Competition category to delete.
+     * @throws CannotDeleteCompetitionCategoryException If there are registered player in the competition category.
+     */
+    fun execute(competitionCategory: CompetitionCategoryDTO) {
+        val registrations = registrationRepository.getRegistrationsIn(competitionCategory.id)
         if (registrations.isNotEmpty()) {
-            throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "A category with registered players should not be deleted"
-            )
+            throw CannotDeleteCompetitionCategoryException()
         }
-        competitionCategoryRepository.delete(competitionCategoryId)
+        competitionCategoryRepository.delete(competitionCategory.id)
     }
 }

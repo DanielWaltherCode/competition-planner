@@ -87,7 +87,7 @@ class TestDrawCupOnly(
         for (id in registrationIds) {
             registrationService.unregister(id)
         }
-        deleteCompetitionCategory.execute(competitionCategoryId)
+        deleteCompetitionCategory.execute(findCompetitionCategory.byId(competitionCategoryId))
     }
 
     @ParameterizedTest

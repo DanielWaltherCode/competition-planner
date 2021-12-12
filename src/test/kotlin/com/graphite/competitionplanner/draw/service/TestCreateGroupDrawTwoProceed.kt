@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.draw.service
 
 import com.graphite.competitionplanner.competitioncategory.domain.DeleteCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.service.MatchService
@@ -25,7 +26,8 @@ class TestCreateGroupDrawTwoProceed(
     @Autowired val competitionDrawRepository: CompetitionDrawRepository,
     @Autowired val registrationService: RegistrationService,
     @Autowired val matchService: MatchService,
-    @Autowired val deleteCompetitionCategory: DeleteCompetitionCategory
+    @Autowired val deleteCompetitionCategory: DeleteCompetitionCategory,
+    @Autowired val findCompetitionCategory: FindCompetitionCategory
 ) {
 
     var competitionCategoryId = 0
@@ -48,7 +50,7 @@ class TestCreateGroupDrawTwoProceed(
         for (id in registrationIds) {
             registrationService.unregister(id)
         }
-        deleteCompetitionCategory.execute(competitionCategoryId)
+        deleteCompetitionCategory.execute(findCompetitionCategory.byId(competitionCategoryId))
     }
 
     @Test

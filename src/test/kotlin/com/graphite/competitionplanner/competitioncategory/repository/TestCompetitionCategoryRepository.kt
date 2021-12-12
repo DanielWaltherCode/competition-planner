@@ -9,7 +9,6 @@ import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.util.DataGenerator
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -35,12 +34,6 @@ class TestCompetitionCategoryRepository(
         competition = competitionRepository.store(dataGenerator.newCompetitionSpec(organizingClubId = club.id))
     }
 
-    @AfterEach
-    fun deleteClub() {
-        competitionRepository.delete(competition.id)
-        clubRepository.delete(club.id)
-    }
-
     @Test
     fun shouldNotReturnAnyCategories() {
         // Act
@@ -64,9 +57,6 @@ class TestCompetitionCategoryRepository(
 
         // Assert
         Assertions.assertEquals(addedCompetitionCategory, actualCategory)
-
-        // Clean up
-        repository.delete(addedCompetitionCategory.id)
     }
 
     @Test
@@ -84,15 +74,22 @@ class TestCompetitionCategoryRepository(
         Assertions.assertEquals(spec.category, competitionCategory.category)
         Assertions.assertEquals(spec.settings, competitionCategory.settings)
         Assertions.assertEquals(spec.gameSettings, competitionCategory.gameSettings)
-
-        // Clean up
-        repository.delete(competitionCategory.id)
     }
 
     @Test
-    fun shouldThrowExceptionWhenDeletingCompetitionCategoryThatDoesNotExist() {
+    fun shouldNotBeAbleToFindDeletedCompetitionCategory() {
+        // Setup
+        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
+        val spec =
+            dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, category.type))
+        val competitionCategory = repository.store(competition.id, spec)
+
+        // Act
+        repository.delete(competitionCategory.id)
+
+        // Assert
         Assertions.assertThrows(NotFoundException::class.java) {
-            repository.delete(-1)
+            repository.get(competitionCategory.id)
         }
     }
 
@@ -146,6 +143,4 @@ class TestCompetitionCategoryRepository(
         // Clean up
         repository.delete(updated.id)
     }
-
-
 }
