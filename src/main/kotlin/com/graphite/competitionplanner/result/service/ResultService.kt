@@ -1,8 +1,8 @@
 package com.graphite.competitionplanner.result.service
 
 import com.graphite.competitionplanner.common.exception.GameValidationException
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.GameSettingsDTO
-import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchDTO
 import com.graphite.competitionplanner.match.service.MatchService
@@ -18,9 +18,9 @@ import org.springframework.stereotype.Service
 @Service
 class ResultService(
     val resultRepository: ResultRepository,
-    val competitionCategoryService: CompetitionCategoryService,
     val matchService: MatchService,
-    val matchRepository: MatchRepository
+    val matchRepository: MatchRepository,
+    val findCompetitionCategory: FindCompetitionCategory
 ) {
 
     private val LOGGER = LoggerFactory.getLogger(javaClass)
@@ -37,7 +37,7 @@ class ResultService(
         }
         // Winner of last game must be winner
         val finalGame: GameRecord = resultList.last()
-        var winnerId: Int
+        val winnerId: Int
         if (finalGame.firstRegistrationResult > finalGame.secondRegistrationResult) {
             winnerId = match.firstRegistrationId
         }
@@ -56,7 +56,7 @@ class ResultService(
 
     fun updateGameResult(matchId: Int, gameId: Int, gameSpec: GameSpec): ResultDTO {
         val match: MatchDTO = matchService.getMatch(matchId)
-        val gameRules: GameSettingsDTO = competitionCategoryService.getByCompetitionCategoryId(match.competitionCategory.id).gameSettings
+        val gameRules: GameSettingsDTO = findCompetitionCategory.byId(match.competitionCategory.id).gameSettings
         validateGame(gameRules, gameSpec)
         resultRepository.updateGameResult(gameId, matchId, gameSpec)
         return getResult(matchId)
@@ -83,7 +83,7 @@ class ResultService(
     }
 
     private fun validateResult(categoryId: Int, resultSpec: ResultSpec) {
-        val gameRules = competitionCategoryService.getByCompetitionCategoryId(categoryId).gameSettings
+        val gameRules = findCompetitionCategory.byId(categoryId).gameSettings
         // TODO -- add specific checks for group stage and playoff stage
         for (game in resultSpec.gameList) {
             validateGame(gameRules, game)

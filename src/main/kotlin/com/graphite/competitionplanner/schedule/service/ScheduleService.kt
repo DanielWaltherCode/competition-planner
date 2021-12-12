@@ -3,8 +3,9 @@ package com.graphite.competitionplanner.schedule.service
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.domain.GetDaysOfCompetition
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategory
-import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.schedule.api.*
 import com.graphite.competitionplanner.schedule.repository.ScheduleRepository
 import com.graphite.competitionplanner.tables.records.ScheduleAvailableTablesRecord
@@ -22,9 +23,10 @@ import java.time.temporal.ChronoUnit
 @Service
 class ScheduleService(
     val scheduleRepository: ScheduleRepository,
-    val competitionCategoryService: CompetitionCategoryService,
     val findCompetitions: FindCompetitions,
-    val getDaysOfCompetition: GetDaysOfCompetition
+    val getDaysOfCompetition: GetDaysOfCompetition,
+    val findCompetitionCategory: FindCompetitionCategory,
+    val getCompetitionCategories: GetCompetitionCategories
 ) {
 
     // Schedule metadata methods
@@ -133,21 +135,6 @@ class ScheduleService(
         }
     }
 
-    fun updateTablesAvailableForWholeCompetition(
-        competitionId: Int,
-        availableTablesWholeCompetitionSpec: AvailableTablesWholeCompetitionSpec
-    ) {
-        val competition = findCompetitions.byId(competitionId)
-        val competitionDays = getDaysOfCompetition.execute(competition)
-        for (day in competitionDays) {
-            updateTablesAvailableFullDay(
-                competitionId, AvailableTablesFullDaySpec(
-                    availableTablesWholeCompetitionSpec.nrTables, day
-                )
-            )
-        }
-    }
-
     fun registerTablesAvailableFullDay(
         competitionId: Int,
         availableTablesFullDaySpec: AvailableTablesFullDaySpec
@@ -216,7 +203,7 @@ class ScheduleService(
     }
 
     fun getCategoryStartTimesByDay(competitionId: Int, day: LocalDate): List<CategoryStartTimeDTO> {
-        val categoriesInCompetition = competitionCategoryService.getCompetitionCategoriesFor(competitionId)
+        val categoriesInCompetition = getCompetitionCategories.execute(competitionId)
         val startTimeRecords = mutableListOf<ScheduleCategoryRecord>()
         for (category in categoriesInCompetition) {
             try {
@@ -323,7 +310,7 @@ class ScheduleService(
             StartInterval.valueOf(scheduleCategoryRecord.startInterval)
         }
         val competitionCategory =
-            competitionCategoryService.getByCompetitionCategoryId(scheduleCategoryRecord.competitonCategoryId)
+            findCompetitionCategory.byId(scheduleCategoryRecord.competitonCategoryId)
         return CategoryStartTimeDTO(
             scheduleCategoryRecord.id,
             CompetitionCategory(competitionCategory.id, competitionCategory.category.name, competitionCategory.status),

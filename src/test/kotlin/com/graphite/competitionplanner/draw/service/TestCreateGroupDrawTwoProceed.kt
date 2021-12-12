@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.draw.service
 
-import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
+import com.graphite.competitionplanner.competitioncategory.domain.DeleteCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.service.MatchService
@@ -19,13 +19,13 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest
 class TestCreateGroupDrawTwoProceed(
     @Autowired val drawService: DrawService,
-    @Autowired val competitionCategoryService: CompetitionCategoryService,
     @Autowired val testUtil: TestUtil,
     @Autowired val playerRepository: PlayerRepository,
     @Autowired val registrationRepository: RegistrationRepository,
     @Autowired val competitionDrawRepository: CompetitionDrawRepository,
     @Autowired val registrationService: RegistrationService,
-    @Autowired val matchService: MatchService
+    @Autowired val matchService: MatchService,
+    @Autowired val deleteCompetitionCategory: DeleteCompetitionCategory
 ) {
 
     var competitionCategoryId = 0
@@ -48,7 +48,7 @@ class TestCreateGroupDrawTwoProceed(
         for (id in registrationIds) {
             registrationService.unregister(id)
         }
-        competitionCategoryService.deleteCategoryInCompetition(competitionCategoryId)
+        deleteCompetitionCategory.execute(competitionCategoryId)
     }
 
     @Test

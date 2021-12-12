@@ -8,9 +8,12 @@ import com.graphite.competitionplanner.competition.api.CompetitionApi
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
 import com.graphite.competitionplanner.competition.interfaces.LocationSpec
+import com.graphite.competitionplanner.competitioncategory.domain.AddCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.DeleteCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.UpdateCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
-import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.api.PlayerApi
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
@@ -33,13 +36,16 @@ class TestDrawCupOnlyMatchOrder(
     @Autowired val playerRepository: PlayerRepository,
     @Autowired val registrationService: RegistrationService,
     @Autowired val matchService: MatchService,
-    @Autowired val competitionCategoryService: CompetitionCategoryService,
     @Autowired val registrationRepository: RegistrationRepository,
     @Autowired val drawService: DrawService,
     @Autowired val competitionApi: CompetitionApi,
     @Autowired val playerApi: PlayerApi,
     @Autowired val categoryApi: CategoryApi,
-    @Autowired val createClub: CreateClub
+    @Autowired val createClub: CreateClub,
+    @Autowired val findCompetitionCategory: FindCompetitionCategory,
+    @Autowired val updateCompetitionCategory: UpdateCompetitionCategory,
+    @Autowired val addCompetitionCategory: AddCompetitionCategory,
+    @Autowired val deleteCompetitionCategory: DeleteCompetitionCategory
 ) {
     lateinit var club: ClubDTO
     lateinit var competition: CompetitionDTO
@@ -68,14 +74,14 @@ class TestDrawCupOnlyMatchOrder(
             CompetitionCategoryDTO {
         val categories = categoryApi.getCategories()
         val category = categories.filter { it.name == "Flickor 12" }[0]
-        return competitionCategoryService.addCompetitionCategory(
+        return addCompetitionCategory.execute(
             competition.id,
             CategorySpec(category.id, category.name, category.type)
         )
     }
 
     private fun setModeToCupOnlyFor(competitionCategoryId: Int) {
-        val original = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
+        val original = findCompetitionCategory.byId(competitionCategoryId)
 
         val updatedSettings = dataGenerator.newCompetitionCategoryUpdateSpec(
             settings = dataGenerator.newGeneralSettingsSpec(
@@ -99,7 +105,7 @@ class TestDrawCupOnlyMatchOrder(
             )
         )
 
-        competitionCategoryService.updateCompetitionCategory(original.id, updatedSettings)
+        updateCompetitionCategory.execute(original.id, updatedSettings)
     }
 
     private fun registerPlayerTo(player: PlayerWithClubDTO, competitionCategoryId: Int) {
@@ -149,7 +155,7 @@ class TestDrawCupOnlyMatchOrder(
         for (id in registrationIds) {
             registrationService.unregister(id)
         }
-        competitionCategoryService.deleteCategoryInCompetition(competitionCategory.id)
+        deleteCompetitionCategory.execute(competitionCategory.id)
 
     }
 

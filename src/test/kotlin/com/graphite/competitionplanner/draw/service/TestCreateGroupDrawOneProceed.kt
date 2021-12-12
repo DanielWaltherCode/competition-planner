@@ -1,6 +1,8 @@
 package com.graphite.competitionplanner.draw.service
 
-import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
+import com.graphite.competitionplanner.competitioncategory.domain.DeleteCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.UpdateCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.service.MatchService
@@ -18,14 +20,17 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
-                                    @Autowired val registrationRepository: RegistrationRepository,
-                                    @Autowired val registrationService: RegistrationService,
-                                    @Autowired val matchService: MatchService,
-                                    @Autowired val playerRepository: PlayerRepository,
-                                    @Autowired val competitionDrawRepository: CompetitionDrawRepository,
-                                    @Autowired val drawService: DrawService,
-                                    @Autowired val competitionCategoryService: CompetitionCategoryService
+class TestCreateGroupDrawOneProceed(
+    @Autowired val testUtil: TestUtil,
+    @Autowired val registrationRepository: RegistrationRepository,
+    @Autowired val registrationService: RegistrationService,
+    @Autowired val matchService: MatchService,
+    @Autowired val playerRepository: PlayerRepository,
+    @Autowired val competitionDrawRepository: CompetitionDrawRepository,
+    @Autowired val drawService: DrawService,
+    @Autowired val findCompetitionCategory: FindCompetitionCategory,
+    @Autowired val updateCompetitionCategory: UpdateCompetitionCategory,
+    @Autowired val deleteCompetitionCategory: DeleteCompetitionCategory
 ) {
     var competitionCategoryId = 0
     val dataGenerator = DataGenerator()
@@ -35,7 +40,7 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
         competitionCategoryId = testUtil.addCompetitionCategory("Flickor 13")
 
         // Update competition category so that it's groups of 3 instead with one proceeding
-        val original = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
+        val original = findCompetitionCategory.byId(competitionCategoryId)
 
         val updatedSettings = dataGenerator.newCompetitionCategoryUpdateSpec(
             settings = dataGenerator.newGeneralSettingsSpec(
@@ -59,7 +64,7 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
             )
         )
 
-        competitionCategoryService.updateCompetitionCategory(original.id, updatedSettings)
+        updateCompetitionCategory.execute(original.id, updatedSettings)
     }
 
     @AfterEach
@@ -75,7 +80,7 @@ class TestCreateGroupDrawOneProceed(@Autowired val testUtil: TestUtil,
         for (id in registrationIds) {
             registrationService.unregister(id)
         }
-        competitionCategoryService.deleteCategoryInCompetition(competitionCategoryId)
+        deleteCompetitionCategory.execute(competitionCategoryId)
     }
 
     @Test

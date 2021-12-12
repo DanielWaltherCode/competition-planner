@@ -1,7 +1,9 @@
 package com.graphite.competitionplanner.draw.service
 
+import com.graphite.competitionplanner.competitioncategory.domain.DeleteCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.UpdateCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
-import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.draw.api.DrawDTO
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
@@ -28,10 +30,12 @@ class TestDrawCupOnly(
     @Autowired val playerRepository: PlayerRepository,
     @Autowired val registrationService: RegistrationService,
     @Autowired val matchService: MatchService,
-    @Autowired val competitionCategoryService: CompetitionCategoryService,
     @Autowired val registrationRepository: RegistrationRepository,
     @Autowired val competitionDrawRepository: CompetitionDrawRepository,
-    @Autowired val drawService: DrawService
+    @Autowired val drawService: DrawService,
+    @Autowired val findCompetitionCategory: FindCompetitionCategory,
+    @Autowired val updateCompetitionCategory: UpdateCompetitionCategory,
+    @Autowired val deleteCompetitionCategory: DeleteCompetitionCategory
 ) {
     var competitionCategoryId = 0
     lateinit var draw : DrawDTO
@@ -43,7 +47,7 @@ class TestDrawCupOnly(
 
         competitionCategoryId = testUtil.addCompetitionCategory("Flickor 13")
 
-        val original = competitionCategoryService.getByCompetitionCategoryId(competitionCategoryId)
+        val original = findCompetitionCategory.byId(competitionCategoryId)
 
         val updatedSettings = dataGenerator.newCompetitionCategoryUpdateSpec(
             settings = dataGenerator.newGeneralSettingsSpec(
@@ -67,7 +71,7 @@ class TestDrawCupOnly(
             )
         )
 
-        competitionCategoryService.updateCompetitionCategory(original.id, updatedSettings)
+        updateCompetitionCategory.execute(original.id, updatedSettings)
     }
 
     @AfterEach
@@ -83,7 +87,7 @@ class TestDrawCupOnly(
         for (id in registrationIds) {
             registrationService.unregister(id)
         }
-        competitionCategoryService.deleteCategoryInCompetition(competitionCategoryId)
+        deleteCompetitionCategory.execute(competitionCategoryId)
     }
 
     @ParameterizedTest

@@ -11,8 +11,9 @@ import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
 import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
+import com.graphite.competitionplanner.competitioncategory.domain.AddCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
-import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.player.domain.ListAllPlayersInClub
@@ -44,7 +45,6 @@ class EventListener(
     val competitionCategoryRepository: CompetitionCategoryRepository,
     val registrationRepository: RegistrationRepository,
     val createCompetition: CreateCompetition,
-    val competitionCategoryService: CompetitionCategoryService,
     val competitionDrawRepository: CompetitionDrawRepository,
     val userRepository: UserRepository,
     val util: Util,
@@ -52,7 +52,9 @@ class EventListener(
     val userService: UserService,
     val matchRepository: MatchRepository,
     val createClub: CreateClub,
-    val findCompetitions: FindCompetitions
+    val findCompetitions: FindCompetitions,
+    val getCompetitionCategories: GetCompetitionCategories,
+    val addCompetitionCategory: AddCompetitionCategory
 ) {
 
     @EventListener
@@ -394,31 +396,31 @@ class EventListener(
         val lugiCompetitionId = lugiCompetitions[0].id
         val categories = categoryRepository.getAvailableCategories()
 
-        competitionCategoryService.addCompetitionCategory(
+        addCompetitionCategory.execute(
             lugiCompetitionId,
             categories.find { it.name == "Herrar 1" }!!.toSpec()
         )
-        competitionCategoryService.addCompetitionCategory(
+        addCompetitionCategory.execute(
             lugiCompetitionId,
             categories.find { it.name == "Herrar 2" }!!.toSpec()
         )
-        competitionCategoryService.addCompetitionCategory(
+        addCompetitionCategory.execute(
             lugiCompetitionId,
             categories.find { it.name == "Damer 1" }!!.toSpec()
         )
-        competitionCategoryService.addCompetitionCategory(
+        addCompetitionCategory.execute(
             lugiCompetitionId,
             categories.find { it.name == "Damer 2" }!!.toSpec()
         )
-        competitionCategoryService.addCompetitionCategory(
+        addCompetitionCategory.execute(
             lugiCompetitionId,
             categories.find { it.name == "Damjuniorer 17" }!!.toSpec()
         )
-        competitionCategoryService.addCompetitionCategory(
+        addCompetitionCategory.execute(
             lugiCompetitionId,
             categories.find { it.name == "Damer 3" }!!.toSpec()
         )
-        competitionCategoryService.addCompetitionCategory(
+        addCompetitionCategory.execute(
             lugiCompetitionId,
             categories.find { it.name == "Herrdubbel" }!!.toSpec()
         )
@@ -426,23 +428,23 @@ class EventListener(
         val umeaId = util.getClubIdOrDefault("Umeå IK")
         val umeaCompetitions = findCompetitions.thatBelongsTo(umeaId)
         val umeaCompetitionId = umeaCompetitions[0].id
-        competitionCategoryService.addCompetitionCategory(
+        addCompetitionCategory.execute(
             umeaCompetitionId,
             categories.find { it.name == "Herrar 1" }!!.toSpec()
         )
-        competitionCategoryService.addCompetitionCategory(
+        addCompetitionCategory.execute(
             umeaCompetitionId,
             categories.find { it.name == "Herrar 2" }!!.toSpec()
         )
-        competitionCategoryService.addCompetitionCategory(
+        addCompetitionCategory.execute(
             umeaCompetitionId,
             categories.find { it.name == "Damer 1" }!!.toSpec()
         )
-        competitionCategoryService.addCompetitionCategory(
+        addCompetitionCategory.execute(
             umeaCompetitionId,
             categories.find { it.name == "Damer 2" }!!.toSpec()
         )
-        competitionCategoryService.addCompetitionCategory(
+        addCompetitionCategory.execute(
             umeaCompetitionId,
             categories.find { it.name == "Damer 3" }!!.toSpec()
         )
@@ -458,7 +460,7 @@ class EventListener(
         val umePlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Umeå IK"))
         val otherPlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Övriga"))
         val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
-        val competitionCategories = competitionCategoryService.getCompetitionCategoriesFor(lugiCompetitionId)
+        val competitionCategories = getCompetitionCategories.execute(lugiCompetitionId)
 
         registrationService.registerPlayersDoubles(
             RegistrationDoublesSpec(
@@ -510,7 +512,7 @@ class EventListener(
         val umePlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Umeå IK"))
         val otherPlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Övriga"))
         val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
-        val competitionCategories = competitionCategoryService.getCompetitionCategoriesFor(lugiCompetitionId)
+        val competitionCategories = getCompetitionCategories.execute(lugiCompetitionId)
 
         // Have "Herrar 1" in Lugi as main competition category to play around with
         registrationService.registerPlayerSingles(

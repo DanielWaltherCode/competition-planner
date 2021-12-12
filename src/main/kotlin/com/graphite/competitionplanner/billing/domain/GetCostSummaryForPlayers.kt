@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.billing.domain
 
 import com.graphite.competitionplanner.billing.interfaces.PlayerCostSummaryDTO
 import com.graphite.competitionplanner.billing.interfaces.PlayerCostSummaryListDTO
-import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 class GetCostSummaryForPlayers(
     val registrationRepository: RegistrationRepository,
     val competitionCategoryRepository: CompetitionCategoryRepository,
-    val getCompetitionCategory: GetCompetitionCategory
+    val findCompetitionCategory: FindCompetitionCategory
 ) {
 
     fun execute(competitionId: Int, clubId: Int): PlayerCostSummaryListDTO {
@@ -28,7 +28,7 @@ class GetCostSummaryForPlayers(
             val playerRegistrationLists =
                 competitionCategoryRepository.getRegistrationsForPlayerInCompetition(competitionId, player.id)
             for (registration in playerRegistrationLists) {
-                val category = getCompetitionCategory.execute(registration.categoryId)
+                val category = findCompetitionCategory.byId(registration.categoryId)
                 val playerCostSummaryDTO = PlayerCostSummaryDTO(
                     player,
                     category,
