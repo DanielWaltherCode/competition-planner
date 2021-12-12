@@ -1,19 +1,20 @@
 package com.graphite.competitionplanner.competitioncategory.api
 
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
-import com.graphite.competitionplanner.competitioncategory.domain.CancelCompetitionCategory
-import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.*
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
-import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import org.springframework.web.bind.annotation.*
 
 /* Handle categories in competitions */
 @RestController
 @RequestMapping("/competition/{competitionId}/category")
 class CompetitionCategoryApi(
-    val competitionCategoryService: CompetitionCategoryService,
     val cancelCompetitionCategory: CancelCompetitionCategory,
     val findCompetitionCategory: FindCompetitionCategory,
+    val getCompetitionCategories: GetCompetitionCategories,
+    val updateCompetitionCategory: UpdateCompetitionCategory,
+    val addCompetitionCategory: AddCompetitionCategory,
+    val deleteCompetitionCategory: DeleteCompetitionCategory
 ) {
 
     @PostMapping
@@ -21,12 +22,12 @@ class CompetitionCategoryApi(
         @PathVariable competitionId: Int,
         @RequestBody spec: CategorySpec
     ): CompetitionCategoryDTO {
-        return competitionCategoryService.addCompetitionCategory(competitionId, spec)
+        return addCompetitionCategory.execute(competitionId, spec)
     }
 
     @GetMapping
     fun getCompetitionCategories(@PathVariable competitionId: Int): List<CompetitionCategoryDTO> {
-        val competitionCategories = competitionCategoryService.getCompetitionCategoriesFor(competitionId)
+        val competitionCategories = getCompetitionCategories.execute(competitionId)
         return competitionCategories.sortedBy { c -> c.category.name }
     }
 
@@ -37,7 +38,7 @@ class CompetitionCategoryApi(
     }
     @DeleteMapping("/{competitionCategoryId}")
     fun deleteCompetitionCategory(@PathVariable competitionId: Int, @PathVariable competitionCategoryId: Int) {
-        return competitionCategoryService.deleteCategoryInCompetition(competitionCategoryId)
+        return deleteCompetitionCategory.execute(competitionCategoryId)
     }
 
     @PutMapping("/{competitionCategoryId}")
@@ -46,7 +47,7 @@ class CompetitionCategoryApi(
         @PathVariable competitionCategoryId: Int,
         @RequestBody spec: CompetitionCategoryUpdateSpec
     ) {
-        competitionCategoryService.updateCompetitionCategory(competitionCategoryId, spec)
+        updateCompetitionCategory.execute(competitionCategoryId, spec)
     }
 
     @GetMapping("/{competitionCategoryId}/metadata")

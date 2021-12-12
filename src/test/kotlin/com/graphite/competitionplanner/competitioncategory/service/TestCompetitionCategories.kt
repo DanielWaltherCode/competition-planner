@@ -1,6 +1,8 @@
 package com.graphite.competitionplanner.competitioncategory.service
 
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
+import com.graphite.competitionplanner.competitioncategory.domain.DeleteCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.player.domain.ListAllPlayersInClub
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
@@ -19,9 +21,10 @@ class TestCompetitionCategories(
     @Autowired val listAllPlayersInClub: ListAllPlayersInClub,
     @Autowired val registrationService: RegistrationService,
     @Autowired val competitionCategoryRepository: CompetitionCategoryRepository,
-    @Autowired val competitionCategoryService: CompetitionCategoryService,
     @Autowired val testUtil: TestUtil,
-    @Autowired val findCompetitions: FindCompetitions
+    @Autowired val findCompetitions: FindCompetitions,
+    @Autowired val getCompetitionCategories: GetCompetitionCategories,
+    @Autowired val deleteCompetitionCategory: DeleteCompetitionCategory,
 ) {
 
     @Test
@@ -31,7 +34,7 @@ class TestCompetitionCategories(
 
         val umeaId = util.getClubIdOrDefault("Umeå IK")
         val competitions = findCompetitions.thatBelongsTo(umeaId)
-        val competitionCategories = competitionCategoryService.getCompetitionCategoriesFor(competitions[0].id)
+        val competitionCategories = getCompetitionCategories.execute(competitions[0].id)
         Assertions.assertTrue(competitionCategories.isNotEmpty())
     }
 
@@ -41,7 +44,7 @@ class TestCompetitionCategories(
         val newCategoryId = testUtil.addCompetitionCategory("Herrar 3")
 
         // No players registered in competition, deleting should be fine
-        competitionCategoryService.deleteCategoryInCompetition(newCategoryId)
+        deleteCompetitionCategory.execute(newCategoryId)
 
         Assertions.assertEquals(originalLength, competitionCategoryRepository.getCompetitionCategories().size )
     }
@@ -57,7 +60,7 @@ class TestCompetitionCategories(
 
         // Try deleting after players have registered, should fail
         Assertions.assertThrows(ResponseStatusException::class.java) {
-            competitionCategoryService.deleteCategoryInCompetition(newCategoryId)
+            deleteCompetitionCategory.execute(newCategoryId)
         }
 
         // Assert nothing has been removed

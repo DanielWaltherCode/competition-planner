@@ -3,27 +3,33 @@ package com.graphite.competitionplanner.competitioncategory.domain
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
+import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategorySpec
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
-import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
-import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
+import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
+import com.graphite.competitionplanner.schedule.api.CategoryStartTimeSpec
+import com.graphite.competitionplanner.schedule.service.ScheduleService
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.Mockito
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.verify
+import org.mockito.Mockito.*
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 class TestAddCompetitionCategory {
 
-    private final val mockedRepository = Mockito.mock(ICompetitionCategoryRepository::class.java)
-    private final val mockedCategoryRepository = Mockito.mock(ICategoryRepository::class.java)
-    val addCompetitionCategory = AddCompetitionCategory(mockedRepository, mockedCategoryRepository)
+    private val mockedRepository = mock(ICompetitionCategoryRepository::class.java)
+    private val mockedCategoryRepository = mock(ICategoryRepository::class.java)
+    private val mockedScheduleService = mock(ScheduleService::class.java)
+    val addCompetitionCategory = AddCompetitionCategory(
+        mockedRepository,
+        mockedCategoryRepository,
+        mockedScheduleService
+    )
+
     val dataGenerator = DataGenerator()
 
     @Test
@@ -78,6 +84,7 @@ class TestAddCompetitionCategory {
     fun shouldCallRepositoryToStoreWithDefaultSettings() {
         // Setup
         val spec = dataGenerator.newCategorySpec(id = 0, name = "HERRDUBBEL")
+        val competitionCategory = dataGenerator.newCompetitionCategoryDTO()
         val settings = dataGenerator.newGeneralSettingsSpec(
             cost = 150f,
             playersPerGroup = 4,
@@ -109,6 +116,9 @@ class TestAddCompetitionCategory {
             )
         )
         `when`(mockedRepository.getAll(competitionId)).thenReturn(emptyList())
+        `when`(mockedRepository.store(eq(competitionId), TestHelper.MockitoHelper.anyObject())).thenReturn(
+            competitionCategory
+        )
 
         // Act
         addCompetitionCategory.execute(competitionId, spec)
@@ -121,10 +131,41 @@ class TestAddCompetitionCategory {
                 settings,
                 gameSettings
             )
-        verify(mockedRepository, Mockito.times(1)).store(competitionId, expected)
-        verify(mockedRepository, Mockito.times(1)).store(
+        verify(mockedRepository, times(1)).store(competitionId, expected)
+        verify(mockedRepository, times(1)).store(
             anyInt(),
             TestHelper.MockitoHelper.anyObject()
+        )
+    }
+
+    @Test
+    fun shouldDelegateToScheduleServiceToAddCategoryStartTime() {
+        // Setup
+        val spec = dataGenerator.newCategorySpec(id = 0, name = "HERRDUBBEL")
+        val competitionCategory = dataGenerator.newCompetitionCategoryDTO()
+
+        val competitionId = 1
+        `when`(mockedCategoryRepository.getAvailableCategories()).thenReturn(
+            listOf(
+                CategoryDTO(
+                    spec.id,
+                    spec.name,
+                    spec.type
+                )
+            )
+        )
+        `when`(mockedRepository.getAll(competitionId)).thenReturn(emptyList())
+        `when`(mockedRepository.store(eq(competitionId), TestHelper.MockitoHelper.anyObject())).thenReturn(
+            competitionCategory
+        )
+
+        // Act
+        addCompetitionCategory.execute(competitionId, spec)
+
+        // Assert
+        verify(mockedScheduleService, times(1)).addCategoryStartTime(
+            competitionCategory.id,
+            CategoryStartTimeSpec(null, null, null)
         )
     }
 }

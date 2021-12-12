@@ -48,13 +48,6 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
 
     fun clearPlayerRegistration() = dslContext.deleteFrom(PLAYER_REGISTRATION).execute()
 
-    fun checkIfCategoryHasRegistrations(competitionCategory: Int): Boolean {
-        return dslContext.fetchExists(
-            dslContext.selectFrom(COMPETITION_CATEGORY_REGISTRATION)
-                .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategory))
-        )
-    }
-
     fun getRegistreredPlayersInCompetition(competitionId: Int): List<PlayerRecord> {
         return dslContext.selectDistinct(PLAYER.asterisk())
             .from(COMPETITION)
@@ -87,14 +80,6 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             .fetchInto(Int::class.java)
     }
 
-    fun getPlayersFromRegistrationId(registrationId: Int): List<PlayerRecord> {
-        return dslContext.select()
-            .from(PLAYER_REGISTRATION)
-            .join(PLAYER).on(PLAYER.ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
-            .where(PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId))
-            .fetchInto(PLAYER)
-    }
-
     fun setSeed(registrationId: Int, competitionCategoryId: Int, seed: Int) {
         dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
             .set(COMPETITION_CATEGORY_REGISTRATION.SEED, seed)
@@ -122,7 +107,7 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
     override fun storeSingles(spec: RegistrationSinglesSpecWithDate): RegistrationSinglesDTO {
         val registrationRecord = addRegistration(spec.date)
         registerPlayer(registrationRecord.id, spec.playerId)
-        registerInCategory(registrationRecord.id, null, spec.competitionCategoryId)
+        registerInCategory(registrationRecord.id, spec.competitionCategoryId)
 
         return RegistrationSinglesDTO(registrationRecord.id, spec.playerId, spec.competitionCategoryId, spec.date)
     }
@@ -131,7 +116,7 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         val registrationRecord = addRegistration(spec.date)
         registerPlayer(registrationRecord.id, spec.playerOneId)
         registerPlayer(registrationRecord.id, spec.playerTwoId)
-        registerInCategory(registrationRecord.id, null, spec.competitionCategoryId)
+        registerInCategory(registrationRecord.id, spec.competitionCategoryId)
 
         return RegistrationDoublesDTO(
             registrationRecord.id,
@@ -361,12 +346,11 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
     // Links a registration to a specific category in the competition. Also includes the seed.
     private fun registerInCategory(
         registrationId: Int,
-        seed: Int?,
         competitionCategory: Int
     ): CompetitionCategoryRegistrationRecord {
         val record = dslContext.newRecord(COMPETITION_CATEGORY_REGISTRATION)
         record.registrationId = registrationId
-        record.seed = seed
+        record.seed = null
         record.competitionCategoryId = competitionCategory
         record.store()
         return record

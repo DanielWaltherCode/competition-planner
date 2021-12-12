@@ -4,7 +4,6 @@ import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitio
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsDTO
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
-import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.draw.api.DrawDTO
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
@@ -29,7 +28,6 @@ class DrawService(
     val registrationRepository: RegistrationRepository,
     val matchRepository: MatchRepository,
     val matchService: MatchService,
-    val competitionCategoryService: CompetitionCategoryService,
     val competitionDrawRepository: CompetitionDrawRepository,
     val drawUtil: DrawUtil,
     val drawUtilTwoProceed: DrawUtilTwoProceed,

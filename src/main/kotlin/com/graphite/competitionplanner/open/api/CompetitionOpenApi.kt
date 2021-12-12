@@ -4,9 +4,9 @@ import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategory
-import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.draw.api.DrawDTO
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
@@ -25,11 +25,11 @@ import java.time.LocalDate
 class CompetitionOpenApi(
     val drawService: DrawService,
     val registrationService: RegistrationService,
-    val competitionCategoryService: CompetitionCategoryService,
     val matchService: MatchService,
     val findPlayer: FindPlayer,
     val findCompetitions: FindCompetitions,
-    val findCompetitionCategory: FindCompetitionCategory
+    val findCompetitionCategory: FindCompetitionCategory,
+    val getCompetitionCategories: GetCompetitionCategories
 ) {
 
     @GetMapping
@@ -47,7 +47,7 @@ class CompetitionOpenApi(
 
     @GetMapping("/{competitionId}/categories")
     fun getCompetitionCategories(@PathVariable competitionId: Int): List<CompetitionCategoryDTO> {
-        val competitionCategories = competitionCategoryService.getCompetitionCategoriesFor(competitionId)
+        val competitionCategories = getCompetitionCategories.execute(competitionId)
         return competitionCategories.sortedBy { c -> c.category.name }
     }
 

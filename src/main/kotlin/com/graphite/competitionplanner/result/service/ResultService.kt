@@ -3,7 +3,6 @@ package com.graphite.competitionplanner.result.service
 import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.GameSettingsDTO
-import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchDTO
 import com.graphite.competitionplanner.match.service.MatchService
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service
 @Service
 class ResultService(
     val resultRepository: ResultRepository,
-    val competitionCategoryService: CompetitionCategoryService,
     val matchService: MatchService,
     val matchRepository: MatchRepository,
     val findCompetitionCategory: FindCompetitionCategory

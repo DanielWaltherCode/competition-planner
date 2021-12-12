@@ -53,7 +53,7 @@ interface IRegistrationRepository {
     /**
      * Return the registrations for the given competition category.
      *
-     * @param competitionCategoryId Id of the competition category
+     * @param competitionCategoryId ID of the competition category
      * @return A list of registrations
      */
     fun getRegistrationsIn(competitionCategoryId: Int): List<RegistrationDTO>

@@ -6,7 +6,8 @@ import com.graphite.competitionplanner.competition.domain.CreateCompetition
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
 import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
-import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
+import com.graphite.competitionplanner.competitioncategory.domain.AddCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.domain.DeleteCompetitionCategory
 import com.graphite.competitionplanner.schedule.api.CategoryStartTimeSpec
 import com.graphite.competitionplanner.schedule.repository.ScheduleRepository
 import com.graphite.competitionplanner.util.Util
@@ -23,10 +24,11 @@ class TestScheduleCategoryStartTime(
     @Autowired val util: Util,
     @Autowired val scheduleService: ScheduleService,
     @Autowired val scheduleRepository: ScheduleRepository,
-    @Autowired val competitionCategoryService: CompetitionCategoryService,
     @Autowired val categoryRepository: CategoryRepository,
     @Autowired val competitionRepository: CompetitionRepository,
-    @Autowired val createCompetition: CreateCompetition
+    @Autowired val createCompetition: CreateCompetition,
+    @Autowired val addCompetitionCategory: AddCompetitionCategory,
+    @Autowired val deleteCompetitionCategory: DeleteCompetitionCategory
 ) {
 
     var competitionId = 0
@@ -52,11 +54,11 @@ class TestScheduleCategoryStartTime(
         val herrar2 = categories.find { it.name == "Herrar 2" }!!
 
         // Categories to competition
-        competitionCategory1 = competitionCategoryService.addCompetitionCategory(
+        competitionCategory1 = addCompetitionCategory.execute(
             competitionId,
             CategorySpec(herrar1.id, herrar1.name, herrar1.type)
         ).id
-        competitionCategory2 = competitionCategoryService.addCompetitionCategory(
+        competitionCategory2 = addCompetitionCategory.execute(
             competitionId,
             CategorySpec(herrar2.id, herrar2.name, herrar2.type)
         ).id
@@ -67,8 +69,8 @@ class TestScheduleCategoryStartTime(
 
     @AfterEach
     fun deleteCompetition() {
-        competitionCategoryService.deleteCategoryInCompetition(competitionCategory1)
-        competitionCategoryService.deleteCategoryInCompetition(competitionCategory2)
+        deleteCompetitionCategory.execute(competitionCategory1)
+        deleteCompetitionCategory.execute(competitionCategory2)
         competitionRepository.deleteCompetition(competitionId)
     }
 

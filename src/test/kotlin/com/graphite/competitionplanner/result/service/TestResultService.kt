@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.result.service
 
 import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
-import com.graphite.competitionplanner.competitioncategory.service.CompetitionCategoryService
+import com.graphite.competitionplanner.competitioncategory.domain.UpdateCompetitionCategory
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.service.MatchDTO
@@ -26,7 +26,6 @@ import org.springframework.boot.test.context.SpringBootTest
 class TestResultService(
     @Autowired val testUtil: TestUtil,
     @Autowired val matchService: MatchService,
-    @Autowired val competitionCategoryService: CompetitionCategoryService,
     @Autowired val registrationService: RegistrationService,
     @Autowired val competitionDrawRepository: CompetitionDrawRepository,
     @Autowired val registrationRepository: RegistrationRepository,
@@ -35,7 +34,8 @@ class TestResultService(
     @Autowired val drawService: DrawService,
     @Autowired val resultRepository: ResultRepository,
     @Autowired val util: Util,
-    @Autowired val findCompetitionCategory: FindCompetitionCategory
+    @Autowired val findCompetitionCategory: FindCompetitionCategory,
+    @Autowired val updateCompetitionCategory: UpdateCompetitionCategory
 ) {
 
     var competitionCategoryId = 0
@@ -75,7 +75,7 @@ class TestResultService(
             )
         )
 
-        competitionCategoryService.updateCompetitionCategory(original.id, updatedSettings)
+        updateCompetitionCategory.execute(original.id, updatedSettings)
 
         // Add players
         val allPlayers = playerRepository.getAll()

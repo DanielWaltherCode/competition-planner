@@ -397,6 +397,14 @@ class DataGenerator {
         competitionCategoryId
     )
 
+    fun newRegistrationDTO(
+        id: Int = this.registrationId++,
+        date: LocalDate = LocalDate.now()
+    ) = RegistrationDTO(
+        id,
+        date
+    )
+
     /**
      * Generates a set of matches for a pool with the given amount of players. The generated matches
      * are so that every player will go up against each other player exactly once.
