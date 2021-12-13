@@ -31,7 +31,7 @@ class TestClubRepository(
 
     @Test
     fun shouldThrowNotFoundExceptionWhenDeletingClubThatDoesNotExist() {
-        Assertions.assertThrows(NotFoundException::class.java) { clubRepository.delete(10) }
+        Assertions.assertThrows(NotFoundException::class.java) { clubRepository.delete(-1) }
     }
 
     @Test

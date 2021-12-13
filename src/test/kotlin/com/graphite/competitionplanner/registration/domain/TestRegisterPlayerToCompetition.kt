@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.player.domain.FindPlayer
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
+import com.graphite.competitionplanner.registration.interfaces.PlayerAlreadyRegisteredException
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Description
-import java.lang.NullPointerException
 
 @SpringBootTest
 class TestRegisterPlayerToCompetition {
@@ -131,14 +131,16 @@ class TestRegisterPlayerToCompetition {
             "already existing registration.")
     fun shouldNotRegisterIfPlayerAlreadyRegistered() {
         // Setup
-        val spec = dataGenerator.newRegistrationSinglesSpec(playerId = 53)
+        val player = dataGenerator.newPlayerWithClubDTO()
+        val spec = dataGenerator.newRegistrationSinglesSpec(playerId = player.id)
+        `when`(findPlayer.byId(player.id)).thenReturn(player)
         `when`(repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)).thenReturn(listOf(spec.playerId))
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
                 category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)))
 
         // Act
-        Assertions.assertThrows(NullPointerException::class.java) {
+        Assertions.assertThrows(PlayerAlreadyRegisteredException::class.java) {
             registerPlayer.execute(spec)
         }
 

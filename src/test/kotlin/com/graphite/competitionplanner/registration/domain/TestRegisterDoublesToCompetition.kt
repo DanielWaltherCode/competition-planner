@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.player.domain.FindPlayer
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
+import com.graphite.competitionplanner.registration.interfaces.PlayerAlreadyRegisteredException
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
@@ -13,14 +14,13 @@ import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Description
-import java.lang.NullPointerException
 
 @SpringBootTest
 class TestRegisterDoublesToCompetition {
 
-    private final val findPlayer = Mockito.mock(FindPlayer::class.java)
-    private final val findCompetitionCategory = Mockito.mock(FindCompetitionCategory::class.java)
-    private final val repository = Mockito.mock(IRegistrationRepository::class.java)
+    private val findPlayer = Mockito.mock(FindPlayer::class.java)
+    private val findCompetitionCategory = Mockito.mock(FindCompetitionCategory::class.java)
+    private val repository = Mockito.mock(IRegistrationRepository::class.java)
     private val registerDoubles = RegisterDoubleToCompetition(findPlayer, findCompetitionCategory, repository)
     val dataGenerator = DataGenerator()
 
@@ -148,14 +148,18 @@ class TestRegisterDoublesToCompetition {
     @Description("If any of the player are already registered to the competition category then abort registration.")
     fun shouldNotRegisterIfPlayerOneAlreadyRegistered() {
         // Setup
-        val spec = dataGenerator.newRegistrationDoublesSpec(playerOneId = 53)
-        `when`(repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)).thenReturn(listOf(spec.playerOneId))
+        val playerOne = dataGenerator.newPlayerWithClubDTO()
+        val playerTwo = dataGenerator.newPlayerWithClubDTO()
+        val spec = dataGenerator.newRegistrationDoublesSpec(playerOneId = playerOne.id, playerTwoId = playerTwo.id)
+        `when`(findPlayer.byId(playerOne.id)).thenReturn(playerOne)
+        `when`(findPlayer.byId(playerTwo.id)).thenReturn(playerTwo)
+        `when`(repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)).thenReturn(listOf(playerOne.id))
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
                 category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES.name)))
 
         // Act
-        Assertions.assertThrows(NullPointerException::class.java) {
+        Assertions.assertThrows(PlayerAlreadyRegisteredException::class.java) {
             registerDoubles.execute(spec)
         }
 
@@ -167,14 +171,18 @@ class TestRegisterDoublesToCompetition {
     @Description("If any of the player are already registered to the competition category then abort registration.")
     fun shouldNotRegisterIfPlayerTwoAlreadyRegistered() {
         // Setup
-        val spec = dataGenerator.newRegistrationDoublesSpec(playerTwoId = 53)
-        `when`(repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)).thenReturn(listOf(spec.playerTwoId))
+        val playerOne = dataGenerator.newPlayerWithClubDTO()
+        val playerTwo = dataGenerator.newPlayerWithClubDTO()
+        val spec = dataGenerator.newRegistrationDoublesSpec(playerOneId = playerOne.id, playerTwoId = playerTwo.id)
+        `when`(findPlayer.byId(playerOne.id)).thenReturn(playerOne)
+        `when`(findPlayer.byId(playerTwo.id)).thenReturn(playerTwo)
+        `when`(repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)).thenReturn(listOf(playerTwo.id))
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
                 category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES.name)))
 
         // Act
-        Assertions.assertThrows(NullPointerException::class.java) {
+        Assertions.assertThrows(PlayerAlreadyRegisteredException::class.java) {
             registerDoubles.execute(spec)
         }
 
