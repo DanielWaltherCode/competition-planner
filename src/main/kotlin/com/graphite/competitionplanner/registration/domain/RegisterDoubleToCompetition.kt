@@ -5,14 +5,9 @@ import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitio
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.player.domain.FindPlayer
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
-import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
-import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesDTO
-import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesSpec
-import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesSpecWithDate
+import com.graphite.competitionplanner.registration.interfaces.*
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
 
 @Component
@@ -34,13 +29,10 @@ class RegisterDoubleToCompetition(
 
         val playerIds: List<Int> = repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)
         if (playerIds.contains(spec.playerOneId)) {
-            // Todo - gör om till nytt exception med en egen felkod som webben kan mappa till ett felmeddelande
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST,
-                "Player ${playerOne.firstName + " " + playerOne.lastName} is already registered in this category")
+            throw PlayerAlreadyRegisteredException(playerOne)
         }
         if (playerIds.contains(spec.playerTwoId)) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST,
-                "Player ${playerTwo.firstName + " " + playerTwo.lastName} is already registered in this category")
+            throw PlayerAlreadyRegisteredException(playerTwo)
         }
 
         return repository.storeDoubles(
