@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.draw.repository
 
 import com.graphite.competitionplanner.Tables.*
-import com.graphite.competitionplanner.competitioncategory.entity.Round
+import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.domain.*
 import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.draw.service.*
@@ -12,7 +12,6 @@ import com.graphite.competitionplanner.tables.records.PoolRecord
 import com.graphite.competitionplanner.tables.records.PoolToPlayoffMapRecord
 import org.jetbrains.annotations.NotNull
 import org.jooq.DSLContext
-import org.jooq.Record
 import org.springframework.stereotype.Repository
 
 @Repository

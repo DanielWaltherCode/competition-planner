@@ -1,6 +1,5 @@
 package com.graphite.competitionplanner.draw.interfaces
 
-import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 
