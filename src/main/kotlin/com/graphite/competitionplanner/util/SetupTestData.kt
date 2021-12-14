@@ -459,7 +459,7 @@ class EventListener(
         val lugiPlayers = listAllPlayersInClub.execute(lugiId)
         val umePlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Umeå IK"))
         val otherPlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Övriga"))
-        val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
+        val lugiCompetitionId = competitionRepository.findCompetitionsThatBelongsTo(lugiId)[0].id
         val competitionCategories = getCompetitionCategories.execute(lugiCompetitionId)
 
         registrationService.registerPlayersDoubles(
@@ -511,7 +511,7 @@ class EventListener(
         val lugiPlayers = listAllPlayersInClub.execute(lugiId)
         val umePlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Umeå IK"))
         val otherPlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Övriga"))
-        val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
+        val lugiCompetitionId = competitionRepository.findCompetitionsThatBelongsTo(lugiId)[0].id
         val competitionCategories = getCompetitionCategories.execute(lugiCompetitionId)
 
         // Have "Herrar 1" in Lugi as main competition category to play around with

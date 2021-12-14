@@ -15,24 +15,10 @@ import java.time.LocalDate
 @Repository
 class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository {
 
-    internal fun addCompetitionWithId(competitionId: Int, competitionSpec: CompetitionSpec): CompetitionRecord {
-        val competitionRecord = competitionSpec.toRecord()
-        competitionRecord.id = competitionId
-        competitionRecord.store()
-        return competitionRecord
-    }
-
     internal fun deleteCompetition(competitionId: Int): Boolean {
         val deletedRows =
             dslContext.deleteFrom(Competition.COMPETITION).where(Competition.COMPETITION.ID.eq(competitionId)).execute()
         return deletedRows >= 1
-    }
-
-    internal fun getByLocation(location: String): List<CompetitionRecord> {
-        return dslContext.select()
-            .from(COMPETITION)
-            .where(COMPETITION.LOCATION.eq(location))
-            .fetchInto(COMPETITION)
     }
 
     internal fun clearTable() = dslContext.deleteFrom(Competition.COMPETITION).execute()
