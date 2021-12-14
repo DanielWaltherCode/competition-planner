@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.Tables.POOL
 import com.graphite.competitionplanner.Tables.POOL_TO_PLAYOFF_MAP
-import com.graphite.competitionplanner.competitioncategory.entity.Round
+import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO

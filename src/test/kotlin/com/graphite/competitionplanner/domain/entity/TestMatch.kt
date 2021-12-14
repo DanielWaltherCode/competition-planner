@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.domain.entity
 
-import com.graphite.competitionplanner.competitioncategory.entity.Match
-import com.graphite.competitionplanner.competitioncategory.entity.MatchType
+import com.graphite.competitionplanner.schedule.domain.entity.Match
+import com.graphite.competitionplanner.schedule.domain.entity.MatchType
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -11,8 +11,8 @@ import java.time.LocalDateTime
 @SpringBootTest
 class TestMatch {
 
-    private final val dataGenerator = DataGenerator()
-    private final val p2 = dataGenerator.newPlayerDTO()
+    private val dataGenerator = DataGenerator()
+    private val p2 = dataGenerator.newPlayerDTO()
 
     @Test
     fun playerCannotBelongToBothTeamsInSameMatch() {

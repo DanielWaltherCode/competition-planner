@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.draw.service
 import com.graphite.competitionplanner.competitioncategory.domain.DeleteCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.domain.UpdateCompetitionCategory
-import com.graphite.competitionplanner.competitioncategory.entity.Round
+import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.repository.PlayerRepository

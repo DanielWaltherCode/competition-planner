@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.draw.repository
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
-import com.graphite.competitionplanner.competitioncategory.entity.Round
+import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.*
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
