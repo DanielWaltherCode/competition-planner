@@ -15,7 +15,6 @@
                       <div v-if="match.firstPlayer[0].firstName !== 'BYE'">
                         <p class="mb-0" :class="isPlayerOneWinner(match) ? 'fw-bold' : ''">
                           {{ getPlayerOne(match) }}
-                          <span class="text-uppercase"> {{ getClub(match.firstPlayer) }}</span>
                         </p>
                       </div>
                     </td>
@@ -27,8 +26,7 @@
                     <td>
                       <div v-if="match.secondPlayer[0].firstName !== 'BYE'">
                         <p class="mb-0" :class="isPlayerTwoWinner(match) ? 'fw-bold' : ''">
-                          {{ getPlayerTwo(match) }} <span
-                            class="text-uppercase"> {{ getClub(match.secondPlayer) }}</span>
+                          {{ getPlayerTwo(match) }}
                         </p>
                       </div>
                     </td>
@@ -49,7 +47,7 @@
 </template>
 
 <script>
-import {getClub, getPlayerOne, getPlayerTwo, isPlayerOneWinner, isPlayerTwoWinner} from "@/common/util";
+import {getClub, isPlayerOneWinner, isPlayerTwoWinner, getPlayerOneWithClub, getPlayerTwoWithClub} from "@/common/util";
 
 export default {
   name: "PlayoffDraw",
@@ -57,8 +55,8 @@ export default {
     playoffRounds: Array
   },
   methods: {
-    getPlayerOne: getPlayerOne,
-    getPlayerTwo: getPlayerTwo,
+    getPlayerOne: getPlayerOneWithClub,
+    getPlayerTwo: getPlayerTwoWithClub,
     getClub: getClub,
     isPlayerOneWinner: isPlayerOneWinner,
     isPlayerTwoWinner: isPlayerTwoWinner,
