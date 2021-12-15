@@ -20,6 +20,7 @@ import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import kotlin.random.Random
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
@@ -109,6 +110,22 @@ class TestResultService(
         addResult()
         Assertions.assertTrue(result.gameList.isNotEmpty())
         Assertions.assertNotNull(match.winner)
+    }
+
+    @Test
+    fun testNumberGenerator() {
+        val resultsMap = mutableMapOf<Int, Int>()
+
+        for (i in 1..100) {
+            val number = Random.nextInt(0, 10)
+            if (resultsMap.containsKey(number)) {
+                resultsMap[number] = resultsMap.getValue(number) + 1
+            }
+            else {
+                resultsMap[number] = 1
+            }
+        }
+        println(resultsMap)
     }
 
     private fun addResult() {

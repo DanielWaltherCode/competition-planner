@@ -21,8 +21,9 @@ class TestGetDraw(@Autowired val dslContext: DSLContext, @Autowired val createDr
 
     private val mockedCompetitionCategoryRepository = Mockito.mock(ICompetitionCategoryRepository::class.java)
     private val mockedMatchService = Mockito.mock(MatchService::class.java)
+    private val mockedCalculateGroupStanding = Mockito.mock(CalculateGroupStanding::class.java)
     private val getDraw = GetDraw(mockedCompetitionCategoryRepository,
-        mockedMatchService, dslContext)
+        mockedMatchService, dslContext, mockedCalculateGroupStanding)
 
     val dataGenerator = DataGenerator()
 
@@ -79,6 +80,7 @@ class TestGetDraw(@Autowired val dslContext: DSLContext, @Autowired val createDr
             groupName,
             playerList,
             emptyList(),
+            mutableListOf()
         )
     }
 }

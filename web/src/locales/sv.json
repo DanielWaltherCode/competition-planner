@@ -172,13 +172,19 @@
       "redraw": "Lotta om"
     },
     "pool": {
+      "players": "Spelare i gruppen",
+      "standing": "Ställning",
       "club": "Klubb",
       "groups": "Pool-lottning",
       "playoff": "Slutspelslottning",
       "matches": "Matcher",
       "time": "Tid",
       "result": "Resultat",
-      "noTime": "Tid ej satt"
+      "noTime": "Tid ej satt",
+      "won": "Vunna",
+      "played": "Spelat",
+      "games": "Set",
+      "points": "Poäng"
     }
   },
   "schedule": {
