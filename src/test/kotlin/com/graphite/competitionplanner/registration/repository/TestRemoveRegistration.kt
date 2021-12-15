@@ -32,7 +32,7 @@ class TestRemoveRegistration(
     @Test
     fun shouldThrowNotFoundIfRegistrationIdCannotBeFound() {
         Assertions.assertThrows(NotFoundException::class.java) {
-            registrationRepository.remove(-1)
+            registrationRepository.remove(-991)
         }
     }
 

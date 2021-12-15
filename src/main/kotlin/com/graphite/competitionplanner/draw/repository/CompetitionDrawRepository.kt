@@ -173,7 +173,7 @@ class CompetitionDrawRepository(val dslContext: DSLContext,
         return when (this) {
             is Registration.Real -> this.id
             is Registration.Bye -> 0 // TODO: This feels a bit fragile. These IDs are set in SetupTestData
-            is Registration.Placeholder -> 1 // TODO: Fetch PlaceHolder ID once
+            is Registration.Placeholder -> -1 // TODO: Fetch PlaceHolder ID once
         }
     }
 

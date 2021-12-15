@@ -141,9 +141,9 @@ class EventListener(
     }
 
     fun setUpPlaceHolderRegistration() {
-        // We need a Placeholder player and registration to return matches with place holder players.
+        // We need a Placeholder player and registration to return matches with placeholder players.
         playerRepository.addPlayerWithId(
-            1,
+            -1,
             PlayerSpec(
                 firstName = "Placeholder",
                 lastName = "Placeholder",
@@ -151,8 +151,8 @@ class EventListener(
                 dateOfBirth = LocalDate.now().minus(18, ChronoUnit.YEARS)
             )
         )
-        registrationRepository.addRegistrationWithId(1, LocalDate.now())
-        registrationRepository.registerPlayer(1, 1)
+        registrationRepository.addRegistrationWithId(-1, LocalDate.now())
+        registrationRepository.registerPlayer(-1, -1)
     }
 
     fun setUpBYEPlayer() {

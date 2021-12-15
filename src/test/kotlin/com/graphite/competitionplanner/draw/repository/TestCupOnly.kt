@@ -136,7 +136,7 @@ class TestCupOnly(
         Assertions.assertEquals(1, result.playOff.size, "Expected to find 1 match")
 
         val final = result.playOff.first().matches.first()
-        Assertions.assertEquals(1, final.firstPlayer.first().id,
+        Assertions.assertEquals(-1, final.firstPlayer.first().id,
             "Expected to find player id 1 which represents the placeholder player")
         Assertions.assertEquals(registrations[0].playerId, final.secondPlayer.first().id)
         Assertions.assertEquals(1, final.matchOrderNumber)

@@ -87,7 +87,7 @@ class TestPlayerRepository(
     @Test
     fun shouldThrowNotFoundExceptionWhenUpdatingPlayerThatCannotBeFound() {
         val spec = dataGenerator.newPlayerSpec()
-        Assertions.assertThrows(NotFoundException::class.java) { playerRepository.update(-1, spec) }
+        Assertions.assertThrows(NotFoundException::class.java) { playerRepository.update(-45461, spec) }
     }
 
     @Test
@@ -139,7 +139,7 @@ class TestPlayerRepository(
     @Test
     fun shouldIgnorePlayerIdsThatDoesNotExist() {
         // Act
-        val result = playerRepository.findAllForIds(listOf(-1, -3))
+        val result = playerRepository.findAllForIds(listOf(-8901, -6573))
 
         // Assert
         Assert.isTrue(result.isEmpty())
