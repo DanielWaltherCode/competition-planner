@@ -96,7 +96,6 @@ class MatchService(
     fun recordToMatchAndResultDTO(match: MatchRecord): MatchAndResultDTO {
         val result = resultService.getResult(match.id)
 
-        println("MatchId: " + match.id.toString())
         return MatchAndResultDTO(
             match.id,
             match.startTime,

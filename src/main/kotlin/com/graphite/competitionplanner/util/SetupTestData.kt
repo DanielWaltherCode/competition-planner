@@ -66,8 +66,6 @@ class EventListener(
     fun setUpData() {
         setUpClub()
         competitionSetup()
-//        registerUsers()
-//        playerSetup()
         try {
             setUpBYEPlayer()
             setUpPlaceHolderRegistration()

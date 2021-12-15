@@ -52,7 +52,6 @@ class RegistrationService(
             return emptyList()
         }
         val players = getPlayersFromRegistration.execute(registrationId)
-        println(registrationId.toString() + ": " + players)
         return findPlayer.byIds(players.map { it.id })
     }
 
