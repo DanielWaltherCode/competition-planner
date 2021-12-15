@@ -1,18 +1,13 @@
 package com.graphite.competitionplanner.draw.domain
 
-import com.graphite.competitionplanner.competitioncategory.entity.Round
-import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
+import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.util.DataGenerator
 import org.jooq.DSLContext
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import org.mockito.Mockito.anyInt
-import org.mockito.Mockito.times
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 

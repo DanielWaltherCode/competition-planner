@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
+import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,12 +12,14 @@ import org.springframework.boot.test.context.SpringBootTest
 class TestCalculateGroupStanding(
     @Autowired val getDraw: GetDraw,
     @Autowired val competitionRepository: CompetitionRepository,
-    @Autowired val getCompetitionCategories: GetCompetitionCategories
+    @Autowired val getCompetitionCategories: GetCompetitionCategories,
+    @Autowired val util: Util
 ) {
 
     @Test
     fun testGroupStanding() {
-        val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
+        val lugiId = util.getClubIdOrDefault("Lugi")
+        val lugiCompetitionId = competitionRepository.findCompetitionsThatBelongsTo(lugiId)[0].id
         val competitionCategories = getCompetitionCategories.execute(lugiCompetitionId)
         val herrar2 = competitionCategories[1]
         val draw = getDraw.execute(herrar2.id)

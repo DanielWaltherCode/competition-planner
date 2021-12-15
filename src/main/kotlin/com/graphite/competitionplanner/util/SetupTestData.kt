@@ -466,7 +466,7 @@ class EventListener(
         val lugiPlayers = listAllPlayersInClub.execute(lugiId)
         val umePlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Umeå IK"))
         val otherPlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Övriga"))
-        val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
+        val lugiCompetitionId = competitionRepository.findCompetitionsThatBelongsTo(lugiId)[0].id
         val competitionCategories = getCompetitionCategories.execute(lugiCompetitionId)
 
         registrationService.registerPlayersDoubles(
@@ -518,7 +518,7 @@ class EventListener(
         val lugiPlayers = listAllPlayersInClub.execute(lugiId)
         val umePlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Umeå IK"))
         val otherPlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Övriga"))
-        val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
+        val lugiCompetitionId = competitionRepository.findCompetitionsThatBelongsTo(lugiId)[0].id
         val competitionCategories = getCompetitionCategories.execute(lugiCompetitionId)
 
         // Have "Herrar 1" in Lugi as main competition category to play around with
@@ -652,7 +652,8 @@ class EventListener(
 
     // Draw category and register match results in Herrar 2 (competitionCategories[1]
     fun registerResults() {
-        val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
+        val lugiId = util.getClubIdOrDefault("Lugi")
+        val lugiCompetitionId = competitionRepository.findCompetitionsThatBelongsTo(lugiId)[0].id
         val competitionCategories = getCompetitionCategories.execute(lugiCompetitionId)
         val herrar2 = competitionCategories[1]
         val draw = createDraw.execute(herrar2.id)

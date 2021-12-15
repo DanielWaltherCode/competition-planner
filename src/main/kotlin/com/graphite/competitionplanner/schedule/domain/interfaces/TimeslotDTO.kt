@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.schedule.domain.interfaces
 
-import com.graphite.competitionplanner.competitioncategory.entity.Timeslot
+import com.graphite.competitionplanner.schedule.domain.entity.Timeslot
 
 data class TimeslotDTO(
     val orderNumber: Int,

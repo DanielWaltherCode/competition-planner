@@ -5,7 +5,7 @@ import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.domain.GetDaysOfCompetition
 import com.graphite.competitionplanner.competition.domain.UpdateCompetition
 import com.graphite.competitionplanner.competition.interfaces.*
-import com.graphite.competitionplanner.competitioncategory.entity.Round
+import com.graphite.competitionplanner.draw.interfaces.Round
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 

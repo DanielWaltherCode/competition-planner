@@ -5,7 +5,7 @@ import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
-import com.graphite.competitionplanner.competitioncategory.entity.Round
+import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.tables.records.CategoryRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryGameRulesRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryMetadataRecord

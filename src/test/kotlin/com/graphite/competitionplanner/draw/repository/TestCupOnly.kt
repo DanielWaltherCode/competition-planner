@@ -4,13 +4,12 @@ import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
-import com.graphite.competitionplanner.competitioncategory.entity.Round
+import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.domain.CupDrawSpec
 import com.graphite.competitionplanner.draw.domain.PlayOffMatch
 import com.graphite.competitionplanner.draw.domain.Registration
 import com.graphite.competitionplanner.draw.interfaces.CompetitionCategoryDrawDTO
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
-import com.graphite.competitionplanner.draw.interfaces.PlayoffRoundDTO
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository

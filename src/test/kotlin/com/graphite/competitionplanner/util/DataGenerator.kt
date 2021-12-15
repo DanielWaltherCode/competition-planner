@@ -5,10 +5,10 @@ import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.competition.interfaces.*
-import com.graphite.competitionplanner.competitioncategory.entity.Match
-import com.graphite.competitionplanner.competitioncategory.entity.MatchType
-import com.graphite.competitionplanner.competitioncategory.entity.Round
-import com.graphite.competitionplanner.competitioncategory.entity.ScheduleSettings
+import com.graphite.competitionplanner.schedule.domain.entity.Match
+import com.graphite.competitionplanner.schedule.domain.entity.MatchType
+import com.graphite.competitionplanner.draw.interfaces.Round
+import com.graphite.competitionplanner.schedule.domain.entity.ScheduleSettings
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO

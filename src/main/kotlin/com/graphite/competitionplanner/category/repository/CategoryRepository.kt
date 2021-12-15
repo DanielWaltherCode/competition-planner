@@ -22,12 +22,6 @@ class CategoryRepository(val dslContext: DSLContext) : ICategoryRepository {
             .values(category, type).execute()
     }
 
-    internal fun addCategoryWithId(id: Int, category: String, type: String) {
-        dslContext.insertInto(Tables.CATEGORY)
-            .columns(Tables.CATEGORY.ID, Tables.CATEGORY.CATEGORY_NAME, Tables.CATEGORY.CATEGORY_TYPE)
-            .values(id, category, type).execute()
-    }
-
     internal fun clearTable() = dslContext.deleteFrom(Tables.CATEGORY).execute()
 
     private fun CategoryRecord.toDto(): CategoryDTO {
