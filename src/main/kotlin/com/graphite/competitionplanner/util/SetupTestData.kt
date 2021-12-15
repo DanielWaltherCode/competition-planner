@@ -66,14 +66,16 @@ class EventListener(
     fun setUpData() {
         setUpClub()
         competitionSetup()
-        registerUsers()
-        playerSetup()
+//        registerUsers()
+//        playerSetup()
         try {
             setUpBYEPlayer()
             setUpPlaceHolderRegistration()
         } catch (ex: DuplicateKeyException) {
             // Nothing
         }
+        registerUsers()
+        playerSetup()
         addPlayerRankings()
         categorySetup()
         competitionCategorySetup()
