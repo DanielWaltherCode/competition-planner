@@ -26,4 +26,6 @@ interface ICompetitionDrawRepository {
      *  @param competitionCategoryId Id of the competition category
      */
     fun delete(competitionCategoryId: Int)
+
+    fun getPoolToPlayoffMap(competitionCategoryId: Int): List<GroupToPlayoff>
 }

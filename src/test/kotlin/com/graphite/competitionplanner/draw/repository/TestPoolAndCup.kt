@@ -8,6 +8,8 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetiti
 import com.graphite.competitionplanner.draw.domain.*
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.PlayoffRoundDTO
+import com.graphite.competitionplanner.match.repository.MatchRepository
+import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import org.junit.jupiter.api.Assertions
@@ -21,7 +23,9 @@ class TestPoolAndCup(
     @Autowired competitionCategoryRepository: ICompetitionCategoryRepository,
     @Autowired categoryRepository: ICategoryRepository,
     @Autowired playerRepository: PlayerRepository,
-    @Autowired registrationRepository: IRegistrationRepository
+    @Autowired registrationRepository: IRegistrationRepository,
+    @Autowired val matchService: MatchService,
+    @Autowired val matchRepository: MatchRepository
 ) : TestCompetitionDrawRepository(repository,
     clubRepository,
     competitionRepository,
@@ -75,11 +79,43 @@ class TestPoolAndCup(
             matches = semifinals + listOf(final),
         )
 
+        println(competitionCategory)
+
+        for (p in players) {
+            println(p)
+        }
+
+        for (r in registrations) {
+            println(r)
+        }
+
+        val playerRecords = playerRepository.getAll()
+        for (p in playerRecords) {
+            print(p)
+        }
+
         // Act
         val result = repository.store(spec)
 
         // Assert
         val actualFinal = result.playOff.inRound(Round.FINAL)
+        val poolToMap = repository.getPoolToPlayoffMap(competitionCategory.id)
+
+        println(result.toString())
+        val poolToPlayoff = repository.getPoolToPlayoffMap(competitionCategory.id)
+        for (p in poolToPlayoff) {
+            println(p)
+        }
+        val matches = matchService.getMatchesInCategory(competitionCategory.id).sortedBy { it.id }
+        for (m in matches) {
+            println(m)
+        }
+
+        val matchRecords = matchRepository.getMatchesInCategory(competitionCategory.id).sortedBy { it.id }
+        for (m in matchRecords) {
+            println(m)
+        }
+
         Assertions.assertEquals(1, actualFinal.matches.size, "There should only be one final.")
         Assertions.assertEquals(1, actualFinal.matches.first().firstPlayer.size)
         Assertions.assertEquals(1, actualFinal.matches.first().secondPlayer.size)

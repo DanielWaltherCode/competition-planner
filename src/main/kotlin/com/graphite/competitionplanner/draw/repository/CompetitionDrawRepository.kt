@@ -12,6 +12,7 @@ import com.graphite.competitionplanner.tables.records.PoolRecord
 import com.graphite.competitionplanner.tables.records.PoolToPlayoffMapRecord
 import org.jetbrains.annotations.NotNull
 import org.jooq.DSLContext
+import org.jooq.Record
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -45,7 +46,6 @@ class CompetitionDrawRepository(val dslContext: DSLContext,
         dslContext.deleteFrom(POOL).execute()
     }
 
-
     override fun store(draw: CompetitionCategoryDrawSpec): CompetitionCategoryDrawDTO {
         return when (draw) {
             is CupDrawSpec -> storeCupDraw(draw)
@@ -65,6 +65,31 @@ class CompetitionDrawRepository(val dslContext: DSLContext,
 
     fun String.isRound(): Boolean {
         return Round.values().any { it.name == this }
+    }
+
+    override fun getPoolToPlayoffMap(competitionCategoryId: Int): List<GroupToPlayoff> {
+        val records = dslContext.select()
+            .from(POOL_TO_PLAYOFF_MAP)
+            .join(POOL).on(POOL_TO_PLAYOFF_MAP.POOL_ID.eq(POOL.ID))
+            .where(POOL_TO_PLAYOFF_MAP.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+            .orderBy(POOL_TO_PLAYOFF_MAP.MATCH_ID).fetch().toList()
+
+        return processPoolToPlayoffMapRecords(records)
+    }
+
+    private fun processPoolToPlayoffMapRecords(records: List<Record>): List<GroupToPlayoff> {
+        return records.map {
+            GroupToPlayoff(
+                PlayoffPosition(
+                    it.get(POOL_TO_PLAYOFF_MAP.MATCH_ID),
+                    it.get(POOL_TO_PLAYOFF_MAP.MATCH_REGISTRATION_POSITION),
+                ),
+                GroupPosition(
+                    it.getValue(POOL.NAME),
+                    it.getValue(POOL_TO_PLAYOFF_MAP.POOL_POSITION)
+                )
+            )
+        }
     }
 
     private fun storeCupDraw(draw: CupDrawSpec): CompetitionCategoryDrawDTO {
@@ -91,6 +116,8 @@ class CompetitionDrawRepository(val dslContext: DSLContext,
         val groupMatchRecords: List<MatchRecord> =
             draw.pools.flatMap { group -> group.matches.map { it.toRecord(draw.competitionCategoryId, group.name) } }
         dslContext.batchInsert(playerOffMatchRecords + groupMatchRecords).execute()
+
+
 
         val poolToPlayoffMapRecords: List<PoolToPlayoffMapRecord> = createPoolToPlayoffMapRecords(draw)
         dslContext.batchInsert(poolToPlayoffMapRecords).execute()
