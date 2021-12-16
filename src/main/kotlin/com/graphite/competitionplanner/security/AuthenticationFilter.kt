@@ -45,13 +45,15 @@ class AuthenticationFilter(authenticationManager: AuthenticationManager) : Usern
         chain: FilterChain,
         auth: Authentication
     ) {
-        val username: String = (auth.principal as User).username
-        val accessToken: String = SecurityHelper.generateAccessToken(username)
-        val refreshToken: String = SecurityHelper.generateRefreshToken(username)
+        val userService: UserService = SpringApplicationContext.getBean("userService") as UserService
+        val email: String = (auth.principal as User).username
+        val user = userService.getUserByEmail(email)
+        val accessToken: String = SecurityHelper.generateAccessToken(user)
+        val refreshToken: String = SecurityHelper.generateRefreshToken(user)
 
         // Store refresh token with user
-        val userService: UserService = SpringApplicationContext.getBean("userService") as UserService
-        userService.storeRefreshToken(refreshToken, username)
+
+        userService.storeRefreshToken(refreshToken, email)
 
         // Add access and refresh tokens to response body
         val out: PrintWriter = res.writer

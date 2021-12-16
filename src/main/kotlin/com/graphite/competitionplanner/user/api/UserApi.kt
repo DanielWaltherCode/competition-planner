@@ -19,11 +19,7 @@ class UserApi(val userService: UserService) {
 
     @GetMapping
     fun getLoggedInUser(): UserDTO {
-        val authentication = SecurityContextHolder.getContext().authentication
-            ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-
-        val user = authentication.principal as String
-        return userService.getUserByUsername(user)
+        return userService.getLoggedInUser()
     }
 
 }

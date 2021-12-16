@@ -399,7 +399,7 @@ class EventListener(
 
     fun competitionCategorySetup() {
         val lugiId = util.getClubIdOrDefault("Lugi")
-        val lugiCompetitions = findCompetitions.thatBelongsTo(lugiId)
+        val lugiCompetitions = findCompetitions.thatBelongTo(lugiId)
         val lugiCompetitionId = lugiCompetitions[0].id
         val categories = categoryRepository.getAvailableCategories()
 
@@ -433,7 +433,7 @@ class EventListener(
         )
 
         val umeaId = util.getClubIdOrDefault("Umeå IK")
-        val umeaCompetitions = findCompetitions.thatBelongsTo(umeaId)
+        val umeaCompetitions = findCompetitions.thatBelongTo(umeaId)
         val umeaCompetitionId = umeaCompetitions[0].id
         addCompetitionCategory.execute(
             umeaCompetitionId,

@@ -8,6 +8,7 @@ import com.graphite.competitionplanner.user.api.LoginDTO
 import com.graphite.competitionplanner.user.api.UserSpec
 import com.graphite.competitionplanner.user.repository.UserRepository
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -33,16 +34,31 @@ class UserService(
         return recordToDTO(addedUser)
     }
 
-    fun getUserByUsername(username: String): UserDTO {
-        val userRecord = userRepository.getUserByUsername(username)
+    fun getUserByEmail(email: String): UserDTO {
+        val userRecord = userRepository.getUserByEmail(email)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No user with that username found")
 
         return recordToDTO(userRecord)
     }
 
+    fun getUserById(id: Int): UserDTO {
+        val userRecord = userRepository.getUserById(id)
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No user with that username found")
+
+        return recordToDTO(userRecord)
+    }
+
+    fun getLoggedInUser(): UserDTO {
+        val authentication = SecurityContextHolder.getContext().authentication
+            ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+
+        val username = authentication.principal as String
+        return getUserByEmail(username)
+    }
+
     // Will either update existing or add new one
     fun storeRefreshToken(refreshToken: String, username: String) {
-        val user = getUserByUsername(username)
+        val user = getUserByEmail(username)
         val existingRecord = userRepository.getRefreshTokenByUser(user.id)
         if (existingRecord == null) {
             userRepository.saveRefreshToken(refreshToken, user.id)
@@ -57,11 +73,10 @@ class UserService(
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No such refresh token found")
 
         if (SecurityHelper.validateToken(tokenRecord.refreshToken)) {
-            val user = userRepository.getUserById(tokenRecord.userId)
-                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No user matching the record found")
-            val accessToken = SecurityHelper.generateAccessToken(user.username)
-            val newRefreshToken = SecurityHelper.generateRefreshToken(user.username)
-            storeRefreshToken(newRefreshToken, user.username)
+            val user: UserDTO = getUserById(tokenRecord.userId)
+            val accessToken = SecurityHelper.generateAccessToken(user)
+            val newRefreshToken = SecurityHelper.generateRefreshToken(user)
+            storeRefreshToken(newRefreshToken, user.email)
             return LoginDTO(accessToken, newRefreshToken)
         }
         else {
@@ -71,17 +86,17 @@ class UserService(
 
     /*Override necessary method from UserDetailsService */
     override fun loadUserByUsername(username: String): UserDetails {
-        val userRecord = userRepository.getUserByUsername(username)
+        val userRecord = userRepository.getUserByEmail(username)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No user with that username found")
 
-        return User(userRecord.username, userRecord.password, mutableListOf())
+        return User(userRecord.email, userRecord.password, mutableListOf())
     }
 
     fun recordToDTO(userRecord: UserTableRecord): UserDTO {
         val club = findClub.byId(userRecord.clubid)
         return UserDTO(
             userRecord.id,
-            userRecord.username,
+            userRecord.email,
             ClubNoAddressDTO(club.id, club.name)
         )
     }
@@ -96,6 +111,6 @@ data class UserWithEncryptedPassword(
 
 data class UserDTO(
     val id: Int,
-    val username: String,
+    val email: String,
     val clubNoAddressDTO: ClubNoAddressDTO
 )
