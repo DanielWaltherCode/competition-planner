@@ -72,11 +72,12 @@
               <div v-for="group in draw.groups" :key="group.name"
                    class="row col-sm-11 mx-auto mt-3 mb-4 d-flex align-items-start p-3 custom-card">
                 <h4 class="text-start mb-3">{{ $t("draw.main.group") }} {{ group.name }}</h4>
-                <div class="col-sm-4">
+                <div class="col-sm-12">
                   <PoolDraw :group="group"/>
                 </div>
-                <div class="col-sm-8">
+                <div class="col-sm-12">
                   <div id="matches" class="row justify-content-center ms-0">
+                    <h5 class="black text-start fw-bolder"> {{$t("draw.pool.matches")}}</h5>
                     <match-list-component :matches="group.matches"/>
                   </div>
                 </div>

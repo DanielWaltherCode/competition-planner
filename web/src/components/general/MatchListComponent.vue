@@ -14,7 +14,11 @@
         <td>{{ getTime(match) }}</td>
         <td>{{ getPlayerOne(match) }}</td>
         <td>{{ getPlayerTwo(match) }}</td>
-        <td></td>
+        <td>
+          <p class="pe-2 d-inline" v-for="game in match.result.gameList" :key="game.id">
+            {{ game.firstRegistrationResult }} - {{ game.secondRegistrationResult }}
+          </p>
+        </td>
       </tr>
       </tbody>
     </table>

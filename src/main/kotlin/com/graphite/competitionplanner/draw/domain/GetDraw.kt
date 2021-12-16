@@ -16,7 +16,8 @@ import org.springframework.stereotype.Repository
 class GetDraw(
     val competitionCategoryRepository: ICompetitionCategoryRepository,
     val matchService: MatchService,
-    val dslContext: DSLContext
+    val dslContext: DSLContext,
+    val calculateGroupStanding: CalculateGroupStanding
 ) {
 
     fun execute(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
@@ -27,6 +28,7 @@ class GetDraw(
             updatePlaceholderNamesInFirstRound(competitionCategoryId, playOffMatches)
         val playoffRounds: List<PlayoffRoundDTO> = convertToPlayoffRound(updatedPlayoffMatches)
         val groupDraws: List<GroupDrawDTO> = constructGroupDraw(matchesInCategory.filterNot{ it.groupOrRound.isRound() })
+
         val groupToPlayoffList: List<GroupToPlayoff> = getPoolToPlayoffList(competitionCategoryId)
 
         return CompetitionCategoryDrawDTO(
@@ -125,8 +127,8 @@ class GetDraw(
                     playersInGroup.add(PlayerInPoolDTO(match.firstPlayer, 1))
                     playersInGroup.add(PlayerInPoolDTO(match.secondPlayer, 1))
                 }
-
-                groups.add(GroupDrawDTO(group, playersInGroup.toList(), matchesInGroup ))
+                val groupStanding: List<GroupStandingDTO> = calculateGroupStanding.execute(matchesInGroup)
+                groups.add(GroupDrawDTO(group, playersInGroup.toList(), matchesInGroup, groupStanding))
             }
         }
         return groups
