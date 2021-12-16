@@ -14,21 +14,19 @@
         <thead>
         <tr>
           <th scope="col"></th>
-          <th scope="col">{{ $t("draw.pool.points") }}</th>
-          <th scope="col">{{ $t("draw.pool.won") }}</th>
+          <th scope="col">{{ $t("draw.pool.nrMatches") }}</th>
           <th scope="col">{{ $t("draw.pool.matches") }}</th>
           <th scope="col">{{ $t("draw.pool.games") }}</th>
           <th scope="col">{{ $t("draw.pool.points") }}</th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(playerInGroup, index) in group.players" :key="index">
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
+        <tr v-for="(standing, index) in group.groupStandingList" :key="index">
+          <td>{{getName(standing.player) }} {{ getClub(standing.player) }}</td>
+          <td>{{standing.matchesPlayed}}</td>
+          <td>{{standing.matchesWonLost.won}} - {{standing.matchesWonLost.lost}}</td>
+          <td>{{standing.gamesWonLost.won}} - {{standing.gamesWonLost.lost}}</td>
+          <td>{{standing.pointsWonLost.won}} - {{standing.pointsWonLost.lost}}</td>
         </tr>
         </tbody>
       </table>
