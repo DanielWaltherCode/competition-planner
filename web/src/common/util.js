@@ -62,7 +62,7 @@ export function getPlayerTwo(match) {
  * @returns {string|null|default.methods.firstName|*}
  */
 function getFormattedPlayerName(player) {
-    if (player.id === 1) { // This is a Placeholder, strip it of last name
+    if (player.id === -1) { // This is a Placeholder, strip it of last name
         return player.firstName
     } else {
         return player.firstName + " " + player.lastName
@@ -77,7 +77,7 @@ function getFormattedPlayerName(player) {
  * @returns {string|null|default.methods.firstName|*}
  */
 function getFormattedPlayerNameWithClub(player) {
-    if (player.id === 1) { // This is a Placeholder, strip it of last name and club.
+    if (player.id === -1) { // This is a Placeholder, strip it of last name and club.
         return player.firstName
     } else {
         return player.firstName + " " + player.lastName + " " + player.club.name
