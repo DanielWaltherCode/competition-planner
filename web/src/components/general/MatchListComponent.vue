@@ -12,11 +12,11 @@
       <tbody>
       <tr class="group-matches" v-for="match in matches" :key="match.id">
         <td>{{ getTime(match) }}</td>
-        <td>{{ getPlayerOne(match) }}</td>
-        <td>{{ getPlayerTwo(match) }}</td>
+        <td :class="isPlayerOneWinner(match) ? 'fw-bolder' : ''">{{ getPlayerOne(match) }}</td>
+        <td :class="isPlayerTwoWinner(match) ? 'fw-bolder' : ''">{{ getPlayerTwo(match) }}</td>
         <td>
           <p class="pe-2 d-inline" v-for="game in match.result.gameList" :key="game.id">
-            {{ game.firstRegistrationResult }} - {{ game.secondRegistrationResult }}
+            {{ game.firstRegistrationResult }}-{{ game.secondRegistrationResult }}
           </p>
         </td>
       </tr>
@@ -29,35 +29,21 @@
 </template>
 
 <script>
+import {getPlayerOne, getPlayerTwo, isPlayerOneWinner, isPlayerTwoWinner} from "@/common/util";
+
 export default {
   name: "MatchListComponent",
   props: ["matches"],
   methods: {
-    getPlayerOne(match) {
-      let playerOne = ""
-      if (match.firstPlayer.length === 1) {
-        playerOne = match.firstPlayer[0].firstName + " " + match.firstPlayer[0].lastName
-      } else if (match.firstPlayer.length === 2) {
-        playerOne = match.firstPlayer[0].firstName + " " + match.firstPlayer[0].lastName + "/" +
-            match.firstPlayer[1].firstName + " " + match.firstPlayer[1].lastName
-      }
-      return playerOne
-    },
-    getPlayerTwo(match) {
-      let playerTwo = ""
-      if (match.secondPlayer.length === 1) {
-        playerTwo = match.secondPlayer[0].firstName + " " + match.secondPlayer[0].lastName
-      } else if (match.firstPlayer.length === 2) {
-        playerTwo = match.secondPlayer[0].firstName + " " + match.secondPlayer[0].lastName + "/" +
-            match.secondPlayer[1].firstName + " " + match.secondPlayer[1].lastName
-      }
-      return playerTwo
-    },
+    getPlayerOne: getPlayerOne,
+    getPlayerTwo: getPlayerTwo,
     getTime(match) {
       if (match.startTime === null) {
         return this.$t("draw.pool.noTime")
       }
-    }
+    },
+    isPlayerOneWinner: isPlayerOneWinner,
+    isPlayerTwoWinner: isPlayerTwoWinner,
   }
 }
 </script>

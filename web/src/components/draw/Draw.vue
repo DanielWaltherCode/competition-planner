@@ -27,6 +27,7 @@
           <div class="blue-section row">
             <div class="top-content col-md-10 mx-auto">
               <h3 class="p-4">{{ chosenCategory.category.name }}</h3>
+
               <!-- If class is not drawn yet -->
               <div v-if="!isChosenCategoryDrawn " class="pb-4 ms-3 ms-md-0">
                 <div v-if="registeredPlayersLists.length > 0">
