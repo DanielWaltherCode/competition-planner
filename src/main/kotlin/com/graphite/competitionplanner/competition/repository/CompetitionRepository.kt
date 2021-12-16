@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.competition.repository
 
 import com.graphite.competitionplanner.Tables.CLUB
 import com.graphite.competitionplanner.Tables.COMPETITION
+import com.graphite.competitionplanner.club.domain.FindClub
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competition.interfaces.*
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 @Repository
-class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository {
+class CompetitionRepository(val dslContext: DSLContext, val findClub: FindClub) : ICompetitionRepository {
 
     internal fun deleteCompetition(competitionId: Int): Boolean {
         val deletedRows =
@@ -29,9 +30,9 @@ class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository
         return record.toDto()
     }
 
-    override fun findCompetitionsThatBelongsTo(clubId: Int): List<CompetitionDTO> {
+    override fun findCompetitionsThatBelongTo(clubId: Int): List<CompetitionWithClubDTO> {
         val records = dslContext.selectFrom(COMPETITION).where(COMPETITION.ORGANIZING_CLUB.eq(clubId)).fetch()
-        return records.map { it.toDto() }
+        return records.map { it.toDtoWithClub() }
     }
 
     override fun findCompetitions(start: LocalDate, end: LocalDate): List<CompetitionWithClubDTO> {
@@ -129,6 +130,18 @@ class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository
             this.name,
             this.welcomeText,
             this.organizingClub,
+            this.startDate,
+            this.endDate
+        )
+    }
+
+    private fun CompetitionRecord.toDtoWithClub(): CompetitionWithClubDTO {
+        return CompetitionWithClubDTO(
+            this.id,
+            LocationDTO(this.location),
+            this.name,
+            this.welcomeText,
+            findClub.byId(this.organizingClub),
             this.startDate,
             this.endDate
         )

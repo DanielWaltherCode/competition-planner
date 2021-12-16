@@ -19,7 +19,7 @@ class TestCalculateGroupStanding(
     @Test
     fun testGroupStanding() {
         val lugiId = util.getClubIdOrDefault("Lugi")
-        val lugiCompetitionId = competitionRepository.findCompetitionsThatBelongsTo(lugiId)[0].id
+        val lugiCompetitionId = competitionRepository.findCompetitionsThatBelongTo(lugiId)[0].id
         val competitionCategories = getCompetitionCategories.execute(lugiCompetitionId)
         val herrar2 = competitionCategories[1]
         val draw = getDraw.execute(herrar2.id)

@@ -11,8 +11,8 @@ class FindCompetitions(
    val repository: ICompetitionRepository
 ) {
 
-    fun thatBelongTo(clubId: Int): List<CompetitionDTO> {
-        return repository.findCompetitionsThatBelongsTo(clubId)
+    fun thatBelongTo(clubId: Int): List<CompetitionWithClubDTO> {
+        return repository.findCompetitionsThatBelongTo(clubId)
     }
 
     fun thatStartOrEndWithin(weekStartDate: LocalDate?, weekEndDate: LocalDate?): List<CompetitionWithClubDTO> {
