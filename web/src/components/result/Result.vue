@@ -132,7 +132,7 @@ export default {
       return JSON.parse(JSON.stringify(this.selectedMatch));
     },
     hideModalAndUpdate(matchId) {
-      MatchService.getMatch(matchId).then(res => {
+      MatchService.getMatch(this.competition.id, matchId).then(res => {
         for(let i = 0; i < this.matches.length; i++) {
           if (this.matches[i].id === matchId) {
             this.$set(this.matches, i, res.data)

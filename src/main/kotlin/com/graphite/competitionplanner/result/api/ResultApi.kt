@@ -6,7 +6,7 @@ import com.graphite.competitionplanner.result.service.ResultService
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/result")
+@RequestMapping("/result/{competitionId}")
 class ResultApi(val resultService: ResultService, val resultRepository: ResultRepository) {
 
     @PostMapping("/{matchId}")

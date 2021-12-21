@@ -23,10 +23,16 @@ object SecurityHelper {
         }
     }
 
-    fun getEmailFromToken(token: String?): String {
+    fun getEmailFromToken(token: String): String {
         val claims: Claims =
             Jwts.parser().setSigningKey(SecurityConstants.tokenSecret).parseClaimsJws(token).getBody()
         return claims.subject
+    }
+
+    fun getClubIdFromToken(token: String): Int {
+        val claims: Claims =
+            Jwts.parser().setSigningKey(SecurityConstants.tokenSecret).parseClaimsJws(token).getBody()
+        return claims["clubId"].toString().toInt()
     }
 
     fun generateAccessToken(user: UserDTO): String {

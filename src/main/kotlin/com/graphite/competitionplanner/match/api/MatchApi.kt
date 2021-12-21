@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
 @RestController
-@RequestMapping("/match")
+@RequestMapping("/match/{competitionId}")
 class MatchApi(val matchService: MatchService) {
 
     @PutMapping("/{matchId}")
@@ -16,12 +16,12 @@ class MatchApi(val matchService: MatchService) {
         return matchService.updateMatch(matchId, matchSpec)
     }
 
-    @GetMapping("/{competitionId}/{day}")
+    @GetMapping("/{day}")
     fun getMatchesInCompetitionByDay(@PathVariable competitionId: Int, @PathVariable day: LocalDate): List<MatchAndResultDTO> {
         return matchService.getMatchesInCompetitionByDay(competitionId, day)
     }
 
-    @GetMapping("/{competitionId}")
+    @GetMapping()
     fun getAllMatchesInCompetition(@PathVariable competitionId: Int): List<MatchAndResultDTO> {
         return matchService.getMatchesInCompetition(competitionId)
     }
