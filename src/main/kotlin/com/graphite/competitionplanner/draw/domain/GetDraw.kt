@@ -28,12 +28,12 @@ class GetDraw(
             updatePlaceholderNamesInFirstRound(competitionCategoryId, playOffMatches)
         val playoffRounds: List<PlayoffRoundDTO> = convertToPlayoffRound(updatedPlayoffMatches)
         val groupDraws: List<GroupDrawDTO> = constructGroupDraw(matchesInCategory.filterNot{ it.groupOrRound.isRound() })
-
+        val playoffRoundsSorted = playoffRounds.sortedByDescending { p -> p.round }
         val groupToPlayoffList: List<GroupToPlayoff> = getPoolToPlayoffList(competitionCategoryId)
 
         return CompetitionCategoryDrawDTO(
             competitionCategoryId,
-            playoffRounds,
+            playoffRoundsSorted,
             groupDraws,
             groupToPlayoffList
         )
