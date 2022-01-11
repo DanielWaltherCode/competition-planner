@@ -105,7 +105,7 @@ class RegistrationService(
                 }
             }
             // Get matches
-            val matches = matchService.getMatchesInCompetitionForPlayer(competitionId, registration.registrationId)
+            val matches = matchService.getMatchesInCompetitionForRegistration(competitionId, registration.registrationId)
             registrationDTOs.add(
                 CategoryRegistrationDTO(
                     registration.registrationId,

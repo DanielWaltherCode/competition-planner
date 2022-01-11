@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.tables.records.PlayerRegistrationRecord
 
 
 interface IRegistrationRepository {
@@ -80,4 +81,8 @@ interface IRegistrationRepository {
      * Return the rankings of each registration for the given competition category
      */
     fun getRegistrationRanking(competitionCategory: CompetitionCategoryDTO): List<RegistrationRankingDTO>
+
+    fun updatePlayerRegistrationStatus(registrationId: Int, status: String)
+
+    fun getPlayerRegistration(registrationId: Int): PlayerRegistrationRecord
 }

@@ -308,6 +308,18 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         }
     }
 
+    override fun updatePlayerRegistrationStatus(registrationId: Int, status: String) {
+        dslContext.update(PLAYER_REGISTRATION).set(PLAYER_REGISTRATION.STATUS, status)
+            .where(PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId)).execute()
+    }
+
+    override fun getPlayerRegistration(registrationId: Int): PlayerRegistrationRecord {
+       return dslContext
+           .selectFrom(PLAYER_REGISTRATION)
+           .where(PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId))
+           .fetchOneInto(PLAYER_REGISTRATION) ?: throw NotFoundException("RegistrationId not found")
+    }
+
     private fun getRankField(category: CategorySpec): TableField<PlayerRankingRecord, Int>? {
         return if (category.type == "DOUBLES") {
             PLAYER_RANKING.RANK_DOUBLE

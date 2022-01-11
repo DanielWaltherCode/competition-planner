@@ -63,8 +63,8 @@ class MatchService(
         return matchRecords.map { recordToMatchAndResultDTO(it) }
     }
 
-    fun getMatchesInCompetitionForPlayer(competitionId: Int, registrationId: Int): List<MatchAndResultDTO> {
-        val matchRecords = matchRepository.getMatchesInCompetitionForPlayer(competitionId, registrationId)
+    fun getMatchesInCompetitionForRegistration(competitionId: Int, registrationId: Int): List<MatchAndResultDTO> {
+        val matchRecords = matchRepository.getMatchesInCompetitionForRegistration(competitionId, registrationId)
         return matchRecords.map { recordToMatchAndResultDTO(it) }
     }
 
