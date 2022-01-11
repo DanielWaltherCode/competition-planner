@@ -16,8 +16,7 @@ import org.springframework.web.bind.annotation.*
 class CompetitionRegistrationApi(
     val registrationService: RegistrationService,
     val drawService: DrawService,
-    val widthDraw: Withdraw,
-    val unregister: Unregister
+    val widthDraw: Withdraw
 ) {
 
     // Supports search by club, category, name
@@ -59,17 +58,14 @@ class CompetitionRegistrationApi(
 
     }
 
-    @PutMapping("/withdraw/{competitionCategoryId}/{registrationId}/{playerId}")
-    fun withdrawFromCategory(@PathVariable competitionId: Int,
-                             @PathVariable registrationId: Int,
-                             @PathVariable competitionCategoryId: Int,
-                             @PathVariable playerId: Int) {
+    @PutMapping("/withdraw/{competitionCategoryId}/{registrationId}")
+    fun withdrawFromCategory(@PathVariable competitionId: Int, @PathVariable registrationId: Int, @PathVariable competitionCategoryId: Int) {
         if (drawService.isDrawMade(competitionCategoryId)) {
             // withdraw
             widthDraw.beforeCompetition(competitionId, competitionCategoryId, registrationId)
         }
         else {
-            unregister.unregisterIndividualPlayer(registrationId, playerId)
+            registrationService.unregister(registrationId)
         }
     }
 
