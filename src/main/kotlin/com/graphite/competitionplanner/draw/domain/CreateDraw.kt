@@ -91,8 +91,8 @@ class CreateDraw(
         settings: GeneralSettingsDTO
     ) {
         when (settings.drawType) {
-            DrawType.POOL_ONLY -> if (registrations.size < 2) throw NotEnoughRegistrationsException("Failed to draw pool only. Requires atleast two registrations.")
-            DrawType.CUP_ONLY -> if (registrations.size < 2) throw NotEnoughRegistrationsException("Failed to draw cup only. Requires atleast two registrations.")
+            DrawType.POOL_ONLY -> if (registrations.size < 2) throw NotEnoughRegistrationsException("Failed to draw pool only. Requires at least two registrations.")
+            DrawType.CUP_ONLY -> if (registrations.size < 2) throw NotEnoughRegistrationsException("Failed to draw cup only. Requires at least two registrations.")
             DrawType.POOL_AND_CUP -> if ((settings.playersToPlayOff == 1 && registrations.size <= settings.playersPerGroup) || (registrations.size < 2)) throw NotEnoughRegistrationsException(
                 "Failed to draw pool and cup. Too few people would have advanced to playoff."
             )
@@ -198,7 +198,7 @@ class CreateDraw(
      * Generates the first round of matches in a play off given a list of registrations.
      *
      * The following properties are true for the generated matches:
-     * - Match order is set so it guarantees that the best and second-best players do not meet until final round,
+     * - Match order is set, so it guarantees that the best and second-best players do not meet until final round,
      * - Best players are paired against the worse ranked players, where BYE is considered the worst ranked player giving
      * the best players a free game in first round.
      *
