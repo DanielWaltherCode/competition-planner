@@ -26,8 +26,8 @@ const CategoryService = {
     },
 
     // Category game rules
-    getCategoryGameRules(categoryId) {
-        return Axios.get(`/competition/0/category/${categoryId}/game-rules/`, {withCredentials: true})
+    getCategoryGameRules(competitionId, categoryId) {
+        return Axios.get(`/competition/${competitionId}/category/${categoryId}/game-rules/`, {withCredentials: true})
     }
 }
 
