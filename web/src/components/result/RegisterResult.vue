@@ -107,7 +107,7 @@ export default {
       if (this.selectedMatch === null) {
         return
       }
-      CategoryService.getCategoryGameRules(this.selectedMatch.competitionCategory.id).then(res => {
+      CategoryService.getCategoryGameRules(this.competition.id, this.selectedMatch.competitionCategory.id).then(res => {
         this.matchRules = res.data
 
         // Add already registered game result to our local setlist
