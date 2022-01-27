@@ -89,6 +89,7 @@ class MatchService(
             registrationService.getPlayersWithClubFromRegistrationId(record.secondRegistrationId),
             record.matchOrderNumber,
             record.groupOrRound,
+            record.wasWalkover,
             registrationService.getPlayersFromRegistrationId(record.winner)
         )
     }
@@ -108,6 +109,7 @@ class MatchService(
             match.matchOrderNumber,
             match.groupOrRound,
             registrationService.getPlayersWithClubFromRegistrationId(match.winner),
+            match.wasWalkover,
             result
         )
     }
@@ -130,6 +132,7 @@ data class MatchDTO(
     val secondPlayer: List<PlayerWithClubDTO>,
     val matchOrderNumber: Int,
     val groupOrRound: String, // Either group name (e.g. Group "A") or the round like Round of 64, Quarterfinals
+    val wasWalkover: Boolean,
     val winner: List<PlayerDTO>
 )
 
@@ -144,5 +147,6 @@ data class MatchAndResultDTO(
     val matchOrderNumber: Int,
     val groupOrRound: String, // Either group name (e.g. Group "A") or the round like Round of 64, Quarterfinals
     val winner: List<PlayerWithClubDTO>,
+    val wasWalkover: Boolean,
     val result: ResultDTO
 )

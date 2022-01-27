@@ -12,8 +12,13 @@
       <tbody>
       <tr class="group-matches" v-for="match in matches" :key="match.id">
         <td>{{ getTime(match) }}</td>
-        <td :class="isPlayerOneWinner(match) ? 'fw-bolder' : ''">{{ getPlayerOne(match) }}</td>
-        <td :class="isPlayerTwoWinner(match) ? 'fw-bolder' : ''">{{ getPlayerTwo(match) }}</td>
+        <td :class="isPlayerOneWinner(match) ? 'fw-bolder' : ''">
+          {{ getPlayerOne(match) }} <span v-if="didPlayerOneGiveWO(match)"> (W.O)</span>
+        </td>
+        <td :class="isPlayerTwoWinner(match) ? 'fw-bolder' : ''">
+          {{ getPlayerTwo(match) }}
+          <span v-if="didPlayerTwoGiveWO(match)"> (W.O)</span>
+        </td>
         <td>
           <p class="pe-2 d-inline" v-for="game in match.result.gameList" :key="game.id">
             {{ game.firstRegistrationResult }}-{{ game.secondRegistrationResult }}
@@ -24,12 +29,18 @@
     </table>
   </div>
   <div v-else>
-    <p>{{$t("draw.main.notDrawnTitle")}}</p>
+    <p>{{ $t("draw.main.notDrawnTitle") }}</p>
   </div>
 </template>
 
 <script>
-import {getPlayerOne, getPlayerTwo, isPlayerOneWinner, isPlayerTwoWinner} from "@/common/util";
+import {
+  didPlayerOneGiveWO, didPlayerTwoGiveWO,
+  getPlayerOne,
+  getPlayerTwo,
+  isPlayerOneWinner,
+  isPlayerTwoWinner
+} from "@/common/util";
 
 export default {
   name: "MatchListComponent",
@@ -44,6 +55,8 @@ export default {
     },
     isPlayerOneWinner: isPlayerOneWinner,
     isPlayerTwoWinner: isPlayerTwoWinner,
+    didPlayerOneGiveWO: didPlayerOneGiveWO,
+    didPlayerTwoGiveWO: didPlayerTwoGiveWO
   }
 }
 </script>

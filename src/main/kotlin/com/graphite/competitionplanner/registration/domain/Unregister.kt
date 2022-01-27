@@ -12,4 +12,8 @@ class Unregister(
     fun execute(registrationId: Int) {
         repository.remove(registrationId)
     }
+
+    fun unregisterIndividualPlayer(registrationId: Int, playerId: Int) {
+        repository.unregisterIndividualPlayer(registrationId, playerId)
+    }
 }

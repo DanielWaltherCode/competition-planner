@@ -111,7 +111,8 @@ class RegistrationService(
                     registration.registrationId,
                     CompetitionCategoryWithTypeDTO(registration.categoryId, registration.categoryName, registration.categoryType),
                     matches,
-                    accompanyingPlayer
+                    accompanyingPlayer,
+                    registration.registrationStatus
                 )
             )
         }

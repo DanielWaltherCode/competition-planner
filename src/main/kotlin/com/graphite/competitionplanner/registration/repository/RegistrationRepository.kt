@@ -283,6 +283,16 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         }
     }
 
+    override fun unregisterIndividualPlayer(registrationId: Int, playerId: Int) {
+        val success = dslContext
+            .deleteFrom(PLAYER_REGISTRATION)
+            .where(PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId).and(PLAYER_REGISTRATION.PLAYER_ID.eq(playerId)))
+            .execute() > 0
+        if (!success) {
+            throw NotFoundException("Could not delete. The registration with id $registrationId and playerId $playerId was not found.")
+        }
+    }
+
     override fun getRegistrationRanking(competitionCategory: CompetitionCategoryDTO): List<RegistrationRankingDTO> {
         val rankFieldName = "rank"
         val records = dslContext.select(

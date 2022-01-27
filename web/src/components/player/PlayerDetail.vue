@@ -14,16 +14,36 @@
     <div class="p-4 custom-card" v-if="player !== null">
       <h2 class="black"> {{ player.firstName + " " + player.lastName }}</h2>
       <div class="p-4">
-        <div class="p-4" v-for="registration in registrations" :key="registration.id">
-          <div class="fw-bold pb-2">{{ registration.competitionCategory.name }}
-
+        <div class="p-4 m-5 custom-card" v-for="registration in registrations" :key="registration.id">
+          <div class="pb-2">
+            <h4>{{ registration.competitionCategory.name }}
+            </h4>
           </div>
           <div v-if="registration.competitionCategory.type === 'DOUBLES'">
-                <p>{{ $t("player.playingWith") }}
-                  <span class="clickable" @click="getRegistrations(competition.id, registration.accompanyingPlayer.id)">{{ registration.accompanyingPlayer.firstName + ' ' + registration.accompanyingPlayer.lastName }}</span>
-                </p>
-              </div>
-            <match-list-component :matches="registration.matches" />
+            <p>{{ $t("player.playingWith") }}
+              <span class="clickable" @click="getRegistrations(competition.id, registration.accompanyingPlayer.id)">{{
+                  registration.accompanyingPlayer.firstName + ' ' + registration.accompanyingPlayer.lastName
+                }}</span>
+            </p>
+          </div>
+          <match-list-component :matches="registration.matches"/>
+          <div class="d-flex justify-content-end">
+            <!-- If category is already drawn, give WO -->
+            <button class="btn btn-danger"
+                    type="button"
+                    v-if="isCategoryDrawnMap[registration.competitionCategory.id] && registration.registrationStatus === 'PLAYING'"
+                    @click="giveWalkover(registration.competitionCategory.id, registration.id)">
+              {{$t("player.giveWalkover")}}
+            </button>
+
+            <!-- If category is already drawn, withdraw -->
+            <button class="btn btn-danger"
+                    type="button"
+                    v-if="!isCategoryDrawnMap[registration.competitionCategory.id] && registration.registrationStatus === 'PLAYING'"
+                    @click="withdraw(registration.competitionCategory.id, registration.id, player.id)">
+              {{$t("player.withdraw")}}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -36,6 +56,8 @@ import Autocomplete from '@trevoreyre/autocomplete-vue'
 import '@trevoreyre/autocomplete-vue/dist/style.css'
 import PlayerService from "@/common/api-services/player.service";
 import MatchListComponent from "@/components/general/MatchListComponent";
+import DrawService from "@/common/api-services/draw.service";
+import Vue from "vue";
 
 export default {
   name: "PlayerDetail",
@@ -44,7 +66,8 @@ export default {
       player: null,
       playerId: null,
       playerNotFound: false,
-      registrations: []
+      registrations: [],
+      isCategoryDrawnMap: {}
     }
   },
   components: {MatchListComponent, Autocomplete},
@@ -55,6 +78,7 @@ export default {
   },
   mounted() {
     this.playerId = this.$route.params.id
+    this.isCategoryDrawnMap = {}
     if (this.playerId !== '0') {
       this.getRegistrations(this.competition.id, this.playerId)
     }
@@ -64,6 +88,12 @@ export default {
       RegistrationService.getRegistrationsForPlayer(competitionId, playerId).then(res => {
         this.player = res.data.player
         this.registrations = res.data.registrations
+
+        this.registrations.forEach(reg => {
+          DrawService.isDrawMade(this.competition.id, reg.competitionCategory.id).then(res => {
+            Vue.set(this.isCategoryDrawnMap, reg.competitionCategory.id, res.data)
+          })
+        })
       })
     },
     searchPlayers(input) {
@@ -80,8 +110,25 @@ export default {
 
       })
     },
+    isCategoryDrawn(categoryId) {
+      return DrawService.isDrawMade(this.competition.id, categoryId)
+    },
     getSearchResult(searchResult) {
       return searchResult.firstName + " " + searchResult.lastName
+    },
+    giveWalkover(categoryId, registrationId) {
+      if (confirm(this.$tc("player.walkoverWarningText"))) {
+          RegistrationService.giveWalkover(this.competition.id, categoryId, registrationId).then( () => {
+            this.getRegistrations(this.competition.id, this.playerId)
+          })
+      }
+    },
+    withdraw(categoryId, registrationId, playerId) {
+      if (confirm(this.$tc("player.withdrawWarningText"))) {
+        RegistrationService.withdraw(this.competition.id, categoryId, registrationId, playerId).then( () => {
+          this.getRegistrations(this.competition.id, this.playerId)
+        })
+      }
     },
     handleSubmit(result) {
       if (result === undefined || result === "") {
@@ -91,7 +138,7 @@ export default {
       this.$router.replace({params: {id: this.player.id}}).catch(() => {
       })
       this.getRegistrations(this.competition.id, this.player.id)
-    },
+    }
   }
 }
 </script>

@@ -131,11 +131,11 @@ export default {
   },
   methods: {
     isCategoryDrawn(categoryId) {
-      return DrawService.isClassDrawn(categoryId)
+      return DrawService.isDrawMade(categoryId)
     },
     makeChoice(category) {
       this.chosenCategory = category
-      DrawService.isClassDrawn(this.competition.id, category.id).then(res => {
+      DrawService.isDrawMade(this.competition.id, category.id).then(res => {
         if (res.data === true) {
           this.isChosenCategoryDrawn = true
           this.getDraw(category.id)

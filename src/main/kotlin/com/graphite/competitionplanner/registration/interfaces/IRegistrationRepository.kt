@@ -78,6 +78,12 @@ interface IRegistrationRepository {
     fun remove(registrationId: Int)
 
     /**
+     * Remove playerregistration -- i.e. a specific player id and registration id combination. This is helpful
+     * for doubles where two people share a registration id
+     */
+    fun unregisterIndividualPlayer(registrationId: Int, playerId: Int)
+
+    /**
      * Return the rankings of each registration for the given competition category
      */
     fun getRegistrationRanking(competitionCategory: CompetitionCategoryDTO): List<RegistrationRankingDTO>
