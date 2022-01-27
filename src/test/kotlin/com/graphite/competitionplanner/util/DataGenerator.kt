@@ -144,7 +144,8 @@ class DataGenerator {
         firstPlayer: List<PlayerWithClubDTO> = listOf(newPlayerWithClubDTO(firstName = "Lars", lastName = "Åkesson")),
         secondPlayer: List<PlayerWithClubDTO> = listOf(newPlayerWithClubDTO(firstName = "Lars", lastName = "Åkesson")),
         orderNumber: Int = 0,
-        groupOrRound: String = "GROUP A"
+        groupOrRound: String = "GROUP A",
+        wasWalkover: Boolean = false,
     ) = MatchAndResultDTO(
         id,
         startTime,
@@ -156,6 +157,7 @@ class DataGenerator {
         orderNumber,
         groupOrRound,
         firstPlayer,
+        wasWalkover,
         ResultDTO(emptyList())
     )
 

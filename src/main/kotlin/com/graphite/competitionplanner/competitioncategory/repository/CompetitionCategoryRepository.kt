@@ -6,6 +6,7 @@ import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.draw.interfaces.Round
+import com.graphite.competitionplanner.registration.interfaces.PlayerRegistrationStatus
 import com.graphite.competitionplanner.tables.records.CategoryRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryGameRulesRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryMetadataRecord
@@ -83,6 +84,7 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
     fun getRegistrationsForPlayerInCompetition(competitionId: Int, playerId: Int): List<RegistrationsInCompetition> {
         val records = dslContext.select(
             PLAYER_REGISTRATION.REGISTRATION_ID,
+            PLAYER_REGISTRATION.STATUS,
             COMPETITION_CATEGORY.ID,
             CATEGORY.CATEGORY_NAME,
             CATEGORY.CATEGORY_TYPE
@@ -101,7 +103,8 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
                 it.getValue(PLAYER_REGISTRATION.REGISTRATION_ID),
                 it.getValue(COMPETITION_CATEGORY.ID),
                 it.getValue(CATEGORY.CATEGORY_NAME),
-                it.getValue(CATEGORY.CATEGORY_TYPE)
+                it.getValue(CATEGORY.CATEGORY_TYPE),
+                PlayerRegistrationStatus.valueOf(it.getValue(PLAYER_REGISTRATION.STATUS))
             )
         }
     }
@@ -305,7 +308,8 @@ data class RegistrationsInCompetition(
     val registrationId: Int,
     val categoryId: Int,
     val categoryName: String,
-    val categoryType: String
+    val categoryType: String,
+    val registrationStatus: PlayerRegistrationStatus
 )
 
 data class CompetitionCategory(

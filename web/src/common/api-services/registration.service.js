@@ -19,6 +19,14 @@ const RegistrationService = {
     },
     getRegistrationsForPlayer(competitionId, playerId) {
         return Axios.get(`/competition/${competitionId}/registration/player/${playerId}`, {withCredentials: true})
+    },
+    // Withdrawing after draw is made but before any matches are played
+    withdraw(competitionId, categoryId, registrationId, playerId) {
+        return Axios.put(`/competition/${competitionId}/registration/withdraw/${categoryId}/${registrationId}/${playerId}`, {}, {withCredentials: true})
+    },
+    // After competition or category has started, this method should be called
+    giveWalkover(competitionId, categoryId, registrationId) {
+        return Axios.put(`/competition/${competitionId}/registration/walkover/${categoryId}/${registrationId}`, {}, {withCredentials: true})
     }
 }
 

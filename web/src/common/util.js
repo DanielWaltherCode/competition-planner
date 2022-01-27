@@ -118,3 +118,27 @@ export function getDisplayTime(time) {
     }
     return time;
 }
+
+export function didPlayerOneGiveWO(match) {
+    if (!match.wasWalkover) {
+        return false;
+    }
+    if (match.winner.length === 0) {
+        return false
+    }
+    let winnerIds = match.winner.map(player => player.id)
+
+    return winnerIds.includes(match.secondPlayer[0].id)
+}
+
+export function didPlayerTwoGiveWO(match) {
+    if (!match.wasWalkover) {
+        return false;
+    }
+    if (match.winner.length === 0) {
+        return false
+    }
+    let winnerIds = match.winner.map(player => player.id)
+
+    return winnerIds.includes(match.firstPlayer[0].id)
+}

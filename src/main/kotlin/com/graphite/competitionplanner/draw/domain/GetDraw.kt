@@ -96,6 +96,7 @@ class GetDraw(
                     match.matchOrderNumber,
                     match.groupOrRound,
                     match.winner,
+                    match.wasWalkover,
                     match.result
                 )
             )
