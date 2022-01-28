@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/competition/{competitionId}/registration")
 class CompetitionRegistrationApi(
     val registrationService: RegistrationService,
-    val drawService: DrawService,
     val widthDraw: Withdraw,
     val unregister: Unregister
 ) {
@@ -59,22 +58,17 @@ class CompetitionRegistrationApi(
 
     }
 
-    @PutMapping("/withdraw/{competitionCategoryId}/{registrationId}/{playerId}")
+    @PutMapping("/withdraw/{competitionCategoryId}/{registrationId}")
     fun withdrawFromCategory(@PathVariable competitionId: Int,
                              @PathVariable registrationId: Int,
-                             @PathVariable competitionCategoryId: Int,
-                             @PathVariable playerId: Int) {
-        if (drawService.isDrawMade(competitionCategoryId)) {
-            // withdraw
-            widthDraw.beforeCompetition(competitionId, competitionCategoryId, registrationId)
-        }
-        else {
-            unregister.unregisterIndividualPlayer(registrationId, playerId)
-        }
+                             @PathVariable competitionCategoryId: Int) {
+        widthDraw.beforeCompetition(competitionId, competitionCategoryId, registrationId)
     }
 
     @PutMapping("/walkover/{competitionCategoryId}/{registrationId}")
-    fun reportWalkover(@PathVariable competitionId: Int, @PathVariable registrationId: Int, @PathVariable competitionCategoryId: Int) {
+    fun reportWalkover(@PathVariable competitionId: Int,
+                       @PathVariable registrationId: Int,
+                       @PathVariable competitionCategoryId: Int) {
             widthDraw.walkOver(competitionId, competitionCategoryId, registrationId)
         }
 }

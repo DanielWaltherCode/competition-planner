@@ -155,7 +155,9 @@
     "info": "Spelarinfo",
     "playingWith": "Spelar med ",
     "giveWalkover": "Lämna WO i klassen",
+    "hasGivenWalkover": "Har lämnat WO",
     "withdraw": "Lämna återbud",
+    "hasWithdrawn": "Har lämnat återbud",
     "walkoverWarningText": "Är du säker på att spelaren ska lämna WO i klassen? Spelaren förlorar alla återstående matcher i klassen",
     "withdrawWarningText": "Är du säker på att spelaren ska lämna återbud?"
   },

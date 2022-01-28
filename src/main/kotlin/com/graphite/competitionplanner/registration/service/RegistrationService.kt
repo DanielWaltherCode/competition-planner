@@ -51,7 +51,7 @@ class RegistrationService(
         if (registrationId == null) {
             return emptyList()
         }
-        val players = getPlayersFromRegistration.execute(registrationId)
+        val players: List<PlayerDTO> = getPlayersFromRegistration.execute(registrationId)
         return findPlayer.byIds(players.map { it.id })
     }
 
@@ -85,8 +85,12 @@ class RegistrationService(
     }
 
     fun getPlayersInCompetitionCategory(competitionCategoryId: Int): List<List<PlayerWithClubDTO>> {
-        val registrationIds = competitionCategoryRepository.getRegistrationsInCategory(competitionCategoryId)
-        return registrationIds.map { getPlayersWithClubFromRegistrationId(it) }
+        val allRegistrationIds = competitionCategoryRepository.getRegistrationsInCategory(competitionCategoryId)
+        // Remove players that are withdrawn so that only playing or walkover players are still listed
+        val filteredRegistrations = allRegistrationIds
+            .map { id -> registrationRepository.getPlayerRegistration(id) }
+            .filter { playerRegistrationRecord -> playerRegistrationRecord.status != PlayerRegistrationStatus.WITHDRAWN.name }
+        return filteredRegistrations.map { getPlayersWithClubFromRegistrationId(it.registrationId) }
     }
 
     fun getRegistrationsForPlayerInCompetition(competitionId: Int, playerId: Int): PlayerRegistrationDTO {
