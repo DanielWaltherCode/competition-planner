@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.registration.domain
 
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
+import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.registration.interfaces.PlayerRegistrationStatus
@@ -15,17 +16,21 @@ class Withdraw(
     val registrationRepository: IRegistrationRepository,
     val matchRepository: MatchRepository,
     val resultService: ResultService,
+    val drawService: DrawService,
     val findCompetitionCategory: FindCompetitionCategory
 ) {
 
     /**
-     * This method is called after draw is made, but before competition begins.
+     * This method is called before competition begins. If draw is made, matches are lost.
+     * Otherwise player is just removed from competition but can still be billed for participating.
      * A player withdraws for a given registration in one category. To withdraw from the entire competition
      * the player must withdraw from each category he/she is registered in.
      */
     fun beforeCompetition(competitionId: Int, categoryId: Int, registrationId: Int) {
         // Withdrawing means losing all registered matches
-       loseRemainingMatches(competitionId, categoryId, registrationId)
+        if (drawService.isDrawMade(categoryId)) {
+            loseRemainingMatches(competitionId, categoryId, registrationId)
+        }
 
         // Set registration status to withdrawn
         registrationRepository.updatePlayerRegistrationStatus(

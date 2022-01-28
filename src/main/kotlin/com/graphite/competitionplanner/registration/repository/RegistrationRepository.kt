@@ -306,7 +306,8 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             .on(REGISTRATION.ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
             .join(PLAYER_REGISTRATION).on(REGISTRATION.ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
             .join(PLAYER_RANKING).on(PLAYER_RANKING.PLAYER_ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
-            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategory.id))
+            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategory.id)
+                .and(PLAYER_REGISTRATION.STATUS.eq(PlayerRegistrationStatus.PLAYING.name)))
             .fetch()
 
         return records.map {
