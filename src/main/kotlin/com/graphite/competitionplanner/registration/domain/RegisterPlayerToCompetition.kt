@@ -14,7 +14,7 @@ import java.time.LocalDate
 class RegisterPlayerToCompetition(
     @Autowired val findPlayer: FindPlayer,
     @Autowired val findCompetitionCategory: FindCompetitionCategory,
-    @Autowired val repository: IRegistrationRepository
+    @Autowired val registrationRepository: IRegistrationRepository
 ) {
 
     fun execute(spec: RegistrationSinglesSpec): RegistrationSinglesDTO {
@@ -26,12 +26,22 @@ class RegisterPlayerToCompetition(
                     "correspond to a category of type ${CategoryType.SINGLES} ")
         }
 
-        val playerIds: List<Int> = repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)
+        val playerIds: List<Int> = registrationRepository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)
         if (playerIds.contains(spec.playerId)) {
-            throw PlayerAlreadyRegisteredException(player)
+            // If player is already registered, check if he is withdrawn. If so, set status to active again
+            val playerRegistrationId =
+                registrationRepository.getRegistrationIdForPlayerInCategory(spec.competitionCategoryId, spec.playerId)
+            val registrationRecord = registrationRepository.getPlayerRegistration(playerRegistrationId)
+            if (registrationRecord.status == PlayerRegistrationStatus.WITHDRAWN.name) {
+                registrationRepository.updatePlayerRegistrationStatus(playerRegistrationId,
+                    PlayerRegistrationStatus.PLAYING.name)
+            }
+            else {
+                throw PlayerAlreadyRegisteredException(player)
+            }
         }
 
-        return repository.storeSingles(
+        return registrationRepository.storeSingles(
             RegistrationSinglesSpecWithDate(
                 LocalDate.now(),
                 spec.playerId,
