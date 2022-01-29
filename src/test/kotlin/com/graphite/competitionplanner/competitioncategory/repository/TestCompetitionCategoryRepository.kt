@@ -4,9 +4,11 @@ import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
+import com.graphite.competitionplanner.common.exception.IllegalActionException
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
@@ -101,18 +103,51 @@ class TestCompetitionCategoryRepository(
     }
 
     @Test
+    fun shouldThrowExceptionIfCompetitionCategoryHasBeenDrawn() {
+        // Setup
+        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
+        val spec =
+            dataGenerator.newCompetitionCategorySpec(
+                status = CompetitionCategoryStatus.DRAWN,
+                category = CategorySpec(category.id, category.name, category.type),
+                gameSettings = dataGenerator.newGameSettingsSpec(useDifferentRulesInEndGame = false)
+            )
+        val original = repository.store(competition.id, spec)
+        val updateSpec = dataGenerator.newCompetitionCategoryUpdateSpec(
+            settings = dataGenerator.newGeneralSettingsSpec(cost = 125f, playersToPlayOff = 1),
+            gameSettings = dataGenerator.newGameSettingsSpec(
+                numberOfSets = 3, winScore = 5, numberOfSetsFinal = 2, useDifferentRulesInEndGame = true
+            )
+        )
+
+        // Act & Assert
+        Assertions.assertThrows(IllegalActionException::class.java) {
+            repository.update(original.id, updateSpec)
+        }
+
+        val afterUpdate = repository.get(original.id)
+        Assertions.assertEquals(
+            original,
+            afterUpdate,
+            "The competition category was updated when it was not supposed to."
+        )
+    }
+
+    @Test
     fun shouldBeAbleToUpdateCompetitionCategory() {
         // Setup
         val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
         val spec =
             dataGenerator.newCompetitionCategorySpec(
                 category = CategorySpec(category.id, category.name, category.type),
-                gameSettings = dataGenerator.newGameSettingsSpec(useDifferentRulesInEndGame = false))
+                gameSettings = dataGenerator.newGameSettingsSpec(useDifferentRulesInEndGame = false)
+            )
         val original = repository.store(competition.id, spec)
         val updateSpec = dataGenerator.newCompetitionCategoryUpdateSpec(
             settings = dataGenerator.newGeneralSettingsSpec(cost = 110f, playersToPlayOff = 1),
             gameSettings = dataGenerator.newGameSettingsSpec(
-                numberOfSets = 4, winScore = 8, numberOfSetsFinal = 11, useDifferentRulesInEndGame = true)
+                numberOfSets = 4, winScore = 8, numberOfSetsFinal = 11, useDifferentRulesInEndGame = true
+            )
         )
 
         // Act
@@ -120,27 +155,86 @@ class TestCompetitionCategoryRepository(
         val updated = repository.getAll(competition.id).first { it.id == original.id }
 
         // Assert
-        Assertions.assertEquals(updateSpec.settings.cost, updated.settings.cost)
-        Assertions.assertEquals(updateSpec.settings.drawType, updated.settings.drawType)
-        Assertions.assertEquals(updateSpec.settings.playersPerGroup, updated.settings.playersPerGroup)
-        Assertions.assertEquals(updateSpec.settings.playersToPlayOff, updated.settings.playersToPlayOff)
-        Assertions.assertEquals(updateSpec.settings.poolDrawStrategy, updated.settings.poolDrawStrategy)
+        Assertions.assertEquals(
+            updateSpec.settings.cost,
+            updated.settings.cost,
+            "Cost wast not updated."
+        )
+        Assertions.assertEquals(
+            updateSpec.settings.drawType,
+            updated.settings.drawType,
+            "Draw type was not updated."
+        )
+        Assertions.assertEquals(
+            updateSpec.settings.playersPerGroup,
+            updated.settings.playersPerGroup,
+            "Players per group was not updated."
+        )
+        Assertions.assertEquals(
+            updateSpec.settings.playersToPlayOff,
+            updated.settings.playersToPlayOff,
+            "Players to playoff was not updated."
+        )
+        Assertions.assertEquals(
+            updateSpec.settings.poolDrawStrategy,
+            updated.settings.poolDrawStrategy,
+            "Pooldraw strategry was not updated."
+        )
 
-        Assertions.assertEquals(updateSpec.gameSettings.numberOfSets, updated.gameSettings.numberOfSets)
-        Assertions.assertEquals(updateSpec.gameSettings.winScore, updated.gameSettings.winScore)
-        Assertions.assertEquals(updateSpec.gameSettings.winMargin, updated.gameSettings.winMargin)
-        Assertions.assertEquals(updateSpec.gameSettings.differentNumberOfGamesFromRound,
-            updated.gameSettings.differentNumberOfGamesFromRound)
-        Assertions.assertEquals(updateSpec.gameSettings.numberOfSetsFinal, updated.gameSettings.numberOfSetsFinal)
-        Assertions.assertEquals(updateSpec.gameSettings.winScoreFinal, updated.gameSettings.winScoreFinal)
-        Assertions.assertEquals(updateSpec.gameSettings.winMarginFinal, updated.gameSettings.winMarginFinal)
-        Assertions.assertEquals(updateSpec.gameSettings.tiebreakInFinalGame, updated.gameSettings.tiebreakInFinalGame)
-        Assertions.assertEquals(updateSpec.gameSettings.winScoreTiebreak, updated.gameSettings.winScoreTiebreak)
-        Assertions.assertEquals(updateSpec.gameSettings.winMarginTieBreak, updated.gameSettings.winMarginTieBreak)
-        Assertions.assertEquals(updateSpec.gameSettings.useDifferentRulesInEndGame,
-            updated.gameSettings.useDifferentRulesInEndGame)
-
-        // Clean up
-        repository.delete(updated.id)
+        Assertions.assertEquals(
+            updateSpec.gameSettings.numberOfSets,
+            updated.gameSettings.numberOfSets,
+            "Number of sets was not updated."
+        )
+        Assertions.assertEquals(
+            updateSpec.gameSettings.winScore,
+            updated.gameSettings.winScore,
+            "Win score was not updated."
+        )
+        Assertions.assertEquals(
+            updateSpec.gameSettings.winMargin,
+            updated.gameSettings.winMargin,
+            "Win margin was not updated."
+        )
+        Assertions.assertEquals(
+            updateSpec.gameSettings.differentNumberOfGamesFromRound,
+            updated.gameSettings.differentNumberOfGamesFromRound,
+            "Different number of games from round was not updated."
+        )
+        Assertions.assertEquals(
+            updateSpec.gameSettings.numberOfSetsFinal,
+            updated.gameSettings.numberOfSetsFinal,
+            "Number of sets in final was not updated."
+        )
+        Assertions.assertEquals(
+            updateSpec.gameSettings.winScoreFinal,
+            updated.gameSettings.winScoreFinal,
+            "Win score in final was not updated."
+        )
+        Assertions.assertEquals(
+            updateSpec.gameSettings.winMarginFinal,
+            updated.gameSettings.winMarginFinal,
+            "Win margin in final was not updated."
+        )
+        Assertions.assertEquals(
+            updateSpec.gameSettings.tiebreakInFinalGame,
+            updated.gameSettings.tiebreakInFinalGame,
+            "Tie break in final game was not updated."
+        )
+        Assertions.assertEquals(
+            updateSpec.gameSettings.winScoreTiebreak,
+            updated.gameSettings.winScoreTiebreak,
+            "Win score in tie break was not updated."
+        )
+        Assertions.assertEquals(
+            updateSpec.gameSettings.winMarginTieBreak,
+            updated.gameSettings.winMarginTieBreak,
+            "Win margin in tie break was not updated."
+        )
+        Assertions.assertEquals(
+            updateSpec.gameSettings.useDifferentRulesInEndGame,
+            updated.gameSettings.useDifferentRulesInEndGame,
+            "Use of different rules in end game was not updated"
+        )
     }
 }
