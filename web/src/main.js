@@ -21,9 +21,6 @@ import VModal from 'vue-js-modal'
 Vue.use(VModal)
 Vue.use(Toasted)
 
-import UserService from "@/common/api-services/user.service";
-
-
 Vue.config.productionTip = false
 
 App.AOS = new AOS.init({
@@ -54,14 +51,17 @@ Axios.interceptors.request.use(
 
 
 // Response interceptor
+
 Axios.interceptors.response.use((response) => {
         return response
     },
     function (error) {
-        const currentRequest = error.config
-        const refreshToken = store.getters.refreshToken
+        // const currentRequest = error.config
+        // const refreshToken = store.getters.refreshToken
         console.log(error)
         if (error.response.status === 401) {
+            logout(error)
+            /*
             if (refreshToken != null) {
                 // If previous request tried to refresh token but failed, abort here
                 console.log("original request: " + currentRequest.url)
@@ -85,7 +85,9 @@ Axios.interceptors.response.use((response) => {
             }
 
         }
-    })
+        */
+
+    }})
 
 function logout(error) {
     store.commit("logout")
