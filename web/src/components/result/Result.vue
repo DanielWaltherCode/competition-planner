@@ -52,7 +52,8 @@
               <register-result
                   :selected-match="getMatchCopy()"
                   v-on:close="hideModal"
-                  v-on:closeAndUpdate="hideModalAndUpdate"></register-result>
+                  v-on:closeAndUpdate="hideModalAndUpdate"
+              v-on:walkover="onWalkover"></register-result>
             </vue-final-modal>
           </div>
 
@@ -139,6 +140,10 @@ export default {
           }
         }
       })
+      this.hideModal()
+    },
+    onWalkover() {
+      this.getMatches()
       this.hideModal()
     },
     hideModal() {

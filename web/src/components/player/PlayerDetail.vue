@@ -125,14 +125,14 @@ export default {
       return searchResult.firstName + " " + searchResult.lastName
     },
     giveWalkover(categoryId, registrationId) {
-      if (confirm(this.$tc("player.walkoverWarningText"))) {
+      if (confirm(this.$t("player.walkoverWarningText", {player: this.player.firstName + this.player.lastName}))) {
         RegistrationService.giveWalkover(this.competition.id, categoryId, registrationId).then(() => {
           this.getRegistrations(this.competition.id, this.playerId)
         })
       }
     },
     withdraw(categoryId, registrationId) {
-      if (confirm(this.$tc("player.withdrawWarningText"))) {
+      if (confirm(this.$t("player.withdrawWarningText", {player: this.player.firstName + this.player.lastName}))) {
         RegistrationService.withdraw(this.competition.id, categoryId, registrationId).then(() => {
           this.getRegistrations(this.competition.id, this.playerId)
         })

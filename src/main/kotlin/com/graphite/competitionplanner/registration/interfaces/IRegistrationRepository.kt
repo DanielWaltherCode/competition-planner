@@ -91,4 +91,6 @@ interface IRegistrationRepository {
     fun updatePlayerRegistrationStatus(registrationId: Int, status: String)
 
     fun getPlayerRegistration(registrationId: Int): PlayerRegistrationRecord
+
+    fun getRegistrationIdForPlayerInCategory(categoryId: Int, playerId: Int): Int
 }

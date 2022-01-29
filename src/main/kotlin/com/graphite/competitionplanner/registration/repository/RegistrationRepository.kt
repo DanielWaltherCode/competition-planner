@@ -331,6 +331,15 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
            .fetchOneInto(PLAYER_REGISTRATION) ?: throw NotFoundException("RegistrationId not found")
     }
 
+    override fun getRegistrationIdForPlayerInCategory(categoryId: Int, playerId: Int): Int {
+        return dslContext
+            .select(PLAYER_REGISTRATION.REGISTRATION_ID)
+            .from(COMPETITION_CATEGORY_REGISTRATION)
+            .join(PLAYER_REGISTRATION).on(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
+            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(categoryId)).and(PLAYER_REGISTRATION.PLAYER_ID.eq(playerId))
+            .fetchOneInto(Int::class.java) ?: throw NotFoundException("That combination of category ID $categoryId and player ID $playerId was not found")
+    }
+
     private fun getRankField(category: CategorySpec): TableField<PlayerRankingRecord, Int>? {
         return if (category.type == "DOUBLES") {
             PLAYER_RANKING.RANK_DOUBLE
