@@ -1,10 +1,8 @@
 package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
-import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
-import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsDTO
+import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.draw.interfaces.Round
-import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCompetitionCategory
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
@@ -22,6 +20,7 @@ class CreateDraw(
     val repository: IRegistrationRepository,
     val seedRepository: ISeedRepository,
     val drawRepository: ICompetitionDrawRepository,
+    val competitionCategoryRepository: ICompetitionCategoryRepository
 ) {
 
     /**
@@ -30,8 +29,8 @@ class CreateDraw(
      * @throws NotEnoughRegistrationsException
      */
     fun execute(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
+        competitionCategoryRepository.setStatus(competitionCategoryId, CompetitionCategoryStatus.DRAWN)
         val competitionCategory: CompetitionCategoryDTO = findCompetitionCategory.byId(competitionCategoryId)
-
 
         // TODO: We should check the state of this competition category.
         // TODO: Has drawn been made? Has a match already been played? Etc.

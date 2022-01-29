@@ -45,7 +45,6 @@ class CompetitionDrawRepository(val dslContext: DSLContext,
         dslContext.deleteFrom(POOL).execute()
     }
 
-
     override fun store(draw: CompetitionCategoryDrawSpec): CompetitionCategoryDrawDTO {
         return when (draw) {
             is CupDrawSpec -> storeCupDraw(draw)

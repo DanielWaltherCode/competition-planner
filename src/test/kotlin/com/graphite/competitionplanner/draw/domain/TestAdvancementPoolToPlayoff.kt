@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
@@ -26,6 +27,7 @@ class TestAdvancementPoolToPlayoff {
     protected final val mockedRegistrationRepository: IRegistrationRepository = Mockito.mock(IRegistrationRepository::class.java)
     private val mockedSeedRepository = Mockito.mock(ISeedRepository::class.java)
     protected final val mockedCompetitionDrawRepository: ICompetitionDrawRepository = Mockito.mock(ICompetitionDrawRepository::class.java)
+    private val mockedCompetitionCategoryRepository = Mockito.mock(ICompetitionCategoryRepository::class.java)
 
     protected final val dataGenerator = DataGenerator()
 
@@ -38,7 +40,8 @@ class TestAdvancementPoolToPlayoff {
         CreateSeed(),
         mockedRegistrationRepository,
         mockedSeedRepository,
-        mockedCompetitionDrawRepository
+        mockedCompetitionDrawRepository,
+        mockedCompetitionCategoryRepository
     )
 
     /**

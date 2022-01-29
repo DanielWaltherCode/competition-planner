@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
+import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
 import com.graphite.competitionplanner.draw.interfaces.NotEnoughRegistrationsException
@@ -26,6 +27,7 @@ class TestCreateDrawPoolSizes {
     private val mockedRegistrationRepository = mock(IRegistrationRepository::class.java)
     private val mockedSeedRepository = mock(ISeedRepository::class.java)
     private val mockedCompetitionDrawRepository = mock(ICompetitionDrawRepository::class.java)
+    private val mockedCompetitionCategoryRepository = mock(ICompetitionCategoryRepository::class.java)
 
     private val createDraw = CreateDraw(
         mockedGetRegistrationInCompetitionCategory,
@@ -33,7 +35,8 @@ class TestCreateDrawPoolSizes {
         CreateSeed(),
         mockedRegistrationRepository,
         mockedSeedRepository,
-        mockedCompetitionDrawRepository
+        mockedCompetitionDrawRepository,
+        mockedCompetitionCategoryRepository
     )
 
     private val dataGenerator = DataGenerator()
