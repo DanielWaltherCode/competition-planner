@@ -32,7 +32,7 @@ class RegisterPlayerToCompetition(
             val playerRegistrationId =
                 registrationRepository.getRegistrationIdForPlayerInCategory(spec.competitionCategoryId, spec.playerId)
             val registrationRecord = registrationRepository.getPlayerRegistration(playerRegistrationId)
-            if (registrationRecord.status == PlayerRegistrationStatus.WITHDRAWN.name) {
+            if (registrationRecord != null && registrationRecord.status == PlayerRegistrationStatus.WITHDRAWN.name) {
                 registrationRepository.updatePlayerRegistrationStatus(playerRegistrationId,
                     PlayerRegistrationStatus.PLAYING.name)
             }
