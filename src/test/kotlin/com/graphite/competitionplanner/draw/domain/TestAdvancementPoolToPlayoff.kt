@@ -1,16 +1,7 @@
 package com.graphite.competitionplanner.draw.domain
 
-import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.draw.interfaces.Round
-import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
-import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
-import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCompetitionCategory
-import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
-import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
-import org.mockito.Mockito
 import org.springframework.boot.test.context.SpringBootTest
 
 /**
@@ -18,28 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest
  * for asserting that the pools are mapped to the correct playoff matches.
  */
 @SpringBootTest
-class TestAdvancementPoolToPlayoff {
-
-    private val mockedGetRegistrationInCompetitionCategory =
-        Mockito.mock(GetRegistrationsInCompetitionCategory::class.java)
-    protected final val mockedFindCompetitionCategory: FindCompetitionCategory = Mockito.mock(FindCompetitionCategory::class.java)
-    protected final val mockedRegistrationRepository: IRegistrationRepository = Mockito.mock(IRegistrationRepository::class.java)
-    private val mockedSeedRepository = Mockito.mock(ISeedRepository::class.java)
-    protected final val mockedCompetitionDrawRepository: ICompetitionDrawRepository = Mockito.mock(ICompetitionDrawRepository::class.java)
-
-    protected final val dataGenerator = DataGenerator()
-
-    @Captor
-    lateinit var classCaptor: ArgumentCaptor<CompetitionCategoryDrawSpec>
-
-    protected val createDraw = CreateDraw(
-        mockedGetRegistrationInCompetitionCategory,
-        mockedFindCompetitionCategory,
-        CreateSeed(),
-        mockedRegistrationRepository,
-        mockedSeedRepository,
-        mockedCompetitionDrawRepository
-    )
+class TestAdvancementPoolToPlayoff: TestBaseCreateDraw() {
 
     /**
      * Assert that the given match up exist.
