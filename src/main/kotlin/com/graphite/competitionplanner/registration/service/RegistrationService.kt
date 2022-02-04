@@ -84,6 +84,7 @@ class RegistrationService(
         )
     }
 
+    // TODO: This is a N+1 query and will grow slower and slower the more player are in the competition. Should refactor
     fun getPlayersInCompetitionCategory(competitionCategoryId: Int): List<List<PlayerWithClubDTO>> {
         val allRegistrationIds = competitionCategoryRepository.getRegistrationsInCategory(competitionCategoryId)
         // Remove players that are withdrawn so that only playing or walkover players are still listed

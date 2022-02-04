@@ -35,7 +35,7 @@ class Withdraw(
         // Set registration status to withdrawn
         registrationRepository.updatePlayerRegistrationStatus(
             registrationId,
-            PlayerRegistrationStatus.WITHDRAWN.toString()
+            PlayerRegistrationStatus.WITHDRAWN
         )
     }
 
@@ -45,7 +45,7 @@ class Withdraw(
         // Set registration status to walkover
         registrationRepository.updatePlayerRegistrationStatus(
             registrationId,
-            PlayerRegistrationStatus.WALK_OVER.toString()
+            PlayerRegistrationStatus.WALK_OVER
         )
     }
 

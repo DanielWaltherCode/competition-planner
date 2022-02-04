@@ -6,6 +6,8 @@ import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitio
 import com.graphite.competitionplanner.player.domain.FindPlayer
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.registration.interfaces.PlayerAlreadyRegisteredException
+import com.graphite.competitionplanner.registration.interfaces.PlayerRegistrationStatus
+import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesDTO
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
@@ -29,7 +31,9 @@ class TestRegisterPlayerToCompetition {
         val spec = dataGenerator.newRegistrationSinglesSpec(playerId = 10)
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)))
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)
+            )
+        )
 
         // Act
         registerPlayer.execute(spec)
@@ -45,7 +49,9 @@ class TestRegisterPlayerToCompetition {
         val spec = dataGenerator.newRegistrationSinglesSpec(competitionCategoryId = 333)
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES.name)))
+                category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES.name)
+            )
+        )
 
         // Act & Assert
         Assertions.assertThrows(IllegalArgumentException::class.java) {
@@ -59,7 +65,9 @@ class TestRegisterPlayerToCompetition {
         val spec = dataGenerator.newRegistrationSinglesSpec(competitionCategoryId = 333)
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)))
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)
+            )
+        )
 
         // Act & Assert
         Assertions.assertDoesNotThrow {
@@ -73,7 +81,9 @@ class TestRegisterPlayerToCompetition {
         val spec = dataGenerator.newRegistrationSinglesSpec(competitionCategoryId = 333)
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)))
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)
+            )
+        )
 
         // Act
         registerPlayer.execute(spec)
@@ -117,7 +127,9 @@ class TestRegisterPlayerToCompetition {
         val spec = dataGenerator.newRegistrationSinglesSpec()
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)))
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)
+            )
+        )
 
         // Act
         registerPlayer.execute(spec)
@@ -127,17 +139,23 @@ class TestRegisterPlayerToCompetition {
     }
 
     @Test
-    @Description("When a user tries to register itself to the same competition category, we instead return the" +
-            "already existing registration.")
+    @Description(
+        "When a user tries to register itself to the same competition category we" +
+                " throw error that player is already registered"
+    )
     fun shouldNotRegisterIfPlayerAlreadyRegistered() {
         // Setup
         val player = dataGenerator.newPlayerWithClubDTO()
+        val existingRegistration =
+            dataGenerator.newRegistrationSinglesDTO(playerId = player.id, status = PlayerRegistrationStatus.PLAYING)
         val spec = dataGenerator.newRegistrationSinglesSpec(playerId = player.id)
         `when`(findPlayer.byId(player.id)).thenReturn(player)
-        `when`(repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)).thenReturn(listOf(spec.playerId))
+        `when`(repository.getAllSingleRegistrations(spec.competitionCategoryId)).thenReturn(listOf(existingRegistration))
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)))
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)
+            )
+        )
 
         // Act
         Assertions.assertThrows(PlayerAlreadyRegisteredException::class.java) {
@@ -146,7 +164,46 @@ class TestRegisterPlayerToCompetition {
 
         // Assert
         verify(repository, never()).storeSingles(TestHelper.MockitoHelper.anyObject())
-        verify(repository, times(1)).getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)
+    }
+
+    @Test
+    @Description(
+        "When a user that has withdrawn from the tournament and then re-register itself again, the " +
+                "status of the original registration is updated."
+    )
+    fun shouldChangeStatusToPlayingIfRegistrationWasPreviouslyWithdrawn() {
+        // Setup
+        val player = dataGenerator.newPlayerWithClubDTO()
+        val existingRegistration =
+            dataGenerator.newRegistrationSinglesDTO(playerId = player.id, status = PlayerRegistrationStatus.WITHDRAWN)
+        val spec = dataGenerator.newRegistrationSinglesSpec(playerId = player.id)
+        `when`(findPlayer.byId(player.id)).thenReturn(player)
+        `when`(repository.getAllSingleRegistrations(spec.competitionCategoryId)).thenReturn(listOf(existingRegistration))
+        `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
+            dataGenerator.newCompetitionCategoryDTO(
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)
+            )
+        )
+        val expectedRegistrationAfterUpdate = RegistrationSinglesDTO(
+            existingRegistration.id,
+            existingRegistration.playerId,
+            existingRegistration.competitionCategoryId,
+            existingRegistration.registrationDate,
+            PlayerRegistrationStatus.PLAYING
+        )
+        `when`(repository.getRegistrationFor(spec)).thenReturn(expectedRegistrationAfterUpdate)
+
+        // Act
+        val updated = registerPlayer.execute(spec)
+
+        // Assert
+        Assertions.assertEquals(expectedRegistrationAfterUpdate, updated)
+        verify(repository, never()).storeSingles(TestHelper.MockitoHelper.anyObject())
+        verify(repository, times(1)).updatePlayerRegistrationStatus(
+            existingRegistration.id,
+            PlayerRegistrationStatus.PLAYING
+        )
+        verify(repository, times(1)).updatePlayerRegistrationStatus(anyInt(), TestHelper.MockitoHelper.anyObject())
     }
 
 }

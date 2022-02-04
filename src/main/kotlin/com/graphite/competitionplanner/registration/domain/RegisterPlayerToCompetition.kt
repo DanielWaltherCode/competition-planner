@@ -26,15 +26,13 @@ class RegisterPlayerToCompetition(
                     "correspond to a category of type ${CategoryType.SINGLES} ")
         }
 
-        val playerIds: List<Int> = registrationRepository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)
-        if (playerIds.contains(spec.playerId)) {
+        val registrations: List<RegistrationSinglesDTO> = registrationRepository.getAllSingleRegistrations(spec.competitionCategoryId)
+        val registration = registrations.find { it.playerId == spec.playerId }
+        if (registration != null) {
             // If player is already registered, check if he is withdrawn. If so, set status to active again
-            val playerRegistrationId =
-                registrationRepository.getRegistrationIdForPlayerInCategory(spec.competitionCategoryId, spec.playerId)
-            val registrationRecord = registrationRepository.getPlayerRegistration(playerRegistrationId)
-            if (registrationRecord != null && registrationRecord.status == PlayerRegistrationStatus.WITHDRAWN.name) {
-                registrationRepository.updatePlayerRegistrationStatus(playerRegistrationId,
-                    PlayerRegistrationStatus.PLAYING.name)
+            if (registration.status == PlayerRegistrationStatus.WITHDRAWN) {
+                registrationRepository.updatePlayerRegistrationStatus(registration.id, PlayerRegistrationStatus.PLAYING)
+                return registrationRepository.getRegistrationFor(spec)
             }
             else {
                 throw PlayerAlreadyRegisteredException(player)
