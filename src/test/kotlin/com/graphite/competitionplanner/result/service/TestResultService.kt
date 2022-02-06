@@ -55,14 +55,14 @@ class TestResultService(
         val original = findCompetitionCategory.byId(competitionCategoryId)
 
         val updatedSettings = dataGenerator.newCompetitionCategoryUpdateSpec(
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 cost = original.settings.cost,
                 drawType = original.settings.drawType,
                 playersPerGroup = 3,
                 playersToPlayOff = 1,
                 poolDrawStrategy = original.settings.poolDrawStrategy
             ),
-            gameSettings = dataGenerator.newGameSettingsSpec(
+            gameSettings = dataGenerator.newGameSettingsDTO(
                 original.gameSettings.numberOfSets,
                 original.gameSettings.winScore,
                 original.gameSettings.winMargin,

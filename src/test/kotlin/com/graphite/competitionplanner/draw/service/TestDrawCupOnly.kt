@@ -50,14 +50,14 @@ class TestDrawCupOnly(
         val original = findCompetitionCategory.byId(competitionCategoryId)
 
         val updatedSettings = dataGenerator.newCompetitionCategoryUpdateSpec(
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 cost = original.settings.cost,
                 drawType = DrawType.CUP_ONLY,
                 playersPerGroup = original.settings.playersPerGroup,
                 playersToPlayOff = original.settings.playersToPlayOff,
                 poolDrawStrategy = original.settings.poolDrawStrategy
             ),
-            gameSettings = dataGenerator.newGameSettingsSpec(
+            gameSettings = dataGenerator.newGameSettingsDTO(
                 original.gameSettings.numberOfSets,
                 original.gameSettings.winScore,
                 original.gameSettings.winMargin,

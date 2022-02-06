@@ -110,12 +110,12 @@ class TestCompetitionCategoryRepository(
             dataGenerator.newCompetitionCategorySpec(
                 status = CompetitionCategoryStatus.DRAWN,
                 category = CategorySpec(category.id, category.name, category.type),
-                gameSettings = dataGenerator.newGameSettingsSpec(useDifferentRulesInEndGame = false)
+                gameSettings = dataGenerator.newGameSettingsDTO(useDifferentRulesInEndGame = false)
             )
         val original = repository.store(competition.id, spec)
         val updateSpec = dataGenerator.newCompetitionCategoryUpdateSpec(
-            settings = dataGenerator.newGeneralSettingsSpec(cost = 125f, playersToPlayOff = 1),
-            gameSettings = dataGenerator.newGameSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(cost = 125f, playersToPlayOff = 1),
+            gameSettings = dataGenerator.newGameSettingsDTO(
                 numberOfSets = 3, winScore = 5, numberOfSetsFinal = 2, useDifferentRulesInEndGame = true
             )
         )
@@ -140,12 +140,12 @@ class TestCompetitionCategoryRepository(
         val spec =
             dataGenerator.newCompetitionCategorySpec(
                 category = CategorySpec(category.id, category.name, category.type),
-                gameSettings = dataGenerator.newGameSettingsSpec(useDifferentRulesInEndGame = false)
+                gameSettings = dataGenerator.newGameSettingsDTO(useDifferentRulesInEndGame = false)
             )
         val original = repository.store(competition.id, spec)
         val updateSpec = dataGenerator.newCompetitionCategoryUpdateSpec(
-            settings = dataGenerator.newGeneralSettingsSpec(cost = 110f, playersToPlayOff = 1),
-            gameSettings = dataGenerator.newGameSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(cost = 110f, playersToPlayOff = 1),
+            gameSettings = dataGenerator.newGameSettingsDTO(
                 numberOfSets = 4, winScore = 8, numberOfSetsFinal = 11, useDifferentRulesInEndGame = true
             )
         )

@@ -13,43 +13,43 @@ class TestCompetitionCategoryGeneralSettings {
     @Test
     fun costMustBeGreaterOrEqualToZero() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            dataGenerator.newGeneralSettingsSpec(cost = -1f)
+            dataGenerator.newGeneralSettingsDTO(cost = -1f)
         }
 
         Assertions.assertDoesNotThrow {
-            dataGenerator.newGeneralSettingsSpec(cost = 0f)
+            dataGenerator.newGeneralSettingsDTO(cost = 0f)
         }
     }
 
     @Test
     fun playerPerGroupMustBeGreaterThanOne() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            dataGenerator.newGeneralSettingsSpec(playersPerGroup = 1)
+            dataGenerator.newGeneralSettingsDTO(playersPerGroup = 1)
         }
     }
 
     @Test
     fun playersToPlayOffMustBeGreaterThanZero() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            dataGenerator.newGeneralSettingsSpec(playersToPlayOff = 0)
+            dataGenerator.newGeneralSettingsDTO(playersToPlayOff = 0)
         }
     }
 
     @Test
     fun playersPerGroupMustBeGreaterOrEqualToPlayersThatGoesToPlayOff() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            dataGenerator.newGeneralSettingsSpec(playersPerGroup = 2, playersToPlayOff = 3)
+            dataGenerator.newGeneralSettingsDTO(playersPerGroup = 2, playersToPlayOff = 3)
         }
 
         Assertions.assertDoesNotThrow {
-            dataGenerator.newGeneralSettingsSpec(playersPerGroup = 2, playersToPlayOff = 2)
+            dataGenerator.newGeneralSettingsDTO(playersPerGroup = 2, playersToPlayOff = 2)
         }
     }
 
     @Test
     fun shouldNotThrowException() {
         Assertions.assertDoesNotThrow {
-            dataGenerator.newGeneralSettingsSpec()
+            dataGenerator.newGeneralSettingsDTO()
         }
     }
 }

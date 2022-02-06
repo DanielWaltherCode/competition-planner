@@ -16,7 +16,7 @@ class TestCreateDrawPoolPlayOffTreeSize: TestBaseCreateDraw() {
         // Setup
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.POOL_AND_CUP,
                 playersPerGroup = 4,
                 playersToPlayOff = 2
@@ -51,7 +51,7 @@ class TestCreateDrawPoolPlayOffTreeSize: TestBaseCreateDraw() {
         // Setup
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.POOL_AND_CUP,
                 playersPerGroup = 4,
                 playersToPlayOff = 2
@@ -86,7 +86,7 @@ class TestCreateDrawPoolPlayOffTreeSize: TestBaseCreateDraw() {
         // Setup
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.POOL_AND_CUP,
                 playersPerGroup = 3,
                 playersToPlayOff = 1
@@ -121,7 +121,7 @@ class TestCreateDrawPoolPlayOffTreeSize: TestBaseCreateDraw() {
         // Setup
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.POOL_AND_CUP,
                 playersPerGroup = 4,
                 playersToPlayOff = 1

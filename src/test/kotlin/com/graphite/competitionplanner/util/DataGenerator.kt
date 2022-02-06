@@ -206,8 +206,8 @@ class DataGenerator {
         id: Int = 1,
         status: String = CompetitionCategoryStatus.ACTIVE.name,
         category: CategorySpec = newCategorySpec(),
-        settings: GeneralSettingsDTO = newGeneralSettingsSpec(),
-        gameSettings: GameSettingsDTO = newGameSettingsSpec()
+        settings: GeneralSettingsDTO = newGeneralSettingsDTO(),
+        gameSettings: GameSettingsDTO = newGameSettingsDTO()
     ) = CompetitionCategoryDTO(
         id,
         status,
@@ -239,8 +239,8 @@ class DataGenerator {
     )
 
     fun newCompetitionCategoryUpdateSpec(
-        settings: GeneralSettingsDTO = newGeneralSettingsSpec(),
-        gameSettings: GameSettingsDTO = newGameSettingsSpec()
+        settings: GeneralSettingsDTO = newGeneralSettingsDTO(),
+        gameSettings: GameSettingsDTO = newGameSettingsDTO()
     ) = CompetitionCategoryUpdateSpec(
         settings,
         gameSettings
@@ -249,8 +249,8 @@ class DataGenerator {
     fun newCompetitionCategorySpec(
         status: CompetitionCategoryStatus = CompetitionCategoryStatus.ACTIVE,
         category: CategorySpec = newCategorySpec(),
-        settings: GeneralSettingsDTO = newGeneralSettingsSpec(),
-        gameSettings: GameSettingsDTO = newGameSettingsSpec()
+        settings: GeneralSettingsDTO = newGeneralSettingsDTO(),
+        gameSettings: GameSettingsDTO = newGameSettingsDTO()
     ) = CompetitionCategorySpec(
         status,
         category,
@@ -258,7 +258,7 @@ class DataGenerator {
         gameSettings
     )
 
-    fun newGeneralSettingsSpec(
+    fun newGeneralSettingsDTO(
         cost: Float = 150f,
         drawType: DrawType = DrawType.POOL_ONLY,
         playersPerGroup: Int = 4,
@@ -272,14 +272,14 @@ class DataGenerator {
         poolDrawStrategy
     )
 
-    fun newGameSettingsSpec(
+    fun newGameSettingsDTO(
         numberOfSets: Int = 2,
         winScore: Int = 11,
-        winMargin: Int = 3,
+        winMargin: Int = 2,
         differentNumberOfGamesFromRound: Round = Round.UNKNOWN,
         numberOfSetsFinal: Int = 5,
-        winScoreFinal: Int = 7,
-        winMarginFinal: Int = 3,
+        winScoreFinal: Int = 11,
+        winMarginFinal: Int = 2,
         tiebreakInFinalGame: Boolean = false,
         winScoreTiebreak: Int = 3,
         winMarginTieBreak: Int = 3,

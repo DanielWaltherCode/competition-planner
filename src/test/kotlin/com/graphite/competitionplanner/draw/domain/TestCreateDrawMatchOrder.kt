@@ -14,7 +14,7 @@ class TestCreateDrawMatchOrder: TestBaseCreateDraw() {
     fun oneMatch() {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.CUP_ONLY,
                 playersPerGroup = 3
             )
@@ -43,7 +43,7 @@ class TestCreateDrawMatchOrder: TestBaseCreateDraw() {
     fun twoMatches() {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.CUP_ONLY,
                 playersPerGroup = 3
             )
@@ -75,7 +75,7 @@ class TestCreateDrawMatchOrder: TestBaseCreateDraw() {
     fun fourMatches() {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.CUP_ONLY,
                 playersPerGroup = 3
             )
