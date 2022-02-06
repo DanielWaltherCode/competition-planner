@@ -47,7 +47,7 @@ class ResultService(
         else {
             // Couldn't determine winner, something is wrong!
                 LOGGER.error("Couldn't determine winner in match ${matchId}!", resultSpec)
-            throw GameValidationException(HttpStatus.BAD_REQUEST, "3")
+            throw GameValidationException(GameValidationException.Reason.COULD_NOT_DECIDE_WINNER)
         }
         matchService.setWinner(match.id, winnerId)
         return ResultDTO(resultList.map { recordToDTO(it) })
@@ -90,7 +90,7 @@ class ResultService(
         }
         if ((resultSpec.gameList.size) < (gameRules.numberOfSets / 2.0)) {
             // Too few sets
-            throw GameValidationException(HttpStatus.BAD_REQUEST, "1")
+            throw GameValidationException(GameValidationException.Reason.TOO_FEW_SETS_REPORTED)
         }
 
         // Todo -- add special validation for tie breaks or final matches with more sets
@@ -101,7 +101,7 @@ class ResultService(
             && game.secondRegistrationResult < gameRules.winScore
         ) {
             // Both players have lower score than registered win score
-            throw GameValidationException(HttpStatus.BAD_REQUEST, "2")
+            throw GameValidationException(GameValidationException.Reason.TOO_FEW_POINTS_IN_SET)
         }
     }
 
