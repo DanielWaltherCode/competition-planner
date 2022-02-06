@@ -8,11 +8,11 @@ import com.graphite.competitionplanner.match.service.MatchDTO
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
+import com.graphite.competitionplanner.result.domain.AddResult
 import com.graphite.competitionplanner.result.repository.ResultRepository
 import com.graphite.competitionplanner.tables.records.GameRecord
 import com.graphite.competitionplanner.tables.records.MatchRecord
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
 @Service
@@ -20,7 +20,8 @@ class ResultService(
     val resultRepository: ResultRepository,
     val matchService: MatchService,
     val matchRepository: MatchRepository,
-    val findCompetitionCategory: FindCompetitionCategory
+    val findCompetitionCategory: FindCompetitionCategory,
+    val addResult: AddResult
 ) {
 
     private val LOGGER = LoggerFactory.getLogger(javaClass)
@@ -73,8 +74,9 @@ class ResultService(
     }
 
     fun addFinalMatchResult(matchId: Int, resultSpec: ResultSpec): ResultDTO {
-        resultRepository.deleteMatchResult(matchId)
-        return addResult(matchId, resultSpec)
+        val match = matchService.getSimpleMatchDTO(matchId)
+        val competitionCategory = findCompetitionCategory.byId(match.competitionCategoryId)
+        return addResult.execute(match, resultSpec, competitionCategory)
     }
 
     fun getResult(matchId: Int): ResultDTO {

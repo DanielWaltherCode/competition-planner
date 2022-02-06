@@ -1,13 +1,15 @@
 package com.graphite.competitionplanner.result.repository
 
 import com.graphite.competitionplanner.result.api.GameSpec
+import com.graphite.competitionplanner.result.interfaces.IResultRepository
+import com.graphite.competitionplanner.result.service.GameDTO
 import com.graphite.competitionplanner.tables.Game.GAME
 import com.graphite.competitionplanner.tables.records.GameRecord
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
 
 @Repository
-class ResultRepository(val dslContext: DSLContext) {
+class ResultRepository(val dslContext: DSLContext): IResultRepository {
     fun addGameResult(matchId: Int, gameResult: GameSpec): GameRecord {
         val record = dslContext.newRecord(GAME)
 
@@ -46,5 +48,19 @@ class ResultRepository(val dslContext: DSLContext) {
             .deleteFrom(GAME)
             .where(GAME.MATCH_ID.eq(matchId))
             .execute()
+    }
+
+    override fun storeResult(matchId: Int, gameResult: GameSpec): GameDTO {
+        val record = addGameResult(matchId, gameResult)
+        return GameDTO(record.id, record.gameNumber, record.firstRegistrationResult, record.secondRegistrationResult)
+    }
+
+    override fun getResults(matchId: Int): List<GameDTO> {
+        val records = getResult(matchId)
+        return records.map { GameDTO(it.id, it.gameNumber, it.firstRegistrationResult, it.secondRegistrationResult) }
+    }
+
+    override fun deleteResults(matchId: Int) {
+        deleteMatchResult(matchId)
     }
 }

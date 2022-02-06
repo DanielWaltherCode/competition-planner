@@ -11,10 +11,13 @@ import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.schedule.domain.entity.ScheduleSettings
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
+import com.graphite.competitionplanner.match.service.SimpleMatchDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.interfaces.*
+import com.graphite.competitionplanner.result.api.GameSpec
+import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.service.ResultDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
@@ -132,6 +135,20 @@ class DataGenerator {
         secondPlayer,
         orderNumber,
         groupOrRound
+    )
+
+    fun newSimpleMatchDTO(
+        id: Int = matchId++,
+        competitionCategoryId: Int = this.competitionCategoryId++,
+        firstRegistrationId: Int = registrationId++,
+        secondRegistrationId: Int = registrationId++,
+        matchType: String = "A"
+    ) = SimpleMatchDTO (
+        id,
+        competitionCategoryId,
+        firstRegistrationId,
+        secondRegistrationId,
+        matchType
     )
 
     fun newMatchAndResultDTO(
@@ -397,6 +414,22 @@ class DataGenerator {
         playerOneId,
         playerTwoId,
         competitionCategoryId
+    )
+
+    fun newGameSpec(
+        gameNumber: Int = 1,
+        firstRegistrationResult: Int = 11,
+        secondRegistrationResult: Int = 9
+    ) = GameSpec(
+        gameNumber,
+        firstRegistrationResult,
+        secondRegistrationResult
+    )
+
+    fun newResultSpec(
+        games: List<GameSpec> = listOf()
+    ) = ResultSpec(
+        games
     )
 
     fun newRegistrationDTO(
