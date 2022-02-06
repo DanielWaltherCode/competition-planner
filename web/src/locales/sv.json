@@ -70,7 +70,8 @@
     "addClass": "Lägg till klassen",
     "delete": "Ta bort klassen",
     "alreadyAddedCategories": "Tillagda klasser",
-    "chooseClass": "Välj klass"
+    "chooseClass": "Välj klass",
+    "cannotUpdate": "Dessa inställningar kan inte ändras efter att en lottning har gjorts"
   },
   "categoryGameRules": {
     "nrSets": "Antal set",
