@@ -1,6 +1,8 @@
 package com.graphite.competitionplanner.competitioncategory.domain
 
+import com.graphite.competitionplanner.common.exception.IllegalActionException
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
@@ -22,6 +24,8 @@ class TestUpdateCompetitionCategory {
         // Setup
         val competitionCategoryId = 10
         val spec = dataGenerator.newCompetitionCategoryUpdateSpec()
+        `when`(mockedRepository.get(competitionCategoryId)).thenReturn(
+            dataGenerator.newCompetitionCategoryDTO(status = CompetitionCategoryStatus.ACTIVE.toString()))
 
         // Act
         updateCompetitionCategory.execute(competitionCategoryId, spec)
@@ -36,10 +40,26 @@ class TestUpdateCompetitionCategory {
         // Setup
         val competitionCategoryId = 10
         val spec = dataGenerator.newCompetitionCategoryUpdateSpec()
+        `when`(mockedRepository.get(competitionCategoryId)).thenReturn(
+            dataGenerator.newCompetitionCategoryDTO(status = CompetitionCategoryStatus.ACTIVE.toString()))
         `when`(mockedRepository.update(competitionCategoryId, spec)).thenThrow(NotFoundException::class.java)
 
         // Act & Assert
         Assertions.assertThrows(NotFoundException::class.java) {
+            updateCompetitionCategory.execute(competitionCategoryId, spec)
+        }
+    }
+
+    @Test
+    fun cannotUpdateCategoryThatHasBeenDrawn() {
+        // Setup
+        val competitionCategoryId = 10
+        val spec = dataGenerator.newCompetitionCategoryUpdateSpec()
+        `when`(mockedRepository.get(competitionCategoryId)).thenReturn(
+            dataGenerator.newCompetitionCategoryDTO(status = CompetitionCategoryStatus.DRAWN.toString()))
+
+        // Act & Assert
+        Assertions.assertThrows(IllegalActionException::class.java) {
             updateCompetitionCategory.execute(competitionCategoryId, spec)
         }
     }

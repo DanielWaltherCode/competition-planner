@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.result.service
 import com.graphite.competitionplanner.club.repository.ClubRepository
 import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
-import com.graphite.competitionplanner.competitioncategory.domain.UpdateCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.CreateDraw
 import com.graphite.competitionplanner.match.service.MatchDTO
 import com.graphite.competitionplanner.match.service.MatchService
@@ -35,7 +35,7 @@ class TestResultService(
     @Autowired val resultRepository: ResultRepository,
     @Autowired val util: Util,
     @Autowired val findCompetitionCategory: FindCompetitionCategory,
-    @Autowired val updateCompetitionCategory: UpdateCompetitionCategory,
+    @Autowired val competitionCategoryRepository: CompetitionCategoryRepository,
     @Autowired val createDraw: CreateDraw,
     @Autowired val clubRepository: ClubRepository,
     @Autowired val createPlayer: CreatePlayer
@@ -48,7 +48,7 @@ class TestResultService(
 
     @BeforeAll
     fun setUpClassData() {
-        competitionCategoryId = testUtil.addCompetitionCategory("Herrar 5")
+        competitionCategoryId = testUtil.addCompetitionCategory("Herrar 3")
     }
 
     @BeforeEach
@@ -78,7 +78,7 @@ class TestResultService(
             )
         )
 
-        updateCompetitionCategory.execute(original.id, updatedSettings)
+        competitionCategoryRepository.update(original.id, updatedSettings)
 
         val club = clubRepository.store(dataGenerator.newClubSpec())
         val players = listOf(
@@ -98,22 +98,6 @@ class TestResultService(
         addResult()
         Assertions.assertTrue(result.gameList.isNotEmpty())
         Assertions.assertNotNull(match.winner)
-    }
-
-    @Test
-    fun testNumberGenerator() {
-        val resultsMap = mutableMapOf<Int, Int>()
-
-        for (i in 1..100) {
-            val number = Random.nextInt(0, 10)
-            if (resultsMap.containsKey(number)) {
-                resultsMap[number] = resultsMap.getValue(number) + 1
-            }
-            else {
-                resultsMap[number] = 1
-            }
-        }
-        println(resultsMap)
     }
 
     private fun addResult() {
@@ -149,14 +133,14 @@ class TestResultService(
         Assertions.assertEquals(0, match.winner.size)
     }
 
-    @Test
-    fun testGetResult() {
-        addResult()
-        val result = resultService.getResult(match.id)
-        Assertions.assertNotNull(result.gameList)
-        Assertions.assertEquals(3, result.gameList.size)
-
-    }
+//    @Test
+//    fun testGetResult() {
+//        addResult()
+//        val result = resultService.getResult(match.id)
+//        Assertions.assertNotNull(result.gameList)
+//        Assertions.assertEquals(3, result.gameList.size)
+//
+//    }
 
     @Test
     fun testUpdateFullResults() {
