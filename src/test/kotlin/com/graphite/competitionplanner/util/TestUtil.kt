@@ -18,7 +18,7 @@ class TestUtil(
 
     fun addCompetitionCategory(name: String): Int {
         val umeaId = getClubIdOrDefault("Umeå IK")
-        val umeaCompetitions = findCompetitions.thatBelongsTo(umeaId)
+        val umeaCompetitions = findCompetitions.thatBelongTo(umeaId)
         val umeaCompetitionId = umeaCompetitions[0].id
         val category = categoryRepository.getAvailableCategories().first { it.name == name }
         return addCompetitionCategory.execute(

@@ -3,9 +3,11 @@ package com.graphite.competitionplanner.competitioncategory.repository
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
+import com.graphite.competitionplanner.common.exception.IllegalActionException
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
-import com.graphite.competitionplanner.competitioncategory.entity.Round
+import com.graphite.competitionplanner.draw.interfaces.Round
+import com.graphite.competitionplanner.registration.interfaces.PlayerRegistrationStatus
 import com.graphite.competitionplanner.tables.records.CategoryRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryGameRulesRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryMetadataRecord
@@ -13,7 +15,9 @@ import com.graphite.competitionplanner.tables.records.CompetitionCategoryRecord
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.SelectConditionStep
+import org.jooq.impl.*
 import org.springframework.stereotype.Repository
+import kotlin.RuntimeException
 
 /**
  * N..N table for categories at a given competition
@@ -33,12 +37,12 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         return dslContext.selectFrom(COMPETITION_CATEGORY).fetch()
     }
 
-    fun getCategoryType(competitionCategoryId: Int) : CategoryRecord {
+    fun getCategoryType(competitionCategoryId: Int): CategoryRecord {
         return dslContext.select().from(COMPETITION_CATEGORY)
-                .join(CATEGORY).on(CATEGORY.ID.eq(COMPETITION_CATEGORY.CATEGORY))
-                .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
-                .fetchOneInto(CATEGORY) ?:
-                throw NotFoundException("No competition category type found for categoryId $competitionCategoryId")
+            .join(CATEGORY).on(CATEGORY.ID.eq(COMPETITION_CATEGORY.CATEGORY))
+            .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
+            .fetchOneInto(CATEGORY)
+            ?: throw NotFoundException("No competition category type found for categoryId $competitionCategoryId")
 
     }
 
@@ -62,9 +66,10 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             CATEGORY.CATEGORY_TYPE
         )
             .from(PLAYER_REGISTRATION)
-                .join(COMPETITION_CATEGORY_REGISTRATION).on(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
+            .join(COMPETITION_CATEGORY_REGISTRATION)
+            .on(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
             .join(COMPETITION_CATEGORY)
-                .on(COMPETITION_CATEGORY.ID.eq(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID))
+            .on(COMPETITION_CATEGORY.ID.eq(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID))
             .join(PLAYER).on(PLAYER_REGISTRATION.PLAYER_ID.eq(PLAYER.ID))
             .join(CATEGORY).on(CATEGORY.ID.eq(COMPETITION_CATEGORY.CATEGORY))
             .where(PLAYER_REGISTRATION.PLAYER_ID.eq(playerId))
@@ -83,17 +88,20 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
     fun getRegistrationsForPlayerInCompetition(competitionId: Int, playerId: Int): List<RegistrationsInCompetition> {
         val records = dslContext.select(
             PLAYER_REGISTRATION.REGISTRATION_ID,
+            PLAYER_REGISTRATION.STATUS,
             COMPETITION_CATEGORY.ID,
             CATEGORY.CATEGORY_NAME,
             CATEGORY.CATEGORY_TYPE
         )
             .from(PLAYER_REGISTRATION)
-            .join(COMPETITION_CATEGORY_REGISTRATION).on(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
+            .join(COMPETITION_CATEGORY_REGISTRATION)
+            .on(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
             .join(COMPETITION_CATEGORY)
             .on(COMPETITION_CATEGORY.ID.eq(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID))
             .join(PLAYER).on(PLAYER_REGISTRATION.PLAYER_ID.eq(PLAYER.ID))
             .join(CATEGORY).on(CATEGORY.ID.eq(COMPETITION_CATEGORY.CATEGORY))
-            .where(PLAYER_REGISTRATION.PLAYER_ID.eq(playerId)).and(COMPETITION_CATEGORY.COMPETITION_ID.eq(competitionId))
+            .where(PLAYER_REGISTRATION.PLAYER_ID.eq(playerId))
+            .and(COMPETITION_CATEGORY.COMPETITION_ID.eq(competitionId))
             .fetch()
 
         return records.map {
@@ -101,7 +109,8 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
                 it.getValue(PLAYER_REGISTRATION.REGISTRATION_ID),
                 it.getValue(COMPETITION_CATEGORY.ID),
                 it.getValue(CATEGORY.CATEGORY_NAME),
-                it.getValue(CATEGORY.CATEGORY_TYPE)
+                it.getValue(CATEGORY.CATEGORY_TYPE),
+                PlayerRegistrationStatus.valueOf(it.getValue(PLAYER_REGISTRATION.STATUS))
             )
         }
     }
@@ -114,7 +123,10 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
     fun getAccompanyingPlayerId(registrationId: Int, otherPlayerId: Int): Int? {
         return dslContext.select(PLAYER_REGISTRATION.PLAYER_ID)
             .from(PLAYER_REGISTRATION)
-            .where(PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId).and(PLAYER_REGISTRATION.PLAYER_ID.notEqual(otherPlayerId)))
+            .where(
+                PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId)
+                    .and(PLAYER_REGISTRATION.PLAYER_ID.notEqual(otherPlayerId))
+            )
             .fetchOneInto(Int::class.java)
     }
 
@@ -140,7 +152,6 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
     }
 
 
-
     override fun getAll(competitionId: Int): List<CompetitionCategoryDTO> {
         val records = dslContext.select()
             .from(COMPETITION_CATEGORY)
@@ -155,6 +166,7 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
 
     override fun store(competitionId: Int, spec: CompetitionCategorySpec): CompetitionCategoryDTO {
         val competitionCategoryRecord = dslContext.newRecord(COMPETITION_CATEGORY)
+        competitionCategoryRecord.status = spec.status.toString()
         competitionCategoryRecord.competitionId = competitionId
         competitionCategoryRecord.category = spec.category.id
         competitionCategoryRecord.store()
@@ -183,7 +195,7 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             .execute()
     }
 
-    @Throws(NotFoundException::class)
+    @Throws(NotFoundException::class, IllegalActionException::class)
     override fun update(id: Int, spec: CompetitionCategoryUpdateSpec) {
         dslContext.selectFrom(COMPETITION_CATEGORY).where(COMPETITION_CATEGORY.ID.eq(id)).fetchOne()
             ?: throw NotFoundException("Could not update. Competition category with id $id not found.")
@@ -202,8 +214,22 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             COMPETITION_CATEGORY_METADATA.ID
         )
 
-        gameSettingsRecord.update()
-        settingRecord.update()
+        try {
+            dslContext.transaction { configuration ->
+                settingRecord.update()
+                gameSettingsRecord.update()
+                val competitionCategory = DSL.using(configuration)
+                    .selectFrom(COMPETITION_CATEGORY)
+                    .where(COMPETITION_CATEGORY.ID.eq(id))
+                    .fetchInto(COMPETITION_CATEGORY).first()
+
+                if (competitionCategory.getValue(COMPETITION_CATEGORY.STATUS) == CompetitionCategoryStatus.DRAWN.toString()) {
+                    throw RuntimeException() // Throwing exception inside transaction block will roll back changes
+                }
+            }
+        } catch (exception: RuntimeException) {
+            throw IllegalActionException("Can not update the game settings when the category has already been drawn.")
+        }
     }
 
     override fun addAvailableCategory(dto: CategoryDTO) {
@@ -218,10 +244,10 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
     }
 
     override fun getCostForCategories(categoryIds: List<Int>): MutableMap<Int, Float> {
-       return dslContext
-           .selectFrom(COMPETITION_CATEGORY_METADATA)
-           .where(COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID.`in`(categoryIds))
-           .fetchMap(COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID, COMPETITION_CATEGORY_METADATA.COST)
+        return dslContext
+            .selectFrom(COMPETITION_CATEGORY_METADATA)
+            .where(COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID.`in`(categoryIds))
+            .fetchMap(COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID, COMPETITION_CATEGORY_METADATA.COST)
     }
 
     private fun toCompetitionCategoryDto(records: SelectConditionStep<Record>): List<CompetitionCategoryDTO> {
@@ -305,7 +331,8 @@ data class RegistrationsInCompetition(
     val registrationId: Int,
     val categoryId: Int,
     val categoryName: String,
-    val categoryType: String
+    val categoryType: String,
+    val registrationStatus: PlayerRegistrationStatus
 )
 
 data class CompetitionCategory(

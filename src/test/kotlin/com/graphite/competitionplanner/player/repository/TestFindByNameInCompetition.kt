@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
@@ -57,27 +58,64 @@ class TestFindByNameInCompetition(
         Assertions.assertEquals(expectedPlayerIds, actualPlayerIds)
     }
 
+    @Test
+    fun whenPlayerRegisteredToTwoCategoriesThenPlayerShouldBeReturnedOnce() {
+        // Setup
+        val club = clubRepository.store(dataGenerator.newClubSpec())
+        val player = playerRepository.store(
+            dataGenerator.newPlayerSpec(
+                firstName = "Gustav",
+                lastName = "Hanson",
+                clubId = club.id
+            )
+        )
+        val competition = club.addCompetition()
+        val category1 = competition.addCategory("Herrar 1")
+        val category2 = competition.addCategory("Herrar 2")
+
+        category1.register(player)
+        category2.register(player)
+
+        // Act
+        val players = playerRepository.findByNameInCompetition("Gustav", competition.id)
+
+        // Act
+        Assertions.assertEquals(1, players.size)
+        Assertions.assertEquals(player.firstName, players.first().firstName)
+    }
+
+    private fun ClubDTO.addCompetition(): CompetitionDTO {
+        return competitionRepository.store(dataGenerator.newCompetitionSpec(organizingClubId = this.id))
+    }
+
+    private fun CompetitionDTO.addCategory(name: String): CompetitionCategoryDTO {
+        val category = categoryRepository.getAvailableCategories().find { it.name == name }!!
+        return competitionCategoryRepository.store(
+            this.id,
+            dataGenerator.newCompetitionCategorySpec(
+                category = dataGenerator.newCategorySpec(
+                    id = category.id,
+                    name = category.name,
+                    type = category.type
+                )
+            )
+        )
+    }
+
+    private fun CompetitionCategoryDTO.register(player: PlayerDTO) {
+        registrationRepository.storeSingles(
+            dataGenerator.newRegistrationSinglesSpecWithDate(
+                playerId = player.id,
+                competitionCategoryId = this.id
+            )
+        )
+    }
+
     private fun ClubDTO.createCompetitionAndRegister(players: List<PlayerDTO>): CompetitionDTO {
-        val competition = competitionRepository.store(dataGenerator.newCompetitionSpec(organizingClubId = this.id))
-        val category = categoryRepository.getAvailableCategories().first()
-        val competitionCategory =
-            competitionCategoryRepository.store(
-                competition.id,
-                dataGenerator.newCompetitionCategorySpec(
-                    category = dataGenerator.newCategorySpec(
-                        id = category.id,
-                        name = category.name,
-                        type = category.type
-                    )
-                )
-            )
+        val competition = this.addCompetition()
+        val competitionCategory = competition.addCategory(categoryRepository.getAvailableCategories().first().name)
         for (p in players) {
-            registrationRepository.storeSingles(
-                dataGenerator.newRegistrationSinglesSpecWithDate(
-                    playerId = p.id,
-                    competitionCategoryId = competitionCategory.id
-                )
-            )
+            competitionCategory.register(p)
         }
         return competition
     }

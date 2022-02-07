@@ -1,6 +1,5 @@
 package com.graphite.competitionplanner.draw.interfaces
 
-import com.graphite.competitionplanner.competitioncategory.entity.Round
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 
@@ -84,7 +83,9 @@ data class GroupDrawDTO(
     /**
      * Matches in this group
      */
-    val matches: List<MatchAndResultDTO>
+    val matches: List<MatchAndResultDTO>,
+
+    val groupStandingList: List<GroupStandingDTO>
 )
 
 data class PlayerInPoolDTO(

@@ -5,7 +5,9 @@ import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.domain.GetDaysOfCompetition
 import com.graphite.competitionplanner.competition.domain.UpdateCompetition
 import com.graphite.competitionplanner.competition.interfaces.*
-import com.graphite.competitionplanner.competitioncategory.entity.Round
+import com.graphite.competitionplanner.draw.interfaces.Round
+import com.graphite.competitionplanner.user.service.UserDTO
+import com.graphite.competitionplanner.user.service.UserService
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
@@ -16,7 +18,8 @@ class CompetitionApi(
     val createCompetition: CreateCompetition,
     val updateCompetition: UpdateCompetition,
     val findCompetitions: FindCompetitions,
-    val getDaysOfCompetition: GetDaysOfCompetition
+    val getDaysOfCompetition: GetDaysOfCompetition,
+    val userService: UserService
 ) {
 
     @PostMapping
@@ -43,6 +46,13 @@ class CompetitionApi(
         @RequestParam(required = false) weekEndDate: LocalDate?
     ): List<CompetitionWithClubDTO> {
         return findCompetitions.thatStartOrEndWithin(weekStartDate, weekEndDate)
+    }
+
+    @GetMapping("/for-club")
+    fun getAllForClub(
+    ): List<CompetitionWithClubDTO> {
+        val loggedInUser: UserDTO = userService.getLoggedInUser()
+        return findCompetitions.thatBelongTo(loggedInUser.clubNoAddressDTO.id)
     }
 
     @GetMapping("/{competitionId}/days")

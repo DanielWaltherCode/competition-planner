@@ -13,17 +13,17 @@ class UserRepository(val dslContext: DSLContext) {
 
     fun addUser(user: UserWithEncryptedPassword): UserTableRecord {
         val record = dslContext.newRecord(USER_TABLE)
-        record.username = user.username
+        record.email = user.username
         record.password = user.encryptedPassword
         record.clubid = user.clubId
         record.store()
         return record
     }
 
-    fun getUserByUsername(username: String): UserTableRecord? {
+    fun getUserByEmail(email: String): UserTableRecord? {
         return dslContext
             .selectFrom(USER_TABLE)
-            .where(USER_TABLE.USERNAME.eq(username))
+            .where(USER_TABLE.EMAIL.eq(email))
             .fetchOneInto(USER_TABLE)
     }
 

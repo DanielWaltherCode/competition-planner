@@ -1,10 +1,8 @@
 package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
-import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
-import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsDTO
-import com.graphite.competitionplanner.competitioncategory.entity.Round
-import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
+import com.graphite.competitionplanner.competitioncategory.interfaces.*
+import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCompetitionCategory
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
@@ -22,6 +20,7 @@ class CreateDraw(
     val repository: IRegistrationRepository,
     val seedRepository: ISeedRepository,
     val drawRepository: ICompetitionDrawRepository,
+    val competitionCategoryRepository: ICompetitionCategoryRepository
 ) {
 
     /**
@@ -30,8 +29,8 @@ class CreateDraw(
      * @throws NotEnoughRegistrationsException
      */
     fun execute(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
+        competitionCategoryRepository.setStatus(competitionCategoryId, CompetitionCategoryStatus.DRAWN)
         val competitionCategory: CompetitionCategoryDTO = findCompetitionCategory.byId(competitionCategoryId)
-
 
         // TODO: We should check the state of this competition category.
         // TODO: Has drawn been made? Has a match already been played? Etc.
@@ -91,8 +90,8 @@ class CreateDraw(
         settings: GeneralSettingsDTO
     ) {
         when (settings.drawType) {
-            DrawType.POOL_ONLY -> if (registrations.size < 2) throw NotEnoughRegistrationsException("Failed to draw pool only. Requires atleast two registrations.")
-            DrawType.CUP_ONLY -> if (registrations.size < 2) throw NotEnoughRegistrationsException("Failed to draw cup only. Requires atleast two registrations.")
+            DrawType.POOL_ONLY -> if (registrations.size < 2) throw NotEnoughRegistrationsException("Failed to draw pool only. Requires at least two registrations.")
+            DrawType.CUP_ONLY -> if (registrations.size < 2) throw NotEnoughRegistrationsException("Failed to draw cup only. Requires at least two registrations.")
             DrawType.POOL_AND_CUP -> if ((settings.playersToPlayOff == 1 && registrations.size <= settings.playersPerGroup) || (registrations.size < 2)) throw NotEnoughRegistrationsException(
                 "Failed to draw pool and cup. Too few people would have advanced to playoff."
             )
@@ -198,7 +197,7 @@ class CreateDraw(
      * Generates the first round of matches in a play off given a list of registrations.
      *
      * The following properties are true for the generated matches:
-     * - Match order is set so it guarantees that the best and second-best players do not meet until final round,
+     * - Match order is set, so it guarantees that the best and second-best players do not meet until final round,
      * - Best players are paired against the worse ranked players, where BYE is considered the worst ranked player giving
      * the best players a free game in first round.
      *

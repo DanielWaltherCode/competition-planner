@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.tables.records.PlayerRegistrationRecord
 
 
 interface IRegistrationRepository {
@@ -77,7 +78,17 @@ interface IRegistrationRepository {
     fun remove(registrationId: Int)
 
     /**
+     * Remove playerregistration -- i.e. a specific player id and registration id combination. This is helpful
+     * for doubles where two people share a registration id
+     */
+    fun unregisterIndividualPlayer(registrationId: Int, playerId: Int)
+
+    /**
      * Return the rankings of each registration for the given competition category
      */
     fun getRegistrationRanking(competitionCategory: CompetitionCategoryDTO): List<RegistrationRankingDTO>
+
+    fun updatePlayerRegistrationStatus(registrationId: Int, status: String)
+
+    fun getPlayerRegistration(registrationId: Int): PlayerRegistrationRecord
 }

@@ -283,6 +283,16 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         }
     }
 
+    override fun unregisterIndividualPlayer(registrationId: Int, playerId: Int) {
+        val success = dslContext
+            .deleteFrom(PLAYER_REGISTRATION)
+            .where(PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId).and(PLAYER_REGISTRATION.PLAYER_ID.eq(playerId)))
+            .execute() > 0
+        if (!success) {
+            throw NotFoundException("Could not delete. The registration with id $registrationId and playerId $playerId was not found.")
+        }
+    }
+
     override fun getRegistrationRanking(competitionCategory: CompetitionCategoryDTO): List<RegistrationRankingDTO> {
         val rankFieldName = "rank"
         val records = dslContext.select(
@@ -306,6 +316,18 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
                 it.getValue(rankFieldName).toString().toInt()
             )
         }
+    }
+
+    override fun updatePlayerRegistrationStatus(registrationId: Int, status: String) {
+        dslContext.update(PLAYER_REGISTRATION).set(PLAYER_REGISTRATION.STATUS, status)
+            .where(PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId)).execute()
+    }
+
+    override fun getPlayerRegistration(registrationId: Int): PlayerRegistrationRecord {
+       return dslContext
+           .selectFrom(PLAYER_REGISTRATION)
+           .where(PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId))
+           .fetchOneInto(PLAYER_REGISTRATION) ?: throw NotFoundException("RegistrationId not found")
     }
 
     private fun getRankField(category: CategorySpec): TableField<PlayerRankingRecord, Int>? {

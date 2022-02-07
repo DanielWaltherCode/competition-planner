@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.competition.repository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
 import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.AfterEach
@@ -61,11 +62,12 @@ class TestCompetitionRepository(
         val competition2 = competitionRepository.store(newCompetition2)
 
         // Act
-        val competitions = competitionRepository.findCompetitionsThatBelongsTo(club.id)
+        val competitions = competitionRepository.findCompetitionsThatBelongTo(club.id)
 
         // Assert
-        Assertions.assertTrue(competitions.contains(competition1), "Expected to find competition 1")
-        Assertions.assertTrue(competitions.contains(competition2), "Expected to find competition 2")
+        val competitionIds = competitions.map { c -> c.id }
+        Assertions.assertTrue(competitionIds.contains(competition1.id), "Expected to find competition 1")
+        Assertions.assertTrue(competitionIds.contains(competition2.id), "Expected to find competition 2")
 
         // Clean up
         competitionRepository.delete(competition1.id)
@@ -75,7 +77,7 @@ class TestCompetitionRepository(
     @Test
     fun shouldGetEmptyListIfClubDoesNotExist() {
         // Act
-        val competitions = competitionRepository.findCompetitionsThatBelongsTo(-10)
+        val competitions = competitionRepository.findCompetitionsThatBelongTo(-10)
 
         // Assert
         Assertions.assertTrue(competitions.isEmpty())
@@ -84,7 +86,7 @@ class TestCompetitionRepository(
     @Test
     fun shouldGetEmptyListIfClubDoesNotHaveAnyCompetitions() {
         // Act
-        val competitions = competitionRepository.findCompetitionsThatBelongsTo(club.id)
+        val competitions = competitionRepository.findCompetitionsThatBelongTo(club.id)
 
         // Assert
         Assertions.assertTrue(competitions.isEmpty())

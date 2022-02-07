@@ -27,6 +27,7 @@
           <div class="blue-section row">
             <div class="top-content col-md-10 mx-auto">
               <h3 class="p-4">{{ chosenCategory.category.name }}</h3>
+
               <!-- If class is not drawn yet -->
               <div v-if="!isChosenCategoryDrawn " class="pb-4 ms-3 ms-md-0">
                 <div v-if="registeredPlayersLists.length > 0">
@@ -72,11 +73,12 @@
               <div v-for="group in draw.groups" :key="group.name"
                    class="row col-sm-11 mx-auto mt-3 mb-4 d-flex align-items-start p-3 custom-card">
                 <h4 class="text-start mb-3">{{ $t("draw.main.group") }} {{ group.name }}</h4>
-                <div class="col-sm-4">
+                <div class="col-sm-12">
                   <PoolDraw :group="group"/>
                 </div>
-                <div class="col-sm-8">
+                <div class="col-sm-12">
                   <div id="matches" class="row justify-content-center ms-0">
+                    <h5 class="black text-start fw-bolder"> {{$t("draw.pool.matches")}}</h5>
                     <match-list-component :matches="group.matches"/>
                   </div>
                 </div>
@@ -129,11 +131,11 @@ export default {
   },
   methods: {
     isCategoryDrawn(categoryId) {
-      return DrawService.isClassDrawn(categoryId)
+      return DrawService.isDrawMade(categoryId)
     },
     makeChoice(category) {
       this.chosenCategory = category
-      DrawService.isClassDrawn(this.competition.id, category.id).then(res => {
+      DrawService.isDrawMade(this.competition.id, category.id).then(res => {
         if (res.data === true) {
           this.isChosenCategoryDrawn = true
           this.getDraw(category.id)

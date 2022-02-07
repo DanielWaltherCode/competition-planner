@@ -52,11 +52,11 @@
               <h2 class="p-3">{{activeCategory.category.name}}</h2>
               <div class="d-flex col-12 p-2 justify-content-end">
                 <div class="p-2 custom-card">
-                  <button class="btn btn-primary m-1" type="button" @click="save">{{ $t("general.saveChanges") }}</button>
-                  <button class="btn btn-danger" type="button" @click="deleteCategory">{{ $t("categories.delete") }}</button>
+                  <button class="btn btn-primary m-1" type="button" @click="save" :disabled="isDrawMade && displayChoice==='SETTINGS'">{{ $t("general.saveChanges") }}</button>
+                  <button class="btn btn-danger" type="button" @click="deleteCategory" :disabled="isDrawMade && displayChoice==='SETTINGS'">{{ $t("categories.delete") }}</button>
                 </div>
               </div>
-              <CategoryGeneralSettings v-if="displayChoice === 'SETTINGS'"
+              <CategoryGeneralSettings v-if="displayChoice === 'SETTINGS'" :is-draw-made="isDrawMade"
                                        :category="activeCategory"></CategoryGeneralSettings>
               <CategoryGameSettings v-if="displayChoice === 'GAME_RULES'"
                                     :category="activeCategory"></CategoryGameSettings>
@@ -74,6 +74,7 @@
 import CategoryGeneralSettings from "@/components/category/CategoryGeneralSettings"
 import CategoryGameSettings from "@/components/category/CategoryGameRules";
 import CategoryService from "@/common/api-services/category.service";
+import DrawService from "@/common/api-services/draw.service";
 
 export default {
   name: "Categories",
@@ -88,7 +89,8 @@ export default {
       competitionCategories: [],
       possibleCategories: [],
       possibleMetaDataValues: Object,
-      newCategory: null
+      newCategory: null,
+      isDrawMade: false
     }
   },
   computed: {
@@ -116,12 +118,20 @@ export default {
   methods: {
     chooseCategory(category) {
       this.activeCategory = category
+      DrawService.isDrawMade(this.competition.id, category.id).then(res => {
+        this.isDrawMade = res.data
+      })
+      .catch(() => {
+        console.log("Couldn't determine if draw was already made")
+      })
+
     },
     addCategory() {
       CategoryService.addCompetitionCategory(this.competition.id, this.newCategory).then(res => {
         const addedCategory = res.data
         this.competitionCategories.push(addedCategory)
         this.activeCategory = addedCategory
+        this.isDrawMade = false
         this.newCategory = null
       })
     },

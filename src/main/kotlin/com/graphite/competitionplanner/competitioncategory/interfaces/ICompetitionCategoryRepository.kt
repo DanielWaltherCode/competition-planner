@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.competitioncategory.interfaces
 
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
+import com.graphite.competitionplanner.common.exception.IllegalActionException
 import com.graphite.competitionplanner.common.exception.NotFoundException
 
 interface ICompetitionCategoryRepository {
@@ -43,7 +44,7 @@ interface ICompetitionCategoryRepository {
      * @param spec The competition category that will be updated
      * @throws NotFoundException If a competition category that matches the dto's id cannot be found
      */
-    @Throws(NotFoundException::class)
+    @Throws(NotFoundException::class, IllegalActionException::class)
     fun update(id: Int, spec: CompetitionCategoryUpdateSpec)
 
     /**

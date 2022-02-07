@@ -69,7 +69,7 @@
 
 <script>
 import MatchService from "@/common/api-services/match.service";
-import {getPlayerOneWithClub, getPlayerTwoWithClub} from "@/common/util";
+import {getPlayerOneWithClub, getPlayerTwoWithClub, isPlayerOneWinner, isPlayerTwoWinner} from "@/common/util";
 import RegisterResult from "@/components/result/RegisterResult";
 
 export default {
@@ -108,7 +108,6 @@ export default {
         this.matches = res.data
       })
     },
-    // TODO - move to util
     getPlayerOne: getPlayerOneWithClub,
     getPlayerTwo: getPlayerTwoWithClub,
     getTime(match) {
@@ -116,24 +115,8 @@ export default {
         return this.$t("draw.pool.noTime")
       }
     },
-    isPlayerOneWinner(match) {
-      if (match.winner.length > 0) {
-        const winnerIds = match.winner.map(winner => winner.id)
-        if (winnerIds.includes(match.firstPlayer[0].id)) {
-          return true
-        }
-      }
-      return false
-    },
-    isPlayerTwoWinner(match) {
-      if (match.winner.length > 0) {
-        const winnerIds = match.winner.map(winner => winner.id)
-        if (winnerIds.includes(match.secondPlayer[0].id)) {
-          return true
-        }
-      }
-      return false
-    },
+    isPlayerOneWinner: isPlayerOneWinner,
+    isPlayerTwoWinner: isPlayerTwoWinner,
     removeGame() {
       if (this.gamesToAdd.length > 0) {
         this.removedGames.push(this.gamesToAdd.pop())
@@ -149,7 +132,7 @@ export default {
       return JSON.parse(JSON.stringify(this.selectedMatch));
     },
     hideModalAndUpdate(matchId) {
-      MatchService.getMatch(matchId).then(res => {
+      MatchService.getMatch(this.competition.id, matchId).then(res => {
         for(let i = 0; i < this.matches.length; i++) {
           if (this.matches[i].id === matchId) {
             this.$set(this.matches, i, res.data)

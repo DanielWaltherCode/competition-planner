@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.schedule.domain.interfaces
 
-import com.graphite.competitionplanner.competitioncategory.entity.Schedule
+import com.graphite.competitionplanner.schedule.domain.entity.Schedule
 
 data class ScheduleDTO(
     val id: Int,

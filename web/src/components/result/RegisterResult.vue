@@ -15,8 +15,8 @@
         <td>{{ getPlayerOne(this.selectedMatch) }}</td>
         <td v-for="(game, index) in setList" :key="index">
           <select class="form-select custom-select p-1 text-center" v-model="game.firstRegistrationResult">
-            <option v-for="i in 30" :key="i" :value="i" class="p-2">
-              {{ i }}
+            <option v-for="i in 31" :key="i" :value="i-1" class="p-2">
+              {{ i-1 }}
             </option>
           </select>
         </td>
@@ -27,8 +27,8 @@
         <td>{{getPlayerTwo(this.selectedMatch)}}</td>
         <td v-for="(game, index) in setList" :key="index">
           <select class="form-select custom-select p-1 text-center" v-model="game.secondRegistrationResult">
-            <option v-for="i in 30" :key="i" :value="i" class="p-2">
-              {{ i }}
+            <option v-for="i in 31" :key="i" :value="i-1" class="p-2">
+              {{ i-1 }}
             </option>
           </select>
         </td>
@@ -85,6 +85,11 @@ export default {
       error: null
     }
   },
+  computed: {
+    competition: function () {
+      return this.$store.getters.competition
+    }
+  },
   watch: {
     selectedMatch: function() {
       this.setUp()
@@ -102,7 +107,7 @@ export default {
       if (this.selectedMatch === null) {
         return
       }
-      CategoryService.getCategoryGameRules(this.selectedMatch.competitionCategory.id).then(res => {
+      CategoryService.getCategoryGameRules(this.competition.id, this.selectedMatch.competitionCategory.id).then(res => {
         this.matchRules = res.data
 
         // Add already registered game result to our local setlist
@@ -132,7 +137,7 @@ export default {
           resultsToSubmit.push(result)
         }
       })
-      ResultService.addPartialResult(this.selectedMatch.id, {gameList: resultsToSubmit}).then(() => {
+      ResultService.addPartialResult(this.competition.id, this.selectedMatch.id, {gameList: resultsToSubmit}).then(() => {
         this.$emit("closeAndUpdate", this.selectedMatch.id)
         this.$toasted.success(this.$tc("toasts.temporaryResultRegistered")).goAway(3000)
       }).catch(() => {
@@ -153,7 +158,7 @@ export default {
           resultsToSubmit.push(result)
         }
       })
-      ResultService.updateFullMatchResult(this.selectedMatch.id, {gameList: resultsToSubmit}).then(() => {
+      ResultService.updateFullMatchResult(this.competition.id, this.selectedMatch.id, {gameList: resultsToSubmit}).then(() => {
         this.$emit("closeAndUpdate", this.selectedMatch.id)
         this.$toasted.success(this.$tc("toasts.resultRegistered")).goAway(3000)
       }).catch(err => {
@@ -173,8 +178,8 @@ export default {
     },
     deleteResults() {
       if(confirm(this.$tc("confirm.deleteResult"))) {
-        ResultService.deleteResult(this.selectedMatch.id).then(() => {
-          this.$emit("close", this.selectedMatch.id)
+        ResultService.deleteResult(this.competition.id, this.selectedMatch.id).then(() => {
+          this.$emit("closeAndUpdate", this.selectedMatch.id)
         })
       }
     },

@@ -42,8 +42,8 @@ class JWTAuthorizationFilter : OncePerRequestFilter() {
         if (token != null) {
             token = token.replace(SecurityConstants.TOKEN_PREFIX, "")
             if (SecurityHelper.validateToken(token)) {
-                val user = SecurityHelper.getUsernameFromToken(token)
-                return UsernamePasswordAuthenticationToken(user, null, ArrayList())
+                val user = SecurityHelper.getEmailFromToken(token)
+                return UsernamePasswordAuthenticationToken(user, token, ArrayList())
             }
             return null
         }

@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.Tables.POOL
 import com.graphite.competitionplanner.Tables.POOL_TO_PLAYOFF_MAP
-import com.graphite.competitionplanner.competitioncategory.entity.Round
+import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
@@ -16,7 +16,8 @@ import org.springframework.stereotype.Repository
 class GetDraw(
     val competitionCategoryRepository: ICompetitionCategoryRepository,
     val matchService: MatchService,
-    val dslContext: DSLContext
+    val dslContext: DSLContext,
+    val calculateGroupStanding: CalculateGroupStanding
 ) {
 
     fun execute(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
@@ -27,11 +28,12 @@ class GetDraw(
             updatePlaceholderNamesInFirstRound(competitionCategoryId, playOffMatches)
         val playoffRounds: List<PlayoffRoundDTO> = convertToPlayoffRound(updatedPlayoffMatches)
         val groupDraws: List<GroupDrawDTO> = constructGroupDraw(matchesInCategory.filterNot{ it.groupOrRound.isRound() })
+        val playoffRoundsSorted = playoffRounds.sortedByDescending { p -> p.round }
         val groupToPlayoffList: List<GroupToPlayoff> = getPoolToPlayoffList(competitionCategoryId)
 
         return CompetitionCategoryDrawDTO(
             competitionCategoryId,
-            playoffRounds,
+            playoffRoundsSorted,
             groupDraws,
             groupToPlayoffList
         )
@@ -94,6 +96,7 @@ class GetDraw(
                     match.matchOrderNumber,
                     match.groupOrRound,
                     match.winner,
+                    match.wasWalkover,
                     match.result
                 )
             )
@@ -125,8 +128,8 @@ class GetDraw(
                     playersInGroup.add(PlayerInPoolDTO(match.firstPlayer, 1))
                     playersInGroup.add(PlayerInPoolDTO(match.secondPlayer, 1))
                 }
-
-                groups.add(GroupDrawDTO(group, playersInGroup.toList(), matchesInGroup ))
+                val groupStanding: List<GroupStandingDTO> = calculateGroupStanding.execute(matchesInGroup)
+                groups.add(GroupDrawDTO(group, playersInGroup.toList(), matchesInGroup, groupStanding))
             }
         }
         return groups

@@ -1,9 +1,9 @@
 package com.graphite.competitionplanner.schedule.domain
 
-import com.graphite.competitionplanner.competitioncategory.entity.Match
-import com.graphite.competitionplanner.competitioncategory.entity.Schedule
-import com.graphite.competitionplanner.competitioncategory.entity.ScheduleSettings
-import com.graphite.competitionplanner.competitioncategory.entity.Timeslot
+import com.graphite.competitionplanner.schedule.domain.entity.Match
+import com.graphite.competitionplanner.schedule.domain.entity.Schedule
+import com.graphite.competitionplanner.schedule.domain.entity.ScheduleSettings
+import com.graphite.competitionplanner.schedule.domain.entity.Timeslot
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO

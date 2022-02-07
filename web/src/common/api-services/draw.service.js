@@ -2,7 +2,7 @@ import Axios from "axios"
 
 
 const DrawService = {
-    isClassDrawn(competitionId, categoryId) {
+    isDrawMade(competitionId, categoryId) {
         return Axios.get(`/competition/${competitionId}/draw/${categoryId}/is-draw-made`, {withCredentials: true})
     },
 

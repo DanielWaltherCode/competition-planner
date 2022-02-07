@@ -52,7 +52,7 @@ class MatchRepository(val dslContext: DSLContext) {
             .fetchInto(MATCH)
     }
 
-    fun getMatchesInCompetitionForPlayer(competitionId: Int, registrationId: Int): List<MatchRecord> {
+    fun getMatchesInCompetitionForRegistration(competitionId: Int, registrationId: Int): List<MatchRecord> {
         return dslContext
             .select().from(COMPETITION)
             .join(COMPETITION_CATEGORY)

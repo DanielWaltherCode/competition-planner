@@ -125,6 +125,7 @@ class PlayerRepository(val dslContext: DSLContext) : IPlayerRepository {
 
     override fun findByNameInCompetition(startOfName: String, competitionId: Int): List<PlayerWithClubDTO> {
         val records = dslContext.select(PLAYER.ID, PLAYER.FIRST_NAME, PLAYER.LAST_NAME, PLAYER.DATE_OF_BIRTH, CLUB.ID, CLUB.NAME, CLUB.ADDRESS)
+            .distinctOn(PLAYER.ID)
             .from(COMPETITION)
             .join(COMPETITION_CATEGORY).on(
                 COMPETITION_CATEGORY.COMPETITION_ID.eq(

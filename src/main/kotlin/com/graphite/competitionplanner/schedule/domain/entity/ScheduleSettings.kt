@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.competitioncategory.entity
+package com.graphite.competitionplanner.schedule.domain.entity
 
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.util.plusDuration

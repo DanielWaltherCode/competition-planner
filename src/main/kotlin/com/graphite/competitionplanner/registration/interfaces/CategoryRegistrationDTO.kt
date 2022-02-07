@@ -23,5 +23,10 @@ data class CategoryRegistrationDTO(
      * The player the registered person is playing with in the category
      * Null if the registration is in a singles tournament
      */
-    val accompanyingPlayer: PlayerWithClubDTO?
+    val accompanyingPlayer: PlayerWithClubDTO?,
+
+    /**
+     * Says whether the player is still playing or has withdrawn/given WO
+     */
+    val registrationStatus: PlayerRegistrationStatus
 )

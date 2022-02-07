@@ -52,19 +52,20 @@ Axios.interceptors.request.use(
         Promise.reject(error)
     });
 
+
 // Response interceptor
 Axios.interceptors.response.use((response) => {
         return response
     },
     function (error) {
-        const originalRequest = error.config
+        const currentRequest = error.config
         const refreshToken = store.getters.refreshToken
         console.log(error)
         if (error.response.status === 401) {
             if (refreshToken != null) {
                 // If previous request tried to refresh token but failed, abort here
-                console.log("original request: " + originalRequest.url)
-                if (originalRequest.url.includes("request-token")) {
+                console.log("original request: " + currentRequest.url)
+                if (currentRequest.url.includes("request-token")) {
                    logout(error)
                 }
                 return UserService.refreshToken(refreshToken).then(res => {
@@ -72,7 +73,7 @@ Axios.interceptors.response.use((response) => {
                     console.log("Token refreshed, updating!")
                     store.commit("auth_success", res.data)
                     // 3) return originalRequest object with Axios.
-                    return Axios(originalRequest);
+                    return Axios(currentRequest);
                 }).catch(() => {
                     // Failed to refresh token
                     logout(error)
@@ -82,6 +83,7 @@ Axios.interceptors.response.use((response) => {
             else {
                logout(error)
             }
+
         }
     })
 

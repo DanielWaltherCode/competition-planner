@@ -4,7 +4,8 @@ import com.graphite.competitionplanner.competition.domain.CreateCompetition
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.domain.GetDaysOfCompetition
 import com.graphite.competitionplanner.competition.domain.UpdateCompetition
-import com.graphite.competitionplanner.competitioncategory.entity.Round
+import com.graphite.competitionplanner.draw.interfaces.Round
+import com.graphite.competitionplanner.user.service.UserService
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
@@ -20,7 +21,8 @@ class TestCompetitionApi {
     private val updateCompetition = mock(UpdateCompetition::class.java)
     private val findCompetition = mock(FindCompetitions::class.java)
     private val getDaysOfCompetition = mock(GetDaysOfCompetition::class.java)
-    private val api = CompetitionApi(createCompetition, updateCompetition, findCompetition, getDaysOfCompetition)
+    private val userService = mock(UserService::class.java)
+    private val api = CompetitionApi(createCompetition, updateCompetition, findCompetition, getDaysOfCompetition, userService)
     val dataGenerator = DataGenerator()
 
     @Test

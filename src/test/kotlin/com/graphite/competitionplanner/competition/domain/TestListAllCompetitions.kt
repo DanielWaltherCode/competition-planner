@@ -19,10 +19,10 @@ class TestListAllCompetitions {
         val club = dataGenerator.newClubDTO(id = 100)
 
         // Act
-        findCompetitions.thatBelongsTo(club.id)
+        findCompetitions.thatBelongTo(club.id)
 
         // Assert
-        verify(mockedCompetitionRepository, times(1)).findCompetitionsThatBelongsTo(club.id)
-        verify(mockedCompetitionRepository, times(1)).findCompetitionsThatBelongsTo(anyInt())
+        verify(mockedCompetitionRepository, times(1)).findCompetitionsThatBelongTo(club.id)
+        verify(mockedCompetitionRepository, times(1)).findCompetitionsThatBelongTo(anyInt())
     }
 }

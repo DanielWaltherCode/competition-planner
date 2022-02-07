@@ -14,8 +14,10 @@ import com.graphite.competitionplanner.competition.repository.CompetitionReposit
 import com.graphite.competitionplanner.competitioncategory.domain.AddCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
+import com.graphite.competitionplanner.draw.domain.CreateDraw
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
+import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.player.domain.ListAllPlayersInClub
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.repository.PlayerRepository
@@ -23,6 +25,9 @@ import com.graphite.competitionplanner.registration.interfaces.RegistrationDoubl
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.registration.service.RegistrationService
+import com.graphite.competitionplanner.result.api.GameSpec
+import com.graphite.competitionplanner.result.api.ResultSpec
+import com.graphite.competitionplanner.result.service.ResultService
 import com.graphite.competitionplanner.user.api.UserSpec
 import com.graphite.competitionplanner.user.repository.UserRepository
 import com.graphite.competitionplanner.user.service.UserService
@@ -54,7 +59,9 @@ class EventListener(
     val createClub: CreateClub,
     val findCompetitions: FindCompetitions,
     val getCompetitionCategories: GetCompetitionCategories,
-    val addCompetitionCategory: AddCompetitionCategory
+    val addCompetitionCategory: AddCompetitionCategory,
+    val createDraw: CreateDraw,
+    val resultService: ResultService
 ) {
 
     @EventListener
@@ -66,19 +73,19 @@ class EventListener(
     fun setUpData() {
         setUpClub()
         competitionSetup()
-        registerUsers()
-        playerSetup()
         try {
             setUpBYEPlayer()
             setUpPlaceHolderRegistration()
         } catch (ex: DuplicateKeyException) {
             // Nothing
         }
+        registerUsers()
+        playerSetup()
         addPlayerRankings()
         categorySetup()
         competitionCategorySetup()
         registerPlayersSingles()
-        registerMatch()
+        registerResults()
         registerPlayersDoubles()
     }
 
@@ -141,9 +148,9 @@ class EventListener(
     }
 
     fun setUpPlaceHolderRegistration() {
-        // We need a Placeholder player and registration to return matches with place holder players.
+        // We need a Placeholder player and registration to return matches with placeholder players.
         playerRepository.addPlayerWithId(
-            1,
+            -1,
             PlayerSpec(
                 firstName = "Placeholder",
                 lastName = "Placeholder",
@@ -151,8 +158,8 @@ class EventListener(
                 dateOfBirth = LocalDate.now().minus(18, ChronoUnit.YEARS)
             )
         )
-        registrationRepository.addRegistrationWithId(1, LocalDate.now())
-        registrationRepository.registerPlayer(1, 1)
+        registrationRepository.addRegistrationWithId(-1, LocalDate.now())
+        registrationRepository.registerPlayer(-1, -1)
     }
 
     fun setUpBYEPlayer() {
@@ -392,7 +399,7 @@ class EventListener(
 
     fun competitionCategorySetup() {
         val lugiId = util.getClubIdOrDefault("Lugi")
-        val lugiCompetitions = findCompetitions.thatBelongsTo(lugiId)
+        val lugiCompetitions = findCompetitions.thatBelongTo(lugiId)
         val lugiCompetitionId = lugiCompetitions[0].id
         val categories = categoryRepository.getAvailableCategories()
 
@@ -426,7 +433,7 @@ class EventListener(
         )
 
         val umeaId = util.getClubIdOrDefault("Umeå IK")
-        val umeaCompetitions = findCompetitions.thatBelongsTo(umeaId)
+        val umeaCompetitions = findCompetitions.thatBelongTo(umeaId)
         val umeaCompetitionId = umeaCompetitions[0].id
         addCompetitionCategory.execute(
             umeaCompetitionId,
@@ -459,7 +466,7 @@ class EventListener(
         val lugiPlayers = listAllPlayersInClub.execute(lugiId)
         val umePlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Umeå IK"))
         val otherPlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Övriga"))
-        val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
+        val lugiCompetitionId = competitionRepository.findCompetitionsThatBelongTo(lugiId)[0].id
         val competitionCategories = getCompetitionCategories.execute(lugiCompetitionId)
 
         registrationService.registerPlayersDoubles(
@@ -511,7 +518,7 @@ class EventListener(
         val lugiPlayers = listAllPlayersInClub.execute(lugiId)
         val umePlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Umeå IK"))
         val otherPlayers = listAllPlayersInClub.execute(util.getClubIdOrDefault("Övriga"))
-        val lugiCompetitionId = competitionRepository.getByLocation("Lund")[0].id
+        val lugiCompetitionId = competitionRepository.findCompetitionsThatBelongTo(lugiId)[0].id
         val competitionCategories = getCompetitionCategories.execute(lugiCompetitionId)
 
         // Have "Herrar 1" in Lugi as main competition category to play around with
@@ -617,9 +624,46 @@ class EventListener(
                 competitionCategories[0].id
             )
         )
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                umePlayers[2].id,
+                competitionCategories[1].id
+            )
+        )
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                umePlayers[3].id,
+                competitionCategories[1].id
+            )
+        )
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                umePlayers[4].id,
+                competitionCategories[1].id
+            )
+        )
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                umePlayers[5].id,
+                competitionCategories[1].id
+            )
+        )
     }
 
-    fun registerMatch() {
+    // Draw category and register match results in Herrar 2 (competitionCategories[1]
+    fun registerResults() {
+        val lugiId = util.getClubIdOrDefault("Lugi")
+        val lugiCompetitionId = competitionRepository.findCompetitionsThatBelongTo(lugiId)[0].id
+        val competitionCategories = getCompetitionCategories.execute(lugiCompetitionId)
+        val herrar2 = competitionCategories[1]
+        val draw = createDraw.execute(herrar2.id)
+
+        for (group in draw.groups) {
+            for (match in group.matches) {
+                val generatedGameResult = createResult(match)
+                resultService.addResult(match.id, ResultSpec(generatedGameResult))
+            }
+        }
 
     }
 
@@ -639,6 +683,36 @@ class EventListener(
         clubRepository.clearClubTable()
     }
 
+    private fun createResult(match: MatchAndResultDTO): List<GameSpec> {
+        val nrGames = Random.nextInt(3, 6)
+        val winningPlayer = Random.nextInt(1, 3)
+
+            val winningPlayerResults = mutableListOf<Int>()
+            while (winningPlayerResults.size < nrGames) {
+                winningPlayerResults.add(Random.nextInt(0, 11))
+            }
+            while (winningPlayerResults.count { i -> i == 11 } < 3) {
+                val gameToRemove = Random.nextInt(0, nrGames)
+                winningPlayerResults.removeAt(gameToRemove)
+                val value = Random.nextInt(4, 12)
+                winningPlayerResults.add(value)
+        }
+        val gameResults = mutableListOf<GameSpec>()
+        for ((index, winningPlayerResult) in winningPlayerResults.withIndex()) {
+            val otherPlayerResult = when (winningPlayerResult) {
+                10 -> 12
+                11 -> Random.nextInt(0, 10)
+                else -> 11
+            }
+            if (winningPlayer == 1) {
+                gameResults.add(GameSpec(index+1, winningPlayerResult, otherPlayerResult))
+            }
+            else {
+                gameResults.add(GameSpec(index+1, otherPlayerResult, winningPlayerResult))
+            }
+        }
+        return gameResults
+    }
 
 }
 

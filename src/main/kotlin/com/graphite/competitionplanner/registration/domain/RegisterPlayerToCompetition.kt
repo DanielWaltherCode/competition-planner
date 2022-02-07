@@ -5,14 +5,9 @@ import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitio
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.player.domain.FindPlayer
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
-import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
-import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesDTO
-import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
-import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpecWithDate
+import com.graphite.competitionplanner.registration.interfaces.*
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import org.springframework.web.server.ResponseStatusException
 import java.time.LocalDate
 
 @Component
@@ -33,9 +28,7 @@ class RegisterPlayerToCompetition(
 
         val playerIds: List<Int> = repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)
         if (playerIds.contains(spec.playerId)) {
-            throw ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "Player ${player.firstName + " " + player.lastName} is already registered in this category")
+            throw PlayerAlreadyRegisteredException(player)
         }
 
         return repository.storeSingles(

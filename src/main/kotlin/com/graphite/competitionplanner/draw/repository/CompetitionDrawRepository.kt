@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.draw.repository
 
 import com.graphite.competitionplanner.Tables.*
-import com.graphite.competitionplanner.competitioncategory.entity.Round
+import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.domain.*
 import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.draw.service.*
@@ -12,7 +12,6 @@ import com.graphite.competitionplanner.tables.records.PoolRecord
 import com.graphite.competitionplanner.tables.records.PoolToPlayoffMapRecord
 import org.jetbrains.annotations.NotNull
 import org.jooq.DSLContext
-import org.jooq.Record
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -45,7 +44,6 @@ class CompetitionDrawRepository(val dslContext: DSLContext,
         dslContext.deleteFrom(POOL_TO_PLAYOFF_MAP).execute()
         dslContext.deleteFrom(POOL).execute()
     }
-
 
     override fun store(draw: CompetitionCategoryDrawSpec): CompetitionCategoryDrawDTO {
         return when (draw) {
@@ -174,7 +172,7 @@ class CompetitionDrawRepository(val dslContext: DSLContext,
         return when (this) {
             is Registration.Real -> this.id
             is Registration.Bye -> 0 // TODO: This feels a bit fragile. These IDs are set in SetupTestData
-            is Registration.Placeholder -> 1 // TODO: Fetch PlaceHolder ID once
+            is Registration.Placeholder -> -1 // TODO: Fetch PlaceHolder ID once
         }
     }
 
