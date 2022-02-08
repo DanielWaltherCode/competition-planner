@@ -27,7 +27,8 @@ class GetDraw(
         val updatedPlayoffMatches: List<MatchAndResultDTO> =
             updatePlaceholderNamesInFirstRound(competitionCategoryId, playOffMatches)
         val playoffRounds: List<PlayoffRoundDTO> = convertToPlayoffRound(updatedPlayoffMatches)
-        val groupDraws: List<GroupDrawDTO> = constructGroupDraw(matchesInCategory.filterNot{ it.groupOrRound.isRound() })
+        val groupDraws: List<GroupDrawDTO> =
+            constructGroupDraw(matchesInCategory.filterNot { it.groupOrRound.isRound() })
         val playoffRoundsSorted = playoffRounds.sortedByDescending { p -> p.round }
         val groupToPlayoffList: List<GroupToPlayoff> = getPoolToPlayoffList(competitionCategoryId)
 
@@ -122,13 +123,16 @@ class GetDraw(
         if (matches.isNotEmpty()) {
             val distinctGroups = matches.map { it.groupOrRound }.distinct()
             for (group in distinctGroups) {
-                val matchesInGroup = matches.filter{it.groupOrRound == group}
+                val matchesInGroup = matches.filter { it.groupOrRound == group }
                 val playersInGroup: MutableSet<PlayerInPoolDTO> = mutableSetOf()
                 for (match in matchesInGroup) {
                     playersInGroup.add(PlayerInPoolDTO(match.firstPlayer, 1))
                     playersInGroup.add(PlayerInPoolDTO(match.secondPlayer, 1))
                 }
-                val groupStanding: List<GroupStandingDTO> = calculateGroupStanding.execute(matchesInGroup)
+                val groupStanding: List<GroupStandingDTO> = calculateGroupStanding.execute(
+                    matchesInGroup[0].competitionCategory.id,
+                    matchesInGroup[0].groupOrRound
+                )
                 groups.add(GroupDrawDTO(group, playersInGroup.toList(), matchesInGroup, groupStanding))
             }
         }

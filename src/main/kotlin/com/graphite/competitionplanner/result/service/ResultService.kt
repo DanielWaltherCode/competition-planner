@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.result.service
 import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.GameSettingsDTO
+import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchDTO
 import com.graphite.competitionplanner.match.service.MatchService
@@ -80,6 +81,46 @@ class ResultService(
     fun getResult(matchId: Int): ResultDTO {
         val resultList = resultRepository.getResult(matchId)
         return ResultDTO(resultList.map { recordToDTO(it) } )
+    }
+
+    fun calculateGroupResultsForCategory(categoryId: Int) {
+        val groupMatches: List<MatchRecord> = matchRepository.getMatchesInCategoryForMatchType(categoryId, MatchType.GROUP)
+        val groups = groupMatches.distinctBy { it.groupOrRound }
+        val groupMatchMap: Map<String, List<MatchRecord>> = mutableMapOf()
+        for (match in groupMatches) {
+
+        }
+    }
+
+    // Returns a list of who each registrationID in a group has defeated
+    fun getOpponentsDefeatedInGroup(categoryId: Int, groupName: String): MutableMap<Int, MutableList<Int>> {
+        val allGroupMatches: List<MatchRecord> = matchRepository.getMatchesInCategoryForMatchType(categoryId, MatchType.GROUP)
+        val matchesInGroup = allGroupMatches.filter { it.groupOrRound == groupName }
+        val uniquePlayerRegistrations: MutableSet<Int> = mutableSetOf()
+        for (match in matchesInGroup) {
+            uniquePlayerRegistrations.add(match.firstRegistrationId)
+            uniquePlayerRegistrations.add(match.secondRegistrationId)
+        }
+        val winMap: MutableMap<Int, MutableList<Int>> = mutableMapOf()
+
+        for (player in uniquePlayerRegistrations) {
+            val defeatedPlayersList: MutableList<Int> = mutableListOf()
+            for (match in matchesInGroup) {
+                if (match.winner == null) {
+                    continue
+                }
+                if (match.winner == player) {
+                    if(match.firstRegistrationId == player) {
+                        defeatedPlayersList.add(match.secondRegistrationId)
+                    }
+                    else if(match.secondRegistrationId == player) {
+                        defeatedPlayersList.add(match.firstRegistrationId)
+                    }
+                }
+            }
+            winMap[player] = defeatedPlayersList
+        }
+        return winMap
     }
 
     private fun validateResult(categoryId: Int, resultSpec: ResultSpec) {

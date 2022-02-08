@@ -81,7 +81,7 @@ class TestResultService(
         // Add players
         val allPlayers = playerRepository.getAll()
 
-        // Get 22 players
+        // Get players
         val players = allPlayers.subList(0, 3)
         for (player in players) {
             registrationService.registerPlayerSingles(RegistrationSinglesSpec(player.id, competitionCategoryId))
