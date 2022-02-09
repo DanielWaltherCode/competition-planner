@@ -8,11 +8,11 @@ import com.graphite.competitionplanner.match.service.MatchDTO
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
+import com.graphite.competitionplanner.result.domain.AddResult
 import com.graphite.competitionplanner.result.repository.ResultRepository
 import com.graphite.competitionplanner.tables.records.GameRecord
 import com.graphite.competitionplanner.tables.records.MatchRecord
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 
 @Service
@@ -20,7 +20,8 @@ class ResultService(
     val resultRepository: ResultRepository,
     val matchService: MatchService,
     val matchRepository: MatchRepository,
-    val findCompetitionCategory: FindCompetitionCategory
+    val findCompetitionCategory: FindCompetitionCategory,
+    val addResult: AddResult
 ) {
 
     private val LOGGER = LoggerFactory.getLogger(javaClass)
@@ -47,7 +48,7 @@ class ResultService(
         else {
             // Couldn't determine winner, something is wrong!
                 LOGGER.error("Couldn't determine winner in match ${matchId}!", resultSpec)
-            throw GameValidationException(HttpStatus.BAD_REQUEST, "3")
+            throw GameValidationException(GameValidationException.Reason.COULD_NOT_DECIDE_WINNER)
         }
         matchService.setWinner(match.id, winnerId)
         return ResultDTO(resultList.map { recordToDTO(it) })
@@ -73,8 +74,9 @@ class ResultService(
     }
 
     fun addFinalMatchResult(matchId: Int, resultSpec: ResultSpec): ResultDTO {
-        resultRepository.deleteMatchResult(matchId)
-        return addResult(matchId, resultSpec)
+        val match = matchService.getSimpleMatchDTO(matchId)
+        val competitionCategory = findCompetitionCategory.byId(match.competitionCategoryId)
+        return addResult.execute(match, resultSpec, competitionCategory)
     }
 
     fun getResult(matchId: Int): ResultDTO {
@@ -90,7 +92,7 @@ class ResultService(
         }
         if ((resultSpec.gameList.size) < (gameRules.numberOfSets / 2.0)) {
             // Too few sets
-            throw GameValidationException(HttpStatus.BAD_REQUEST, "1")
+            throw GameValidationException(GameValidationException.Reason.TOO_FEW_SETS_REPORTED)
         }
 
         // Todo -- add special validation for tie breaks or final matches with more sets
@@ -101,7 +103,7 @@ class ResultService(
             && game.secondRegistrationResult < gameRules.winScore
         ) {
             // Both players have lower score than registered win score
-            throw GameValidationException(HttpStatus.BAD_REQUEST, "2")
+            throw GameValidationException(GameValidationException.Reason.TOO_FEW_POINTS_IN_SET)
         }
     }
 

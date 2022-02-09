@@ -264,9 +264,11 @@
     "group": "Pool",
     "modal": {
       "errors": {
-        "1": "För få set för att avsluta matchen är inrapporterade. Dubbelkolla gärna inställningarna för klassen för att se vilka regler som är uppsatta",
-        "2": "I minst ett av setten verkar båda spelare ha lägre resultat än det som krävs för att vinna. Dubbelkolla gärna inställningarna för klassen för att se vilka regler som är uppsatta",
-        "3": "Något gick fel och vinnaren kunde inte registreras. Var vänlig kontakta supporten"
+        "TOO_FEW_SETS_REPORTED": "För få set för att avsluta matchen är inrapporterade. Dubbelkolla gärna inställningarna för klassen för att se vilka regler som är uppsatta",
+        "TOO_FEW_POINTS_IN_SET": "I minst ett av setten verkar båda spelare ha lägre resultat än det som krävs för att vinna. Dubbelkolla gärna inställningarna för klassen för att se vilka regler som är uppsatta",
+        "COULD_NOT_DECIDE_WINNER": "Något gick fel och vinnaren kunde inte registreras. Var vänlig kontakta supporten",
+        "TOO_MANY_SETS_REPORTED": "Något gick fel och vinnaren kunde inte registreras. Var vänlig kontakta supporten",
+        "NOT_ENOUGH_WIN_MARGIN": "I minst ett av setten så finns ingen vinnar på grund av att vinstmarginalen är för liten"
       },
       "header": "Registrera resultat",
       "savePartial": "Spara delresultat",

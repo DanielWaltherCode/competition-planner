@@ -11,10 +11,13 @@ import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.schedule.domain.entity.ScheduleSettings
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
+import com.graphite.competitionplanner.match.service.SimpleMatchDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.interfaces.*
+import com.graphite.competitionplanner.result.api.GameSpec
+import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.service.ResultDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
@@ -134,6 +137,20 @@ class DataGenerator {
         groupOrRound
     )
 
+    fun newSimpleMatchDTO(
+        id: Int = matchId++,
+        competitionCategoryId: Int = this.competitionCategoryId++,
+        firstRegistrationId: Int = registrationId++,
+        secondRegistrationId: Int = registrationId++,
+        matchType: String = "A"
+    ) = SimpleMatchDTO (
+        id,
+        competitionCategoryId,
+        firstRegistrationId,
+        secondRegistrationId,
+        matchType
+    )
+
     fun newMatchAndResultDTO(
         id: Int = matchId++,
         competitionCategoryId: Int = 0,
@@ -206,8 +223,8 @@ class DataGenerator {
         id: Int = 1,
         status: String = CompetitionCategoryStatus.ACTIVE.name,
         category: CategorySpec = newCategorySpec(),
-        settings: GeneralSettingsDTO = newGeneralSettingsSpec(),
-        gameSettings: GameSettingsDTO = newGameSettingsSpec()
+        settings: GeneralSettingsDTO = newGeneralSettingsDTO(),
+        gameSettings: GameSettingsDTO = newGameSettingsDTO()
     ) = CompetitionCategoryDTO(
         id,
         status,
@@ -239,8 +256,8 @@ class DataGenerator {
     )
 
     fun newCompetitionCategoryUpdateSpec(
-        settings: GeneralSettingsDTO = newGeneralSettingsSpec(),
-        gameSettings: GameSettingsDTO = newGameSettingsSpec()
+        settings: GeneralSettingsDTO = newGeneralSettingsDTO(),
+        gameSettings: GameSettingsDTO = newGameSettingsDTO()
     ) = CompetitionCategoryUpdateSpec(
         settings,
         gameSettings
@@ -249,8 +266,8 @@ class DataGenerator {
     fun newCompetitionCategorySpec(
         status: CompetitionCategoryStatus = CompetitionCategoryStatus.ACTIVE,
         category: CategorySpec = newCategorySpec(),
-        settings: GeneralSettingsDTO = newGeneralSettingsSpec(),
-        gameSettings: GameSettingsDTO = newGameSettingsSpec()
+        settings: GeneralSettingsDTO = newGeneralSettingsDTO(),
+        gameSettings: GameSettingsDTO = newGameSettingsDTO()
     ) = CompetitionCategorySpec(
         status,
         category,
@@ -258,7 +275,7 @@ class DataGenerator {
         gameSettings
     )
 
-    fun newGeneralSettingsSpec(
+    fun newGeneralSettingsDTO(
         cost: Float = 150f,
         drawType: DrawType = DrawType.POOL_ONLY,
         playersPerGroup: Int = 4,
@@ -272,14 +289,14 @@ class DataGenerator {
         poolDrawStrategy
     )
 
-    fun newGameSettingsSpec(
+    fun newGameSettingsDTO(
         numberOfSets: Int = 2,
         winScore: Int = 11,
-        winMargin: Int = 3,
+        winMargin: Int = 2,
         differentNumberOfGamesFromRound: Round = Round.UNKNOWN,
         numberOfSetsFinal: Int = 5,
-        winScoreFinal: Int = 7,
-        winMarginFinal: Int = 3,
+        winScoreFinal: Int = 11,
+        winMarginFinal: Int = 2,
         tiebreakInFinalGame: Boolean = false,
         winScoreTiebreak: Int = 3,
         winMarginTieBreak: Int = 3,
@@ -397,6 +414,22 @@ class DataGenerator {
         playerOneId,
         playerTwoId,
         competitionCategoryId
+    )
+
+    fun newGameSpec(
+        gameNumber: Int = 1,
+        firstRegistrationResult: Int = 11,
+        secondRegistrationResult: Int = 9
+    ) = GameSpec(
+        gameNumber,
+        firstRegistrationResult,
+        secondRegistrationResult
+    )
+
+    fun newResultSpec(
+        games: List<GameSpec> = listOf()
+    ) = ResultSpec(
+        games
     )
 
     fun newRegistrationDTO(
