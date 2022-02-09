@@ -1,12 +1,13 @@
 package com.graphite.competitionplanner.result.service
 
+import com.graphite.competitionplanner.club.repository.ClubRepository
 import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
-import com.graphite.competitionplanner.competitioncategory.domain.UpdateCompetitionCategory
-import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
-import com.graphite.competitionplanner.draw.service.DrawService
+import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
+import com.graphite.competitionplanner.draw.domain.CreateDraw
 import com.graphite.competitionplanner.match.service.MatchDTO
 import com.graphite.competitionplanner.match.service.MatchService
+import com.graphite.competitionplanner.player.domain.CreatePlayer
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
@@ -28,15 +29,16 @@ class TestResultService(
     @Autowired val testUtil: TestUtil,
     @Autowired val matchService: MatchService,
     @Autowired val registrationService: RegistrationService,
-    @Autowired val competitionDrawRepository: CompetitionDrawRepository,
     @Autowired val registrationRepository: RegistrationRepository,
     @Autowired val resultService: ResultService,
     @Autowired val playerRepository: PlayerRepository,
-    @Autowired val drawService: DrawService,
     @Autowired val resultRepository: ResultRepository,
     @Autowired val util: Util,
     @Autowired val findCompetitionCategory: FindCompetitionCategory,
-    @Autowired val updateCompetitionCategory: UpdateCompetitionCategory
+    @Autowired val competitionCategoryRepository: CompetitionCategoryRepository,
+    @Autowired val createDraw: CreateDraw,
+    @Autowired val clubRepository: ClubRepository,
+    @Autowired val createPlayer: CreatePlayer
 ) {
 
     var competitionCategoryId = 0
@@ -46,7 +48,7 @@ class TestResultService(
 
     @BeforeAll
     fun setUpClassData() {
-        competitionCategoryId = testUtil.addCompetitionCategory("Herrar 5")
+        competitionCategoryId = testUtil.addCompetitionCategory("Herrar 3")
     }
 
     @BeforeEach
@@ -59,7 +61,7 @@ class TestResultService(
                 cost = original.settings.cost,
                 drawType = original.settings.drawType,
                 playersPerGroup = 3,
-                playersToPlayOff = 1,
+                playersToPlayOff = 2,
                 poolDrawStrategy = original.settings.poolDrawStrategy
             ),
             gameSettings = dataGenerator.newGameSettingsSpec(
@@ -76,56 +78,26 @@ class TestResultService(
             )
         )
 
-        updateCompetitionCategory.execute(original.id, updatedSettings)
+        competitionCategoryRepository.update(original.id, updatedSettings)
 
-        // Add players
-        val allPlayers = playerRepository.getAll()
-
-        // Get 22 players
-        val players = allPlayers.subList(0, 3)
+        val club = clubRepository.store(dataGenerator.newClubSpec())
+        val players = listOf(
+            createPlayer.execute(dataGenerator.newPlayerSpec(clubId = club.id)),
+            createPlayer.execute(dataGenerator.newPlayerSpec(clubId = club.id)),
+            createPlayer.execute(dataGenerator.newPlayerSpec(clubId = club.id)),
+            createPlayer.execute(dataGenerator.newPlayerSpec(clubId = club.id))
+        )
         for (player in players) {
             registrationService.registerPlayerSingles(RegistrationSinglesSpec(player.id, competitionCategoryId))
         }
-        drawService.createDraw(competitionCategoryId)
+        createDraw.execute(competitionCategoryId)
     }
-
-    @AfterEach
-    fun deleteDataForEachTest() {
-        // Remove matches
-        matchService.deleteMatchesInCategory(competitionCategoryId)
-
-        // Remove pool draw
-        competitionDrawRepository.deleteGroupsInCategory(competitionCategoryId)
-
-        // Remove registrations and delete category
-        val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
-        for (id in registrationIds) {
-            registrationService.unregister(id)
-        }
-    }
-
 
     @Test
     fun testAddResult() {
         addResult()
         Assertions.assertTrue(result.gameList.isNotEmpty())
         Assertions.assertNotNull(match.winner)
-    }
-
-    @Test
-    fun testNumberGenerator() {
-        val resultsMap = mutableMapOf<Int, Int>()
-
-        for (i in 1..100) {
-            val number = Random.nextInt(0, 10)
-            if (resultsMap.containsKey(number)) {
-                resultsMap[number] = resultsMap.getValue(number) + 1
-            }
-            else {
-                resultsMap[number] = 1
-            }
-        }
-        println(resultsMap)
     }
 
     private fun addResult() {
@@ -161,14 +133,14 @@ class TestResultService(
         Assertions.assertEquals(0, match.winner.size)
     }
 
-    @Test
-    fun testGetResult() {
-        addResult()
-        val result = resultService.getResult(match.id)
-        Assertions.assertNotNull(result.gameList)
-        Assertions.assertEquals(3, result.gameList.size)
-
-    }
+//    @Test
+//    fun testGetResult() {
+//        addResult()
+//        val result = resultService.getResult(match.id)
+//        Assertions.assertNotNull(result.gameList)
+//        Assertions.assertEquals(3, result.gameList.size)
+//
+//    }
 
     @Test
     fun testUpdateFullResults() {
