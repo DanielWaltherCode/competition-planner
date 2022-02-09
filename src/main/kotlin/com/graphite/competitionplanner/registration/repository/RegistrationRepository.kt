@@ -16,7 +16,7 @@ import com.graphite.competitionplanner.tables.PlayerRegistration.PLAYER_REGISTRA
 import com.graphite.competitionplanner.tables.Registration.REGISTRATION
 import com.graphite.competitionplanner.tables.records.*
 import org.jooq.DSLContext
-import org.jooq.Record4
+import org.jooq.Record5
 import org.jooq.TableField
 import org.jooq.impl.DSL.partitionBy
 import org.jooq.impl.DSL.sum
@@ -41,6 +41,7 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         val record: PlayerRegistrationRecord = dslContext.newRecord(PLAYER_REGISTRATION)
         record.registrationId = registrationId
         record.playerId = playerId
+        record.status = PlayerRegistrationStatus.PLAYING.name
         record.store()
         return record
     }
@@ -106,10 +107,16 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
 
     override fun storeSingles(spec: RegistrationSinglesSpecWithDate): RegistrationSinglesDTO {
         val registrationRecord = addRegistration(spec.date)
-        registerPlayer(registrationRecord.id, spec.playerId)
+        val playerRegistrationRecord = registerPlayer(registrationRecord.id, spec.playerId)
         registerInCategory(registrationRecord.id, spec.competitionCategoryId)
 
-        return RegistrationSinglesDTO(registrationRecord.id, spec.playerId, spec.competitionCategoryId, spec.date)
+        return RegistrationSinglesDTO(
+            registrationRecord.id,
+            spec.playerId,
+            spec.competitionCategoryId,
+            spec.date,
+            PlayerRegistrationStatus.valueOf(playerRegistrationRecord.status)
+        )
     }
 
     override fun storeDoubles(spec: RegistrationDoublesSpecWithDate): RegistrationDoublesDTO {
@@ -178,6 +185,27 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         }
     }
 
+    override fun getAllSingleRegistrations(competitionCategoryId: Int): List<RegistrationSinglesDTO> {
+        val records = dslContext.select(
+            REGISTRATION.ID, REGISTRATION.REGISTRATION_DATE, PLAYER_REGISTRATION.PLAYER_ID, PLAYER_REGISTRATION.STATUS,
+            COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID
+        )
+            .from(REGISTRATION)
+            .join(PLAYER_REGISTRATION).on(REGISTRATION.ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
+            .join(COMPETITION_CATEGORY_REGISTRATION)
+            .on(REGISTRATION.ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+            .fetch()
+
+        return records.map { RegistrationSinglesDTO(
+            it.getValue(REGISTRATION.ID),
+            it.getValue(PLAYER_REGISTRATION.PLAYER_ID),
+            it.getValue(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID),
+            it.getValue(REGISTRATION.REGISTRATION_DATE),
+            PlayerRegistrationStatus.valueOf(it.getValue(PLAYER_REGISTRATION.STATUS))
+        ) }
+    }
+
     override fun getCategoriesAndPlayersInCompetition(competitionId: Int): List<Pair<CategoryDTO, PlayerWithClubDTO>> {
         val records = dslContext.select(
             PLAYER.ID,
@@ -235,7 +263,8 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             record.getValue(REGISTRATION.ID),
             record.getValue(PLAYER_REGISTRATION.PLAYER_ID),
             record.getValue(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID),
-            record.getValue(REGISTRATION.REGISTRATION_DATE)
+            record.getValue(REGISTRATION.REGISTRATION_DATE),
+            PlayerRegistrationStatus.valueOf(record.getValue(PLAYER_REGISTRATION.STATUS))
         )
     }
 
@@ -286,7 +315,9 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
     override fun unregisterIndividualPlayer(registrationId: Int, playerId: Int) {
         val success = dslContext
             .deleteFrom(PLAYER_REGISTRATION)
-            .where(PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId).and(PLAYER_REGISTRATION.PLAYER_ID.eq(playerId)))
+            .where(
+                PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId).and(PLAYER_REGISTRATION.PLAYER_ID.eq(playerId))
+            )
             .execute() > 0
         if (!success) {
             throw NotFoundException("Could not delete. The registration with id $registrationId and playerId $playerId was not found.")
@@ -306,7 +337,10 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             .on(REGISTRATION.ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
             .join(PLAYER_REGISTRATION).on(REGISTRATION.ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
             .join(PLAYER_RANKING).on(PLAYER_RANKING.PLAYER_ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
-            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategory.id))
+            .where(
+                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategory.id)
+                    .and(PLAYER_REGISTRATION.STATUS.eq(PlayerRegistrationStatus.PLAYING.name))
+            )
             .fetch()
 
         return records.map {
@@ -318,16 +352,28 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         }
     }
 
-    override fun updatePlayerRegistrationStatus(registrationId: Int, status: String) {
-        dslContext.update(PLAYER_REGISTRATION).set(PLAYER_REGISTRATION.STATUS, status)
+    override fun updatePlayerRegistrationStatus(registrationId: Int, status: PlayerRegistrationStatus) {
+        dslContext.update(PLAYER_REGISTRATION).set(PLAYER_REGISTRATION.STATUS, status.name)
             .where(PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId)).execute()
     }
 
     override fun getPlayerRegistration(registrationId: Int): PlayerRegistrationRecord {
-       return dslContext
-           .selectFrom(PLAYER_REGISTRATION)
-           .where(PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId))
-           .fetchOneInto(PLAYER_REGISTRATION) ?: throw NotFoundException("RegistrationId not found")
+        return dslContext
+            .selectFrom(PLAYER_REGISTRATION)
+            .where(PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId))
+            .fetchOneInto(PLAYER_REGISTRATION) ?: throw NotFoundException("RegistrationId not found")
+    }
+
+    override fun getRegistrationIdForPlayerInCategory(categoryId: Int, playerId: Int): Int {
+        return dslContext
+            .select(PLAYER_REGISTRATION.REGISTRATION_ID)
+            .from(COMPETITION_CATEGORY_REGISTRATION)
+            .join(PLAYER_REGISTRATION)
+            .on(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(PLAYER_REGISTRATION.REGISTRATION_ID))
+            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(categoryId))
+            .and(PLAYER_REGISTRATION.PLAYER_ID.eq(playerId))
+            .fetchOneInto(Int::class.java)
+            ?: throw NotFoundException("That combination of category ID $categoryId and player ID $playerId was not found")
     }
 
     private fun getRankField(category: CategorySpec): TableField<PlayerRankingRecord, Int>? {
@@ -341,9 +387,9 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
     /**
      * Will return one row as RegistrationId, RegistrationDate, PlayerId, CompetitionCategoryId
      */
-    private fun getRegistration(playerId: Int, competitionCategoryId: Int): Record4<Int, LocalDate, Int, Int> {
+    private fun getRegistration(playerId: Int, competitionCategoryId: Int): Record5<Int, LocalDate, Int, String, Int> {
         return dslContext.select(
-            REGISTRATION.ID, REGISTRATION.REGISTRATION_DATE, PLAYER_REGISTRATION.PLAYER_ID,
+            REGISTRATION.ID, REGISTRATION.REGISTRATION_DATE, PLAYER_REGISTRATION.PLAYER_ID, PLAYER_REGISTRATION.STATUS,
             COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID
         )
             .from(REGISTRATION)
@@ -382,8 +428,10 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         for (registration in registrationSeeds) {
             dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
                 .set(COMPETITION_CATEGORY_REGISTRATION.SEED, registration.seed)
-                .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(registration.competitionCategoryId)
-                    .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(registration.registrationId)))
+                .where(
+                    COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(registration.competitionCategoryId)
+                        .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(registration.registrationId))
+                )
                 .execute()
         }
     }

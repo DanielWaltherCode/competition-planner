@@ -33,16 +33,24 @@
                     type="button"
                     v-if="isCategoryDrawnMap[registration.competitionCategory.id] && registration.registrationStatus === 'PLAYING'"
                     @click="giveWalkover(registration.competitionCategory.id, registration.id)">
-              {{$t("player.giveWalkover")}}
+              {{ $t("player.giveWalkover") }}
             </button>
 
             <!-- If category is already drawn, withdraw -->
             <button class="btn btn-danger"
                     type="button"
                     v-if="!isCategoryDrawnMap[registration.competitionCategory.id] && registration.registrationStatus === 'PLAYING'"
-                    @click="withdraw(registration.competitionCategory.id, registration.id, player.id)">
-              {{$t("player.withdraw")}}
+                    @click="withdraw(registration.competitionCategory.id, registration.id)">
+              {{ $t("player.withdraw") }}
             </button>
+          </div>
+          <div class="pt-4">
+            <div v-if="registration.registrationStatus === 'WALK_OVER'">
+              <p class="fw-bold fs-4"> {{ $t("player.hasGivenWalkover") }}</p>
+            </div>
+            <div v-if="registration.registrationStatus === 'WITHDRAWN'">
+              <p class="fw-bold fs-4"> {{ $t("player.hasWithdrawn") }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -117,15 +125,15 @@ export default {
       return searchResult.firstName + " " + searchResult.lastName
     },
     giveWalkover(categoryId, registrationId) {
-      if (confirm(this.$tc("player.walkoverWarningText"))) {
-          RegistrationService.giveWalkover(this.competition.id, categoryId, registrationId).then( () => {
-            this.getRegistrations(this.competition.id, this.playerId)
-          })
+      if (confirm(this.$t("player.walkoverWarningText", {player: this.player.firstName + this.player.lastName}))) {
+        RegistrationService.giveWalkover(this.competition.id, categoryId, registrationId).then(() => {
+          this.getRegistrations(this.competition.id, this.playerId)
+        })
       }
     },
-    withdraw(categoryId, registrationId, playerId) {
-      if (confirm(this.$tc("player.withdrawWarningText"))) {
-        RegistrationService.withdraw(this.competition.id, categoryId, registrationId, playerId).then( () => {
+    withdraw(categoryId, registrationId) {
+      if (confirm(this.$t("player.withdrawWarningText", {player: this.player.firstName + this.player.lastName}))) {
+        RegistrationService.withdraw(this.competition.id, categoryId, registrationId).then(() => {
           this.getRegistrations(this.competition.id, this.playerId)
         })
       }

@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.domain.Unregister
 import com.graphite.competitionplanner.registration.domain.Withdraw
 import com.graphite.competitionplanner.registration.interfaces.*
+import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import io.swagger.annotations.ApiModelProperty
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/competition/{competitionId}/registration")
 class CompetitionRegistrationApi(
     val registrationService: RegistrationService,
-    val drawService: DrawService,
+    val registrationRepository: RegistrationRepository,
     val widthDraw: Withdraw,
     val unregister: Unregister
 ) {
@@ -59,22 +60,26 @@ class CompetitionRegistrationApi(
 
     }
 
-    @PutMapping("/withdraw/{competitionCategoryId}/{registrationId}/{playerId}")
+    // Return the registration id for a player in a given category
+    @GetMapping("/player/{competitionCategoryId}/{playerId}")
+    fun getRegistrationId(@PathVariable competitionId: Int,
+                                  @PathVariable competitionCategoryId: Int,
+                                  @PathVariable playerId: Int): Int {
+        return registrationRepository.getRegistrationIdForPlayerInCategory(competitionCategoryId, playerId)
+
+    }
+
+    @PutMapping("/withdraw/{competitionCategoryId}/{registrationId}")
     fun withdrawFromCategory(@PathVariable competitionId: Int,
                              @PathVariable registrationId: Int,
-                             @PathVariable competitionCategoryId: Int,
-                             @PathVariable playerId: Int) {
-        if (drawService.isDrawMade(competitionCategoryId)) {
-            // withdraw
-            widthDraw.beforeCompetition(competitionId, competitionCategoryId, registrationId)
-        }
-        else {
-            unregister.unregisterIndividualPlayer(registrationId, playerId)
-        }
+                             @PathVariable competitionCategoryId: Int) {
+        widthDraw.beforeCompetition(competitionId, competitionCategoryId, registrationId)
     }
 
     @PutMapping("/walkover/{competitionCategoryId}/{registrationId}")
-    fun reportWalkover(@PathVariable competitionId: Int, @PathVariable registrationId: Int, @PathVariable competitionCategoryId: Int) {
+    fun reportWalkover(@PathVariable competitionId: Int,
+                       @PathVariable registrationId: Int,
+                       @PathVariable competitionCategoryId: Int) {
             widthDraw.walkOver(competitionId, competitionCategoryId, registrationId)
         }
 }

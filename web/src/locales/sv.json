@@ -156,9 +156,11 @@
     "info": "Spelarinfo",
     "playingWith": "Spelar med ",
     "giveWalkover": "Lämna WO i klassen",
+    "hasGivenWalkover": "Har lämnat WO",
     "withdraw": "Lämna återbud",
-    "walkoverWarningText": "Är du säker på att spelaren ska lämna WO i klassen? Spelaren förlorar alla återstående matcher i klassen",
-    "withdrawWarningText": "Är du säker på att spelaren ska lämna återbud?"
+    "hasWithdrawn": "Har lämnat återbud",
+    "walkoverWarningText": "Är du säker på att {player} ska lämna WO i klassen? Spelaren förlorar alla återstående matcher i klassen",
+    "withdrawWarningText": "Är du säker på att {player} ska lämna återbud?"
   },
   "draw": {
     "sidebar": {
@@ -280,7 +282,8 @@
       "linkToCategorySettings": "klassinställningar",
       "add": "Lägg till set",
       "remove": "Ta bort set",
-      "delete": "Ta bort resultat"
+      "delete": "Ta bort resultat",
+      "walkover": "Lämna WO"
     },
     "noMatches": "Ingen lottning är gjord än så inga matcher är uppsatta"
   },
@@ -354,7 +357,8 @@
     "resultRegistered": "Resultatet är sparat",
     "temporaryResultRegistered": "Tillfälligt resultatet är sparat",
     "error": {
-      "general": "Något gick fel. Var god försök senare"
+      "general": "Något gick fel. Var god försök senare",
+      "WO": "Kunde inte lämna WO för spelaren"
     }
   },
   "confirm": {

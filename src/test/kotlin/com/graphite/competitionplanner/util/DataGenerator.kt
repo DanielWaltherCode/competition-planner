@@ -237,12 +237,14 @@ class DataGenerator {
         id: Int = this.registrationId++,
         playerId: Int = this.playerId++,
         competitionCategoryId: Int = this.competitionCategoryId++,
-        date: LocalDate = LocalDate.now()
+        date: LocalDate = LocalDate.now(),
+        status: PlayerRegistrationStatus = PlayerRegistrationStatus.PLAYING
     ) = RegistrationSinglesDTO(
         id,
         playerId,
         competitionCategoryId,
-        date
+        date,
+        status
     )
 
     fun newRegistrationRankDTO(

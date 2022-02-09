@@ -22,5 +22,10 @@ data class RegistrationSinglesDTO(
     /**
      * The date when the registration took place
      */
-    val registrationDate: LocalDate
+    val registrationDate: LocalDate,
+
+    /**
+     * Status of this registration
+     */
+    val status: PlayerRegistrationStatus
 )

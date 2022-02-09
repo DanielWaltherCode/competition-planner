@@ -41,7 +41,7 @@
             </div>
           </div>
           <!-- List of registered players if there are any -->
-          <div id="registered-players" v-if="!isChosenCategoryDrawn && registeredPlayersLists.length > 0">
+          <div class="pb-5" id="registered-players" v-if="!isChosenCategoryDrawn && registeredPlayersLists.length > 0">
             <h3>{{ $t("draw.main.registeredPlayers") }}</h3>
             <!-- The innerPlayerList contains two players in case of doubles -->
             <div v-for="(innerPlayerList, index) in registeredPlayersLists" class="py-2 justify-content-center"
