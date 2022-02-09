@@ -9,11 +9,6 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/result/{competitionId}")
 class ResultApi(val resultService: ResultService, val resultRepository: ResultRepository) {
 
-    @PostMapping("/{matchId}")
-    fun addResult(@PathVariable matchId: Int, @RequestBody resultSpec: ResultSpec): ResultDTO {
-       return resultService.addResult(matchId, resultSpec)
-    }
-
     @PutMapping("/{matchId}/{gameId}")
     fun updateGameResult(@PathVariable matchId: Int, @PathVariable gameId: Int, @RequestBody gameSpec: GameSpec): ResultDTO {
         return resultService.updateGameResult(matchId, gameId, gameSpec)

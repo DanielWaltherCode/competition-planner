@@ -14,7 +14,7 @@ class TestCreateDrawGeneratedMatches: TestBaseCreateDraw() {
     fun groupOfThree() {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.POOL_AND_CUP,
                 playersPerGroup = 3
             )
@@ -48,7 +48,7 @@ class TestCreateDrawGeneratedMatches: TestBaseCreateDraw() {
     fun groupOfFour() {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.POOL_AND_CUP,
                 playersPerGroup = 4
             )
@@ -82,7 +82,7 @@ class TestCreateDrawGeneratedMatches: TestBaseCreateDraw() {
     fun groupOfFive() {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.POOL_AND_CUP,
                 playersPerGroup = 5
             )

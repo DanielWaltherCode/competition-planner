@@ -44,7 +44,7 @@ class TestStateTransition : TestBaseCreateDraw() {
     private fun setupCompetitionCategory(): CompetitionCategoryDTO {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 11,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.POOL_AND_CUP,
                 playersPerGroup = 4
             )

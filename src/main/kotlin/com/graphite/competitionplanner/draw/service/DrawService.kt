@@ -2,7 +2,6 @@ package com.graphite.competitionplanner.draw.service
 
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
-import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsDTO
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.api.DrawDTO
@@ -10,7 +9,6 @@ import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
@@ -36,186 +34,6 @@ class DrawService(
     val findCompetitionCategory: FindCompetitionCategory
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
-
-    fun createDraw(competitionCategoryId: Int): DrawDTO {
-        // Check draw type and fetch players signed up in this category
-        // its easier to work with registration ids since it could be doubles and then translate back to
-        // players after the draw is made
-
-        val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
-        val categoryMetadata: GeneralSettingsDTO
-        try {
-            categoryMetadata = findCompetitionCategory.byId(competitionCategoryId).settings
-        } catch (ex: IllegalStateException) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Category metadata not found for that id")
-        }
-
-        // Check if draw has already been made. If so remove and create again.
-        if(isDrawMade(competitionCategoryId)) {
-            deleteDraw(competitionCategoryId)
-        }
-
-        // Create draw
-        createSeed(competitionCategoryId, categoryMetadata)
-
-        if (categoryMetadata.drawType.name == DrawType.POOL_ONLY.name ||
-            categoryMetadata.drawType.name == DrawType.POOL_AND_CUP.name
-        ) {
-            createPoolDraw(registrationIds, categoryMetadata, competitionCategoryId)
-        } else {
-            createPlayOffs(registrationIds, competitionCategoryId)
-        }
-
-        // Fetch the matches that have now been set up
-        return getDraw(competitionCategoryId)
-    }
-
-    private fun createSeed(competitionCategoryId: Int, categoryMetadata: GeneralSettingsDTO) {
-        val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
-        val playerList = mutableMapOf<Int, List<PlayerDTO>>()
-        for (id in registrationIds) {
-            // TODO: Remove this N+1 query, we should make a repository function that takes an array of registration ids instead
-            playerList[id] = registrationService.getPlayersFromRegistrationId(id)
-        }
-
-        val categoryType = competitionCategoryRepository.getCategoryType(competitionCategoryId).categoryType
-
-        val rankings = mutableMapOf<Int, Int>()
-
-        for ((registrationId, players) in playerList) {
-
-            var sum = 0
-            for (player in players) {
-                if (categoryType == "SINGLES") {
-                    sum += playerRepository.getPlayerRanking(player.id)?.rankSingle ?: 0
-                } else if (categoryType == "DOUBLES") {
-                    sum += playerRepository.getPlayerRanking(player.id)?.rankDouble ?: 0
-                }
-            }
-
-            rankings[registrationId] = sum
-        }
-
-        val sortedRankings = rankings.toList()
-            .sortedBy { (_, value) -> -value }
-            .toMap()
-
-        val numberOfSeeds = drawUtil.getNumberOfSeeds(categoryMetadata.playersPerGroup, sortedRankings.size)
-        var seed = 1
-        for ((registrationId, _) in sortedRankings) {
-            registrationRepository.setSeed(registrationId, competitionCategoryId, seed)
-            seed += 1
-
-            if (seed > numberOfSeeds) break
-        }
-    }
-
-    private fun createPlayOffs(
-        registrationIds: List<Int>,
-        competitionCategoryId: Int
-    ) {
-        val matches = drawUtil.createDirectToPlayoff(competitionCategoryId, registrationIds)
-        for (match in matches) {
-            matchRepository.addMatch(match)
-        }
-    }
-
-    fun createPoolDraw(
-        registrationIds: List<Int>,
-        categoryMetadata: GeneralSettingsDTO,
-        competitionCategoryId: Int
-    ) {
-        // If draw has already been made, first remove old matches
-        if (matchRepository.isCategoryDrawn(competitionCategoryId)) {
-            matchRepository.deleteMatchesForCategory(competitionCategoryId)
-        }
-
-        val playerGroups = mutableMapOf<Int, MutableList<PlayerDTO>>()
-        val numberOfPlayers = registrationIds.size
-
-        val remainder = numberOfPlayers.rem(categoryMetadata.playersPerGroup)
-        var nrGroups = numberOfPlayers / categoryMetadata.playersPerGroup
-
-        // If remainder is zero, number of registered players fits perfectly with
-        // group size. Otherwise add one more group if it's groups of 4
-        if (remainder != 0 && categoryMetadata.playersPerGroup == 4) {
-            nrGroups += 1
-        }
-
-        val groupMap = mutableMapOf<Int, MutableList<Int>>()
-
-        // Add lists to hold registration ids for each group
-        var counter = 0
-        while (counter < nrGroups) {
-            groupMap.put(counter, mutableListOf())
-            counter += 1
-        }
-
-        // Add seeded players to groups
-        val categorySeedings = registrationRepository.getSeeds(competitionCategoryId)
-        val seededPlayers = mutableListOf<Int>()
-        for (id in registrationIds) {
-            for (competitionSeed in categorySeedings) {
-                if (competitionSeed.registrationId == id) {
-                    groupMap[competitionSeed.seed - 1]?.add(id)
-                    seededPlayers.add(id)
-                }
-            }
-        }
-        // Remove ids already added for seeding
-        val remainingIds = registrationIds.filter { !seededPlayers.contains(it) }.toMutableList()
-        // Add one player to each group. Start after nr of seeds.
-        // If categoryseedings == nrGroups start from 0
-        remainingIds.shuffle()
-        counter = if (categorySeedings.size == nrGroups) 0 else categorySeedings.size
-        for (id in remainingIds) {
-            groupMap[counter]?.add(id)
-            counter += 1
-
-            if (counter == nrGroups) {
-                counter = 0
-            }
-        }
-
-        // Store matches in database
-        for (groupNumber in groupMap.keys) {
-            val registrationIdsInGroup = groupMap[groupNumber]
-            if (registrationIdsInGroup == null) {
-                logger.error("Draw failed, no registration ids found for group")
-                throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Draw failed")
-            }
-
-            if (registrationIdsInGroup.size == 3) {
-                drawUtil.setUpGroupOfThree(
-                    registrationIdsInGroup,
-                    drawUtil.getPoolName(groupNumber),
-                    competitionCategoryId
-                )
-            } else if (registrationIdsInGroup.size == 4) {
-                drawUtil.setUpGroupOfFour(
-                    registrationIdsInGroup,
-                    drawUtil.getPoolName(groupNumber),
-                    competitionCategoryId
-                )
-            } else if (registrationIdsInGroup.size == 5) {
-                // Match order == 2-3, 1-3, 1-2
-            } else {
-                logger.warn("Group size was different from 3, 4, 5. It was ${registrationIdsInGroup.size}. Pool draw failed")
-            }
-        }
-
-        for (key in groupMap.keys) {
-            playerGroups[key] = mutableListOf()
-            for (registrationId in groupMap[key]!!) {
-                // TODO: Remove this N+1 query, we should make a repository function that takes an array of registration ids instead
-                val players = registrationService.getPlayersFromRegistrationId(registrationId)
-                if (players.size > 1) {
-                    println("Warning, more than one player returned for singles")
-                }
-                playerGroups[key]?.add(players[0])
-            }
-        }
-    }
 
     fun deleteDraw(competitionCategoryId: Int) {
         matchRepository.deleteMatchesForCategory(competitionCategoryId)

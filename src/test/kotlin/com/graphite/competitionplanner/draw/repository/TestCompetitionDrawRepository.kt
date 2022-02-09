@@ -11,7 +11,6 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetiti
 import com.graphite.competitionplanner.draw.domain.Pool
 import com.graphite.competitionplanner.draw.interfaces.GroupDrawDTO
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
-import com.graphite.competitionplanner.draw.interfaces.PlayOffMatchDTO
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
@@ -56,7 +55,7 @@ class TestCompetitionDrawRepository(
         return competitionCategoryRepository.store(
             this.id, dataGenerator.newCompetitionCategorySpec(
                 category = dataGenerator.newCategorySpec(category.id, category.name, category.type),
-                settings = dataGenerator.newGeneralSettingsSpec(drawType = DrawType.CUP_ONLY)
+                settings = dataGenerator.newGeneralSettingsDTO(drawType = DrawType.CUP_ONLY)
             )
         )
     }

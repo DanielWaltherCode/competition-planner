@@ -14,7 +14,7 @@ class TestAdvancementPoolToPlayoffWhenOneProceed : TestAdvancementPoolToPlayoff(
 
     private val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
         id = 35,
-        settings = dataGenerator.newGeneralSettingsSpec(
+        settings = dataGenerator.newGeneralSettingsDTO(
             drawType = DrawType.POOL_AND_CUP,
             playersPerGroup = 2,
             playersToPlayOff = 1

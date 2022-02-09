@@ -31,7 +31,6 @@ class ExceptionAdvisor {
     @ResponseBody
     @ExceptionHandler(
         IllegalArgumentException::class,
-        GameValidationException::class,
         CannotDeleteCompetitionCategoryException::class,
         NotEnoughRegistrationsException::class,
         PlayerAlreadyRegisteredException::class)
@@ -43,4 +42,13 @@ class ExceptionAdvisor {
         return ResponseEntity(body, HttpStatus.BAD_REQUEST)
     }
 
+    @ResponseBody
+    @ExceptionHandler(GameValidationException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun gameValidationError(exception: GameValidationException, request: WebRequest): ResponseEntity<Any> {
+        val body = mutableMapOf<String, Any>()
+        body["timestamp"] = LocalDateTime.now()
+        body["message"] = "${exception.message}"
+        return ResponseEntity(body, HttpStatus.BAD_REQUEST)
+    }
 }

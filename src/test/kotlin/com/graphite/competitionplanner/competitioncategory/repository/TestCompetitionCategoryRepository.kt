@@ -103,49 +103,18 @@ class TestCompetitionCategoryRepository(
     }
 
     @Test
-    fun shouldThrowExceptionIfCompetitionCategoryHasBeenDrawn() {
-        // Setup
-        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
-        val spec =
-            dataGenerator.newCompetitionCategorySpec(
-                status = CompetitionCategoryStatus.DRAWN,
-                category = CategorySpec(category.id, category.name, category.type),
-                gameSettings = dataGenerator.newGameSettingsSpec(useDifferentRulesInEndGame = false)
-            )
-        val original = repository.store(competition.id, spec)
-        val updateSpec = dataGenerator.newCompetitionCategoryUpdateSpec(
-            settings = dataGenerator.newGeneralSettingsSpec(cost = 125f, playersToPlayOff = 1),
-            gameSettings = dataGenerator.newGameSettingsSpec(
-                numberOfSets = 3, winScore = 5, numberOfSetsFinal = 2, useDifferentRulesInEndGame = true
-            )
-        )
-
-        // Act & Assert
-        Assertions.assertThrows(IllegalActionException::class.java) {
-            repository.update(original.id, updateSpec)
-        }
-
-        val afterUpdate = repository.get(original.id)
-        Assertions.assertEquals(
-            original,
-            afterUpdate,
-            "The competition category was updated when it was not supposed to."
-        )
-    }
-
-    @Test
     fun shouldBeAbleToUpdateCompetitionCategory() {
         // Setup
         val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
         val spec =
             dataGenerator.newCompetitionCategorySpec(
                 category = CategorySpec(category.id, category.name, category.type),
-                gameSettings = dataGenerator.newGameSettingsSpec(useDifferentRulesInEndGame = false)
+                gameSettings = dataGenerator.newGameSettingsDTO(useDifferentRulesInEndGame = false)
             )
         val original = repository.store(competition.id, spec)
         val updateSpec = dataGenerator.newCompetitionCategoryUpdateSpec(
-            settings = dataGenerator.newGeneralSettingsSpec(cost = 110f, playersToPlayOff = 1),
-            gameSettings = dataGenerator.newGameSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(cost = 110f, playersToPlayOff = 1),
+            gameSettings = dataGenerator.newGameSettingsDTO(
                 numberOfSets = 4, winScore = 8, numberOfSetsFinal = 11, useDifferentRulesInEndGame = true
             )
         )

@@ -68,6 +68,7 @@ class MatchService(
         return matchRecords.map { recordToMatchAndResultDTO(it) }
     }
 
+    // TODO: Move to ResultService?
     fun setWinner(matchId: Int, winnerRegistrationId: Int) {
         matchRepository.setWinner(matchId, winnerRegistrationId)
     }
@@ -119,7 +120,26 @@ class MatchService(
         return recordToMatchAndResultDTO(matchRecord)
     }
 
+    fun getSimpleMatchDTO(matchId: Int): SimpleMatchDTO {
+        val record = matchRepository.getMatch(matchId)
+        return SimpleMatchDTO(
+            record.id,
+            record.competitionCategoryId,
+            record.firstRegistrationId,
+            record.secondRegistrationId,
+            record.matchType
+        )
+    }
+
 }
+
+data class SimpleMatchDTO(
+    val id: Int,
+    val competitionCategoryId: Int,
+    val firstRegistrationId: Int,
+    val secondRegistrationId: Int,
+    val matchType: String
+)
 
 
 data class MatchDTO(

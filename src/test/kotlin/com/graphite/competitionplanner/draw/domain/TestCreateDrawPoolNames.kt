@@ -14,7 +14,7 @@ class TestCreateDrawPoolNames: TestBaseCreateDraw() {
     fun groupNamesShallBeUnique() {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.POOL_AND_CUP,
                 playersPerGroup = 4
             )

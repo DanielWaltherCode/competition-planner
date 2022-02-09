@@ -15,7 +15,7 @@ class TestCreateDrawCupOnlyPlaceholderMatches: TestBaseCreateDraw() {
     fun shouldGenerateTheCorrectNumberOfMatchesPerRound() {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.CUP_ONLY,
                 playersPerGroup = 3
             )
@@ -52,7 +52,7 @@ class TestCreateDrawCupOnlyPlaceholderMatches: TestBaseCreateDraw() {
     fun shouldAssignCorrectMatchOrderToPlaceHolderMatches() {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.CUP_ONLY,
                 playersPerGroup = 3
             )
