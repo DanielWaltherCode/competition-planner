@@ -24,7 +24,7 @@ class RegisterDoubleToCompetition(
         val competitionCategory: CompetitionCategoryDTO = findCompetitionCategory.byId(spec.competitionCategoryId)
         if (competitionCategory.category.type != CategoryType.DOUBLES.name) {
             throw IllegalArgumentException("The given competition category id ${spec.competitionCategoryId} does not " +
-                    "correspond to a category of type ${CategoryType.DOUBLES} ")
+                    "correspond to a category of type ${CategoryType.DOUBLES}. ${competitionCategory} ")
         }
 
         val playerIds: List<Int> = repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)
