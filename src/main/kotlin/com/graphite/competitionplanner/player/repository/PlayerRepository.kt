@@ -49,7 +49,7 @@ class PlayerRepository(val dslContext: DSLContext) : IPlayerRepository {
     }
 
     fun getAll(): List<PlayerRecord> {
-        return dslContext.selectFrom(PLAYER).fetchInto(PLAYER)
+        return dslContext.selectFrom(PLAYER).where(PLAYER.ID.ne(0).and(PLAYER.ID.ne(-1))).fetchInto(PLAYER)
     }
 
     fun clearTable() {
