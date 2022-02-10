@@ -127,7 +127,9 @@ class MatchService(
             record.competitionCategoryId,
             record.firstRegistrationId,
             record.secondRegistrationId,
-            record.matchType
+            record.matchType,
+            record.groupOrRound,
+            record.matchOrderNumber,
         )
     }
 
@@ -138,7 +140,9 @@ data class SimpleMatchDTO(
     val competitionCategoryId: Int,
     val firstRegistrationId: Int,
     val secondRegistrationId: Int,
-    val matchType: String
+    val matchType: String,
+    val groupOrRound: String,
+    val orderNumber: Int
 )
 
 
