@@ -142,13 +142,17 @@ class DataGenerator {
         competitionCategoryId: Int = this.competitionCategoryId++,
         firstRegistrationId: Int = registrationId++,
         secondRegistrationId: Int = registrationId++,
-        matchType: String = "A"
+        matchType: String = com.graphite.competitionplanner.draw.service.MatchType.GROUP.toString(),
+        groupOrRound: String = "A",
+        orderNumber: Int = 1,
     ) = SimpleMatchDTO (
         id,
         competitionCategoryId,
         firstRegistrationId,
         secondRegistrationId,
-        matchType
+        matchType,
+        groupOrRound,
+        orderNumber
     )
 
     fun newMatchAndResultDTO(

@@ -2,10 +2,17 @@ package com.graphite.competitionplanner.result.service
 
 import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
+import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.GameSettingsDTO
+import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
+import com.graphite.competitionplanner.draw.interfaces.Round
+import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchDTO
 import com.graphite.competitionplanner.match.service.MatchService
+import com.graphite.competitionplanner.match.service.SimpleMatchDTO
+import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.domain.AddResult
@@ -14,6 +21,7 @@ import com.graphite.competitionplanner.tables.records.GameRecord
 import com.graphite.competitionplanner.tables.records.MatchRecord
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import kotlin.math.ceil
 
 @Service
 class ResultService(
@@ -21,7 +29,9 @@ class ResultService(
     val matchService: MatchService,
     val matchRepository: MatchRepository,
     val findCompetitionCategory: FindCompetitionCategory,
-    val addResult: AddResult
+    val addResult: AddResult,
+    val competitionDrawRepository: ICompetitionDrawRepository,
+    val registrationRepository: RegistrationRepository
 ) {
 
     private val LOGGER = LoggerFactory.getLogger(javaClass)
@@ -41,13 +51,11 @@ class ResultService(
         val winnerId: Int
         if (finalGame.firstRegistrationResult > finalGame.secondRegistrationResult) {
             winnerId = match.firstRegistrationId
-        }
-        else if (finalGame.firstRegistrationResult < finalGame.secondRegistrationResult) {
+        } else if (finalGame.firstRegistrationResult < finalGame.secondRegistrationResult) {
             winnerId = match.secondRegistrationId
-        }
-        else {
+        } else {
             // Couldn't determine winner, something is wrong!
-                LOGGER.error("Couldn't determine winner in match ${matchId}!", resultSpec)
+            LOGGER.error("Couldn't determine winner in match ${matchId}!", resultSpec)
             throw GameValidationException(GameValidationException.Reason.COULD_NOT_DECIDE_WINNER)
         }
         matchService.setWinner(match.id, winnerId)
@@ -74,14 +82,69 @@ class ResultService(
     }
 
     fun addFinalMatchResult(matchId: Int, resultSpec: ResultSpec): ResultDTO {
+        // TODO: Think about what happens if something fails in this function. How do we recover?
+        // TODO: Maybe we have to make all of this in one transaction so we avoid getting into an unwanted state?
+
         val match = matchService.getSimpleMatchDTO(matchId)
         val competitionCategory = findCompetitionCategory.byId(match.competitionCategoryId)
-        return addResult.execute(match, resultSpec, competitionCategory)
+        val result = addResult.execute(match, resultSpec, competitionCategory)
+        advanceRegistrations(competitionCategory, match)
+        return result
+    }
+
+    private fun advanceRegistrations(competitionCategory: CompetitionCategoryDTO, match: SimpleMatchDTO) {
+        // Match has now been completed, and we need to decide if we need to advance players (registrations) to next round
+        if (competitionCategory.settings.drawType == DrawType.POOL_ONLY) {
+            return
+        } else if (competitionCategory.settings.drawType == DrawType.POOL_AND_CUP && match.matchType == MatchType.GROUP.toString()) {
+            val draw = competitionDrawRepository.get(competitionCategory.id)
+            val matchesInPool = draw.groups.first { it.name == match.groupOrRound }.matches
+            val allMatchesHaveBeenPlayedInPool = matchesInPool.all { it.winner.isNotEmpty() } // If winner is empty, then there is no winner.
+            if (allMatchesHaveBeenPlayedInPool) {
+                val groupStanding = draw.groups.first { it.name == match.groupOrRound }.groupStandingList
+                val registrationsToAdvance = groupStanding.map { // Assuming groupStanding is sorted first to last place
+                    registrationRepository.getRegistrationIdForPlayerInCategory(competitionCategory.id, it.player.first().id)
+                }
+
+                val groupToPlayoff = draw.poolToPlayoffMap.filter { it.groupPosition.groupName == match.groupOrRound }.sortedBy { it.groupPosition.position }
+                assert(groupToPlayoff.size == registrationsToAdvance.size) { "Number of players advancing does not match the number of group to playoff mappings" }
+
+                draw.groups.first().groupStandingList
+
+                groupToPlayoff.zip(registrationsToAdvance) { groupToPlayOffMapping, registrationId ->
+                    val playoffPosition = groupToPlayOffMapping.playoffPosition
+                    val record = matchRepository.getMatch(playoffPosition.matchId)
+                    if (playoffPosition.position == 1) {
+                        record.firstRegistrationId = registrationId
+                    }else {
+                        record.secondRegistrationId = registrationId
+                    }
+                    record.update()
+                }
+            }
+        } else {
+            if (Round.valueOf(match.groupOrRound) == Round.FINAL) {
+                // Nothing to advance
+            } else {
+                val draw = competitionDrawRepository.get(competitionCategory.id)
+                val winner = matchRepository.getMatch(match.id).winner
+                val nextRound = draw.playOff.filter { it.round < Round.valueOf(match.groupOrRound) }.minByOrNull { it.round }!!
+                val nextOrderNumber = ceil( match.orderNumber / 2.0 ).toInt() // 1 -> 1, 2 -> 1, 3 -> 2, etc.
+                val nextMatch = nextRound.matches.first { it.matchOrderNumber == nextOrderNumber }
+                val record = matchRepository.getMatch(nextMatch.id)
+                if (match.orderNumber % 2 == 1) {
+                    record.firstRegistrationId = winner
+                }else {
+                    record.secondRegistrationId = winner
+                }
+                record.update()
+            }
+        }
     }
 
     fun getResult(matchId: Int): ResultDTO {
         val resultList = resultRepository.getResult(matchId)
-        return ResultDTO(resultList.map { recordToDTO(it) } )
+        return ResultDTO(resultList.map { recordToDTO(it) })
     }
 
     private fun validateResult(categoryId: Int, resultSpec: ResultSpec) {
