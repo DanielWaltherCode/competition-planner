@@ -24,8 +24,7 @@ class AddResult(
         val gameSettings = competitionCategory.gameSettings
 
         val policy = getPolicyFor(match, gameSettings)
-        policy.validateResult(result, gameSettings)
-        val winnerId = policy.getWinner(match, result, gameSettings)
+        val winnerId = policy.validateResultAndReturnWinner(match, result)
 
         repository.deleteResults(match.id)
         val games = result.gameList.map { repository.storeResult(match.id, it) }
@@ -34,98 +33,43 @@ class AddResult(
         return ResultDTO(games)
     }
 
-    private fun getPolicyFor(match: SimpleMatchDTO, gameSettings: GameSettingsDTO): ResultPolicy {
+    private fun getPolicyFor(match: SimpleMatchDTO, gameSettings: GameSettingsDTO): ResultValidationSpecification {
         return if (
             match.matchType.isRound() &&
             gameSettings.useDifferentRulesInEndGame &&
             Round.valueOf(match.matchType) <= gameSettings.differentNumberOfGamesFromRound)
         {
-            DifferentRulesPolicy()
+            ResultValidationSpecification(gameSettings.numberOfSetsFinal, gameSettings.winMarginFinal, gameSettings.winScoreFinal)
         } else {
-            NormalRulesPolicy()
+            ResultValidationSpecification(gameSettings.numberOfSets, gameSettings.winMargin, gameSettings.winScore)
         }
     }
 }
 
-abstract class ResultPolicy {
+class ResultValidationSpecification(val numberOfSets: Int, val winMargin: Int, val winScore: Int) {
     /**
-     * Check the validity of the reported results.
+     * Check the validity of the reported results and return the winner's id.
      *
      * @throws GameValidationException When the results are invalid.
+     * @return The registration id of the winner.
      */
     @Throws(GameValidationException::class)
-    abstract fun validateResult(result: ResultSpec, gameSettings: GameSettingsDTO)
+    fun validateResultAndReturnWinner(match: SimpleMatchDTO, result: ResultSpec): Int {
 
-    /**
-     * Return the registration id of the winner in the match given the results and game settings.
-     *
-     * @throws GameValidationException When no winner can be determined.
-     */
-    @Throws(GameValidationException::class)
-    abstract fun getWinner(match: SimpleMatchDTO, result: ResultSpec, gameSettings: GameSettingsDTO): Int
-}
-
-class NormalRulesPolicy: ResultPolicy() {
-    override fun validateResult(result: ResultSpec, gameSettings: GameSettingsDTO) {
-
-        if (result.gameList.size > gameSettings.numberOfSets) {
+        if (result.gameList.size > this.numberOfSets) {
             throw GameValidationException(GameValidationException.Reason.TOO_MANY_SETS_REPORTED)
         }
 
-        if (result.gameList.any { it.firstRegistrationResult < gameSettings.winScore  &&
-                    it.secondRegistrationResult < gameSettings.winScore }) {
+        if (result.gameList.any { it.firstRegistrationResult < this.winScore  &&
+                    it.secondRegistrationResult < this.winScore }) {
             throw GameValidationException(GameValidationException.Reason.TOO_FEW_POINTS_IN_SET)
         }
 
-        if (result.gameList.any { abs(it.firstRegistrationResult - it.secondRegistrationResult) < gameSettings.winMargin }) {
+        if (result.gameList.any { abs(it.firstRegistrationResult - it.secondRegistrationResult) < this.winMargin }) {
             throw GameValidationException(GameValidationException.Reason.NOT_ENOUGH_WIN_MARGIN)
         }
 
-        val requiredWins = ceil(gameSettings.numberOfSets / 2.0).toInt()
-        val firstRegistrationWins = result.gameList.filter { it.firstRegistrationResult > it.secondRegistrationResult }.size
-        val secondRegistrationWins = result.gameList.filter { it.firstRegistrationResult < it.secondRegistrationResult }.size
-
-        if (firstRegistrationWins < requiredWins && secondRegistrationWins < requiredWins) {
-            throw GameValidationException(GameValidationException.Reason.COULD_NOT_DECIDE_WINNER)
-        }
-    }
-
-    override fun getWinner(match: SimpleMatchDTO, result: ResultSpec, gameSettings: GameSettingsDTO): Int {
-        val requiredWins = ceil(gameSettings.numberOfSets / 2.0).toInt()
-        val firstRegistrationWins = result.gameList.filter { it.firstRegistrationResult > it.secondRegistrationResult }.size
-        val secondRegistrationWins = result.gameList.filter { it.firstRegistrationResult < it.secondRegistrationResult }.size
-
-        if (firstRegistrationWins < requiredWins && secondRegistrationWins < requiredWins) {
-            throw GameValidationException(GameValidationException.Reason.COULD_NOT_DECIDE_WINNER)
-        }
-
-        return if (firstRegistrationWins > secondRegistrationWins) {
-            match.firstRegistrationId
-        }else {
-            match.secondRegistrationId
-        }
-    }
-}
-
-class DifferentRulesPolicy: ResultPolicy() {
-    override fun validateResult(result: ResultSpec, gameSettings: GameSettingsDTO) {
-
-        if (result.gameList.size > gameSettings.numberOfSetsFinal) {
-            throw GameValidationException(GameValidationException.Reason.TOO_MANY_SETS_REPORTED)
-        }
-
-        if (result.gameList.any { it.firstRegistrationResult < gameSettings.winScoreFinal  &&
-                    it.secondRegistrationResult < gameSettings.winScoreFinal }) {
-            throw GameValidationException(GameValidationException.Reason.TOO_FEW_POINTS_IN_SET)
-        }
-
-        if (result.gameList.any { abs(it.firstRegistrationResult - it.secondRegistrationResult) < gameSettings.winMarginFinal }) {
-            throw GameValidationException(GameValidationException.Reason.NOT_ENOUGH_WIN_MARGIN)
-        }
-    }
-
-    override fun getWinner(match: SimpleMatchDTO, result: ResultSpec, gameSettings: GameSettingsDTO): Int {
-        val requiredWins = ceil(gameSettings.numberOfSetsFinal / 2.0).toInt()
+        val requiredWins = ceil(this.numberOfSets / 2.0).toInt()
         val firstRegistrationWins = result.gameList.filter { it.firstRegistrationResult > it.secondRegistrationResult }.size
         val secondRegistrationWins = result.gameList.filter { it.firstRegistrationResult < it.secondRegistrationResult }.size
 
