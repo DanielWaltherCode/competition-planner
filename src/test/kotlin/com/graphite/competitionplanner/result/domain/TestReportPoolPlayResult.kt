@@ -27,7 +27,7 @@ class TestReportPoolPlayResult {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             gameSettings = dataGenerator.newGameSettingsDTO(numberOfSets = 1)
         )
-        val match = dataGenerator.newSimpleMatchDTO()
+        val match = dataGenerator.newPoolMatch()
         val gameSpec1 = dataGenerator.newGameSpec(firstRegistrationResult = 11, secondRegistrationResult = 8)
         val gameSpec2 = dataGenerator.newGameSpec(firstRegistrationResult = 7, secondRegistrationResult = 11)
         val spec = dataGenerator.newResultSpec(listOf(gameSpec1, gameSpec2))
@@ -46,7 +46,7 @@ class TestReportPoolPlayResult {
         // Setup
         val competitionCategory =
             dataGenerator.newCompetitionCategoryDTO(gameSettings = dataGenerator.newGameSettingsDTO(winScore = 7))
-        val match = dataGenerator.newSimpleMatchDTO()
+        val match = dataGenerator.newPoolMatch()
         val gameSpec = dataGenerator.newGameSpec(firstRegistrationResult = 6, secondRegistrationResult = 2)
         `when`(mockedRepository.getResults(match.id)).thenReturn(emptyList())
 
@@ -66,7 +66,7 @@ class TestReportPoolPlayResult {
                 winMargin = 3
             )
         )
-        val match = dataGenerator.newSimpleMatchDTO()
+        val match = dataGenerator.newPoolMatch()
         val gameSpec = dataGenerator.newGameSpec(firstRegistrationResult = 7, secondRegistrationResult = 5)
         `when`(mockedRepository.getResults(match.id)).thenReturn(emptyList())
 
@@ -87,7 +87,7 @@ class TestReportPoolPlayResult {
                 numberOfSets = 5,
             )
         )
-        val match = dataGenerator.newSimpleMatchDTO(matchType = "B")
+        val match = dataGenerator.newPoolMatch(name = "B")
         val resultSpec = dataGenerator.newResultSpec(
             games = listOf(
                 dataGenerator.newGameSpec(firstRegistrationResult = 7, secondRegistrationResult = 5),
@@ -112,7 +112,7 @@ class TestReportPoolPlayResult {
                 numberOfSets = 5,
             )
         )
-        val match = dataGenerator.newSimpleMatchDTO(matchType = "C")
+        val match = dataGenerator.newPoolMatch(name = "C")
         val resultSpec = dataGenerator.newResultSpec(
             games = listOf(
                 dataGenerator.newGameSpec(firstRegistrationResult = 7, secondRegistrationResult = 5),

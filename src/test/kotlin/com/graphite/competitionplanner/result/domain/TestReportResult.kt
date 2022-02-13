@@ -30,7 +30,7 @@ class TestReportResult {
                 numberOfSets = 3
             )
         )
-        val match = dataGenerator.newSimpleMatchDTO(matchType = "D")
+        val match = dataGenerator.newPoolMatch(name = "D")
         val gameSpec1 = dataGenerator.newGameSpec(firstRegistrationResult = 11, secondRegistrationResult = 8)
         val gameSpec2 = dataGenerator.newGameSpec(firstRegistrationResult = 12, secondRegistrationResult = 10)
         val spec = dataGenerator.newResultSpec(listOf(gameSpec1, gameSpec2))
@@ -57,7 +57,7 @@ class TestReportResult {
                 useDifferentRulesInEndGame = true
             )
         )
-        val match = dataGenerator.newSimpleMatchDTO(matchType = Round.SEMI_FINAL.name)
+        val match = dataGenerator.newPlayOffMatch(round = Round.SEMI_FINAL)
         val gameSpec1 = dataGenerator.newGameSpec(firstRegistrationResult = 11, secondRegistrationResult = 8)
         val gameSpec2 = dataGenerator.newGameSpec(firstRegistrationResult = 7, secondRegistrationResult = 11)
         val gameSpec3 = dataGenerator.newGameSpec(firstRegistrationResult = 11, secondRegistrationResult = 13)

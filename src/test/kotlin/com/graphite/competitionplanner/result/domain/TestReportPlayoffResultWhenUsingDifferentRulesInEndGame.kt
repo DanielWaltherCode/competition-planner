@@ -27,7 +27,7 @@ class TestReportPlayoffResultWhenUsingDifferentRulesInEndGame {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             gameSettings = dataGenerator.newGameSettingsDTO(numberOfSetsFinal = 1, useDifferentRulesInEndGame = true)
         )
-        val match = dataGenerator.newSimpleMatchDTO(matchType = Round.ROUND_OF_128.name)
+        val match = dataGenerator.newPlayOffMatch(round = Round.ROUND_OF_128)
         val gameSpec1 = dataGenerator.newGameSpec(firstRegistrationResult = 11, secondRegistrationResult = 8)
         val gameSpec2 = dataGenerator.newGameSpec(firstRegistrationResult = 7, secondRegistrationResult = 11)
         val spec = dataGenerator.newResultSpec(listOf(gameSpec1, gameSpec2))
@@ -47,7 +47,7 @@ class TestReportPlayoffResultWhenUsingDifferentRulesInEndGame {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             gameSettings = dataGenerator.newGameSettingsDTO(winScoreFinal = 7, useDifferentRulesInEndGame = true)
         )
-        val match = dataGenerator.newSimpleMatchDTO(matchType = Round.QUARTER_FINAL.name)
+        val match = dataGenerator.newPlayOffMatch(round = Round.QUARTER_FINAL)
         val gameSpec = dataGenerator.newGameSpec(firstRegistrationResult = 6, secondRegistrationResult = 2)
         Mockito.`when`(mockedRepository.getResults(match.id)).thenReturn(emptyList())
 
@@ -68,7 +68,7 @@ class TestReportPlayoffResultWhenUsingDifferentRulesInEndGame {
                 useDifferentRulesInEndGame = true
             )
         )
-        val match = dataGenerator.newSimpleMatchDTO(matchType = Round.ROUND_OF_16.name)
+        val match = dataGenerator.newPlayOffMatch(round = Round.ROUND_OF_16)
         val gameSpec = dataGenerator.newGameSpec(firstRegistrationResult = 7, secondRegistrationResult = 5)
         Mockito.`when`(mockedRepository.getResults(match.id)).thenReturn(emptyList())
 
@@ -90,7 +90,7 @@ class TestReportPlayoffResultWhenUsingDifferentRulesInEndGame {
                 useDifferentRulesInEndGame = true
             )
         )
-        val match = dataGenerator.newSimpleMatchDTO(matchType = Round.ROUND_OF_16.name)
+        val match = dataGenerator.newPlayOffMatch(round = Round.ROUND_OF_16)
         val resultSpec = dataGenerator.newResultSpec(
             games = listOf(
                 dataGenerator.newGameSpec(firstRegistrationResult = 7, secondRegistrationResult = 5),
@@ -116,7 +116,7 @@ class TestReportPlayoffResultWhenUsingDifferentRulesInEndGame {
                 useDifferentRulesInEndGame = true,
             )
         )
-        val match = dataGenerator.newSimpleMatchDTO(matchType = Round.ROUND_OF_16.name)
+        val match = dataGenerator.newPlayOffMatch(round = Round.ROUND_OF_16)
         val resultSpec = dataGenerator.newResultSpec(
             games = listOf(
                 dataGenerator.newGameSpec(firstRegistrationResult = 7, secondRegistrationResult = 5),
@@ -148,8 +148,8 @@ class TestReportPlayoffResultWhenUsingDifferentRulesInEndGame {
                 differentNumberOfGamesFromRound = Round.SEMI_FINAL
             )
         )
-        val quarterFinal = dataGenerator.newSimpleMatchDTO(matchType = Round.QUARTER_FINAL.name)
-        val semiFinal = dataGenerator.newSimpleMatchDTO(matchType = Round.SEMI_FINAL.name)
+        val quarterFinal = dataGenerator.newPlayOffMatch(round = Round.QUARTER_FINAL)
+        val semiFinal = dataGenerator.newPlayOffMatch(round = Round.SEMI_FINAL)
         val resultSpec = dataGenerator.newResultSpec(
             games = listOf( // Results valid in quarter, but not semi.
                 dataGenerator.newGameSpec(firstRegistrationResult = 7, secondRegistrationResult = 5),
