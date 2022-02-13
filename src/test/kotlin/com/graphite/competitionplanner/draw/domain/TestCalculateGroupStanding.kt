@@ -219,8 +219,55 @@ class TestCalculateGroupStanding(
         Assertions.assertEquals(3, groupStanding.find{it.player[0].id == playerDTOList[3][0].id}?.groupPosition)
         Assertions.assertEquals(4, groupStanding.find{it.player[0].id == playerDTOList[2][0].id}?.groupPosition)
     }
+    /**
+     * Player 1 wins 3, players 2 wins 1, player 3 wins 1, player 4 wins 1
+     * But player 2 beats player 3, player 3 beats player 4, player 4 beats player 2
+     */
+    @Test
+    fun testMutualMeetingsThreeWayTie() {
+        // Setup
+        winAgainstPlayersX(
+            uniquePlayerRegistrations.elementAt(0),
+            mutableListOf(
+                uniquePlayerRegistrations.elementAt(1),
+                uniquePlayerRegistrations.elementAt(2),
+                uniquePlayerRegistrations.elementAt(3),
+            )
+        )
 
-    private fun winAgainstPlayersX(mainPlayer: Int, playersToBeat: List<Int>) {
+        winAgainstPlayersX(
+            uniquePlayerRegistrations.elementAt(1),
+            mutableListOf(
+                uniquePlayerRegistrations.elementAt(2),
+            )
+        )
+
+        winAgainstPlayersX(
+            uniquePlayerRegistrations.elementAt(2),
+            mutableListOf(
+                uniquePlayerRegistrations.elementAt(3),
+            )
+        )
+        winAgainstPlayersX(
+            uniquePlayerRegistrations.elementAt(3),
+            mutableListOf(
+                uniquePlayerRegistrations.elementAt(1),
+            )
+        )
+
+        val playerDTOList: MutableList<List<PlayerDTO>> = mutableListOf()
+        for (registration in uniquePlayerRegistrations) {
+            playerDTOList.add(registrationRepository.getPlayersFrom(registration))
+        }
+
+        // Act
+        val groupStanding = calculateGroupStanding.execute(competitionCategoryId, "A")
+
+        // Assert
+        Assertions.assertEquals(1, groupStanding.find { it.player[0].id == playerDTOList[0][0].id }?.groupPosition)
+    }
+
+        private fun winAgainstPlayersX(mainPlayer: Int, playersToBeat: List<Int>) {
         val matches = matchRepository.getMatchesInCategory(competitionCategoryId)
         val matchesInGroupA = matches.filter { it.groupOrRound == "A" }
         // Select all matches where the main player is one of the parties and the other party is one of the players to beat

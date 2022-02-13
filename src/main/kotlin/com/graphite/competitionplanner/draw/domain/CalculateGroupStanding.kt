@@ -39,13 +39,15 @@ class CalculateGroupStanding(
             val originalPoolDrawList = competitionDrawRepository.getPoolDraw(categoryId, groupName)
             return groupStandingList.map { standingWithRegistrationId ->
                 GroupStandingDTO(
-                registrationService.getPlayersWithClubFromRegistrationId(standingWithRegistrationId.registrationId),
-                originalPoolDrawList.find { it.registrationId == standingWithRegistrationId.registrationId }?.playerNumber ?: 0,
-                standingWithRegistrationId.matchesWon,
-                standingWithRegistrationId.matchesPlayed,
-                standingWithRegistrationId.matchesWonLost,
-                standingWithRegistrationId.gamesWonLost,
-                standingWithRegistrationId.pointsWonLost)
+                    registrationService.getPlayersWithClubFromRegistrationId(standingWithRegistrationId.registrationId),
+                    originalPoolDrawList.find { it.registrationId == standingWithRegistrationId.registrationId }?.playerNumber
+                        ?: 0,
+                    standingWithRegistrationId.matchesWon,
+                    standingWithRegistrationId.matchesPlayed,
+                    standingWithRegistrationId.matchesWonLost,
+                    standingWithRegistrationId.gamesWonLost,
+                    standingWithRegistrationId.pointsWonLost
+                )
             }.sortedBy { it.groupPosition }
         }
         val sortedStandingList = sortGroupStanding(groupStandingList, matchesInSelectedGroup)
@@ -100,8 +102,8 @@ class CalculateGroupStanding(
 
         while (sortedGroupStanding.size < groupStandingList.size) {
             // Keep adding highest remaining players of the players in the groupStandingList that have not already been added to the sorted list
-            sortedGroupStanding.add(
-                getHighestRemainingPlayer(groupStandingList
+            sortedGroupStanding.addAll(
+                getHighestRemainingPlayers(groupStandingList
                     .filterNot {
                         sortedGroupStanding
                             .map { it.registrationId }
@@ -114,10 +116,10 @@ class CalculateGroupStanding(
         return sortedGroupStanding
     }
 
-    private fun getHighestRemainingPlayer(
+    private fun getHighestRemainingPlayers(
         groupStandingList: List<GroupStandingWithRegistrationId>,
         matches: List<MatchRecord>
-    ): GroupStandingWithRegistrationId {
+    ): List<GroupStandingWithRegistrationId> {
         val bestRemainingScore = groupStandingList.map { it.groupScore }.distinct().maxOrNull()
             ?: throw RuntimeException("Group point should not be null")
 
@@ -125,119 +127,149 @@ class CalculateGroupStanding(
 
         // If only one player has best remaining score, return that one
         if (bestRemainingPlayers.size == 1) {
-            return bestRemainingPlayers[0]
-        } else {
-            val registrationIds = bestRemainingPlayers.map { it.registrationId }.toSet()
+            return mutableListOf(bestRemainingPlayers[0])
+        }
 
-            // If two players shared the best remaining score, their mutual meeting is sent in here to calculate a new
-            // subgroup standing. If so, one of them is the best remaining and will be returned here
-            val standingInSubGroup = getGroupStanding(
-                registrationIds,
-                matches.filter {
-                    registrationIds.contains(it.firstRegistrationId)
-                            && registrationIds.contains(it.secondRegistrationId)
-                }
-            )
-            val bestScoreInSubGroup = standingInSubGroup.maxOfOrNull { it.groupScore }
-                ?: throw RuntimeException("Group points should not be null")
-            val bestPlayersInSubGroup = standingInSubGroup.filter { it.groupScore == bestScoreInSubGroup }
-            if (bestPlayersInSubGroup.size == 1) {
-                return bestPlayersInSubGroup[0]
+
+        val registrationIds = bestRemainingPlayers.map { it.registrationId }.toSet()
+
+        // If 2 or more players shared the best remaining score, their mutual meetings are sent in here to calculate a new
+        // subgroup standing.
+        val standingInSubGroup = getGroupStanding(
+            registrationIds,
+            matches.filter {
+                registrationIds.contains(it.firstRegistrationId)
+                        && registrationIds.contains(it.secondRegistrationId)
             }
+        )
+        val bestScoreInSubGroup = standingInSubGroup.maxOfOrNull { it.groupScore }
+            ?: throw RuntimeException("Group points should not be null")
+        val bestPlayersInSubGroup = standingInSubGroup.filter { it.groupScore == bestScoreInSubGroup }
+        // If only player had the best score in the subgroup, that means that this player won his matches against the
+        // other player or players and should be returned here
+        if (bestPlayersInSubGroup.size == 1) {
+            return mutableListOf(bestPlayersInSubGroup[0])
+        }
 
-            // If 3 players had best remainingScore, we need to look at games first, then points
-            val bestGameDifference = standingInSubGroup.maxOfOrNull { it.gameDifference }
-                ?: throw RuntimeException("Game difference should not be null")
-            val playersWithBestGameDifference = standingInSubGroup.filter { it.gameDifference == bestGameDifference }
-            if (playersWithBestGameDifference.size == 1) {
-                return playersWithBestGameDifference[0]
+        // If players are still tied, there are at least 3 people with the same score.
+        // We need to look at games first, then points
+
+        val distinctGameQuotients = standingInSubGroup.map { it.gameQuotient }.distinct().sortedDescending()
+
+        // If the players have as many distinct game quotients (wins / losses) as there are players, they can be
+        // sorted on this measure and returned here
+        if (distinctGameQuotients.size == standingInSubGroup.size) {
+            return groupStandingList.filter { registrationIds.contains(it.registrationId) }
+                .sortedByDescending { it.gameQuotient }
+        }
+
+        // If at least some players are still tied, group them by game quotients and check points won
+        val playersToReturn: MutableList<GroupStandingWithRegistrationId> = mutableListOf()
+        for (gameQuotient in distinctGameQuotients) {
+            val playersWithThatGameQuotient = standingInSubGroup.filter { it.gameQuotient == gameQuotient }
+            if (playersWithThatGameQuotient.size == 1) {
+                playersToReturn.add(groupStandingList.first { it.registrationId == playersWithThatGameQuotient[0].registrationId })
             } else {
-                // Look at points difference, but only for the players with the best game difference
-                val bestPointsDifference = playersWithBestGameDifference.maxOfOrNull { it.pointDifference }
-                    ?: throw RuntimeException("Points difference should not be null")
-                val playersWithBestPointsDifference =
-                    playersWithBestGameDifference.filter { it.pointDifference == bestPointsDifference }
-                if (playersWithBestPointsDifference.size == 1) {
-                    return playersWithBestPointsDifference[0]
+                val distinctPointQuotients =
+                    playersWithThatGameQuotient.map { it.pointQuotient }.distinct().sortedDescending()
+                if (distinctPointQuotients.size == playersWithThatGameQuotient.size) {
+                    for (player in playersWithThatGameQuotient.sortedByDescending { it.pointQuotient }) {
+                        playersToReturn.add(groupStandingList.first { it.registrationId == player.registrationId })
+                    }
+                }
+                // If players with same game quotient also have same point quotient, order randomly
+                else {
+                    for (pointQuotient in distinctPointQuotients) {
+                        val playersWithSameGameAndPointQuotient =
+                            playersWithThatGameQuotient.filter { it.pointQuotient == pointQuotient }
+                        // This happens if three players had same game quotient, and two of them had same point quotient
+                        if (playersWithSameGameAndPointQuotient.size == 1) {
+                            playersToReturn.add(groupStandingList.first { it.registrationId == playersWithSameGameAndPointQuotient[0].registrationId })
+                        }
+                        // Use .shuffled() to randomly sort and add the tied players
+                        else {
+                            val shuffledPlayers = playersWithSameGameAndPointQuotient.shuffled()
+                            for (player in shuffledPlayers)
+                                playersToReturn.add(groupStandingList.first { it.registrationId == player.registrationId })
+                        }
+                    }
+                }
+            }
+        }
+
+    return playersToReturn
+}
+
+/* Calculated standing in a given group
+* Can also be used to calculate standing in a subgroup. For example, if three players end up with the same result,
+* their results should be recalculated without the fourth player in the group. Then this function can be reused.
+ */
+private fun getGroupStanding(
+    playerRegistrationIds: Set<Int>,
+    matchesInGroup: List<MatchRecord>
+): List<GroupStandingWithRegistrationId> {
+    val groupStandingList = mutableListOf<GroupStandingWithRegistrationId>()
+    for (playerRegistration in playerRegistrationIds) {
+        val matchesWithPlayer = matchesInGroup.filter {
+            it.firstRegistrationId == playerRegistration
+                    || it.secondRegistrationId == playerRegistration
+        }
+        var matchesWon = 0
+        var matchesLost = 0
+        var pointsWon = 0
+        var pointsLost = 0
+        var gamesWon = 0
+        var gamesLost = 0
+        var groupPoints = 0
+        for (match in matchesWithPlayer) {
+            if (match.winner != null) {
+                if (match.winner == playerRegistration) {
+                    matchesWon += 1
+                    groupPoints += 2
                 } else {
-                    // If the players had exactly the same points difference too, winner should be determined by draw
-                    // So select a player at random
-                    return playersWithBestGameDifference[(0..1).random()]
+                    matchesLost += 1
+                    // Player only gets point if match was not lost on walkover
+                    if (!match.wasWalkover) {
+                        groupPoints += 1
+                    }
                 }
+                // Calculate games and points
+                val result: ResultDTO = resultService.getResult(match.id)
+                var playerPointsInMatch = 0
+                var otherPlayerPointsInMatch = 0
+                if (playerRegistration == match.firstRegistrationId) {
+                    for (game in result.gameList) {
+                        playerPointsInMatch += game.firstRegistrationResult
+                        otherPlayerPointsInMatch += game.secondRegistrationResult
+                        if (game.firstRegistrationResult > game.secondRegistrationResult) gamesWon += 1 else gamesLost += 1
+
+                    }
+                } else if (playerRegistration == match.secondRegistrationId) {
+                    for (game in result.gameList) {
+                        playerPointsInMatch += game.secondRegistrationResult
+                        otherPlayerPointsInMatch += game.firstRegistrationResult
+                        if (game.secondRegistrationResult > game.firstRegistrationResult) gamesWon += 1 else gamesLost += 1
+                    }
+                }
+                pointsWon += playerPointsInMatch
+                pointsLost += otherPlayerPointsInMatch
             }
         }
-    }
-
-    /* Calculated standing in a given group
-    * Can also be used to calculate standing in a subgroup. For example, if three players end up with the same result,
-    * their results should be recalculated without the fourth player in the group. Then this function can be reused.
-     */
-    private fun getGroupStanding(
-        playerRegistrationIds: Set<Int>,
-        matchesInGroup: List<MatchRecord>
-    ): List<GroupStandingWithRegistrationId> {
-        val groupStandingList = mutableListOf<GroupStandingWithRegistrationId>()
-        for (playerRegistration in playerRegistrationIds) {
-            val matchesWithPlayer = matchesInGroup.filter {
-                it.firstRegistrationId == playerRegistration
-                        || it.secondRegistrationId == playerRegistration
-            }
-            var matchesWon = 0
-            var matchesLost = 0
-            var pointsWon = 0
-            var pointsLost = 0
-            var gamesWon = 0
-            var gamesLost = 0
-            var groupPoints = 0
-            for (match in matchesWithPlayer) {
-                if (match.winner != null) {
-                    if (match.winner == playerRegistration) {
-                        matchesWon += 1
-                        groupPoints += 2
-                    } else {
-                        matchesLost += 1
-                        // Player only gets point if match was not lost on walkover
-                        if (!match.wasWalkover) {
-                            groupPoints += 1
-                        }
-                    }
-                    // Calculate games and points
-                    val result: ResultDTO = resultService.getResult(match.id)
-                    var playerPointsInMatch = 0
-                    var otherPlayerPointsInMatch = 0
-                    if (playerRegistration == match.firstRegistrationId) {
-                        for (game in result.gameList) {
-                            playerPointsInMatch += game.firstRegistrationResult
-                            otherPlayerPointsInMatch += game.secondRegistrationResult
-                            if (game.firstRegistrationResult > game.secondRegistrationResult) gamesWon += 1 else gamesLost += 1
-
-                        }
-                    } else if (playerRegistration == match.secondRegistrationId) {
-                        for (game in result.gameList) {
-                            playerPointsInMatch += game.secondRegistrationResult
-                            otherPlayerPointsInMatch += game.firstRegistrationResult
-                            if (game.secondRegistrationResult > game.firstRegistrationResult) gamesWon += 1 else gamesLost += 1
-                        }
-                    }
-                    pointsWon += playerPointsInMatch
-                    pointsLost += otherPlayerPointsInMatch
-                }
-            }
-            groupStandingList.add(
-                GroupStandingWithRegistrationId(
-                    registrationId = playerRegistration,
-                    matchesWon = matchesWon,
-                    matchesPlayed = matchesWon + matchesLost,
-                    matchesWonLost = WonLostDTO(matchesWon, matchesLost),
-                    gamesWonLost = WonLostDTO(gamesWon, gamesLost),
-                    pointsWonLost = WonLostDTO(pointsWon, pointsLost),
-                    matchDifference = matchesWon - matchesLost,
-                    gameDifference = gamesWon - gamesLost,
-                    pointDifference = pointsWon - pointsLost,
-                    groupScore = groupPoints
-                )
+        groupStandingList.add(
+            GroupStandingWithRegistrationId(
+                registrationId = playerRegistration,
+                matchesWon = matchesWon,
+                matchesPlayed = matchesWon + matchesLost,
+                matchesWonLost = WonLostDTO(matchesWon, matchesLost),
+                gamesWonLost = WonLostDTO(gamesWon, gamesLost),
+                pointsWonLost = WonLostDTO(pointsWon, pointsLost),
+                matchDifference = matchesWon - matchesLost,
+                gameQuotient = gamesWon.toFloat() / gamesLost.toFloat(),
+                pointQuotient = pointsWon.toFloat() / pointsLost.toFloat(),
+                groupScore = groupPoints
             )
-        }
-        return groupStandingList
+        )
     }
+    return groupStandingList
+}
 }

@@ -41,7 +41,7 @@ import kotlin.random.Random
 
 
 @Component
-class EventListener(
+class SetupTestData(
     val playerRepository: PlayerRepository,
     val competitionRepository: CompetitionRepository,
     val clubRepository: ClubRepository,

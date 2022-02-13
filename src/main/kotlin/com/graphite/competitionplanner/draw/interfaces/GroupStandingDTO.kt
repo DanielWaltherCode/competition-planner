@@ -25,8 +25,8 @@ data class GroupStandingWithRegistrationId(
     val gamesWonLost: WonLostDTO,
     val pointsWonLost: WonLostDTO,
     val matchDifference: Int,
-    val gameDifference: Int,
-    val pointDifference: Int,
+    val gameQuotient: Float,
+    val pointQuotient: Float,
     val groupScore: Int // 2 point for a win, 1 for a loss, 0 if the player gave WO/withdrew
 
 )
