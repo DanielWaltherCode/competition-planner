@@ -13,11 +13,12 @@ import com.graphite.competitionplanner.tables.records.PoolToPlayoffMapRecord
 import org.jetbrains.annotations.NotNull
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
+import org.springframework.context.annotation.Lazy
 
 @Repository
 class CompetitionDrawRepository(val dslContext: DSLContext,
                                 val matchService: MatchService,
-                                val getDraw: GetDraw) : ICompetitionDrawRepository {
+                                @Lazy val getDraw: GetDraw) : ICompetitionDrawRepository {
 
     fun addPoolDraw(poolDrawDto: PoolDrawHelper) {
         val pooldrawRecord = dslContext.newRecord(POOL_DRAW)

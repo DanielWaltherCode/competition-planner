@@ -36,7 +36,8 @@ class TestCalculateGroupStanding(
     @Autowired val competitionDrawRepository: CompetitionDrawRepository,
     @Autowired val registrationRepository: RegistrationRepository,
     @Autowired val resultService: ResultService,
-    @Autowired val calculateGroupStanding: CalculateGroupStanding
+    @Autowired val calculateGroupStanding: CalculateGroupStanding,
+    @Autowired val createDraw: CreateDraw
 ) {
 
     var competitionCategoryId = 0
@@ -55,7 +56,7 @@ class TestCalculateGroupStanding(
         for (player in players) {
             registrationService.registerPlayerSingles(RegistrationSinglesSpec(player.id, competitionCategoryId))
         }
-        drawService.createDraw(competitionCategoryId)
+        createDraw.execute(competitionCategoryId)
 
         val matches = matchRepository.getMatchesInCategory(competitionCategoryId)
         val matchesInGroupA = matches.filter { it.groupOrRound == "A" }

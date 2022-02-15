@@ -113,7 +113,7 @@ class TestWithdraw(
         createDraw.execute(competitionCategoryId)
 
         // Act
-        val playerToWithdraw = registrations[0].id
+        val playerToWithdraw = registrations[2].id
 
         // Register result for one match
         val matches = matchRepository.getMatchesInCompetitionForRegistration(competitionId, playerToWithdraw)

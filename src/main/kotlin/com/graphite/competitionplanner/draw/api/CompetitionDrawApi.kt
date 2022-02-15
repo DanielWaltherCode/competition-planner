@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("competition/{competitionId}/draw/{competitionCategoryId}")
 class CompetitionDrawApi(
-    val drawService: DrawService,
     val createDraw: CreateDraw,
+    val drawService: DrawService,
     val getDraw: GetDraw
 ) {
 
