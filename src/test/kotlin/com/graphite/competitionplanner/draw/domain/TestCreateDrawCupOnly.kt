@@ -17,7 +17,7 @@ class TestCreateDrawCupOnly: TestBaseCreateDraw() {
     fun sevenPlayersOneBye() {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.CUP_ONLY,
                 playersPerGroup = 3
             )
@@ -61,7 +61,7 @@ class TestCreateDrawCupOnly: TestBaseCreateDraw() {
     fun ninePlayersSevenByes() {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.CUP_ONLY,
                 playersPerGroup = 3
             )
@@ -107,7 +107,7 @@ class TestCreateDrawCupOnly: TestBaseCreateDraw() {
     fun onePlayer() {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.CUP_ONLY,
                 playersPerGroup = 3
             )
@@ -161,7 +161,7 @@ class TestCreateDrawCupOnly: TestBaseCreateDraw() {
     ) {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             id = 33,
-            settings = dataGenerator.newGeneralSettingsSpec(
+            settings = dataGenerator.newGeneralSettingsDTO(
                 drawType = DrawType.CUP_ONLY,
                 playersPerGroup = 3
             )

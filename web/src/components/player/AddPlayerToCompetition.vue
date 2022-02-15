@@ -10,7 +10,7 @@
       </p>
     </div>
     <!-- Add player to singles categories -->
-    <div class="row custom-card">
+    <div class="row custom-card pb-4">
       <h2 class="p-3">{{ $t("player.addPlayerSingles") }}</h2>
       <search-player-component class="justify-content-center" v-on:clear-player="singlesPlayer = null"
                                v-on:player-found="singlesPlayer = $event"></search-player-component>

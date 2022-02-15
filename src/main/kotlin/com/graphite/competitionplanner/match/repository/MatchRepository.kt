@@ -60,8 +60,10 @@ class MatchRepository(val dslContext: DSLContext) {
             .join(MATCH)
             .on(COMPETITION_CATEGORY.ID.eq(MATCH.COMPETITION_CATEGORY_ID))
             .where(COMPETITION.ID.eq(competitionId))
-                .and(MATCH.FIRST_REGISTRATION_ID.eq(registrationId)
-                    .or(MATCH.SECOND_REGISTRATION_ID.eq(registrationId)))
+            .and(
+                MATCH.FIRST_REGISTRATION_ID.eq(registrationId)
+                    .or(MATCH.SECOND_REGISTRATION_ID.eq(registrationId))
+            )
             .orderBy(MATCH.ID.asc())
             .fetchInto(MATCH)
     }
@@ -69,8 +71,10 @@ class MatchRepository(val dslContext: DSLContext) {
     fun getMatchesInCategoryForMatchType(competitionCategoryId: Int, matchType: MatchType): List<MatchRecord> {
         return dslContext
             .select().from(MATCH)
-            .where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
-                .and(MATCH.MATCH_TYPE.equalIgnoreCase(matchType.name)))
+            .where(
+                MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
+                    .and(MATCH.MATCH_TYPE.equalIgnoreCase(matchType.name))
+            )
             .fetchInto(MATCH)
     }
 
@@ -84,7 +88,10 @@ class MatchRepository(val dslContext: DSLContext) {
     fun getDistinctRegistrationIdsInGroup(competitionCategoryId: Int, groupName: String): MutableSet<Int> {
         val records: List<MatchRecord> = dslContext
             .select().from(MATCH)
-            .where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId).and(MATCH.GROUP_OR_ROUND.equalIgnoreCase(groupName)))
+            .where(
+                MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
+                    .and(MATCH.GROUP_OR_ROUND.equalIgnoreCase(groupName))
+            )
             .fetchInto(MATCH)
 
         val registrationIdSet = mutableSetOf<Int>()
@@ -125,10 +132,10 @@ class MatchRepository(val dslContext: DSLContext) {
     }
 
     fun setWinner(matchId: Int, winnerRegistrationId: Int) {
-       dslContext.update(MATCH)
-           .set(MATCH.WINNER, winnerRegistrationId)
-           .where(MATCH.ID.eq(matchId))
-           .execute()
+        dslContext.update(MATCH)
+            .set(MATCH.WINNER, winnerRegistrationId)
+            .where(MATCH.ID.eq(matchId))
+            .execute()
     }
 
     fun isCategoryDrawn(competitionCategoryId: Int): Boolean {

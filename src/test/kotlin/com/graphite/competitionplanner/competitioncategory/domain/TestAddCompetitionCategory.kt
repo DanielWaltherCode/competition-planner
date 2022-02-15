@@ -85,13 +85,13 @@ class TestAddCompetitionCategory {
         // Setup
         val spec = dataGenerator.newCategorySpec(id = 0, name = "HERRDUBBEL")
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO()
-        val settings = dataGenerator.newGeneralSettingsSpec(
+        val settings = dataGenerator.newGeneralSettingsDTO(
             cost = 150f,
             playersPerGroup = 4,
             playersToPlayOff = 2,
             drawType = DrawType.POOL_AND_CUP
         )
-        val gameSettings = dataGenerator.newGameSettingsSpec(
+        val gameSettings = dataGenerator.newGameSettingsDTO(
             numberOfSets = 5,
             winScore = 11,
             winMargin = 2,

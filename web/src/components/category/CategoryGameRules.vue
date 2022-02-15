@@ -69,7 +69,6 @@
 </template>
 
 <script>
-import CategoryService from "@/common/api-services/category.service";
 import CompetitionService from "@/common/api-services/competition.service";
 
 export default {
@@ -91,13 +90,6 @@ export default {
     CompetitionService.getPossibleRounds().then(res => {
       this.possibleRounds = res.data
     })
-  },
-  methods: {
-    saveChanges() {
-      CategoryService.updateCompetitionCategory(this.competition.id, this.category).then(() => {
-        this.$toasted.success(this.$tc("toasts.categoryUpdated")).goAway(3000)
-      })
-    }
   }
 }
 </script>

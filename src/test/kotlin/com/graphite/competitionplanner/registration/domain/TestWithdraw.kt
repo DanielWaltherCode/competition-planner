@@ -3,8 +3,8 @@ package com.graphite.competitionplanner.registration.domain
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.domain.DeleteCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
+import com.graphite.competitionplanner.draw.domain.CreateDraw
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
-import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.repository.PlayerRepository
@@ -35,7 +35,7 @@ class TestWithdraw(
     @Autowired val findCompetitionCategory: FindCompetitionCategory,
     @Autowired val deleteCompetitionCategory: DeleteCompetitionCategory,
     @Autowired val competitionDrawRepository: CompetitionDrawRepository,
-    @Autowired val drawService: DrawService,
+    @Autowired val createDraw: CreateDraw,
     @Autowired val withdraw: Withdraw,
     @Autowired val findCompetitions: FindCompetitions,
     @Autowired val resultService: ResultService
@@ -45,12 +45,10 @@ class TestWithdraw(
 
     @BeforeEach
     fun setupCompetition() {
-
-        competitionCategoryId = testUtil.addCompetitionCategory("Flickor 15")
+        competitionCategoryId = testUtil.addCompetitionCategory("Flickor 14")
         val umeaId = testUtil.getClubIdOrDefault("Umeå IK")
         val umeaCompetitions = findCompetitions.thatBelongTo(umeaId)
         competitionId = umeaCompetitions[0].id
-
     }
 
     @AfterEach
@@ -79,7 +77,7 @@ class TestWithdraw(
                 registrationService.registerPlayerSingles(RegistrationSinglesSpec(player.id, competitionCategoryId))
             )
         }
-        drawService.createDraw(competitionCategoryId)
+        createDraw.execute(competitionCategoryId)
 
         // Act
         val playerToWithdraw = registrations[0].id
@@ -112,7 +110,7 @@ class TestWithdraw(
                 registrationService.registerPlayerSingles(RegistrationSinglesSpec(player.id, competitionCategoryId))
             )
         }
-        drawService.createDraw(competitionCategoryId)
+        createDraw.execute(competitionCategoryId)
 
         // Act
         val playerToWithdraw = registrations[0].id

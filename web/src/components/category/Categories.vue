@@ -136,6 +136,7 @@ export default {
       })
     },
     save() {
+      this.activeCategory.gameSettings.winScoreFinal = this.activeCategory.gameSettings.winScore // Use same win score setting in endgame matches.
       CategoryService.updateCompetitionCategory(this.competition.id, this.activeCategory.id, this.activeCategory).then(() => {
         this.$toasted.success(this.$tc("toasts.categoryUpdated")).goAway(3000)
       }).catch(() => {

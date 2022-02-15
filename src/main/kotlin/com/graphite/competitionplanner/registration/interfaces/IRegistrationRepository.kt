@@ -37,6 +37,11 @@ interface IRegistrationRepository {
     fun getAllRegisteredPlayersInCompetition(competitionId: Int): List<PlayerWithClubDTO>
 
     /**
+     * Return all single registrations
+     */
+    fun getAllSingleRegistrations(competitionCategoryId: Int): List<RegistrationSinglesDTO>
+
+    /**
      * Get all player and their respective competition category that are currently registered in a given competition
      */
     fun getCategoriesAndPlayersInCompetition(competitionId: Int): List<Pair<CategoryDTO, PlayerWithClubDTO>>
@@ -88,7 +93,9 @@ interface IRegistrationRepository {
      */
     fun getRegistrationRanking(competitionCategory: CompetitionCategoryDTO): List<RegistrationRankingDTO>
 
-    fun updatePlayerRegistrationStatus(registrationId: Int, status: String)
+    fun updatePlayerRegistrationStatus(registrationId: Int, status: PlayerRegistrationStatus)
 
     fun getPlayerRegistration(registrationId: Int): PlayerRegistrationRecord
+
+    fun getRegistrationIdForPlayerInCategory(categoryId: Int, playerId: Int): Int
 }

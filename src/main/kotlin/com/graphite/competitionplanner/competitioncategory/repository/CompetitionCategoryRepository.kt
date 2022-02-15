@@ -15,7 +15,7 @@ import com.graphite.competitionplanner.tables.records.CompetitionCategoryRecord
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.SelectConditionStep
-import org.jooq.impl.*
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import kotlin.RuntimeException
 
@@ -24,6 +24,8 @@ import kotlin.RuntimeException
  */
 @Repository
 class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCategoryRepository {
+
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     fun addCompetitionCategory(competitionId: Int, categoryId: Int): Int {
         val record = dslContext.newRecord(COMPETITION_CATEGORY)
@@ -215,20 +217,13 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         )
 
         try {
-            dslContext.transaction { configuration ->
+            dslContext.transaction { _ ->
                 settingRecord.update()
                 gameSettingsRecord.update()
-                val competitionCategory = DSL.using(configuration)
-                    .selectFrom(COMPETITION_CATEGORY)
-                    .where(COMPETITION_CATEGORY.ID.eq(id))
-                    .fetchInto(COMPETITION_CATEGORY).first()
-
-                if (competitionCategory.getValue(COMPETITION_CATEGORY.STATUS) == CompetitionCategoryStatus.DRAWN.toString()) {
-                    throw RuntimeException() // Throwing exception inside transaction block will roll back changes
-                }
             }
         } catch (exception: RuntimeException) {
-            throw IllegalActionException("Can not update the game settings when the category has already been drawn.")
+            logger.error("Failed to update settings of competition category with $id.")
+            logger.error("Exception message: ${exception.message}")
         }
     }
 
