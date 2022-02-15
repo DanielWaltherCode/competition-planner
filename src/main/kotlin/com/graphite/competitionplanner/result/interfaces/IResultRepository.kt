@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.result.interfaces
 
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.service.GameDTO
+import com.graphite.competitionplanner.result.service.ResultDTO
 
 interface IResultRepository {
 
@@ -18,6 +19,15 @@ interface IResultRepository {
      * @return List of game results for the match
      */
     fun getResults(matchId: Int): List<GameDTO>
+
+    /**
+     * Get the results from all matches.
+     *
+     * @param matchIds IDs of all the matches to fetch result from
+     * @return A list of Pairs where the first item is the match id, and the second is the result of the match with the
+     * same id.
+     */
+    fun getResults(matchIds: List<Int>): List<Pair<Int, ResultDTO>>
 
     /**
      * Delete all results from the match
