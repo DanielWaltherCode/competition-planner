@@ -7,6 +7,10 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.GameSettingsDTO
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.Round
+import com.graphite.competitionplanner.draw.service.MatchType
+import com.graphite.competitionplanner.match.domain.Match
+import com.graphite.competitionplanner.match.domain.PlayoffMatch
+import com.graphite.competitionplanner.match.domain.PoolMatch
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.*
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
@@ -82,14 +86,14 @@ class ResultService(
         // TODO: Think about what happens if something fails in this function. How do we recover?
         // TODO: Maybe we have to make all of this in one transaction so we avoid getting into an unwanted state?
 
-        val match = matchService.getSimpleMatchDTO(matchId)
+        val match = matchRepository.getMatch2(matchId)
         val competitionCategory = findCompetitionCategory.byId(match.competitionCategoryId)
         val result = addResult.execute(match, resultSpec, competitionCategory)
         advanceRegistrations(competitionCategory, match)
         return result
     }
 
-    private fun advanceRegistrations(competitionCategory: CompetitionCategoryDTO, match: BaseMatch) {
+    private fun advanceRegistrations(competitionCategory: CompetitionCategoryDTO, match: Match) {
         // Match has now been completed, and we need to decide if we need to advance players (registrations) to next round
         when(match) {
             is PlayoffMatch -> competitionCategory.handleAdvancementOf(match)

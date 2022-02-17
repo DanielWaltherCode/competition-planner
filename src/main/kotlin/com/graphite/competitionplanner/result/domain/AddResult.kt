@@ -4,8 +4,8 @@ import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.GameSettingsDTO
 import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.match.service.PlayoffMatch
-import com.graphite.competitionplanner.match.service.BaseMatch
+import com.graphite.competitionplanner.match.domain.PlayoffMatch
+import com.graphite.competitionplanner.match.domain.Match
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.interfaces.IResultRepository
 import com.graphite.competitionplanner.result.service.ResultDTO
@@ -19,7 +19,7 @@ class AddResult(
     val matchService: MatchService,
 ) {
 
-    fun execute(match: BaseMatch, result: ResultSpec, competitionCategory: CompetitionCategoryDTO): ResultDTO {
+    fun execute(match: Match, result: ResultSpec, competitionCategory: CompetitionCategoryDTO): ResultDTO {
         val gameSettings = competitionCategory.gameSettings
 
         val policy = getPolicyFor(match, gameSettings)
@@ -32,7 +32,7 @@ class AddResult(
         return ResultDTO(games)
     }
 
-    private fun getPolicyFor(match: BaseMatch, gameSettings: GameSettingsDTO): ResultValidationSpecification {
+    private fun getPolicyFor(match: Match, gameSettings: GameSettingsDTO): ResultValidationSpecification {
         return if (
             match is PlayoffMatch &&
             gameSettings.useDifferentRulesInEndGame &&
@@ -53,7 +53,7 @@ class ResultValidationSpecification(val numberOfSets: Int, val winMargin: Int, v
      * @return The registration id of the winner.
      */
     @Throws(GameValidationException::class)
-    fun validateResultAndReturnWinner(match: BaseMatch, result: ResultSpec): Int {
+    fun validateResultAndReturnWinner(match: Match, result: ResultSpec): Int {
 
         if (result.gameList.size > this.numberOfSets) {
             throw GameValidationException(GameValidationException.Reason.TOO_MANY_SETS_REPORTED)

@@ -1,15 +1,13 @@
 package com.graphite.competitionplanner.match.service
 
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
-import com.graphite.competitionplanner.draw.interfaces.Round
-import com.graphite.competitionplanner.draw.interfaces.isRound
 import com.graphite.competitionplanner.draw.service.MatchSpec
 import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
-import com.graphite.competitionplanner.registration.service.SimpleCompetitionCategoryDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
+import com.graphite.competitionplanner.registration.service.SimpleCompetitionCategoryDTO
 import com.graphite.competitionplanner.result.interfaces.IResultRepository
 import com.graphite.competitionplanner.result.service.ResultDTO
 import com.graphite.competitionplanner.result.service.ResultService
@@ -150,88 +148,6 @@ class MatchService(
         return recordToMatchAndResultDTO(matchRecord)
     }
 
-    fun getSimpleMatchDTO(matchId: Int): BaseMatch {
-        val record = matchRepository.getMatch(matchId)
-        if (record.matchType.isRound()) {
-            return PlayoffMatch(
-                Round.valueOf(record.matchType),
-                record.matchOrderNumber,
-                record.id,
-                record.competitionCategoryId,
-                record.firstRegistrationId,
-                record.secondRegistrationId
-            )
-        } else {
-            return PoolMatch(
-                record.groupOrRound,
-                record.id,
-                record.competitionCategoryId,
-                record.firstRegistrationId,
-                record.secondRegistrationId
-            )
-        }
-    }
-
-}
-
-sealed class BaseMatch(
-    val id: Int,
-    val competitionCategoryId: Int,
-    val firstRegistrationId: Int,
-    val secondRegistrationId: Int,
-) {
-    abstract fun toDto(): MatchDTO
-}
-
-class PoolMatch(
-    val name: String,
-    id: Int,
-    competitionCategoryId: Int,
-    firstRegistrationId: Int,
-    secondRegistrationId: Int
-) : BaseMatch(id, competitionCategoryId, firstRegistrationId, secondRegistrationId) {
-
-    override fun toDto(): MatchDTO { // This is just a dummy implementation
-        return MatchDTO(
-            this.id,
-            null,
-            null,
-            SimpleCompetitionCategoryDTO(this.competitionCategoryId, "Herrar 1"),
-            MatchType.PLAYOFF.toString(),
-            emptyList(),
-            emptyList(),
-0,
-            name,
-            false,
-            emptyList()
-        )
-    }
-}
-
-class PlayoffMatch(
-    val round: Round,
-    val orderNumber: Int,
-    id: Int,
-    competitionCategoryId: Int,
-    firstRegistrationId: Int,
-    secondRegistrationId: Int
-) : BaseMatch(id, competitionCategoryId, firstRegistrationId, secondRegistrationId) {
-
-    override fun toDto(): MatchDTO { // This is just a dummy implementation
-        return MatchDTO(
-            this.id,
-            null,
-            null,
-            SimpleCompetitionCategoryDTO(this.competitionCategoryId, "Herrar 1"),
-            MatchType.PLAYOFF.toString(),
-            emptyList(),
-            emptyList(),
-            orderNumber,
-            round.name,
-            false,
-            emptyList()
-        )
-    }
 }
 
 

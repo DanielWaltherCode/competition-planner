@@ -2,8 +2,13 @@ package com.graphite.competitionplanner.match.repository
 
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.service.MatchSpec
 import com.graphite.competitionplanner.draw.service.MatchType
+import com.graphite.competitionplanner.match.domain.IMatchRepository
+import com.graphite.competitionplanner.match.domain.Match
+import com.graphite.competitionplanner.match.domain.PlayoffMatch
+import com.graphite.competitionplanner.match.domain.PoolMatch
 import com.graphite.competitionplanner.tables.records.MatchRecord
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
@@ -12,12 +17,52 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 @Repository
-class MatchRepository(val dslContext: DSLContext) {
+class MatchRepository(val dslContext: DSLContext): IMatchRepository {
 
     fun getMatch(matchId: Int): MatchRecord {
         return dslContext.select().from(MATCH).where(MATCH.ID.eq(matchId)).fetchOneInto(MATCH)
             ?: throw NotFoundException("Competition category with $matchId not found.")
     }
+
+    override fun getMatch2(matchId: Int): Match {
+        val record = dslContext.select().from(MATCH).where(MATCH.ID.eq(matchId)).fetchOneInto(MATCH)
+        if (record == null) {
+            throw NotFoundException("Competition category with $matchId not found.")
+        }else {
+            return record.toMatch()
+        }
+    }
+
+    override fun store(spec: MatchSpec): Match {
+        val record = addMatch(spec)
+        return record.toMatch()
+    }
+
+    fun MatchRecord.toMatch(): Match {
+        return if (this.matchType == MatchType.GROUP.name) {
+            PoolMatch(
+                this.groupOrRound,
+                this.id,
+                this.competitionCategoryId,
+                this.firstRegistrationId,
+                this.secondRegistrationId,
+                this.wasWalkover,
+                this.winner
+            )
+        } else {
+            PlayoffMatch(
+                Round.valueOf(this.groupOrRound),
+                this.matchOrderNumber,
+                this.id,
+                this.competitionCategoryId,
+                this.firstRegistrationId,
+                this.secondRegistrationId,
+                this.wasWalkover,
+                this.winner
+            )
+        }
+    }
+
 
     fun getMatchesInCategory(competitionCategoryId: Int): List<MatchRecord> {
         return dslContext
@@ -112,6 +157,7 @@ class MatchRepository(val dslContext: DSLContext) {
         matchRecord.secondRegistrationId = matchSpec.secondRegistrationId
         matchRecord.matchOrderNumber = matchSpec.matchOrderNumber
         matchRecord.groupOrRound = matchSpec.groupOrRound
+        matchRecord.wasWalkover = false // Default value in database
         matchRecord.store()
         return matchRecord
     }
