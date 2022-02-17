@@ -153,6 +153,37 @@ class ResultService(
         return ResultDTO(resultList.map { recordToDTO(it) })
     }
 
+    // Returns a list of who each registrationID in a group has defeated
+    fun getOpponentsDefeatedInGroup(categoryId: Int, groupName: String): MutableMap<Int, MutableList<Int>> {
+        val allGroupMatches: List<MatchRecord> = matchRepository.getMatchesInCategoryForMatchType(categoryId, MatchType.GROUP)
+        val matchesInGroup = allGroupMatches.filter { it.groupOrRound == groupName }
+        val uniquePlayerRegistrations: MutableSet<Int> = mutableSetOf()
+        for (match in matchesInGroup) {
+            uniquePlayerRegistrations.add(match.firstRegistrationId)
+            uniquePlayerRegistrations.add(match.secondRegistrationId)
+        }
+        val winMap: MutableMap<Int, MutableList<Int>> = mutableMapOf()
+
+        for (player in uniquePlayerRegistrations) {
+            val defeatedPlayersList: MutableList<Int> = mutableListOf()
+            for (match in matchesInGroup) {
+                if (match.winner == null) {
+                    continue
+                }
+                if (match.winner == player) {
+                    if(match.firstRegistrationId == player) {
+                        defeatedPlayersList.add(match.secondRegistrationId)
+                    }
+                    else if(match.secondRegistrationId == player) {
+                        defeatedPlayersList.add(match.firstRegistrationId)
+                    }
+                }
+            }
+            winMap[player] = defeatedPlayersList
+        }
+        return winMap
+    }
+
     private fun validateResult(categoryId: Int, resultSpec: ResultSpec) {
         val gameRules = findCompetitionCategory.byId(categoryId).gameSettings
         // TODO -- add specific checks for group stage and playoff stage

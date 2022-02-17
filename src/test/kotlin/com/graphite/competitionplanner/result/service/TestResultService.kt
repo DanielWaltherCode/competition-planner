@@ -93,6 +93,14 @@ class TestResultService(
         createDraw.execute(competitionCategoryId)
     }
 
+    @AfterEach
+    fun cleanUp() {
+        val matches = matchService.getMatchesInCategory(competitionCategoryId)
+        for (match in matches) {
+            resultRepository.deleteMatchResult(match.id)
+        }
+    }
+
     @Test
     fun testAddResult() {
         addResult()
