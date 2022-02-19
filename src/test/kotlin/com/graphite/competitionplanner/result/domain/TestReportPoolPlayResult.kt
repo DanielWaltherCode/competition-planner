@@ -1,22 +1,19 @@
 package com.graphite.competitionplanner.result.domain
 
 import com.graphite.competitionplanner.common.exception.GameValidationException
-import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.result.interfaces.IResultRepository
+import com.graphite.competitionplanner.match.domain.IMatchRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import org.mockito.Mockito.`when`
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Description
 
 @SpringBootTest
 class TestReportPoolPlayResult {
 
-    private val mockedRepository = Mockito.mock(IResultRepository::class.java)
-    private val mockedMatchService = Mockito.mock(MatchService::class.java)
-    private val addResult = AddResult(mockedRepository, mockedMatchService)
+    private val mockedRepository = Mockito.mock(IMatchRepository::class.java)
+    private val addResult = AddResult(mockedRepository)
 
     private val dataGenerator = DataGenerator()
 
@@ -31,7 +28,6 @@ class TestReportPoolPlayResult {
         val gameSpec1 = dataGenerator.newGameSpec(firstRegistrationResult = 11, secondRegistrationResult = 8)
         val gameSpec2 = dataGenerator.newGameSpec(firstRegistrationResult = 7, secondRegistrationResult = 11)
         val spec = dataGenerator.newResultSpec(listOf(gameSpec1, gameSpec2))
-        `when`(mockedRepository.getResults(match.id)).thenReturn(emptyList())
 
         // Act & Assertions
         val message = Assertions.assertThrows(GameValidationException::class.java) {
@@ -48,7 +44,6 @@ class TestReportPoolPlayResult {
             dataGenerator.newCompetitionCategoryDTO(gameSettings = dataGenerator.newGameSettingsDTO(winScore = 7))
         val match = dataGenerator.newPoolMatch()
         val gameSpec = dataGenerator.newGameSpec(firstRegistrationResult = 6, secondRegistrationResult = 2)
-        `when`(mockedRepository.getResults(match.id)).thenReturn(emptyList())
 
         // Act & Assertions
         val message = Assertions.assertThrows(GameValidationException::class.java) {
@@ -68,7 +63,6 @@ class TestReportPoolPlayResult {
         )
         val match = dataGenerator.newPoolMatch()
         val gameSpec = dataGenerator.newGameSpec(firstRegistrationResult = 7, secondRegistrationResult = 5)
-        `when`(mockedRepository.getResults(match.id)).thenReturn(emptyList())
 
         // Act & Assertions
         val message = Assertions.assertThrows(GameValidationException::class.java) {

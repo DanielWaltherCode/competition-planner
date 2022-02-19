@@ -109,14 +109,15 @@ class ResultService(
             val winner = matchRepository.getMatch(match.id).winner
             val nextRound = draw.playOff.filter { it.round < match.round }.minByOrNull { it.round }!!
             val nextOrderNumber = ceil( match.orderNumber / 2.0 ).toInt() // 1 -> 1, 2 -> 1, 3 -> 2, etc.
-            val nextMatch = nextRound.matches.first { it.matchOrderNumber == nextOrderNumber }
-            val record = matchRepository.getMatch(nextMatch.id)
+            val nextMatch = matchRepository.getMatch2(
+                nextRound.matches.first { it.matchOrderNumber == nextOrderNumber }.id
+            )
             if (match.orderNumber % 2 == 1) {
-                record.firstRegistrationId = winner
+                nextMatch.firstRegistrationId = winner
             }else {
-                record.secondRegistrationId = winner
+                nextMatch.secondRegistrationId = winner
             }
-            record.update()
+            matchRepository.save(nextMatch)
         }
     }
 

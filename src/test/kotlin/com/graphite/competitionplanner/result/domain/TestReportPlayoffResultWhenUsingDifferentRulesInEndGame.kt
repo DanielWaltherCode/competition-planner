@@ -2,21 +2,20 @@ package com.graphite.competitionplanner.result.domain
 
 import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.draw.interfaces.Round
-import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.result.interfaces.IResultRepository
+import com.graphite.competitionplanner.match.domain.IMatchRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Description
 
 @SpringBootTest
 class TestReportPlayoffResultWhenUsingDifferentRulesInEndGame {
 
-    private val mockedRepository = Mockito.mock(IResultRepository::class.java)
-    private val mockedMatchService = Mockito.mock(MatchService::class.java)
-    private val addResult = AddResult(mockedRepository, mockedMatchService)
+    private val mockedRepository = Mockito.mock(IMatchRepository::class.java)
+    private val addResult = AddResult(mockedRepository)
 
     private val dataGenerator = DataGenerator()
 
@@ -31,7 +30,6 @@ class TestReportPlayoffResultWhenUsingDifferentRulesInEndGame {
         val gameSpec1 = dataGenerator.newGameSpec(firstRegistrationResult = 11, secondRegistrationResult = 8)
         val gameSpec2 = dataGenerator.newGameSpec(firstRegistrationResult = 7, secondRegistrationResult = 11)
         val spec = dataGenerator.newResultSpec(listOf(gameSpec1, gameSpec2))
-        Mockito.`when`(mockedRepository.getResults(match.id)).thenReturn(emptyList())
 
         // Act & Assertions
         val message = Assertions.assertThrows(GameValidationException::class.java) {
@@ -49,7 +47,6 @@ class TestReportPlayoffResultWhenUsingDifferentRulesInEndGame {
         )
         val match = dataGenerator.newPlayOffMatch(round = Round.QUARTER_FINAL)
         val gameSpec = dataGenerator.newGameSpec(firstRegistrationResult = 6, secondRegistrationResult = 2)
-        Mockito.`when`(mockedRepository.getResults(match.id)).thenReturn(emptyList())
 
         // Act & Assertions
         val message = Assertions.assertThrows(GameValidationException::class.java) {
@@ -70,7 +67,6 @@ class TestReportPlayoffResultWhenUsingDifferentRulesInEndGame {
         )
         val match = dataGenerator.newPlayOffMatch(round = Round.ROUND_OF_16)
         val gameSpec = dataGenerator.newGameSpec(firstRegistrationResult = 7, secondRegistrationResult = 5)
-        Mockito.`when`(mockedRepository.getResults(match.id)).thenReturn(emptyList())
 
         // Act & Assertions
         val message = Assertions.assertThrows(GameValidationException::class.java) {
@@ -136,6 +132,7 @@ class TestReportPlayoffResultWhenUsingDifferentRulesInEndGame {
 
     @Test
     fun shouldOnlyApplyEndGameRulesFromSpecifiedRound() {
+        // Setup
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             gameSettings = dataGenerator.newGameSettingsDTO(
                 winScore = 7,
@@ -157,6 +154,7 @@ class TestReportPlayoffResultWhenUsingDifferentRulesInEndGame {
                 dataGenerator.newGameSpec(firstRegistrationResult = 5, secondRegistrationResult = 7),
             )
         )
+       `when`(mockedRepository.getMatch2(quarterFinal.id)).thenReturn(quarterFinal)
 
         // Act & Assertions
         Assertions.assertDoesNotThrow {

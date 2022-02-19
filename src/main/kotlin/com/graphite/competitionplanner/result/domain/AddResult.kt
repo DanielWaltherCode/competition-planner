@@ -3,11 +3,12 @@ package com.graphite.competitionplanner.result.domain
 import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.GameSettingsDTO
-import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.match.domain.PlayoffMatch
+import com.graphite.competitionplanner.match.domain.GameResult
+import com.graphite.competitionplanner.match.domain.IMatchRepository
 import com.graphite.competitionplanner.match.domain.Match
+import com.graphite.competitionplanner.match.domain.PlayoffMatch
 import com.graphite.competitionplanner.result.api.ResultSpec
-import com.graphite.competitionplanner.result.interfaces.IResultRepository
+import com.graphite.competitionplanner.result.service.GameDTO
 import com.graphite.competitionplanner.result.service.ResultDTO
 import org.springframework.stereotype.Component
 import kotlin.math.abs
@@ -15,8 +16,7 @@ import kotlin.math.ceil
 
 @Component
 class AddResult(
-    val repository: IResultRepository,
-    val matchService: MatchService,
+    val matchRepository: IMatchRepository,
 ) {
 
     fun execute(match: Match, result: ResultSpec, competitionCategory: CompetitionCategoryDTO): ResultDTO {
@@ -25,11 +25,13 @@ class AddResult(
         val policy = getPolicyFor(match, gameSettings)
         val winnerId = policy.validateResultAndReturnWinner(match, result)
 
-        repository.deleteResults(match.id)
-        val games = result.gameList.map { repository.storeResult(match.id, it) }
-        matchService.setWinner(match.id, winnerId)
+        match.winner = winnerId
+        match.result = result.gameList.map { GameResult(0, it.gameNumber, it.firstRegistrationResult, it.secondRegistrationResult) }
+        matchRepository.save(match)
 
-        return ResultDTO(games)
+        return ResultDTO(
+            matchRepository.getMatch2(match.id).result.map { GameDTO(it.id, it.number, it.firstRegistrationResult, it.secondRegistrationResult) }
+        )
     }
 
     private fun getPolicyFor(match: Match, gameSettings: GameSettingsDTO): ResultValidationSpecification {

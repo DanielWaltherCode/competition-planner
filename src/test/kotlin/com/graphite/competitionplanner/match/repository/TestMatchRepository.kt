@@ -121,9 +121,7 @@ class TestMatchRepository @Autowired constructor(
         )
         val match = matchRepository.store(spec) as PlayoffMatch
 
-        match.result.add(dataGenerator.newGameResult(number = 1))
-        match.result.add(dataGenerator.newGameResult(number = 2))
-        match.result.add(dataGenerator.newGameResult(number = 3))
+        match.result = listOf(dataGenerator.newGameResult(number = 1), dataGenerator.newGameResult(number = 2), dataGenerator.newGameResult(number = 3))
 
         // Act
         matchRepository.save(match)
@@ -154,13 +152,11 @@ class TestMatchRepository @Autowired constructor(
         )
         val match = matchRepository.store(spec) as PlayoffMatch
 
-        match.result.add(dataGenerator.newGameResult(number = 1))
-        match.result.add(dataGenerator.newGameResult(number = 2))
-        match.result.add(dataGenerator.newGameResult(number = 3))
+        match.result = listOf(dataGenerator.newGameResult(number = 1), dataGenerator.newGameResult(number = 2), dataGenerator.newGameResult(number = 3))
         matchRepository.save(match)
 
         // Act
-        match.result.clear()
+        match.result = emptyList()
         matchRepository.save(match)
 
         // Assert

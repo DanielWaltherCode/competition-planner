@@ -33,7 +33,7 @@ class MatchRepository(val dslContext: DSLContext): IMatchRepository {
             throw NotFoundException("Competition category with $matchId not found.")
         }else {
             val match = record.toMatch()
-            match.result.addAll( gameRecords.map { it.toGameResult() } )
+            match.result = gameRecords.map { it.toGameResult() }
             return match
         }
     }

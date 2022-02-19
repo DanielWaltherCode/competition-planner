@@ -6,13 +6,13 @@ import java.time.LocalDateTime
 sealed class Match(
     val id: Int,
     val competitionCategoryId: Int,
-    val firstRegistrationId: Int,
-    val secondRegistrationId: Int,
+    var firstRegistrationId: Int,
+    var secondRegistrationId: Int,
     val wasWalkOver: Boolean,
-    val winner: Int?,
+    var winner: Int?,
     val startTime: LocalDateTime? = null,
     val endTime: LocalDateTime? = null,
-    val result: MutableList<GameResult> = mutableListOf()
+    var result: List<GameResult> = emptyList()
 )
 
 class PoolMatch(

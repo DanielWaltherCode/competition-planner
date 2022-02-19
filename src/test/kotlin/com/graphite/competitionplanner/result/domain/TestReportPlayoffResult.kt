@@ -2,8 +2,7 @@ package com.graphite.competitionplanner.result.domain
 
 import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.draw.interfaces.Round
-import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.result.interfaces.IResultRepository
+import com.graphite.competitionplanner.match.domain.IMatchRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -14,9 +13,8 @@ import org.springframework.context.annotation.Description
 @SpringBootTest
 class TestReportPlayoffResult {
 
-    private val mockedRepository = Mockito.mock(IResultRepository::class.java)
-    private val mockedMatchService = Mockito.mock(MatchService::class.java)
-    private val addResult = AddResult(mockedRepository, mockedMatchService)
+    private val mockedRepository = Mockito.mock(IMatchRepository::class.java)
+    private val addResult = AddResult(mockedRepository)
 
     private val dataGenerator = DataGenerator()
 
@@ -35,7 +33,6 @@ class TestReportPlayoffResult {
         val gameSpec1 = dataGenerator.newGameSpec(firstRegistrationResult = 11, secondRegistrationResult = 8)
         val gameSpec2 = dataGenerator.newGameSpec(firstRegistrationResult = 7, secondRegistrationResult = 11)
         val spec = dataGenerator.newResultSpec(listOf(gameSpec1, gameSpec2))
-        Mockito.`when`(mockedRepository.getResults(match.id)).thenReturn(emptyList())
 
         // Act & Assertions
         val message = Assertions.assertThrows(GameValidationException::class.java) {
@@ -57,7 +54,6 @@ class TestReportPlayoffResult {
         )
         val match = dataGenerator.newPlayOffMatch(round = Round.QUARTER_FINAL)
         val gameSpec = dataGenerator.newGameSpec(firstRegistrationResult = 6, secondRegistrationResult = 4)
-        Mockito.`when`(mockedRepository.getResults(match.id)).thenReturn(emptyList())
 
         // Act & Assertions
         val message = Assertions.assertThrows(GameValidationException::class.java) {
@@ -78,7 +74,6 @@ class TestReportPlayoffResult {
         )
         val match = dataGenerator.newPlayOffMatch(round = Round.QUARTER_FINAL)
         val gameSpec = dataGenerator.newGameSpec(firstRegistrationResult = 10, secondRegistrationResult = 8)
-        Mockito.`when`(mockedRepository.getResults(match.id)).thenReturn(emptyList())
 
         // Act & Assertions
         val message = Assertions.assertThrows(GameValidationException::class.java) {

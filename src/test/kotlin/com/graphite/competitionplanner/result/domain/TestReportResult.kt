@@ -1,24 +1,30 @@
 package com.graphite.competitionplanner.result.domain
 
 import com.graphite.competitionplanner.draw.interfaces.Round
-import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.result.interfaces.IResultRepository
+import com.graphite.competitionplanner.match.domain.GameResult
+import com.graphite.competitionplanner.match.domain.IMatchRepository
+import com.graphite.competitionplanner.match.domain.Match
+import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
 import org.mockito.Mockito
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
+import org.mockito.Mockito.`when`
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 class TestReportResult {
 
-    private val mockedRepository = Mockito.mock(IResultRepository::class.java)
-    private val mockedMatchService = Mockito.mock(MatchService::class.java)
-    private val addResult = AddResult(mockedRepository, mockedMatchService)
+    private val mockedRepository = Mockito.mock(IMatchRepository::class.java)
+    private val addResult = AddResult(mockedRepository)
 
     private val dataGenerator = DataGenerator()
+
+    @Captor
+    lateinit var classCaptor: ArgumentCaptor<Match>
 
     @Test
     fun addingResultsForPoolPlay() {
@@ -34,16 +40,16 @@ class TestReportResult {
         val gameSpec1 = dataGenerator.newGameSpec(firstRegistrationResult = 11, secondRegistrationResult = 8)
         val gameSpec2 = dataGenerator.newGameSpec(firstRegistrationResult = 12, secondRegistrationResult = 10)
         val spec = dataGenerator.newResultSpec(listOf(gameSpec1, gameSpec2))
+        `when`(mockedRepository.getMatch2(match.id)).thenReturn(match)
 
         // Act
         addResult.execute(match, spec, competitionCategory)
 
-        // Assert
-        verify(mockedRepository, times(1)).storeResult(match.id, gameSpec1)
-        verify(mockedRepository, times(1)).storeResult(match.id, gameSpec2)
-        verify(mockedRepository, times(2)).storeResult(Mockito.anyInt(), TestHelper.MockitoHelper.anyObject())
-        verify(mockedMatchService, times(1)).setWinner(match.id, match.firstRegistrationId)
-        verify(mockedMatchService, times(1)).setWinner(Mockito.anyInt(), Mockito.anyInt())
+        // Record the spec sent to the repository for validation
+        Mockito.verify(mockedRepository).save(TestHelper.MockitoHelper.capture(classCaptor))
+        val storedResult = classCaptor.value.result
+
+        assertCorrectResultWasStored(spec, storedResult)
     }
 
     @Test
@@ -62,16 +68,29 @@ class TestReportResult {
         val gameSpec2 = dataGenerator.newGameSpec(firstRegistrationResult = 7, secondRegistrationResult = 11)
         val gameSpec3 = dataGenerator.newGameSpec(firstRegistrationResult = 11, secondRegistrationResult = 13)
         val spec = dataGenerator.newResultSpec(listOf(gameSpec1, gameSpec2, gameSpec3))
+        `when`(mockedRepository.getMatch2(match.id)).thenReturn(match)
 
         // Act
         addResult.execute(match, spec, competitionCategory)
 
-        // Assert
-        verify(mockedRepository, times(1)).storeResult(match.id, gameSpec1)
-        verify(mockedRepository, times(1)).storeResult(match.id, gameSpec2)
-        verify(mockedRepository, times(1)).storeResult(match.id, gameSpec3)
-        verify(mockedRepository, times(3)).storeResult(Mockito.anyInt(), TestHelper.MockitoHelper.anyObject())
-        verify(mockedMatchService, times(1)).setWinner(match.id, match.secondRegistrationId)
-        verify(mockedMatchService, times(1)).setWinner(Mockito.anyInt(), Mockito.anyInt())
+        // Record the spec sent to the repository for validation
+        Mockito.verify(mockedRepository).save(TestHelper.MockitoHelper.capture(classCaptor))
+        val storedResult = classCaptor.value.result
+
+        assertCorrectResultWasStored(spec, storedResult)
+    }
+
+    private fun assertCorrectResultWasStored(
+        spec: ResultSpec,
+        storedResult: List<GameResult>
+    ) {
+        Assertions.assertEquals(spec.gameList.size, storedResult.size)
+        for (i in (0 until spec.gameList.size)) {
+            val specResult = spec.gameList[i]
+            val gameResult = storedResult[i]
+            Assertions.assertEquals(specResult.gameNumber, gameResult.number)
+            Assertions.assertEquals(specResult.firstRegistrationResult, gameResult.firstRegistrationResult)
+            Assertions.assertEquals(specResult.secondRegistrationResult, gameResult.secondRegistrationResult)
+        }
     }
 }
