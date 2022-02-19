@@ -5,12 +5,11 @@ import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.service.MatchSpec
 import com.graphite.competitionplanner.draw.service.MatchType
-import com.graphite.competitionplanner.match.domain.IMatchRepository
-import com.graphite.competitionplanner.match.domain.Match
-import com.graphite.competitionplanner.match.domain.PlayoffMatch
-import com.graphite.competitionplanner.match.domain.PoolMatch
+import com.graphite.competitionplanner.match.domain.*
+import com.graphite.competitionplanner.tables.records.GameRecord
 import com.graphite.competitionplanner.tables.records.MatchRecord
 import org.jooq.DSLContext
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -19,6 +18,8 @@ import java.time.LocalTime
 @Repository
 class MatchRepository(val dslContext: DSLContext): IMatchRepository {
 
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     fun getMatch(matchId: Int): MatchRecord {
         return dslContext.select().from(MATCH).where(MATCH.ID.eq(matchId)).fetchOneInto(MATCH)
             ?: throw NotFoundException("Competition category with $matchId not found.")
@@ -26,16 +27,70 @@ class MatchRepository(val dslContext: DSLContext): IMatchRepository {
 
     override fun getMatch2(matchId: Int): Match {
         val record = dslContext.select().from(MATCH).where(MATCH.ID.eq(matchId)).fetchOneInto(MATCH)
+        val gameRecords = dslContext.selectFrom(GAME).where(GAME.MATCH_ID.eq(matchId)).fetch()
+
         if (record == null) {
             throw NotFoundException("Competition category with $matchId not found.")
         }else {
-            return record.toMatch()
+            val match = record.toMatch()
+            match.result.addAll( gameRecords.map { it.toGameResult() } )
+            return match
         }
     }
 
     override fun store(spec: MatchSpec): Match {
         val record = addMatch(spec)
         return record.toMatch()
+    }
+
+    override fun save(match: Match) {
+        val matchRecord = match.toRecord()
+        val gameRecords = match.result.map { it.toRecord(match.id) }
+
+        try {
+            dslContext.transaction { _ ->
+                dslContext.deleteFrom(GAME).where(GAME.MATCH_ID.eq(match.id)).execute()
+                matchRecord.update()
+                dslContext.batchStore(gameRecords).execute()
+            }
+        } catch (exception: RuntimeException) {
+            logger.error("Failed to update match with ${match.id}.")
+            logger.error("Exception message: ${exception.message}")
+        }
+    }
+
+    fun Match.toRecord(): MatchRecord {
+        val record = dslContext.newRecord(MATCH)
+        record.id = this.id
+        record.competitionCategoryId = this.competitionCategoryId
+        record.firstRegistrationId = this.firstRegistrationId
+        record.secondRegistrationId = this.secondRegistrationId
+        record.wasWalkover = this.wasWalkOver
+        record.winner = this.winner
+        record.startTime = this.startTime
+        record.endTime = this.endTime
+
+        when(this) {
+            is PoolMatch -> {
+                record.groupOrRound = name
+                record.matchType = MatchType.GROUP.name
+            }
+            is PlayoffMatch -> {
+                record.groupOrRound = round.name
+                record.matchOrderNumber = orderNumber
+                record.matchType = MatchType.PLAYOFF.name
+            }
+        }
+        return record
+    }
+
+    fun GameResult.toRecord(matchId: Int): GameRecord {
+        val record = dslContext.newRecord(GAME)
+        record.matchId = matchId
+        record.gameNumber = this.number
+        record.firstRegistrationResult = this.firstRegistrationResult
+        record.secondRegistrationResult = this.secondRegistrationResult
+        return record
     }
 
     fun MatchRecord.toMatch(): Match {
@@ -63,6 +118,14 @@ class MatchRepository(val dslContext: DSLContext): IMatchRepository {
         }
     }
 
+    fun GameRecord.toGameResult(): GameResult {
+        return GameResult(
+            this.id,
+            this.gameNumber,
+            this.firstRegistrationResult,
+            this.secondRegistrationResult
+        )
+    }
 
     fun getMatchesInCategory(competitionCategoryId: Int): List<MatchRecord> {
         return dslContext

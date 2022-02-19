@@ -75,11 +75,6 @@ class MatchService(
         matchRepository.setWinner(matchId, winnerRegistrationId)
     }
 
-    fun updateMatch(matchId: Int, matchSpec: MatchSpec): MatchDTO {
-        val matchRecord = matchRepository.updateMatch(matchId, matchSpec)
-        return matchRecordToDTO(matchRecord)
-    }
-
     fun matchRecordToDTO(record: MatchRecord): MatchDTO {
         return MatchDTO(
             record.id,

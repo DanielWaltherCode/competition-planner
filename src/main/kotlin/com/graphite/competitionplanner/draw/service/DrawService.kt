@@ -153,6 +153,7 @@ data class MatchSpec(
     val groupOrRound: String // Either group name (e.g. Group "A") or the round like Round of 64, Quarterfinals
 )
 
+// TODO: Move to repository. Match repository ?
 enum class MatchType {
     GROUP, PLAYOFF
 }

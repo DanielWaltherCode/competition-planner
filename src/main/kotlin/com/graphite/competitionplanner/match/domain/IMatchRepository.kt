@@ -20,4 +20,11 @@ interface IMatchRepository {
      */
     fun store(spec: MatchSpec): Match
 
+    /**
+     * Saves the match
+     *
+     * @param match Match to be saved
+     */
+    fun save(match: Match)
+
 }

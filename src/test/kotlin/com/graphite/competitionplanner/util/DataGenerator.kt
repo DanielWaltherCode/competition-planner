@@ -11,6 +11,7 @@ import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.schedule.domain.entity.ScheduleSettings
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.draw.service.MatchSpec
+import com.graphite.competitionplanner.match.domain.GameResult
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.domain.PlayoffMatch
 import com.graphite.competitionplanner.match.domain.PoolMatch
@@ -225,7 +226,7 @@ class DataGenerator {
     )
 
 
-        fun newScheduleSettingsDTO(
+    fun newScheduleSettingsDTO(
         averageMatchTime: Duration = Duration.minutes(15),
                 numberOfTables: Int = 8,
         startTime: LocalDateTime = LocalDateTime.now(),
@@ -470,6 +471,18 @@ class DataGenerator {
         secondRegistrationResult: Int = 9
     ) = GameSpec(
         gameNumber,
+        firstRegistrationResult,
+        secondRegistrationResult
+    )
+
+    fun newGameResult(
+        id: Int = 1,
+        number: Int = 1,
+        firstRegistrationResult: Int = 11,
+        secondRegistrationResult: Int = 8
+    ) = GameResult(
+        id,
+        number,
         firstRegistrationResult,
         secondRegistrationResult
     )

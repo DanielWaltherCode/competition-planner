@@ -12,7 +12,7 @@ sealed class Match(
     val winner: Int?,
     val startTime: LocalDateTime? = null,
     val endTime: LocalDateTime? = null,
-    val result: List<GameResult> = emptyList()
+    val result: MutableList<GameResult> = mutableListOf()
 )
 
 class PoolMatch(

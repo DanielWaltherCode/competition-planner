@@ -108,4 +108,95 @@ class TestMatchRepository @Autowired constructor(
         Assertions.assertTrue(match.winner == null, "There should not be a winner on a newly created match")
     }
 
+    @Test
+    fun saveMatchResult() {
+        // Setup
+        val spec = dataGenerator.newMatchSpec(
+            competitionCategoryId = competitionCategory.id,
+            firstRegistrationId = reg1.id,
+            secondRegistrationId = reg2.id,
+            matchType = MatchType.PLAYOFF,
+            groupOrRound = Round.FINAL.name,
+            matchOrderNumber = 2
+        )
+        val match = matchRepository.store(spec) as PlayoffMatch
+
+        match.result.add(dataGenerator.newGameResult(number = 1))
+        match.result.add(dataGenerator.newGameResult(number = 2))
+        match.result.add(dataGenerator.newGameResult(number = 3))
+
+        // Act
+        matchRepository.save(match)
+
+        // Assert
+        val actualMatch = matchRepository.getMatch2(match.id)
+
+        Assertions.assertEquals(match.result.size, actualMatch.result.size)
+        for ( i in (0 until match.result.size)) {
+            val expectedResult = match.result[i]
+            val actualResult = match.result[i]
+            Assertions.assertEquals(expectedResult.number, actualResult.number)
+            Assertions.assertEquals(expectedResult.firstRegistrationResult, actualResult.firstRegistrationResult)
+            Assertions.assertEquals(expectedResult.secondRegistrationResult, actualResult.secondRegistrationResult)
+        }
+    }
+
+    @Test
+    fun saveOverrideMatchResult() {
+        // Setup
+        val spec = dataGenerator.newMatchSpec(
+            competitionCategoryId = competitionCategory.id,
+            firstRegistrationId = reg1.id,
+            secondRegistrationId = reg2.id,
+            matchType = MatchType.PLAYOFF,
+            groupOrRound = Round.FINAL.name,
+            matchOrderNumber = 2
+        )
+        val match = matchRepository.store(spec) as PlayoffMatch
+
+        match.result.add(dataGenerator.newGameResult(number = 1))
+        match.result.add(dataGenerator.newGameResult(number = 2))
+        match.result.add(dataGenerator.newGameResult(number = 3))
+        matchRepository.save(match)
+
+        // Act
+        match.result.clear()
+        matchRepository.save(match)
+
+        // Assert
+        val actualMatch = matchRepository.getMatch2(match.id)
+
+        Assertions.assertEquals(0, actualMatch.result.size)
+    }
+
+    @Test
+    fun getMatch() {
+        // Setup
+        val spec = dataGenerator.newMatchSpec(
+            competitionCategoryId = competitionCategory.id,
+            firstRegistrationId = reg1.id,
+            secondRegistrationId = reg2.id,
+            matchType = MatchType.PLAYOFF,
+            groupOrRound = Round.FINAL.name,
+            matchOrderNumber = 2
+        )
+
+        val match = matchRepository.store(spec) as PlayoffMatch
+
+        // Act
+        val matchActually = matchRepository.getMatch2(match.id) as PlayoffMatch
+
+        Assertions.assertEquals(match.id, matchActually.id)
+        Assertions.assertEquals(match.result, matchActually.result)
+        Assertions.assertEquals(match.orderNumber, matchActually.orderNumber)
+        Assertions.assertEquals(match.round, matchActually.round)
+        Assertions.assertEquals(match.startTime, matchActually.startTime)
+        Assertions.assertEquals(match.endTime, matchActually.endTime)
+        Assertions.assertEquals(match.winner, matchActually.winner)
+        Assertions.assertEquals(match.wasWalkOver, matchActually.wasWalkOver)
+        Assertions.assertEquals(match.competitionCategoryId, matchActually.competitionCategoryId)
+        Assertions.assertEquals(match.firstRegistrationId, matchActually.firstRegistrationId)
+        Assertions.assertEquals(match.secondRegistrationId, matchActually.secondRegistrationId)
+    }
+
 }
