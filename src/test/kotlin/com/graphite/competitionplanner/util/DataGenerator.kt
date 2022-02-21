@@ -10,8 +10,11 @@ import com.graphite.competitionplanner.schedule.domain.entity.MatchType
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.schedule.domain.entity.ScheduleSettings
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
+import com.graphite.competitionplanner.draw.service.MatchSpec
+import com.graphite.competitionplanner.match.domain.GameResult
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
-import com.graphite.competitionplanner.match.service.SimpleMatchDTO
+import com.graphite.competitionplanner.match.domain.PlayoffMatch
+import com.graphite.competitionplanner.match.domain.PoolMatch
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
@@ -115,6 +118,26 @@ class DataGenerator {
         dateOfBirth
     )
 
+    fun newMatchSpec(
+        startTime: LocalDateTime? = null,
+        endTime: LocalDateTime? = null,
+        competitionCategoryId: Int = this.competitionCategoryId++,
+        matchType: com.graphite.competitionplanner.draw.service.MatchType = com.graphite.competitionplanner.draw.service.MatchType.GROUP,
+        firstRegistrationId: Int = this.registrationId++,
+        secondRegistrationId: Int = this.registrationId++,
+        matchOrderNumber: Int = 1,
+        groupOrRound: String = "A"
+    ) = MatchSpec(
+        startTime,
+        endTime,
+        competitionCategoryId,
+        matchType,
+        firstRegistrationId,
+        secondRegistrationId,
+        matchOrderNumber,
+        groupOrRound
+    )
+
     fun newMatchDTO(
         id: Int = matchId++,
         competitionCategoryId: Int = 0,
@@ -137,22 +160,42 @@ class DataGenerator {
         groupOrRound
     )
 
-    fun newSimpleMatchDTO(
+    fun newPoolMatch(
+        name: String = "A",
         id: Int = matchId++,
         competitionCategoryId: Int = this.competitionCategoryId++,
         firstRegistrationId: Int = registrationId++,
         secondRegistrationId: Int = registrationId++,
-        matchType: String = com.graphite.competitionplanner.draw.service.MatchType.GROUP.toString(),
-        groupOrRound: String = "A",
-        orderNumber: Int = 1,
-    ) = SimpleMatchDTO (
+        wasWalkover: Boolean = false,
+        winner: Int? = null
+    ) = PoolMatch (
+        name,
         id,
         competitionCategoryId,
         firstRegistrationId,
         secondRegistrationId,
-        matchType,
-        groupOrRound,
-        orderNumber
+        wasWalkover,
+        winner,
+    )
+
+    fun newPlayOffMatch(
+        round: Round = Round.ROUND_OF_16,
+        orderNumber: Int = 1,
+        id: Int = matchId++,
+        competitionCategoryId: Int = this.competitionCategoryId++,
+        firstRegistrationId: Int = registrationId++,
+        secondRegistrationId: Int = registrationId++,
+        wasWalkover: Boolean = false,
+        winner: Int? = null
+    ) = PlayoffMatch(
+        round,
+        orderNumber,
+        id,
+        competitionCategoryId,
+        firstRegistrationId,
+        secondRegistrationId,
+        wasWalkover,
+        winner
     )
 
     fun newMatchAndResultDTO(
@@ -183,7 +226,7 @@ class DataGenerator {
     )
 
 
-        fun newScheduleSettingsDTO(
+    fun newScheduleSettingsDTO(
         averageMatchTime: Duration = Duration.minutes(15),
                 numberOfTables: Int = 8,
         startTime: LocalDateTime = LocalDateTime.now(),
@@ -428,6 +471,18 @@ class DataGenerator {
         secondRegistrationResult: Int = 9
     ) = GameSpec(
         gameNumber,
+        firstRegistrationResult,
+        secondRegistrationResult
+    )
+
+    fun newGameResult(
+        id: Int = 1,
+        number: Int = 1,
+        firstRegistrationResult: Int = 11,
+        secondRegistrationResult: Int = 8
+    ) = GameResult(
+        id,
+        number,
         firstRegistrationResult,
         secondRegistrationResult
     )

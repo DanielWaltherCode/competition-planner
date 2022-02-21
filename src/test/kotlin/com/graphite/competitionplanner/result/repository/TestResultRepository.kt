@@ -11,52 +11,42 @@ import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.result.interfaces.IResultRepository
 import com.graphite.competitionplanner.result.service.ResultDTO
-import com.graphite.competitionplanner.util.DataGenerator
+import com.graphite.competitionplanner.util.BaseRepositoryTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TestResultRepository(
-    @Autowired val clubRepository: IClubRepository,
-    @Autowired val competitionRepository: ICompetitionRepository,
-    @Autowired val competitionCategoryRepository: ICompetitionCategoryRepository,
-    @Autowired val categoryRepository: ICategoryRepository,
-    @Autowired val playerRepository: IPlayerRepository,
-    @Autowired val registrationRepository: IRegistrationRepository,
-    @Autowired val matchRepository: MatchRepository,
-    @Autowired val resultRepository: IResultRepository
+class TestResultRepository @Autowired constructor(
+    clubRepository: IClubRepository,
+    competitionRepository: ICompetitionRepository,
+    competitionCategoryRepository: ICompetitionCategoryRepository,
+    categoryRepository: ICategoryRepository,
+    playerRepository: IPlayerRepository,
+    registrationRepository: IRegistrationRepository,
+    matchRepository: MatchRepository,
+    resultRepository: IResultRepository
+) : BaseRepositoryTest(
+    clubRepository,
+    competitionRepository,
+    competitionCategoryRepository,
+    categoryRepository,
+    playerRepository,
+    registrationRepository,
+    matchRepository,
+    resultRepository
 ) {
 
-    private val dataGenerator = DataGenerator()
-
     @Test
-    fun something() {
-        val club = clubRepository.store(dataGenerator.newClubSpec())
-        val competition = competitionRepository.store(dataGenerator.newCompetitionSpec(organizingClubId = club.id))
-        val category = categoryRepository.getAvailableCategories().first()
-        val competitionCategory = competitionCategoryRepository.store(
-            competition.id,
-            dataGenerator.newCompetitionCategorySpec(
-                category = dataGenerator.newCategorySpec(category.id, category.name, category.type)
-            )
-        )
-        val player1 = playerRepository.store(dataGenerator.newPlayerSpec(firstName = "PlayerOne", clubId = club.id))
-        val player2 = playerRepository.store(dataGenerator.newPlayerSpec(firstName = "PlayerTwo", clubId = club.id))
-
-        val reg1 = registrationRepository.storeSingles(
-            dataGenerator.newRegistrationSinglesSpecWithDate(
-                playerId = player1.id,
-                competitionCategoryId = competitionCategory.id
-            )
-        )
-        val reg2 = registrationRepository.storeSingles(
-            dataGenerator.newRegistrationSinglesSpecWithDate(
-                playerId = player2.id,
-                competitionCategoryId = competitionCategory.id
-            )
-        )
+    fun gettingResultsFromMatches() {
+        val club = newClub()
+        val competition = club.addCompetition()
+        val competitionCategory = competition.addCompetitionCategory()
+        val player1 = club.addPlayer("PlayerOne")
+        val player2 = club.addPlayer("PlayerTwo")
+        val reg1 = competitionCategory.registerPlayer(player1)
+        val reg2 = competitionCategory.registerPlayer(player2)
 
         val match1 = matchRepository.addMatch(
             MatchSpec(
@@ -130,7 +120,11 @@ class TestResultRepository(
         val results = resultRepository.getResults(listOf(match2.id, match1.id, match3.id))
         val results2 = resultRepository.getResults(listOf(match1.id, match2.id, match3.id))
         val ids = results.map { it.first }
-        Assertions.assertEquals(listOf(match1.id, match2.id, match3.id), ids, "The result was not sorted in ascending order of match ids")
+        Assertions.assertEquals(
+            listOf(match1.id, match2.id, match3.id),
+            ids,
+            "The result was not sorted in ascending order of match ids"
+        )
 
         // Assert
         Assertions.assertEquals(results, results2, "Order of match IDs in input should not matter")

@@ -3,12 +3,12 @@ package com.graphite.competitionplanner.result.domain
 import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.GameSettingsDTO
-import com.graphite.competitionplanner.draw.interfaces.Round
-import com.graphite.competitionplanner.draw.interfaces.isRound
-import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.match.service.SimpleMatchDTO
+import com.graphite.competitionplanner.match.domain.GameResult
+import com.graphite.competitionplanner.match.domain.IMatchRepository
+import com.graphite.competitionplanner.match.domain.Match
+import com.graphite.competitionplanner.match.domain.PlayoffMatch
 import com.graphite.competitionplanner.result.api.ResultSpec
-import com.graphite.competitionplanner.result.interfaces.IResultRepository
+import com.graphite.competitionplanner.result.service.GameDTO
 import com.graphite.competitionplanner.result.service.ResultDTO
 import org.springframework.stereotype.Component
 import kotlin.math.abs
@@ -16,28 +16,29 @@ import kotlin.math.ceil
 
 @Component
 class AddResult(
-    val repository: IResultRepository,
-    val matchService: MatchService,
+    val matchRepository: IMatchRepository,
 ) {
 
-    fun execute(match: SimpleMatchDTO, result: ResultSpec, competitionCategory: CompetitionCategoryDTO): ResultDTO {
+    fun execute(match: Match, result: ResultSpec, competitionCategory: CompetitionCategoryDTO): ResultDTO {
         val gameSettings = competitionCategory.gameSettings
 
         val policy = getPolicyFor(match, gameSettings)
         val winnerId = policy.validateResultAndReturnWinner(match, result)
 
-        repository.deleteResults(match.id)
-        val games = result.gameList.map { repository.storeResult(match.id, it) }
-        matchService.setWinner(match.id, winnerId)
+        match.winner = winnerId
+        match.result = result.gameList.map { GameResult(0, it.gameNumber, it.firstRegistrationResult, it.secondRegistrationResult) }
+        matchRepository.save(match)
 
-        return ResultDTO(games)
+        return ResultDTO(
+            matchRepository.getMatch2(match.id).result.map { GameDTO(it.id, it.number, it.firstRegistrationResult, it.secondRegistrationResult) }
+        )
     }
 
-    private fun getPolicyFor(match: SimpleMatchDTO, gameSettings: GameSettingsDTO): ResultValidationSpecification {
+    private fun getPolicyFor(match: Match, gameSettings: GameSettingsDTO): ResultValidationSpecification {
         return if (
-            match.matchType.isRound() &&
+            match is PlayoffMatch &&
             gameSettings.useDifferentRulesInEndGame &&
-            Round.valueOf(match.matchType) <= gameSettings.differentNumberOfGamesFromRound)
+            match.round <= gameSettings.differentNumberOfGamesFromRound)
         {
             ResultValidationSpecification(gameSettings.numberOfSetsFinal, gameSettings.winMarginFinal, gameSettings.winScoreFinal)
         } else {
@@ -54,7 +55,7 @@ class ResultValidationSpecification(val numberOfSets: Int, val winMargin: Int, v
      * @return The registration id of the winner.
      */
     @Throws(GameValidationException::class)
-    fun validateResultAndReturnWinner(match: SimpleMatchDTO, result: ResultSpec): Int {
+    fun validateResultAndReturnWinner(match: Match, result: ResultSpec): Int {
 
         if (result.gameList.size > this.numberOfSets) {
             throw GameValidationException(GameValidationException.Reason.TOO_MANY_SETS_REPORTED)

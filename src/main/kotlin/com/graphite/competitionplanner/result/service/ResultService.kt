@@ -8,10 +8,11 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.GameSettin
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.service.MatchType
+import com.graphite.competitionplanner.match.domain.Match
+import com.graphite.competitionplanner.match.domain.PlayoffMatch
+import com.graphite.competitionplanner.match.domain.PoolMatch
 import com.graphite.competitionplanner.match.repository.MatchRepository
-import com.graphite.competitionplanner.match.service.MatchDTO
-import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.match.service.SimpleMatchDTO
+import com.graphite.competitionplanner.match.service.*
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
@@ -85,28 +86,55 @@ class ResultService(
         // TODO: Think about what happens if something fails in this function. How do we recover?
         // TODO: Maybe we have to make all of this in one transaction so we avoid getting into an unwanted state?
 
-        val match = matchService.getSimpleMatchDTO(matchId)
+        val match = matchRepository.getMatch2(matchId)
         val competitionCategory = findCompetitionCategory.byId(match.competitionCategoryId)
         val result = addResult.execute(match, resultSpec, competitionCategory)
         advanceRegistrations(competitionCategory, match)
         return result
     }
 
-    private fun advanceRegistrations(competitionCategory: CompetitionCategoryDTO, match: SimpleMatchDTO) {
+    private fun advanceRegistrations(competitionCategory: CompetitionCategoryDTO, match: Match) {
         // Match has now been completed, and we need to decide if we need to advance players (registrations) to next round
-        if (competitionCategory.settings.drawType == DrawType.POOL_ONLY) {
-            return
-        } else if (competitionCategory.settings.drawType == DrawType.POOL_AND_CUP && match.matchType == MatchType.GROUP.toString()) {
-            val draw = competitionDrawRepository.get(competitionCategory.id)
-            val matchesInPool = draw.groups.first { it.name == match.groupOrRound }.matches
+        when(match) {
+            is PlayoffMatch -> competitionCategory.handleAdvancementOf(match)
+            is PoolMatch -> competitionCategory.handleAdvancementOf(match)
+        }
+    }
+
+    fun CompetitionCategoryDTO.handleAdvancementOf(match: PlayoffMatch) {
+        if (match.round == Round.FINAL) {
+            // Nothing to advance
+        } else {
+            val draw = competitionDrawRepository.get(this.id)
+            val winner = matchRepository.getMatch(match.id).winner
+            val nextRound = draw.playOff.filter { it.round < match.round }.minByOrNull { it.round }!!
+            val nextOrderNumber = ceil( match.orderNumber / 2.0 ).toInt() // 1 -> 1, 2 -> 1, 3 -> 2, etc.
+            val nextMatch = matchRepository.getMatch2(
+                nextRound.matches.first { it.matchOrderNumber == nextOrderNumber }.id
+            )
+            if (match.orderNumber % 2 == 1) {
+                nextMatch.firstRegistrationId = winner
+            }else {
+                nextMatch.secondRegistrationId = winner
+            }
+            matchRepository.save(nextMatch)
+        }
+    }
+
+    fun CompetitionCategoryDTO.handleAdvancementOf(match: PoolMatch) {
+        if (this.settings.drawType == DrawType.POOL_ONLY) {
+            return // Nothing to advance
+        } else {
+            val draw = competitionDrawRepository.get(this.id)
+            val matchesInPool = draw.groups.first { it.name == match.name }.matches
             val allMatchesHaveBeenPlayedInPool = matchesInPool.all { it.winner.isNotEmpty() } // If winner is empty, then there is no winner.
             if (allMatchesHaveBeenPlayedInPool) {
-                val groupStanding = draw.groups.first { it.name == match.groupOrRound }.groupStandingList
+                val groupStanding = draw.groups.first { it.name == match.name }.groupStandingList
                 val registrationsToAdvance = groupStanding.map { // Assuming groupStanding is sorted first to last place
-                    registrationRepository.getRegistrationIdForPlayerInCategory(competitionCategory.id, it.player.first().id)
+                    registrationRepository.getRegistrationIdForPlayerInCategory(this.id, it.player.first().id)
                 }
 
-                val groupToPlayoff = draw.poolToPlayoffMap.filter { it.groupPosition.groupName == match.groupOrRound }.sortedBy { it.groupPosition.position }
+                val groupToPlayoff = draw.poolToPlayoffMap.filter { it.groupPosition.groupName == match.name }.sortedBy { it.groupPosition.position }
                 assert(groupToPlayoff.size == registrationsToAdvance.size) { "Number of players advancing does not match the number of group to playoff mappings" }
 
                 draw.groups.first().groupStandingList
@@ -121,23 +149,6 @@ class ResultService(
                     }
                     record.update()
                 }
-            }
-        } else {
-            if (Round.valueOf(match.groupOrRound) == Round.FINAL) {
-                // Nothing to advance
-            } else {
-                val draw = competitionDrawRepository.get(competitionCategory.id)
-                val winner = matchRepository.getMatch(match.id).winner
-                val nextRound = draw.playOff.filter { it.round < Round.valueOf(match.groupOrRound) }.minByOrNull { it.round }!!
-                val nextOrderNumber = ceil( match.orderNumber / 2.0 ).toInt() // 1 -> 1, 2 -> 1, 3 -> 2, etc.
-                val nextMatch = nextRound.matches.first { it.matchOrderNumber == nextOrderNumber }
-                val record = matchRepository.getMatch(nextMatch.id)
-                if (match.orderNumber % 2 == 1) {
-                    record.firstRegistrationId = winner
-                }else {
-                    record.secondRegistrationId = winner
-                }
-                record.update()
             }
         }
     }
