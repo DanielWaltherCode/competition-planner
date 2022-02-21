@@ -14,14 +14,14 @@ class DeleteCompetitionCategory(
     /**
      * Delete the competition category.
      *
-     * @param competitionCategory Competition category to delete.
+     * @param competitionCategoryId Competition category to delete.
      * @throws CannotDeleteCompetitionCategoryException If there are registered player in the competition category.
      */
-    fun execute(competitionCategory: CompetitionCategoryDTO) {
-        val registrations = registrationRepository.getRegistrationsIn(competitionCategory.id)
+    fun execute(competitionCategoryId: Int) {
+        val registrations = registrationRepository.getRegistrationsIn(competitionCategoryId)
         if (registrations.isNotEmpty()) {
             throw CannotDeleteCompetitionCategoryException()
         }
-        competitionCategoryRepository.delete(competitionCategory.id)
+        competitionCategoryRepository.delete(competitionCategoryId)
     }
 }

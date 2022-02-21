@@ -64,7 +64,7 @@ class TestWithdraw(
         for (id in registrationIds) {
             registrationService.unregister(id)
         }
-        deleteCompetitionCategory.execute(findCompetitionCategory.byId(competitionCategoryId))
+        deleteCompetitionCategory.execute(competitionCategoryId)
     }
 
     @Test

@@ -25,7 +25,7 @@ class TestDeleteCompetitionCategory {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO()
 
         // Act
-        deleteCompetitionCategory.execute(competitionCategory)
+        deleteCompetitionCategory.execute(competitionCategory.id)
 
         // Assert
         verify(mockedCompetitionCategoryRepository, times(1)).delete(competitionCategory.id)
@@ -41,7 +41,7 @@ class TestDeleteCompetitionCategory {
 
         // Act & Assert
         Assertions.assertThrows(CannotDeleteCompetitionCategoryException::class.java) {
-            deleteCompetitionCategory.execute(competitionCategory)
+            deleteCompetitionCategory.execute(competitionCategory.id)
         }
     }
 }

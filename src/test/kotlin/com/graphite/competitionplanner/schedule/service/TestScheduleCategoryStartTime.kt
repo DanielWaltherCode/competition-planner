@@ -71,8 +71,8 @@ class TestScheduleCategoryStartTime(
 
     @AfterEach
     fun deleteCompetition() {
-        deleteCompetitionCategory.execute(findCompetitionCategory.byId(competitionCategory1))
-        deleteCompetitionCategory.execute(findCompetitionCategory.byId(competitionCategory2))
+        deleteCompetitionCategory.execute(competitionCategory1)
+        deleteCompetitionCategory.execute(competitionCategory2)
         competitionRepository.deleteCompetition(competitionId)
     }
 
