@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 class CancelCompetitionCategory(
     val repository: ICompetitionCategoryRepository
 ) {
-    fun execute(competitionCategory: CompetitionCategoryDTO) {
-        repository.setStatus(competitionCategory.id, CompetitionCategoryStatus.CANCELLED)
+    fun execute(competitionCategoryId: Int) {
+        repository.setStatus(competitionCategoryId, CompetitionCategoryStatus.CANCELLED)
     }
 }

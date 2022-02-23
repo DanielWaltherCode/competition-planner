@@ -34,14 +34,12 @@ class TestCompetitionCategoryApi {
     fun cancelCompetitionCategory_shouldDelegateToDomain() {
         // Setup
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO()
-        `when`(findCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
 
         // Act
         api.cancelCompetitionCategory(1, competitionCategory.id)
 
         // Assert
-        verify(cancelCompetitionCategory, times(1)).execute(competitionCategory)
-        verify(cancelCompetitionCategory, times(1)).execute(TestHelper.MockitoHelper.anyObject())
+        verify(cancelCompetitionCategory, times(1)).execute(competitionCategory.id)
     }
 
     @Test
@@ -99,7 +97,6 @@ class TestCompetitionCategoryApi {
             "Result might not be sorted by category name"
         )
         verify(getCompetitionCategories, times(1)).execute(competition.id)
-        verify(getCompetitionCategories, times(1)).execute(anyInt())
     }
 
     @Test
@@ -137,12 +134,10 @@ class TestCompetitionCategoryApi {
     fun deleteCompetitionCategory_shouldDelegateToDomain() {
         // Setup
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(1231)
-        `when`(findCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
 
         // Act
         api.deleteCompetitionCategory(181, competitionCategory.id)
 
-        verify(deleteCompetitionCategory, times(1)).execute(competitionCategory)
-        verify(deleteCompetitionCategory, times(1)).execute(TestHelper.MockitoHelper.anyObject())
+        verify(deleteCompetitionCategory, times(1)).execute(competitionCategory.id)
     }
 }
