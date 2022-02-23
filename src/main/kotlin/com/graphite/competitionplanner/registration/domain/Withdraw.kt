@@ -7,6 +7,7 @@ import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepo
 import com.graphite.competitionplanner.registration.interfaces.PlayerRegistrationStatus
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
+import com.graphite.competitionplanner.result.domain.AddResult
 import com.graphite.competitionplanner.result.service.ResultService
 import com.graphite.competitionplanner.tables.records.MatchRecord
 import org.springframework.stereotype.Component
@@ -17,7 +18,8 @@ class Withdraw(
     val matchRepository: MatchRepository,
     val resultService: ResultService,
     val drawService: DrawService,
-    val findCompetitionCategory: FindCompetitionCategory
+    val findCompetitionCategory: FindCompetitionCategory,
+    val addResult: AddResult
 ) {
 
     /**
@@ -82,7 +84,11 @@ class Withdraw(
              */
             match.wasWalkover = true
             match.update()
-            resultService.addResult(match.id, ResultSpec(gameResults))
+            addResult.execute(
+                matchRepository.getMatch2(match.id),
+                ResultSpec(gameResults),
+                findCompetitionCategory.byId(categoryId)
+            )
         }
     }
 }
