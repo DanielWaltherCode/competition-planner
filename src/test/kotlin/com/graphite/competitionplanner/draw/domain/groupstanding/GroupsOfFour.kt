@@ -1,9 +1,11 @@
-package com.graphite.competitionplanner.draw.domain
+package com.graphite.competitionplanner.draw.domain.groupstanding
 
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
-import com.graphite.competitionplanner.competitioncategory.domain.DeleteCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
+import com.graphite.competitionplanner.draw.domain.CalculateGroupStanding
+import com.graphite.competitionplanner.draw.domain.CreateDraw
+import com.graphite.competitionplanner.draw.domain.GetDraw
 import com.graphite.competitionplanner.draw.interfaces.SortedBy
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
@@ -13,20 +15,15 @@ import com.graphite.competitionplanner.registration.domain.Withdraw
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.registration.service.RegistrationService
-import com.graphite.competitionplanner.result.api.GameSpec
-import com.graphite.competitionplanner.result.api.ResultSpec
-import com.graphite.competitionplanner.result.service.ResultService
-import com.graphite.competitionplanner.tables.records.MatchRecord
 import com.graphite.competitionplanner.util.TestUtil
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import kotlin.random.Random
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
-class TestCalculateGroupStanding(
+class GroupsOfFour(
     @Autowired val getDraw: GetDraw,
     @Autowired val competitionRepository: CompetitionRepository,
     @Autowired val getCompetitionCategories: GetCompetitionCategories,
@@ -37,11 +34,11 @@ class TestCalculateGroupStanding(
     @Autowired val matchRepository: MatchRepository,
     @Autowired val competitionDrawRepository: CompetitionDrawRepository,
     @Autowired val registrationRepository: RegistrationRepository,
-    @Autowired val resultService: ResultService,
     @Autowired val calculateGroupStanding: CalculateGroupStanding,
     @Autowired val createDraw: CreateDraw,
     @Autowired val withdraw: Withdraw,
     @Autowired val findCompetitions: FindCompetitions,
+    @Autowired val groupStandingUtil: GroupStandingUtil
 ) {
 
     var competitionCategoryId = 0
@@ -138,25 +135,28 @@ class TestCalculateGroupStanding(
         val player3 = uniquePlayerRegistrations.elementAt(2)
         val player4 = uniquePlayerRegistrations.elementAt(3)
         // Setup
-        winAgainstPlayersX(
+        groupStandingUtil.winAgainstPlayersX(
             player1,
             mutableListOf(
                 player2, player3, player4
-            )
+            ),
+            competitionCategoryId
         )
 
-        winAgainstPlayersX(
+        groupStandingUtil.winAgainstPlayersX(
             player2,
             mutableListOf(
                 player3, player4
-            )
+            ),
+            competitionCategoryId
         )
 
-        winAgainstPlayersX(
+        groupStandingUtil.winAgainstPlayersX(
             player3,
             mutableListOf(
                     player4
-            )
+            ),
+            competitionCategoryId
         )
 
         // Act
@@ -187,31 +187,34 @@ class TestCalculateGroupStanding(
         val player4 = uniquePlayerRegistrations.elementAt(3)
 
         // Setup
-        winAgainstPlayersX(
+        groupStandingUtil.winAgainstPlayersX(
             player1,
             mutableListOf(
                 player2, player4
-            )
+            ),
+            competitionCategoryId
         )
 
-        winAgainstPlayersX(
+        groupStandingUtil.winAgainstPlayersX(
             player2,
             mutableListOf(
                 player3, player4
-            )
+            ), competitionCategoryId
         )
 
-        winAgainstPlayersX(
+        groupStandingUtil.winAgainstPlayersX(
             player3,
             mutableListOf(
                 player1
-            )
+            ),
+            competitionCategoryId
         )
-        winAgainstPlayersX(
+        groupStandingUtil.winAgainstPlayersX(
             player4,
             mutableListOf(
                 player3
-            )
+            ),
+            competitionCategoryId
         )
 
         // Act
@@ -257,31 +260,35 @@ class TestCalculateGroupStanding(
         val player4 = uniquePlayerRegistrations.elementAt(3)
 
         // Setup
-        winAgainstPlayersX(
+        groupStandingUtil.winAgainstPlayersX(
             player1,
             mutableListOf(
                 player2, player3, player4
-            )
+            ),
+            competitionCategoryId
         )
 
-        winAgainstPlayersX(
+        groupStandingUtil.winAgainstPlayersX(
             player2,
             mutableListOf(
                 player3
-            )
+            ),
+            competitionCategoryId
         )
 
-        winAgainstPlayersX(
+        groupStandingUtil.winAgainstPlayersX(
             player3,
             mutableListOf(
                 player4
-            )
+            ),
+            competitionCategoryId
         )
-        winAgainstPlayersX(
+        groupStandingUtil.winAgainstPlayersX(
             player4,
             mutableListOf(
                 player2
-            )
+            ),
+            competitionCategoryId
         )
 
         // Act
@@ -307,18 +314,20 @@ class TestCalculateGroupStanding(
         withdraw.walkOver(umeaCompetitionId, competitionCategoryId, player4)
 
         // Setup
-        winAgainstPlayersX(
+        groupStandingUtil.winAgainstPlayersX(
             player1,
             mutableListOf(
                 player2, player3
-            )
+            ),
+            competitionCategoryId
         )
 
-        winAgainstPlayersX(
+        groupStandingUtil.winAgainstPlayersX(
             player2,
             mutableListOf(
-                player3,
-            )
+                player3, player4
+            ),
+            competitionCategoryId
         )
 
         // Act
@@ -343,7 +352,60 @@ class TestCalculateGroupStanding(
         Assertions.assertEquals(0, groupStanding.find { it.player[0].id == playerDTOList[3][0].id }?.groupScore)
     }
 
-    // Three way tie. Ensure sorted by quotients
+    @Test
+    fun testGroupWithWalkoverAfterSomeMatchesPlayed() {
+        //Set up
+        val player1 = uniquePlayerRegistrations.elementAt(0)
+        val player2 = uniquePlayerRegistrations.elementAt(1)
+        val player3 = uniquePlayerRegistrations.elementAt(2)
+        val player4 = uniquePlayerRegistrations.elementAt(3)
+        val umeaId = util.getClubIdOrDefault("Umeå IK")
+        val umeaCompetitions = findCompetitions.thatBelongTo(umeaId)
+        val umeaCompetitionId = umeaCompetitions[0].id
+
+        // Setup
+        groupStandingUtil.winAgainstPlayersX(
+            player1,
+            mutableListOf(
+                player2, player3, player4
+            ),
+            competitionCategoryId
+        )
+
+        withdraw.walkOver(umeaCompetitionId, competitionCategoryId, player4)
+
+        groupStandingUtil.winAgainstPlayersX(
+            player2,
+            mutableListOf(
+                player3
+            ),
+            competitionCategoryId
+        )
+
+
+        // Act
+        val groupStanding = calculateGroupStanding.execute(competitionCategoryId, "A")
+        val playerDTOList: MutableList<List<PlayerDTO>> = mutableListOf()
+        for (registration in uniquePlayerRegistrations) {
+            playerDTOList.add(registrationRepository.getPlayersFrom(registration))
+        }
+        // Assert
+        // Player four should be last due to WO in 2 matches. Player 3 lost all matches but still gets more points
+        // than the WO player. WO player gets one point for losing one match.
+        Assertions.assertEquals(1, groupStanding.find { it.player[0].id == playerDTOList[0][0].id }?.groupPosition)
+        Assertions.assertEquals(6, groupStanding.find { it.player[0].id == playerDTOList[0][0].id }?.groupScore)
+
+        Assertions.assertEquals(2, groupStanding.find { it.player[0].id == playerDTOList[1][0].id }?.groupPosition)
+        Assertions.assertEquals(5, groupStanding.find { it.player[0].id == playerDTOList[1][0].id }?.groupScore)
+
+        Assertions.assertEquals(3, groupStanding.find { it.player[0].id == playerDTOList[2][0].id }?.groupPosition)
+        Assertions.assertEquals(4, groupStanding.find { it.player[0].id == playerDTOList[2][0].id }?.groupScore)
+
+        Assertions.assertEquals(4, groupStanding.find { it.player[0].id == playerDTOList[3][0].id }?.groupPosition)
+        Assertions.assertEquals(1, groupStanding.find { it.player[0].id == playerDTOList[3][0].id }?.groupScore)
+    }
+
+    // Three way tie. Ensure sorted by game quotients
     @Test
     fun testThreeWayTieDifferentQuotients() {
         val player1 = uniquePlayerRegistrations.elementAt(0)
@@ -352,18 +414,19 @@ class TestCalculateGroupStanding(
         val player4 = uniquePlayerRegistrations.elementAt(3)
         // All beat fourth player
         for (i in 0..2) {
-            winAgainstPlayersX(
+            groupStandingUtil.winAgainstPlayersX(
                 uniquePlayerRegistrations.elementAt(i),
                 mutableListOf(
                     player4
-                )
+                ),
+                competitionCategoryId
             )
         }
 
-        // Players beat each other, players 1 has best set quotient, then 3, then 2
-        beatPlayerWithExactScore(player1, player2, listOf(11, 11, 11), listOf(8, 5, 7))
-        beatPlayerWithExactScore(player2, player3, listOf(11, 5, 11, 11), listOf(2, 11, 3, 4))
-        beatPlayerWithExactScore(player3, player1, listOf(11, 6, 11, 11), listOf(2, 11, 1, 5))
+        // Players beat each other, players 1 has best game quotient, then 3, then 2
+        groupStandingUtil.beatPlayerWithExactScore(player1, player2, listOf(11, 11, 11), listOf(8, 5, 7), competitionCategoryId)
+        groupStandingUtil.beatPlayerWithExactScore(player2, player3, listOf(11, 5, 11, 11), listOf(2, 11, 3, 4), competitionCategoryId)
+        groupStandingUtil.beatPlayerWithExactScore(player3, player1, listOf(11, 6, 11, 11), listOf(2, 11, 1, 5), competitionCategoryId)
         // Results: Player 1: 4:3, Player2: 3:4, Player 3: 4:4
 
         // Act
@@ -402,18 +465,19 @@ class TestCalculateGroupStanding(
 
         // All beat fourth player
         for (i in 0..2) {
-            winAgainstPlayersX(
+            groupStandingUtil.winAgainstPlayersX(
                 uniquePlayerRegistrations.elementAt(i),
                 mutableListOf(
                     player4
-                )
+                ),
+                competitionCategoryId
             )
         }
 
         // Players beat each other, all of them have 4-4 in sets. Player3 has better point quotient, then 2, then 1
-        beatPlayerWithExactScore(player1, player2, listOf(11, 11, 8, 11), listOf(7, 7, 11, 7))
-        beatPlayerWithExactScore(player2, player3, listOf(11, 5, 11, 11), listOf(9, 11, 3, 4))
-        beatPlayerWithExactScore(player3, player1, listOf(11, 6, 11, 11), listOf(2, 11, 1, 5))
+        groupStandingUtil.beatPlayerWithExactScore(player1, player2, listOf(11, 11, 8, 11), listOf(7, 7, 11, 7), competitionCategoryId)
+        groupStandingUtil.beatPlayerWithExactScore(player2, player3, listOf(11, 5, 11, 11), listOf(9, 11, 3, 4), competitionCategoryId)
+        groupStandingUtil.beatPlayerWithExactScore(player3, player1, listOf(11, 6, 11, 11), listOf(2, 11, 1, 5), competitionCategoryId)
         // Players total points: 1: 60:71, 2: 70:68, 3: 66:57
 
         // Act
@@ -448,18 +512,19 @@ class TestCalculateGroupStanding(
 
         // All beat fourth player
         for (i in 0..2) {
-            winAgainstPlayersX(
+            groupStandingUtil.winAgainstPlayersX(
                 uniquePlayerRegistrations.elementAt(i),
                 mutableListOf(
                     player4
-                )
+                ),
+                competitionCategoryId
             )
         }
 
         // Players beat each other, all of them have 4-4 in sets. Player3 has better point quotient, then 2, then 1
-        beatPlayerWithExactScore(player1, player2, listOf(11, 11, 11), listOf(0, 0, 0))
-        beatPlayerWithExactScore(player2, player3, listOf(11, 11, 11), listOf(0, 0, 0))
-        beatPlayerWithExactScore(player3, player1, listOf(11, 11, 11), listOf(0, 0, 0))
+        groupStandingUtil.beatPlayerWithExactScore(player1, player2, listOf(11, 11, 11), listOf(0, 0, 0), competitionCategoryId)
+        groupStandingUtil.beatPlayerWithExactScore(player2, player3, listOf(11, 11, 11), listOf(0, 0, 0), competitionCategoryId)
+        groupStandingUtil.beatPlayerWithExactScore(player3, player1, listOf(11, 11, 11), listOf(0, 0, 0), competitionCategoryId)
 
         // Act
         val groupStanding = calculateGroupStanding.execute(competitionCategoryId, "A")
@@ -475,86 +540,5 @@ class TestCalculateGroupStanding(
         Assertions.assertTrue(groupStanding.find { it.player[0].id == playerDTOList[2][0].id }?.sortedBy == SortedBy.DRAW)
     }
 
-    private fun winAgainstPlayersX(mainPlayer: Int, playersToBeat: List<Int>) {
-        val matches = matchRepository.getMatchesInCategory(competitionCategoryId)
-        val matchesInGroupA = matches.filter { it.groupOrRound == "A" }
-        // Select all matches where the main player is one of the parties and the other party is one of the players to beat
-        val selectedMatches = matchesInGroupA.filter {
-            (it.firstRegistrationId == mainPlayer || it.secondRegistrationId == mainPlayer)
-                    && (playersToBeat.contains(it.firstRegistrationId) || playersToBeat.contains(it.secondRegistrationId))
-                    && it.winner == null
-        }
 
-        for (match in selectedMatches) {
-            if (match.firstRegistrationId == mainPlayer) {
-                generateAndSaveResult(match, PlayerPosition.FIRST)
-            } else if (match.secondRegistrationId == mainPlayer) {
-                generateAndSaveResult(match, PlayerPosition.SECOND)
-            }
-        }
-    }
-
-    private fun generateAndSaveResult(match: MatchRecord, playerPosition: PlayerPosition) {
-        val nrGames = Random.nextInt(3, 6)
-
-        val winningPlayerResults = mutableListOf<Int>()
-        while (winningPlayerResults.size < nrGames) {
-            winningPlayerResults.add(Random.nextInt(0, 12))
-        }
-        while (winningPlayerResults.count { it == 11 } < 3) {
-            val gameToRemove = Random.nextInt(0, nrGames)
-            winningPlayerResults.removeAt(gameToRemove)
-            val value = Random.nextInt(4, 12)
-            winningPlayerResults.add(value)
-        }
-        val gameResults = mutableListOf<GameSpec>()
-        for ((index, winningPlayerResult) in winningPlayerResults.withIndex()) {
-            val otherPlayerResult = when (winningPlayerResult) {
-                10 -> 12
-                11 -> Random.nextInt(0, 10)
-                else -> 11
-            }
-            if (playerPosition == PlayerPosition.FIRST) {
-                gameResults.add(GameSpec(index + 1, winningPlayerResult, otherPlayerResult))
-            } else {
-                gameResults.add(GameSpec(index + 1, otherPlayerResult, winningPlayerResult))
-            }
-        }
-        val resultSpec = ResultSpec(gameResults)
-        resultService.addResult(match.id, resultSpec)
-
-    }
-
-    private fun beatPlayerWithExactScore(
-        mainPlayer: Int,
-        playerToBeat: Int,
-        mainPlayerResults: List<Int>,
-        playerToBeatResults: List<Int>
-    ) {
-        val matches = matchRepository.getMatchesInCategory(competitionCategoryId)
-        val matchesInGroupA = matches.filter { it.groupOrRound == "A" }
-
-        // Select their match
-        val match = matchesInGroupA.first {
-            (it.firstRegistrationId == mainPlayer || it.secondRegistrationId == mainPlayer)
-                    && (playerToBeat == it.firstRegistrationId || playerToBeat == it.secondRegistrationId)
-                    && it.winner == null
-        }
-
-        val gameResults: MutableList<GameSpec> = mutableListOf()
-        if (match.firstRegistrationId == mainPlayer) {
-            for (i in mainPlayerResults.indices) {
-                gameResults.add(GameSpec(i + 1, mainPlayerResults[i], playerToBeatResults[i]))
-            }
-        } else if (match.secondRegistrationId == mainPlayer) {
-            for (i in mainPlayerResults.indices) {
-                gameResults.add(GameSpec(i + 1, playerToBeatResults[i], mainPlayerResults[i]))
-            }
-        }
-        resultService.addResult(match.id, ResultSpec(gameResults))
-    }
-
-    enum class PlayerPosition {
-        FIRST, SECOND
-    }
 }
