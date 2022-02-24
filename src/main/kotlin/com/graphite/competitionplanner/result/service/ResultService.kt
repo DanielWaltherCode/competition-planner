@@ -110,11 +110,12 @@ class ResultService(
                 // Store final group results
                 storeFinalGroupResult(groupStanding, competitionDrawRepository.getPool(match.competitionCategoryId, match.name))
 
-                val registrationsToAdvance: List<Int> = groupStanding.sortedBy { it.groupPosition }.map {
+                val allRegistrations: List<Int> = groupStanding.sortedBy { it.groupPosition }.map {
                     registrationRepository.getRegistrationIdForPlayerInCategory(this.id, it.player.first().id)
                 }
 
                 val groupToPlayoff: List<GroupToPlayoff> = draw.poolToPlayoffMap.filter { it.groupPosition.groupName == match.name }.sortedBy { it.groupPosition.position }
+                val registrationsToAdvance = allRegistrations.subList(0, groupToPlayoff.size)
                 assert(groupToPlayoff.size == registrationsToAdvance.size) { "Number of players advancing does not match the number of group to playoff mappings" }
 
                 groupToPlayoff.zip(registrationsToAdvance) { groupToPlayOffMapping, registrationId ->
@@ -157,8 +158,10 @@ class ResultService(
     fun storeFinalGroupResult(groupStanding: List<GroupStandingDTO>, pool: PoolRecord) {
         for (standing in groupStanding) {
             val poolResultRecord: PoolResultRecord = dslContext.newRecord(POOL_RESULT)
+            val registrationId = registrationRepository.getRegistrationIdForPlayerInCategory(pool.competitionCategoryId, standing.player.first().id)
             poolResultRecord.poolPosition = standing.groupPosition
             poolResultRecord.poolId = pool.id
+            poolResultRecord.registrationId = registrationId
             poolResultRecord.store()
         }
     }

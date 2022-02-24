@@ -62,10 +62,9 @@ class GroupStandingUtil(
                 gameResults.add(GameSpec(index + 1, otherPlayerResult, winningPlayerResult))
             }
         }
-        addResult.execute(
-            matchRepository.getMatch2(match.id),
-            ResultSpec(gameResults),
-            findCompetitionCategory.byId(competitionCategoryId)
+        resultService.addFinalMatchResult(
+            match.id,
+            ResultSpec(gameResults)
         )
 
     }
@@ -97,10 +96,9 @@ class GroupStandingUtil(
                 gameResults.add(GameSpec(i + 1, playerToBeatResults[i], mainPlayerResults[i]))
             }
         }
-        addResult.execute(
-            matchRepository.getMatch2(match.id),
-            ResultSpec(gameResults),
-            findCompetitionCategory.byId(competitionCategoryId)
+        resultService.addFinalMatchResult(
+            match.id,
+            ResultSpec(gameResults)
         )
     }
 
