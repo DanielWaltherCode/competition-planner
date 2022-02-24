@@ -1,6 +1,8 @@
 package com.graphite.competitionplanner.draw.interfaces
 
 import com.graphite.competitionplanner.draw.domain.CompetitionCategoryDrawSpec
+import com.graphite.competitionplanner.tables.records.PoolRecord
+import com.graphite.competitionplanner.tables.records.PoolResultRecord
 
 interface ICompetitionDrawRepository {
 
@@ -26,4 +28,24 @@ interface ICompetitionDrawRepository {
      *  @param competitionCategoryId Id of the competition category
      */
     fun delete(competitionCategoryId: Int)
+
+    /**
+     * Retrieve a pool
+     */
+    fun getPool(competitionCategoryId: Int, poolName: String): PoolRecord
+
+    /**
+     * Checks if pool is done (i.e. if a PoolResultRecord exists)
+     */
+    fun isPoolFinished(poolId: Int): Boolean
+
+    /**
+     * Retrieve list of pool results for a given group
+     */
+    fun getPoolResult(poolId: Int): List<PoolResultRecord>
+
+    /**
+     * Delete pools for a given competition category
+     */
+    fun deletePools(competitionCategoryId: Int)
 }

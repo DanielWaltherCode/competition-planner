@@ -84,7 +84,8 @@ class GroupsOfFour(
         for (id in registrationIds) {
             registrationService.unregister(id)
         }
-
+        // Delete pools
+        competitionDrawRepository.deletePools(competitionCategoryId)
     }
 
     @Test

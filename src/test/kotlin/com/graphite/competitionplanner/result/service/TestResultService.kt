@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.CreateDraw
+import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchDTO
 import com.graphite.competitionplanner.match.service.MatchService
@@ -42,7 +43,8 @@ class TestResultService(
     @Autowired val clubRepository: ClubRepository,
     @Autowired val createPlayer: CreatePlayer,
     @Autowired val addResult: AddResult,
-    @Autowired val matchRepository: MatchRepository
+    @Autowired val matchRepository: MatchRepository,
+    @Autowired val competitionDrawRepository: CompetitionDrawRepository
 ) {
 
     var competitionCategoryId = 0
@@ -103,6 +105,11 @@ class TestResultService(
         for (match in matches) {
             resultRepository.deleteMatchResult(match.id)
         }
+        // Remove pool draw
+        competitionDrawRepository.deleteGroupsInCategory(competitionCategoryId)
+
+        // Delete pools
+        competitionDrawRepository.deletePools(competitionCategoryId)
     }
 
     @Test

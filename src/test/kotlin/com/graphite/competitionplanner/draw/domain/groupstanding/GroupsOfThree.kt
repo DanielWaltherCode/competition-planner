@@ -48,7 +48,12 @@ class GroupsOfThree(
 
     @BeforeAll
     fun setUpClassData() {
-        competitionCategoryId = testUtil.addCompetitionCategory("Herrar 6")
+        try {
+            competitionCategoryId = testUtil.addCompetitionCategory("Herrar 6")
+        }
+        catch (exception: IllegalArgumentException) {
+            println("Category already added")
+        }
 
         // Update to groups of three
         val originalCategory = findCompetitionCategory.byId(competitionCategoryId)
@@ -102,6 +107,8 @@ class GroupsOfThree(
             registrationService.unregister(id)
         }
 
+        // Delete pools
+        competitionDrawRepository.deletePools(competitionCategoryId)
     }
 
     @Test

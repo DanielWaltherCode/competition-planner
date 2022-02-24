@@ -1,15 +1,13 @@
 package com.graphite.competitionplanner.draw.repository
 
 import com.graphite.competitionplanner.Tables.*
+import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.domain.*
 import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.draw.service.*
 import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.tables.records.MatchRecord
-import com.graphite.competitionplanner.tables.records.PoolDrawRecord
-import com.graphite.competitionplanner.tables.records.PoolRecord
-import com.graphite.competitionplanner.tables.records.PoolToPlayoffMapRecord
+import com.graphite.competitionplanner.tables.records.*
 import org.jetbrains.annotations.NotNull
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
@@ -134,6 +132,28 @@ class CompetitionDrawRepository(val dslContext: DSLContext,
             }
 
         return poc1 + poc2
+    }
+
+    override fun getPool(competitionCategoryId: Int, poolName: String): PoolRecord {
+        return dslContext
+            .selectFrom(POOL)
+            .where(POOL.COMPETITION_CATEGORY_ID.eq(competitionCategoryId).and(POOL.NAME.eq(poolName)))
+            .fetchOneInto(POOL) ?: throw NotFoundException("Pool $poolName in category $competitionCategoryId not found.")
+
+    }
+
+    override fun isPoolFinished(poolId: Int): Boolean {
+        return dslContext.fetchExists(
+            dslContext.selectFrom(POOL_RESULT).where(POOL_RESULT.POOL_ID.eq(poolId))
+        )
+    }
+
+    override fun getPoolResult(poolId: Int): List<PoolResultRecord> {
+        return dslContext.selectFrom(POOL_RESULT).where(POOL_RESULT.POOL_ID.eq(poolId)).fetchInto(POOL_RESULT)
+    }
+
+    override fun deletePools(competitionCategoryId: Int) {
+        dslContext.deleteFrom(POOL).where(POOL.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
     }
 
     private fun Pool.toRecord(competitionCategoryId: Int): PoolRecord {

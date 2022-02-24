@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.result.service
 
+import com.graphite.competitionplanner.Tables.POOL_RESULT
 import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
@@ -19,6 +20,9 @@ import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.domain.AddResult
 import com.graphite.competitionplanner.result.repository.ResultRepository
 import com.graphite.competitionplanner.tables.records.GameRecord
+import com.graphite.competitionplanner.tables.records.PoolRecord
+import com.graphite.competitionplanner.tables.records.PoolResultRecord
+import org.jooq.DSLContext
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import kotlin.math.ceil
@@ -31,7 +35,8 @@ class ResultService(
     val findCompetitionCategory: FindCompetitionCategory,
     val addResult: AddResult,
     val competitionDrawRepository: ICompetitionDrawRepository,
-    val registrationRepository: RegistrationRepository
+    val registrationRepository: RegistrationRepository,
+    val dslContext: DSLContext
 ) {
 
     private val LOGGER = LoggerFactory.getLogger(javaClass)
@@ -102,14 +107,15 @@ class ResultService(
             val allMatchesHaveBeenPlayedInPool: Boolean = matchesInPool.all { it.winner.isNotEmpty() } // If winner is empty, then there is no winner.
             if (allMatchesHaveBeenPlayedInPool) {
                 val groupStanding: List<GroupStandingDTO> = draw.groups.first { it.name == match.name }.groupStandingList
-                val registrationsToAdvance: List<Int> = groupStanding.sortedBy { it.groupPosition }.map { // Assuming groupStanding is sorted first to last place
+                // Store final group results
+                storeFinalGroupResult(groupStanding, competitionDrawRepository.getPool(match.competitionCategoryId, match.name))
+
+                val registrationsToAdvance: List<Int> = groupStanding.sortedBy { it.groupPosition }.map {
                     registrationRepository.getRegistrationIdForPlayerInCategory(this.id, it.player.first().id)
                 }
 
                 val groupToPlayoff: List<GroupToPlayoff> = draw.poolToPlayoffMap.filter { it.groupPosition.groupName == match.name }.sortedBy { it.groupPosition.position }
                 assert(groupToPlayoff.size == registrationsToAdvance.size) { "Number of players advancing does not match the number of group to playoff mappings" }
-
-                draw.groups.first().groupStandingList
 
                 groupToPlayoff.zip(registrationsToAdvance) { groupToPlayOffMapping, registrationId ->
                     val playoffPosition = groupToPlayOffMapping.playoffPosition
@@ -146,6 +152,15 @@ class ResultService(
             gameRecord.firstRegistrationResult,
             gameRecord.secondRegistrationResult
         )
+    }
+
+    fun storeFinalGroupResult(groupStanding: List<GroupStandingDTO>, pool: PoolRecord) {
+        for (standing in groupStanding) {
+            val poolResultRecord: PoolResultRecord = dslContext.newRecord(POOL_RESULT)
+            poolResultRecord.poolPosition = standing.groupPosition
+            poolResultRecord.poolId = pool.id
+            poolResultRecord.store()
+        }
     }
 }
 
