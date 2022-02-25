@@ -15,6 +15,7 @@ import com.graphite.competitionplanner.registration.repository.RegistrationRepos
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
+import com.graphite.competitionplanner.result.domain.AddResult
 import com.graphite.competitionplanner.result.service.ResultService
 import com.graphite.competitionplanner.util.TestUtil
 import org.junit.jupiter.api.AfterEach
@@ -38,7 +39,8 @@ class TestWithdraw(
     @Autowired val createDraw: CreateDraw,
     @Autowired val withdraw: Withdraw,
     @Autowired val findCompetitions: FindCompetitions,
-    @Autowired val resultService: ResultService
+    @Autowired val resultService: ResultService,
+    @Autowired val addResult: AddResult
 ) {
     var competitionCategoryId = 0
     var competitionId = 0
@@ -128,7 +130,11 @@ class TestWithdraw(
                 )
             )
         }
-        resultService.addResult(match.id, ResultSpec(gameResults))
+        addResult.execute(
+            matchRepository.getMatch2(match.id),
+            ResultSpec(gameResults),
+            findCompetitionCategory.byId(competitionCategoryId)
+        )
         withdraw.walkOver(competitionId, competitionCategoryId, playerToWithdraw)
 
         // Assert

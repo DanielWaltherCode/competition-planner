@@ -27,6 +27,7 @@ import com.graphite.competitionplanner.registration.repository.RegistrationRepos
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
+import com.graphite.competitionplanner.result.domain.AddResult
 import com.graphite.competitionplanner.result.service.ResultService
 import com.graphite.competitionplanner.user.api.UserSpec
 import com.graphite.competitionplanner.user.repository.UserRepository
@@ -61,7 +62,8 @@ class SetupTestData(
     val getCompetitionCategories: GetCompetitionCategories,
     val addCompetitionCategory: AddCompetitionCategory,
     val createDraw: CreateDraw,
-    val resultService: ResultService
+    val resultService: ResultService,
+    val addResult: AddResult,
 ) {
 
     @EventListener
@@ -661,7 +663,11 @@ class SetupTestData(
         for (group in draw.groups) {
             for (match in group.matches) {
                 val generatedGameResult = createResult(match)
-                resultService.addResult(match.id, ResultSpec(generatedGameResult))
+                addResult.execute(
+                    matchRepository.getMatch2(match.id),
+                    ResultSpec(generatedGameResult),
+                    herrar2
+                )
             }
         }
 
@@ -687,15 +693,15 @@ class SetupTestData(
         val nrGames = Random.nextInt(3, 6)
         val winningPlayer = Random.nextInt(1, 3)
 
-            val winningPlayerResults = mutableListOf<Int>()
-            while (winningPlayerResults.size < nrGames) {
-                winningPlayerResults.add(Random.nextInt(0, 11))
-            }
-            while (winningPlayerResults.count { i -> i == 11 } < 3) {
-                val gameToRemove = Random.nextInt(0, nrGames)
-                winningPlayerResults.removeAt(gameToRemove)
-                val value = Random.nextInt(4, 12)
-                winningPlayerResults.add(value)
+        val winningPlayerResults = mutableListOf<Int>()
+        while (winningPlayerResults.size < nrGames) {
+            winningPlayerResults.add(Random.nextInt(0, 11))
+        }
+        while (winningPlayerResults.count { i -> i == 11 } < 3) {
+            val gameToRemove = Random.nextInt(0, nrGames)
+            winningPlayerResults.removeAt(gameToRemove)
+            val value = Random.nextInt(4, 12)
+            winningPlayerResults.add(value)
         }
         val gameResults = mutableListOf<GameSpec>()
         for ((index, winningPlayerResult) in winningPlayerResults.withIndex()) {
@@ -705,10 +711,9 @@ class SetupTestData(
                 else -> 11
             }
             if (winningPlayer == 1) {
-                gameResults.add(GameSpec(index+1, winningPlayerResult, otherPlayerResult))
-            }
-            else {
-                gameResults.add(GameSpec(index+1, otherPlayerResult, winningPlayerResult))
+                gameResults.add(GameSpec(index + 1, winningPlayerResult, otherPlayerResult))
+            } else {
+                gameResults.add(GameSpec(index + 1, otherPlayerResult, winningPlayerResult))
             }
         }
         return gameResults

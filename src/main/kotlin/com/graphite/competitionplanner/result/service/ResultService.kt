@@ -1,25 +1,28 @@
 package com.graphite.competitionplanner.result.service
 
+import com.graphite.competitionplanner.Tables.POOL_RESULT
 import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.GameSettingsDTO
-import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
-import com.graphite.competitionplanner.draw.interfaces.Round
-import com.graphite.competitionplanner.draw.service.MatchType
+import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.match.domain.Match
 import com.graphite.competitionplanner.match.domain.PlayoffMatch
 import com.graphite.competitionplanner.match.domain.PoolMatch
 import com.graphite.competitionplanner.match.repository.MatchRepository
-import com.graphite.competitionplanner.match.service.*
+import com.graphite.competitionplanner.match.service.MatchAndResultDTO
+import com.graphite.competitionplanner.match.service.MatchDTO
+import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.domain.AddResult
 import com.graphite.competitionplanner.result.repository.ResultRepository
 import com.graphite.competitionplanner.tables.records.GameRecord
-import com.graphite.competitionplanner.tables.records.MatchRecord
+import com.graphite.competitionplanner.tables.records.PoolRecord
+import com.graphite.competitionplanner.tables.records.PoolResultRecord
+import org.jooq.DSLContext
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import kotlin.math.ceil
@@ -32,37 +35,11 @@ class ResultService(
     val findCompetitionCategory: FindCompetitionCategory,
     val addResult: AddResult,
     val competitionDrawRepository: ICompetitionDrawRepository,
-    val registrationRepository: RegistrationRepository
+    val registrationRepository: RegistrationRepository,
+    val dslContext: DSLContext
 ) {
 
     private val LOGGER = LoggerFactory.getLogger(javaClass)
-
-    fun addResult(matchId: Int, resultSpec: ResultSpec): ResultDTO {
-        val match: MatchRecord = matchRepository.getMatch(matchId)
-        validateResult(match.competitionCategoryId, resultSpec)
-
-        val resultList = mutableListOf<GameRecord>()
-
-        for (gameResult in resultSpec.gameList) {
-            val addedGame = resultRepository.addGameResult(matchId, gameResult)
-            resultList.add(addedGame)
-        }
-        // Winner of last game must be winner
-        val finalGame: GameRecord = resultList.last()
-        val winnerId: Int
-        if (finalGame.firstRegistrationResult > finalGame.secondRegistrationResult) {
-            winnerId = match.firstRegistrationId
-        } else if (finalGame.firstRegistrationResult < finalGame.secondRegistrationResult) {
-            winnerId = match.secondRegistrationId
-        } else {
-            // Couldn't determine winner, something is wrong!
-            LOGGER.error("Couldn't determine winner in match ${matchId}!", resultSpec)
-            throw GameValidationException(GameValidationException.Reason.COULD_NOT_DECIDE_WINNER)
-        }
-        matchService.setWinner(match.id, winnerId)
-        return ResultDTO(resultList.map { recordToDTO(it) })
-
-    }
 
     fun updateGameResult(matchId: Int, gameId: Int, gameSpec: GameSpec): ResultDTO {
         val match: MatchDTO = matchService.getMatch(matchId)
@@ -125,19 +102,21 @@ class ResultService(
         if (this.settings.drawType == DrawType.POOL_ONLY) {
             return // Nothing to advance
         } else {
-            val draw = competitionDrawRepository.get(this.id)
-            val matchesInPool = draw.groups.first { it.name == match.name }.matches
-            val allMatchesHaveBeenPlayedInPool = matchesInPool.all { it.winner.isNotEmpty() } // If winner is empty, then there is no winner.
+            val draw: CompetitionCategoryDrawDTO = competitionDrawRepository.get(this.id)
+            val matchesInPool: List<MatchAndResultDTO> = draw.groups.first { it.name == match.name }.matches
+            val allMatchesHaveBeenPlayedInPool: Boolean = matchesInPool.all { it.winner.isNotEmpty() } // If winner is empty, then there is no winner.
             if (allMatchesHaveBeenPlayedInPool) {
-                val groupStanding = draw.groups.first { it.name == match.name }.groupStandingList
-                val registrationsToAdvance = groupStanding.map { // Assuming groupStanding is sorted first to last place
+                val groupStanding: List<GroupStandingDTO> = draw.groups.first { it.name == match.name }.groupStandingList
+                // Store final group results
+                storeFinalGroupResult(groupStanding, competitionDrawRepository.getPool(match.competitionCategoryId, match.name))
+
+                val allRegistrations: List<Int> = groupStanding.sortedBy { it.groupPosition }.map {
                     registrationRepository.getRegistrationIdForPlayerInCategory(this.id, it.player.first().id)
                 }
 
-                val groupToPlayoff = draw.poolToPlayoffMap.filter { it.groupPosition.groupName == match.name }.sortedBy { it.groupPosition.position }
+                val groupToPlayoff: List<GroupToPlayoff> = draw.poolToPlayoffMap.filter { it.groupPosition.groupName == match.name }.sortedBy { it.groupPosition.position }
+                val registrationsToAdvance = allRegistrations.subList(0, groupToPlayoff.size)
                 assert(groupToPlayoff.size == registrationsToAdvance.size) { "Number of players advancing does not match the number of group to playoff mappings" }
-
-                draw.groups.first().groupStandingList
 
                 groupToPlayoff.zip(registrationsToAdvance) { groupToPlayOffMapping, registrationId ->
                     val playoffPosition = groupToPlayOffMapping.playoffPosition
@@ -158,51 +137,6 @@ class ResultService(
         return ResultDTO(resultList.map { recordToDTO(it) })
     }
 
-    // Returns a list of who each registrationID in a group has defeated
-    fun getOpponentsDefeatedInGroup(categoryId: Int, groupName: String): MutableMap<Int, MutableList<Int>> {
-        val allGroupMatches: List<MatchRecord> = matchRepository.getMatchesInCategoryForMatchType(categoryId, MatchType.GROUP)
-        val matchesInGroup = allGroupMatches.filter { it.groupOrRound == groupName }
-        val uniquePlayerRegistrations: MutableSet<Int> = mutableSetOf()
-        for (match in matchesInGroup) {
-            uniquePlayerRegistrations.add(match.firstRegistrationId)
-            uniquePlayerRegistrations.add(match.secondRegistrationId)
-        }
-        val winMap: MutableMap<Int, MutableList<Int>> = mutableMapOf()
-
-        for (player in uniquePlayerRegistrations) {
-            val defeatedPlayersList: MutableList<Int> = mutableListOf()
-            for (match in matchesInGroup) {
-                if (match.winner == null) {
-                    continue
-                }
-                if (match.winner == player) {
-                    if(match.firstRegistrationId == player) {
-                        defeatedPlayersList.add(match.secondRegistrationId)
-                    }
-                    else if(match.secondRegistrationId == player) {
-                        defeatedPlayersList.add(match.firstRegistrationId)
-                    }
-                }
-            }
-            winMap[player] = defeatedPlayersList
-        }
-        return winMap
-    }
-
-    private fun validateResult(categoryId: Int, resultSpec: ResultSpec) {
-        val gameRules = findCompetitionCategory.byId(categoryId).gameSettings
-        // TODO -- add specific checks for group stage and playoff stage
-        for (game in resultSpec.gameList) {
-            validateGame(gameRules, game)
-        }
-        if ((resultSpec.gameList.size) < (gameRules.numberOfSets / 2.0)) {
-            // Too few sets
-            throw GameValidationException(GameValidationException.Reason.TOO_FEW_SETS_REPORTED)
-        }
-
-        // Todo -- add special validation for tie breaks or final matches with more sets
-    }
-
     private fun validateGame(gameRules: GameSettingsDTO, game: GameSpec) {
         if (game.firstRegistrationResult < gameRules.winScore
             && game.secondRegistrationResult < gameRules.winScore
@@ -219,6 +153,17 @@ class ResultService(
             gameRecord.firstRegistrationResult,
             gameRecord.secondRegistrationResult
         )
+    }
+
+    fun storeFinalGroupResult(groupStanding: List<GroupStandingDTO>, pool: PoolRecord) {
+        for (standing in groupStanding) {
+            val poolResultRecord: PoolResultRecord = dslContext.newRecord(POOL_RESULT)
+            val registrationId = registrationRepository.getRegistrationIdForPlayerInCategory(pool.competitionCategoryId, standing.player.first().id)
+            poolResultRecord.poolPosition = standing.groupPosition
+            poolResultRecord.poolId = pool.id
+            poolResultRecord.registrationId = registrationId
+            poolResultRecord.store()
+        }
     }
 }
 

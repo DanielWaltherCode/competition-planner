@@ -1,15 +1,22 @@
 package com.graphite.competitionplanner.draw.domain.groupstanding
 
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
+import com.graphite.competitionplanner.result.domain.AddResult
 import com.graphite.competitionplanner.result.service.ResultService
 import com.graphite.competitionplanner.tables.records.MatchRecord
 import org.springframework.stereotype.Component
 import kotlin.random.Random
 
 @Component
-class GroupStandingUtil(val resultService: ResultService, val matchRepository: MatchRepository) {
+class GroupStandingUtil(
+    val resultService: ResultService,
+    val matchRepository: MatchRepository,
+    val addResult: AddResult,
+    val findCompetitionCategory: FindCompetitionCategory
+) {
     fun winAgainstPlayersX(mainPlayer: Int, playersToBeat: List<Int>, competitionCategoryId: Int) {
         val matches = matchRepository.getMatchesInCategory(competitionCategoryId)
         val matchesInGroupA = matches.filter { it.groupOrRound == "A" }
@@ -22,14 +29,14 @@ class GroupStandingUtil(val resultService: ResultService, val matchRepository: M
 
         for (match in selectedMatches) {
             if (match.firstRegistrationId == mainPlayer) {
-                generateAndSaveResult(match, PlayerPosition.FIRST)
+                generateAndSaveResult(match, PlayerPosition.FIRST, competitionCategoryId)
             } else if (match.secondRegistrationId == mainPlayer) {
-                generateAndSaveResult(match, PlayerPosition.SECOND)
+                generateAndSaveResult(match, PlayerPosition.SECOND, competitionCategoryId)
             }
         }
     }
 
-    fun generateAndSaveResult(match: MatchRecord, playerPosition: PlayerPosition) {
+    fun generateAndSaveResult(match: MatchRecord, playerPosition: PlayerPosition, competitionCategoryId: Int) {
         val nrGames = Random.nextInt(3, 6)
 
         val winningPlayerResults = mutableListOf<Int>()
@@ -55,8 +62,10 @@ class GroupStandingUtil(val resultService: ResultService, val matchRepository: M
                 gameResults.add(GameSpec(index + 1, otherPlayerResult, winningPlayerResult))
             }
         }
-        val resultSpec = ResultSpec(gameResults)
-        resultService.addResult(match.id, resultSpec)
+        resultService.addFinalMatchResult(
+            match.id,
+            ResultSpec(gameResults)
+        )
 
     }
 
@@ -87,7 +96,10 @@ class GroupStandingUtil(val resultService: ResultService, val matchRepository: M
                 gameResults.add(GameSpec(i + 1, playerToBeatResults[i], mainPlayerResults[i]))
             }
         }
-        resultService.addResult(match.id, ResultSpec(gameResults))
+        resultService.addFinalMatchResult(
+            match.id,
+            ResultSpec(gameResults)
+        )
     }
 
     enum class PlayerPosition {

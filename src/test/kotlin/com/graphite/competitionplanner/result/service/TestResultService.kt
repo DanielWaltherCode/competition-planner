@@ -5,6 +5,8 @@ import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.CreateDraw
+import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
+import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchDTO
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.domain.CreatePlayer
@@ -14,6 +16,7 @@ import com.graphite.competitionplanner.registration.repository.RegistrationRepos
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
+import com.graphite.competitionplanner.result.domain.AddResult
 import com.graphite.competitionplanner.result.repository.ResultRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestUtil
@@ -38,7 +41,10 @@ class TestResultService(
     @Autowired val competitionCategoryRepository: CompetitionCategoryRepository,
     @Autowired val createDraw: CreateDraw,
     @Autowired val clubRepository: ClubRepository,
-    @Autowired val createPlayer: CreatePlayer
+    @Autowired val createPlayer: CreatePlayer,
+    @Autowired val addResult: AddResult,
+    @Autowired val matchRepository: MatchRepository,
+    @Autowired val competitionDrawRepository: CompetitionDrawRepository
 ) {
 
     var competitionCategoryId = 0
@@ -99,6 +105,11 @@ class TestResultService(
         for (match in matches) {
             resultRepository.deleteMatchResult(match.id)
         }
+        // Remove pool draw
+        competitionDrawRepository.deleteGroupsInCategory(competitionCategoryId)
+
+        // Delete pools
+        competitionDrawRepository.deletePools(competitionCategoryId)
     }
 
     @Test
@@ -116,30 +127,18 @@ class TestResultService(
         gameList.add(GameSpec(1, 11, 9))
         gameList.add(GameSpec(2, 11, 9))
         gameList.add(GameSpec(3, 11, 9))
-        val resultSpec = ResultSpec(gameList)
-        this.result = resultService.addResult(matches[0].id, resultSpec)
+
         this.match = matchService.getMatch(matches[0].id)
 
+        this.result = addResult.execute(
+            matchRepository.getMatch2(match.id),
+            ResultSpec(gameList),
+            findCompetitionCategory.byId(competitionCategoryId)
+        )
+
     }
 
-    @Test
-    fun testAddFaultyResults() {
-        val matches = matchService.getMatchesInCategory(competitionCategoryId)
 
-        val gameList = mutableListOf<GameSpec>()
-        gameList.add(GameSpec(1, 11, 9))
-        gameList.add(GameSpec(2, 11, 9))
-        gameList.add(GameSpec(3, 10, 9))
-        val resultSpec = ResultSpec(gameList)
-
-        Assertions.assertThrows(GameValidationException::class.java) {
-            resultService.addResult(matches[1].id, resultSpec)
-        }
-
-        // Assert winner of match has not been set
-        val match = matchService.getMatch(matches[1].id)
-        Assertions.assertEquals(0, match.winner.size)
-    }
 
 //    @Test
 //    fun testGetResult() {

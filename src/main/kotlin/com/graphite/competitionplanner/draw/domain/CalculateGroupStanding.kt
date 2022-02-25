@@ -56,15 +56,33 @@ class CalculateGroupStanding(
         }
         val sortedStandingList = sortGroupStanding(groupStandingList, matchesInSelectedGroup)
 
-        var counter = 0
-        val groupStandingDTOList: MutableList<GroupStandingDTO> = mutableListOf()
-        for (standing in sortedStandingList) {
-            counter += 1
-            groupStandingDTOList.add(
-                convertToGroupStandingDTO(standing, counter)
-            )
+        // If pool is already finished, fetch final result and re-sort the group based on this
+        // In all cases except for when draw decided the group, the order should be the same
+        val pool = competitionDrawRepository.getPool(categoryId, groupName)
+        if (competitionDrawRepository.isPoolFinished(pool.id)) {
+            val finalPoolResult = competitionDrawRepository.getPoolResult(pool.id)
+            val groupStandingDTOList: MutableList<GroupStandingDTO> = mutableListOf()
+            for (standing in sortedStandingList) {
+                groupStandingDTOList.add(
+                    convertToGroupStandingDTO(
+                        standing,
+                        finalPoolResult.first { it.registrationId == standing.registrationId }.poolPosition
+                    )
+                )
+            }
+            return groupStandingDTOList.sortedBy { it.groupPosition }
+        } else {
+            var counter = 0
+            val groupStandingDTOList: MutableList<GroupStandingDTO> = mutableListOf()
+            for (standing in sortedStandingList) {
+                counter += 1
+                groupStandingDTOList.add(
+                    convertToGroupStandingDTO(standing, counter)
+                )
+            }
+            return groupStandingDTOList
         }
-        return groupStandingDTOList
+
     }
 
     /* Groups should be sorted by:
@@ -155,7 +173,7 @@ class CalculateGroupStanding(
         // Add subgroup result calculation to list we will return
         for (fullResult in groupStandingList) {
             try {
-                val subGroupResult = standingInSubGroup.first{it.registrationId == fullResult.registrationId}
+                val subGroupResult = standingInSubGroup.first { it.registrationId == fullResult.registrationId }
                 fullResult.subgroupStanding = subGroupResult
             }
             // If the player in the group is not in this particular subgroup, just continue
@@ -195,7 +213,8 @@ class CalculateGroupStanding(
         for (gameQuotient in distinctGameQuotients) {
             val playersWithThatGameQuotient = standingInSubGroup.filter { it.gameQuotient == gameQuotient }
             if (playersWithThatGameQuotient.size == 1) {
-                val fullResult = groupStandingList.first { it.registrationId == playersWithThatGameQuotient[0].registrationId }
+                val fullResult =
+                    groupStandingList.first { it.registrationId == playersWithThatGameQuotient[0].registrationId }
                 fullResult.sortedBy = SortedBy.POINT_QUOTIENT
                 playersToReturn.add(fullResult)
             } else {
@@ -215,7 +234,8 @@ class CalculateGroupStanding(
                             playersWithThatGameQuotient.filter { it.pointQuotient == pointQuotient }
                         // This happens if three players had same game quotient, and two of them had same point quotient
                         if (playersWithSameGameAndPointQuotient.size == 1) {
-                            val fullResult = groupStandingList.first { it.registrationId == playersWithSameGameAndPointQuotient[0].registrationId }
+                            val fullResult =
+                                groupStandingList.first { it.registrationId == playersWithSameGameAndPointQuotient[0].registrationId }
                             fullResult.sortedBy = SortedBy.POINT_QUOTIENT
                             playersToReturn.add(fullResult)
                         }
