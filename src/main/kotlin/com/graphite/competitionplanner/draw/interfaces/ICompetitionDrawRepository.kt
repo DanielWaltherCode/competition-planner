@@ -48,4 +48,9 @@ interface ICompetitionDrawRepository {
      * Delete pools for a given competition category
      */
     fun deletePools(competitionCategoryId: Int)
+
+    /**
+     * Should only be used to clear test data
+     */
+    fun clearPoolTable()
 }

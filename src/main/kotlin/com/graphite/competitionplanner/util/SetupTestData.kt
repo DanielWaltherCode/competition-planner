@@ -687,6 +687,7 @@ class SetupTestData(
         playerRepository.clearTable()
         categoryRepository.clearTable()
         clubRepository.clearClubTable()
+        competitionDrawRepository.clearPoolTable()
     }
 
     private fun createResult(match: MatchAndResultDTO): List<GameSpec> {

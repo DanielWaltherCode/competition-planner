@@ -156,6 +156,10 @@ class CompetitionDrawRepository(val dslContext: DSLContext,
         dslContext.deleteFrom(POOL).where(POOL.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
     }
 
+    override fun clearPoolTable() {
+       dslContext.deleteFrom(POOL).execute()
+    }
+
     private fun Pool.toRecord(competitionCategoryId: Int): PoolRecord {
         val record = dslContext.newRecord(POOL)
         record.competitionCategoryId = competitionCategoryId
