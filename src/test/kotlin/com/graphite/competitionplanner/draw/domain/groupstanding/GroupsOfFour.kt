@@ -3,6 +3,8 @@ package com.graphite.competitionplanner.draw.domain.groupstanding
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
+import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.CalculateGroupStanding
 import com.graphite.competitionplanner.draw.domain.CreateDraw
 import com.graphite.competitionplanner.draw.domain.GetDraw
@@ -38,7 +40,8 @@ class GroupsOfFour(
     @Autowired val createDraw: CreateDraw,
     @Autowired val withdraw: Withdraw,
     @Autowired val findCompetitions: FindCompetitions,
-    @Autowired val groupStandingUtil: GroupStandingUtil
+    @Autowired val groupStandingUtil: GroupStandingUtil,
+    @Autowired val competitionCategoryRepository: ICompetitionCategoryRepository
 ) {
 
     var competitionCategoryId = 0
@@ -46,6 +49,7 @@ class GroupsOfFour(
 
     @BeforeAll
     fun setUpClassData() {
+
         competitionCategoryId = testUtil.addCompetitionCategory("Herrar 6")
     }
 
@@ -86,6 +90,9 @@ class GroupsOfFour(
         }
         // Delete pools
         competitionDrawRepository.deletePools(competitionCategoryId)
+
+        // Set status to Active
+        competitionCategoryRepository.setStatus(competitionCategoryId, CompetitionCategoryStatus.ACTIVE)
     }
 
     @Test

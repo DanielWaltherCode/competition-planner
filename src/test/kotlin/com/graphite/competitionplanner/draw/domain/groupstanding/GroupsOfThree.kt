@@ -4,8 +4,10 @@ import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.domain.UpdateCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryUpdateSpec
 import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsDTO
+import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.CalculateGroupStanding
 import com.graphite.competitionplanner.draw.domain.CreateDraw
 import com.graphite.competitionplanner.draw.interfaces.SortedBy
@@ -41,7 +43,8 @@ class GroupsOfThree(
     @Autowired val findCompetitions: FindCompetitions,
     @Autowired val findCompetitionCategory: FindCompetitionCategory,
     @Autowired val updateCompetitionCategory: UpdateCompetitionCategory,
-    @Autowired val groupStandingUtil: GroupStandingUtil
+    @Autowired val groupStandingUtil: GroupStandingUtil,
+    @Autowired val competitionCategoryRepository: ICompetitionCategoryRepository
 ) {
     var competitionCategoryId = 0
     var uniquePlayerRegistrations: MutableSet<Int> = mutableSetOf()
@@ -109,6 +112,9 @@ class GroupsOfThree(
 
         // Delete pools
         competitionDrawRepository.deletePools(competitionCategoryId)
+
+        // Set status to Active
+        competitionCategoryRepository.setStatus(competitionCategoryId, CompetitionCategoryStatus.ACTIVE)
     }
 
     @Test
