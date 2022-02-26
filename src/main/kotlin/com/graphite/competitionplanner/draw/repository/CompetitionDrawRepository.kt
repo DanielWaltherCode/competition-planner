@@ -2,7 +2,8 @@ package com.graphite.competitionplanner.draw.repository
 
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.common.exception.NotFoundException
-import com.graphite.competitionplanner.draw.interfaces.Round
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
+import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.*
 import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.draw.service.*
@@ -10,13 +11,17 @@ import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.tables.records.*
 import org.jetbrains.annotations.NotNull
 import org.jooq.DSLContext
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import org.springframework.context.annotation.Lazy
 
 @Repository
 class CompetitionDrawRepository(val dslContext: DSLContext,
                                 val matchService: MatchService,
+                                val competitionCategoryRepository: ICompetitionCategoryRepository,
                                 @Lazy val getDraw: GetDraw) : ICompetitionDrawRepository {
+
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     fun addPoolDraw(poolDrawDto: PoolDrawHelper) {
         val pooldrawRecord = dslContext.newRecord(POOL_DRAW)
@@ -45,10 +50,20 @@ class CompetitionDrawRepository(val dslContext: DSLContext,
     }
 
     override fun store(draw: CompetitionCategoryDrawSpec): CompetitionCategoryDrawDTO {
-        return when (draw) {
-            is CupDrawSpec -> storeCupDraw(draw)
-            is PoolAndCupDrawSpec -> storePoolAndCupDraw(draw)
-            is PoolDrawSpec -> storePoolDraw(draw)
+        try {
+            dslContext.transaction { _ ->
+                competitionCategoryRepository.setStatus(draw.competitionCategoryId, CompetitionCategoryStatus.DRAWN)
+                when (draw) {
+                    is CupDrawSpec -> storeCupDraw(draw)
+                    is PoolAndCupDrawSpec -> storePoolAndCupDraw(draw)
+                    is PoolDrawSpec -> storePoolDraw(draw)
+                }
+            }
+            return get(draw.competitionCategoryId)
+        } catch (exception: RuntimeException) {
+            logger.error("Failed to store draw for competition category with id ${draw.competitionCategoryId}")
+            logger.error("Exception message: ${exception.message}")
+            throw RuntimeException("Something went wrong")
         }
     }
 
@@ -61,27 +76,21 @@ class CompetitionDrawRepository(val dslContext: DSLContext,
         dslContext.deleteFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
     }
 
-    fun String.isRound(): Boolean {
-        return Round.values().any { it.name == this }
-    }
-
-    private fun storeCupDraw(draw: CupDrawSpec): CompetitionCategoryDrawDTO {
+    private fun storeCupDraw(draw: CupDrawSpec) {
         val records = draw.matches.map { it.toRecord(draw.competitionCategoryId) }
         dslContext.batchInsert(records).execute()
-        return get(draw.competitionCategoryId)
     }
 
-    private fun storePoolDraw(draw: PoolDrawSpec): CompetitionCategoryDrawDTO {
+    private fun storePoolDraw(draw: PoolDrawSpec) {
         val poolRecords: List<PoolRecord> = draw.pools.map { it.toRecord(draw.competitionCategoryId) }
         dslContext.batchInsert(poolRecords).execute()
 
         val records: List<MatchRecord> =
             draw.pools.flatMap { group -> group.matches.map { it.toRecord(draw.competitionCategoryId, group.name) } }
         dslContext.batchInsert(records).execute()
-        return get(draw.competitionCategoryId)
     }
 
-    private fun storePoolAndCupDraw(draw: PoolAndCupDrawSpec): CompetitionCategoryDrawDTO {
+    private fun storePoolAndCupDraw(draw: PoolAndCupDrawSpec) {
         val poolRecords: List<PoolRecord> = draw.pools.map { it.toRecord(draw.competitionCategoryId) }
         dslContext.batchInsert(poolRecords).execute()
 
@@ -92,8 +101,6 @@ class CompetitionDrawRepository(val dslContext: DSLContext,
 
         val poolToPlayoffMapRecords: List<PoolToPlayoffMapRecord> = createPoolToPlayoffMapRecords(draw)
         dslContext.batchInsert(poolToPlayoffMapRecords).execute()
-
-        return get(draw.competitionCategoryId)
     }
 
     private fun createPoolToPlayoffMapRecords(draw: PoolAndCupDrawSpec): List<PoolToPlayoffMapRecord> {

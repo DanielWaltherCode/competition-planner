@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.draw.repository
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.domain.CupDrawSpec
@@ -69,6 +70,9 @@ class TestCupOnly(
         Assertions.assertEquals(registrations[1].playerId, final.secondPlayer.first().id)
         Assertions.assertEquals(1, final.matchOrderNumber)
         Assertions.assertEquals(Round.FINAL.name, final.groupOrRound)
+
+        val status = competitionCategoryRepository.get(drawDTO.competitionCategoryId).status
+        Assertions.assertEquals(CompetitionCategoryStatus.DRAWN.name, status)
     }
 
     @Test

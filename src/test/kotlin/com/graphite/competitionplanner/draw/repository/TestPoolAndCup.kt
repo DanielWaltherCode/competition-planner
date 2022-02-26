@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.draw.repository
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.*
@@ -100,6 +101,9 @@ class TestPoolAndCup(
         Assertions.assertEquals(1, secondSemi.secondPlayer.size)
         Assertions.assertEquals("B1", secondSemi.firstPlayer.first().firstName)
         Assertions.assertEquals("A2", secondSemi.secondPlayer.first().firstName)
+
+        val status = competitionCategoryRepository.get(result.competitionCategoryId).status
+        Assertions.assertEquals(CompetitionCategoryStatus.DRAWN.name, status)
     }
 
     private fun List<PlayoffRoundDTO>.inRound(round: Round): PlayoffRoundDTO {

@@ -171,10 +171,17 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         competitionCategoryRecord.status = spec.status.toString()
         competitionCategoryRecord.competitionId = competitionId
         competitionCategoryRecord.category = spec.category.id
-        competitionCategoryRecord.store()
 
-        spec.gameSettings.toRecord(competitionCategoryRecord.id).store()
-        spec.settings.toRecord(competitionCategoryRecord.id).store()
+        try {
+            dslContext.transaction { _ ->
+                competitionCategoryRecord.store()
+                spec.gameSettings.toRecord(competitionCategoryRecord.id).store()
+                spec.settings.toRecord(competitionCategoryRecord.id).store()
+            }
+        } catch (exception: RuntimeException) {
+            logger.error("Failed to store competition category in competition with id $competitionId. Competition category spec: $spec")
+            logger.error("Exception message: ${exception.message}")
+        }
 
         return CompetitionCategoryDTO(
             id = competitionCategoryRecord.id,
@@ -186,15 +193,22 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
     }
 
     override fun delete(competitionCategoryId: Int) {
-        dslContext.delete(COMPETITION_CATEGORY_METADATA)
-            .where(COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
-            .execute()
-        dslContext.delete(COMPETITION_CATEGORY_GAME_RULES)
-            .where(COMPETITION_CATEGORY_GAME_RULES.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
-            .execute()
-        dslContext.deleteFrom(COMPETITION_CATEGORY)
-            .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
-            .execute()
+        try {
+            dslContext.transaction { _ ->
+                dslContext.delete(COMPETITION_CATEGORY_METADATA)
+                    .where(COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+                    .execute()
+                dslContext.delete(COMPETITION_CATEGORY_GAME_RULES)
+                    .where(COMPETITION_CATEGORY_GAME_RULES.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+                    .execute()
+                dslContext.deleteFrom(COMPETITION_CATEGORY)
+                    .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
+                    .execute()
+            }
+        } catch (exception: RuntimeException) {
+            logger.error("Failed to delete competition category of competition category with $competitionCategoryId.")
+            logger.error("Exception message: ${exception.message}")
+        }
     }
 
     @Throws(NotFoundException::class, IllegalActionException::class)

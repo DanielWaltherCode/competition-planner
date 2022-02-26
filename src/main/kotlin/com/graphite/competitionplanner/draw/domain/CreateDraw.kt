@@ -29,11 +29,11 @@ class CreateDraw(
      * @throws NotEnoughRegistrationsException
      */
     fun execute(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
-        competitionCategoryRepository.setStatus(competitionCategoryId, CompetitionCategoryStatus.DRAWN)
         val competitionCategory: CompetitionCategoryDTO = findCompetitionCategory.byId(competitionCategoryId)
 
-        // TODO: We should check the state of this competition category.
-        // TODO: Has drawn been made? Has a match already been played? Etc.
+        if (competitionCategory.status == CompetitionCategoryStatus.DRAWN.name) {
+            return drawRepository.get(competitionCategoryId)
+        }
 
         val registrationRankings: List<RegistrationRankingDTO> = repository.getRegistrationRanking(competitionCategory)
         val registrationsWithSeeds: List<RegistrationSeedDTO> = createSeed.execute(registrationRankings)
