@@ -23,7 +23,6 @@ import com.graphite.competitionplanner.tables.records.GameRecord
 import com.graphite.competitionplanner.tables.records.PoolRecord
 import com.graphite.competitionplanner.tables.records.PoolResultRecord
 import org.jooq.DSLContext
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import kotlin.math.ceil
 
@@ -38,8 +37,6 @@ class ResultService(
     val registrationRepository: RegistrationRepository,
     val dslContext: DSLContext
 ) {
-
-    private val LOGGER = LoggerFactory.getLogger(javaClass)
 
     fun updateGameResult(matchId: Int, gameId: Int, gameSpec: GameSpec): ResultDTO {
         val match: MatchDTO = matchService.getMatch(matchId)
@@ -84,7 +81,7 @@ class ResultService(
         } else {
             val draw = competitionDrawRepository.get(this.id)
             val winner = matchRepository.getMatch(match.id).winner
-            val nextRound = draw.playOff.filter { it.round < match.round }.minByOrNull { it.round }!!
+            val nextRound = draw.playOff.filter { it.round < match.round }.maxByOrNull { it.round }!!
             val nextOrderNumber = ceil( match.orderNumber / 2.0 ).toInt() // 1 -> 1, 2 -> 1, 3 -> 2, etc.
             val nextMatch = matchRepository.getMatch2(
                 nextRound.matches.first { it.matchOrderNumber == nextOrderNumber }.id
