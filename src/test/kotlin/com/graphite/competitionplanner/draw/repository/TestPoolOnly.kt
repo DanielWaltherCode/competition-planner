@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.draw.repository
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.Pool
 import com.graphite.competitionplanner.draw.domain.PoolDrawSpec
@@ -71,6 +72,9 @@ class TestPoolOnly(
 
         AssertionHelper.assertGroupDrawDto(spec.pools.first { it.name == "A" }, club, players.take(2), groups.first {it.name == "A"})
         AssertionHelper.assertGroupDrawDto(spec.pools.first { it.name == "B" }, club, players.takeLast(2), groups.first {it.name == "B"})
+
+        val status = competitionCategoryRepository.get(result.competitionCategoryId).status
+        Assertions.assertEquals(CompetitionCategoryStatus.DRAWN.name, status)
     }
 
     @Test
@@ -109,6 +113,9 @@ class TestPoolOnly(
         Assertions.assertEquals(1, groups.size, "Expected to find 1 groups.")
         Assertions.assertNotNull(groups.find { it.name == "Z" })
         AssertionHelper.assertGroupDrawDto(spec.pools.first { it.name == "Z" }, club, players, groups.first {it.name == "Z"})
+
+        val status = competitionCategoryRepository.get(result.competitionCategoryId).status
+        Assertions.assertEquals(CompetitionCategoryStatus.DRAWN.name, status)
     }
 
     @Test
