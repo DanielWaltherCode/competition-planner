@@ -1,13 +1,12 @@
 package com.graphite.competitionplanner.result.service
 
 import com.graphite.competitionplanner.club.repository.ClubRepository
-import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.CreateDraw
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
+import com.graphite.competitionplanner.match.domain.Match
 import com.graphite.competitionplanner.match.repository.MatchRepository
-import com.graphite.competitionplanner.match.service.MatchDTO
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.domain.CreatePlayer
 import com.graphite.competitionplanner.player.repository.PlayerRepository
@@ -24,7 +23,6 @@ import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import kotlin.random.Random
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
@@ -49,7 +47,7 @@ class TestResultService(
 
     var competitionCategoryId = 0
     lateinit var result: ResultDTO
-    lateinit var match: MatchDTO
+    lateinit var match: Match
     val dataGenerator = DataGenerator()
 
     @BeforeAll
@@ -128,26 +126,15 @@ class TestResultService(
         gameList.add(GameSpec(2, 11, 9))
         gameList.add(GameSpec(3, 11, 9))
 
-        this.match = matchService.getMatch(matches[0].id)
+        this.match = matchRepository.getMatch2(matches[0].id)
 
         this.result = addResult.execute(
-            matchRepository.getMatch2(match.id),
+            match,
             ResultSpec(gameList),
             findCompetitionCategory.byId(competitionCategoryId)
         )
 
     }
-
-
-
-//    @Test
-//    fun testGetResult() {
-//        addResult()
-//        val result = resultService.getResult(match.id)
-//        Assertions.assertNotNull(result.gameList)
-//        Assertions.assertEquals(3, result.gameList.size)
-//
-//    }
 
     @Test
     fun testUpdateFullResults() {

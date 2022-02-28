@@ -1,7 +1,6 @@
 package com.graphite.competitionplanner.match.service
 
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
-import com.graphite.competitionplanner.draw.service.MatchSpec
 import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
@@ -26,16 +25,6 @@ class MatchService(
     val resultsRepository: IResultRepository
 ) {
 
-    fun getMatch(matchId: Int): MatchDTO {
-        val matchRecord = matchRepository.getMatch(matchId)
-        return matchRecordToDTO(matchRecord)
-    }
-
-    fun addMatch(matchSpec: MatchSpec): MatchDTO {
-        val matchRecord = matchRepository.addMatch(matchSpec)
-        return matchRecordToDTO(matchRecord)
-    }
-
     fun deleteMatchesInCategory(competitionCategoryId: Int) {
         matchRepository.deleteMatchesForCategory(competitionCategoryId)
     }
@@ -55,11 +44,6 @@ class MatchService(
         return transformToMatchAndResultDTO(matchRecords)
     }
 
-    fun getPlayoffMatchesInCategory(competitionCategoryId: Int): List<MatchDTO> {
-        val matchRecords = matchRepository.getMatchesInCategoryForMatchType(competitionCategoryId, MatchType.PLAYOFF)
-        return  matchRecords.map { matchRecordToDTO(it) }
-    }
-
     fun getMatchesInCompetition(competitionId: Int): List<MatchAndResultDTO> {
         val matchRecords = matchRepository.getMatchesInCompetition(competitionId)
         return transformToMatchAndResultDTO(matchRecords)
@@ -73,25 +57,6 @@ class MatchService(
     // TODO: Move to ResultService?
     fun setWinner(matchId: Int, winnerRegistrationId: Int) {
         matchRepository.setWinner(matchId, winnerRegistrationId)
-    }
-
-    fun matchRecordToDTO(record: MatchRecord): MatchDTO {
-        return MatchDTO(
-            record.id,
-            record.startTime,
-            record.endTime,
-            SimpleCompetitionCategoryDTO(
-                record.competitionCategoryId,
-                competitionCategoryRepository.getCategoryType(record.competitionCategoryId).categoryName
-            ),
-            record.matchType,
-            registrationService.getPlayersWithClubFromRegistrationId(record.firstRegistrationId),
-            registrationService.getPlayersWithClubFromRegistrationId(record.secondRegistrationId),
-            record.matchOrderNumber,
-            record.groupOrRound,
-            record.wasWalkover,
-            registrationService.getPlayersFromRegistrationId(record.winner)
-        )
     }
 
     fun transformToMatchAndResultDTO(matches: List<MatchRecord>): List<MatchAndResultDTO> {
