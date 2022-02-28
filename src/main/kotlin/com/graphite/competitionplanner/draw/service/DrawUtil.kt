@@ -17,52 +17,6 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
         }
     }
 
-    fun getPoolNameMap(): MutableMap<Int, String> {
-        val poolNameMap: MutableMap<Int, String> = mutableMapOf()
-        poolNameMap[0] = "A"
-        poolNameMap[1] = "B"
-        poolNameMap[2] = "C"
-        poolNameMap[3] = "D"
-        poolNameMap[4] = "E"
-        poolNameMap[5] = "F"
-        poolNameMap[6] = "G"
-        poolNameMap[7] = "H"
-        poolNameMap[8] = "I"
-        poolNameMap[9] = "J"
-        poolNameMap[10] = "K"
-        poolNameMap[11] = "L"
-        poolNameMap[12] = "M"
-        poolNameMap[13] = "N"
-        poolNameMap[14] = "O"
-        poolNameMap[15] = "P"
-        poolNameMap[16] = "Q"
-        poolNameMap[17] = "R"
-        poolNameMap[18] = "S"
-        poolNameMap[19] = "T"
-        poolNameMap[20] = "U"
-        poolNameMap[21] = "V"
-        poolNameMap[22] = "W"
-        return poolNameMap
-    }
-
-    fun getNumberOfSeeds(nrPlayersPerGroup: Int, numberOfRegisteredPlayers: Int): Int {
-        when(numberOfRegisteredPlayers) {
-            in 0..5 -> return 1
-            in 6..11 -> return 2
-            in 12..24 -> return 4
-            else -> return 8
-        }
-    }
-
-    fun getPoolName(poolNumber: Int): String {
-        val map = getPoolNameMap()
-        val name = map[poolNumber]
-        if (name == null) {
-            return ""
-        }
-        return name
-    }
-
     fun playoffForGroupsWhereOneProceeds(groups: List<String> ): List<MatchUp> {
         val playOrder = getPlayoffOrderWhereOneProceeds(groups.size)
         val playerPositions = playOrder.map { "BYE" }.toMutableList()
@@ -85,38 +39,6 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
             }
 
         return matchUps
-    }
-
-    fun createDirectToPlayoff(competitionCategoryId: Int, registrationIds: List<Int>): List<MatchSpec> {
-        val playOrder = getPlayoffOrderWhereOneProceeds(registrationIds.size)
-        val registrationPositions = playOrder.map { 0 }.toMutableList()    // Create list with player and opponent (or BYE if there is no opponent)
-        for (idOrder in registrationIds.indices) {
-            for (i in playOrder.indices) {
-                if (idOrder + 1 == playOrder[i]) {
-                    registrationPositions[i] = registrationIds[idOrder]
-                    continue
-                }
-            }
-        }
-        // Convert raw list to match up list
-        val round = getRound(playOrder.size / 2)
-        val matches = mutableListOf<MatchSpec>()
-        var matchOrderNumber = 1
-        for (i in registrationPositions.indices step 2) {
-            val match = MatchSpec(
-                startTime = null,
-                endTime = null,
-                competitionCategoryId = competitionCategoryId,
-                matchType = MatchType.PLAYOFF,
-                firstRegistrationId = registrationPositions[i],
-                secondRegistrationId = registrationPositions[i+1],
-                matchOrderNumber = matchOrderNumber,
-                groupOrRound = round.name
-            )
-            matches.add(match)
-            matchOrderNumber += 1
-        }
-        return matches
     }
 
     fun getPossiblePlayoffNumbers() = listOf(2, 4, 8, 16, 32, 64, 128, 256)
@@ -162,15 +84,8 @@ class DrawUtil(val matchRepository: MatchRepository, val competitionDrawReposito
     }
 }
 
-
 data class MatchUp(
     val player1: String,
     val player2: String
 )
 
-data class PoolDrawHelper(
-    val registrationId: Int,
-    val competitionCategoryId: Int,
-    val groupName: String,
-    val playerNumber: Int
-)
