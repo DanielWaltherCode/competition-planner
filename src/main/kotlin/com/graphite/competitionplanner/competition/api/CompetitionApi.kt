@@ -49,8 +49,7 @@ class CompetitionApi(
     }
 
     @GetMapping("/for-club")
-    fun getAllForClub(
-    ): List<CompetitionWithClubDTO> {
+    fun getAllForClub(): List<CompetitionDTO> {
         val loggedInUser: UserDTO = userService.getLoggedInUser()
         return findCompetitions.thatBelongTo(loggedInUser.clubNoAddressDTO.id)
     }
