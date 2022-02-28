@@ -12,7 +12,6 @@ import com.graphite.competitionplanner.match.domain.PlayoffMatch
 import com.graphite.competitionplanner.match.domain.PoolMatch
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
-import com.graphite.competitionplanner.match.service.MatchDTO
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.result.api.GameSpec
@@ -39,8 +38,8 @@ class ResultService(
 ) {
 
     fun updateGameResult(matchId: Int, gameId: Int, gameSpec: GameSpec): ResultDTO {
-        val match: MatchDTO = matchService.getMatch(matchId)
-        val gameRules: GameSettingsDTO = findCompetitionCategory.byId(match.competitionCategory.id).gameSettings
+        val match = matchRepository.getMatch2(matchId)
+        val gameRules: GameSettingsDTO = findCompetitionCategory.byId(match.competitionCategoryId).gameSettings
         validateGame(gameRules, gameSpec)
         resultRepository.updateGameResult(gameId, matchId, gameSpec)
         return getResult(matchId)

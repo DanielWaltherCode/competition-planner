@@ -11,7 +11,6 @@ import com.graphite.competitionplanner.registration.interfaces.PlayerRegistratio
 import com.graphite.competitionplanner.tables.records.CategoryRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryGameRulesRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryMetadataRecord
-import com.graphite.competitionplanner.tables.records.CompetitionCategoryRecord
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.SelectConditionStep
@@ -27,18 +26,6 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    fun addCompetitionCategory(competitionId: Int, categoryId: Int): Int {
-        val record = dslContext.newRecord(COMPETITION_CATEGORY)
-        record.competitionId = competitionId
-        record.category = categoryId
-        record.store()
-        return record.id
-    }
-
-    fun getCompetitionCategories(): List<CompetitionCategoryRecord> {
-        return dslContext.selectFrom(COMPETITION_CATEGORY).fetch()
-    }
-
     fun getCategoryType(competitionCategoryId: Int): CategoryRecord {
         return dslContext.select().from(COMPETITION_CATEGORY)
             .join(CATEGORY).on(CATEGORY.ID.eq(COMPETITION_CATEGORY.CATEGORY))
@@ -48,6 +35,7 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
 
     }
 
+    // TODO: Move to Registration Service instead ?
     // Returns registrations ids for the players registered in a given competition category
     fun getRegistrationsInCategory(categoryId: Int): List<Int> {
         return dslContext
