@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.security
 
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
-import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
+import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
@@ -27,7 +27,7 @@ class PathAccessInterceptor(val findCompetitions: FindCompetitions) : HandlerInt
             val competitionIdAsInt = competitionId.toInt()
             val authentication: Authentication = SecurityContextHolder.getContext().authentication
             val clubId: Int = SecurityHelper.getClubIdFromToken(authentication.credentials as String)
-            val competitionsForClub: List<CompetitionWithClubDTO> = findCompetitions.thatBelongTo(clubId)
+            val competitionsForClub: List<CompetitionDTO> = findCompetitions.thatBelongTo(clubId)
             val competitionIds: List<Int> = competitionsForClub.map { c -> c.id }
 
             // If the list of competitions hosted by this club contains the competition id sent in, permit
