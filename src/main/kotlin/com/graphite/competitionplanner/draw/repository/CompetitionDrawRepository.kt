@@ -16,21 +16,14 @@ import org.springframework.stereotype.Repository
 import org.springframework.context.annotation.Lazy
 
 @Repository
-class CompetitionDrawRepository(val dslContext: DSLContext,
-                                val matchService: MatchService,
-                                val competitionCategoryRepository: ICompetitionCategoryRepository,
-                                @Lazy val getDraw: GetDraw) : ICompetitionDrawRepository {
+class CompetitionDrawRepository(
+    val dslContext: DSLContext,
+    val matchService: MatchService,
+    val competitionCategoryRepository: ICompetitionCategoryRepository,
+    @Lazy val getDraw: GetDraw
+) : ICompetitionDrawRepository {
 
     private val logger = LoggerFactory.getLogger(javaClass)
-
-    fun addPoolDraw(poolDrawDto: PoolDrawHelper) {
-        val pooldrawRecord = dslContext.newRecord(POOL_DRAW)
-        pooldrawRecord.registrationId = poolDrawDto.registrationId
-        pooldrawRecord.competitionCategoryId = poolDrawDto.competitionCategoryId
-        pooldrawRecord.groupName = poolDrawDto.groupName
-        pooldrawRecord.playerNumber = poolDrawDto.playerNumber
-        pooldrawRecord.store()
-    }
 
     fun getPoolDraw(competitionCategoryId: Int, groupName: String): List<PoolDrawRecord> {
         return dslContext
@@ -68,7 +61,7 @@ class CompetitionDrawRepository(val dslContext: DSLContext,
     }
 
     override fun get(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
-       return getDraw.execute(competitionCategoryId)
+        return getDraw.execute(competitionCategoryId)
     }
 
 
@@ -111,32 +104,34 @@ class CompetitionDrawRepository(val dslContext: DSLContext,
             MATCH.COMPETITION_CATEGORY_ID.eq(draw.competitionCategoryId).and(MATCH.GROUP_OR_ROUND.eq(firstRound.name))
         ).fetch()
 
-        val poc1: List<PoolToPlayoffMapRecord> = draw.matches.filter { it.round == firstRound }.filterNot { it.registrationOneId is Registration.Bye }
-            .map { playOffMatch ->
-                dslContext.newRecord(POOL_TO_PLAYOFF_MAP).apply<@NotNull PoolToPlayoffMapRecord> {
-                    competitionCategoryId = draw.competitionCategoryId
-                    poolId =
-                        poolRecords.first {
-                            playOffMatch.registrationOneId.toString().first().toString() == it.name
-                        }.id
-                    poolPosition = playOffMatch.registrationOneId.toString().last().digitToInt()
-                    matchId = matchesFirstRound.first { it.matchOrderNumber == playOffMatch.order }.id
-                    matchRegistrationPosition = 1 // registrationOneId
+        val poc1: List<PoolToPlayoffMapRecord> =
+            draw.matches.filter { it.round == firstRound }.filterNot { it.registrationOneId is Registration.Bye }
+                .map { playOffMatch ->
+                    dslContext.newRecord(POOL_TO_PLAYOFF_MAP).apply<@NotNull PoolToPlayoffMapRecord> {
+                        competitionCategoryId = draw.competitionCategoryId
+                        poolId =
+                            poolRecords.first {
+                                playOffMatch.registrationOneId.toString().first().toString() == it.name
+                            }.id
+                        poolPosition = playOffMatch.registrationOneId.toString().last().digitToInt()
+                        matchId = matchesFirstRound.first { it.matchOrderNumber == playOffMatch.order }.id
+                        matchRegistrationPosition = 1 // registrationOneId
+                    }
                 }
-            }
-        val poc2: List<PoolToPlayoffMapRecord> = draw.matches.filter { it.round == firstRound }.filterNot { it.registrationTwoId is Registration.Bye }
-            .map { playOffMatch ->
-                dslContext.newRecord(POOL_TO_PLAYOFF_MAP).apply<@NotNull PoolToPlayoffMapRecord> {
-                    competitionCategoryId = draw.competitionCategoryId
-                    poolId =
-                        poolRecords.first {
-                            playOffMatch.registrationTwoId.toString().first().toString() == it.name
-                        }.id
-                    poolPosition = playOffMatch.registrationTwoId.toString().last().digitToInt()
-                    matchId = matchesFirstRound.first { it.matchOrderNumber == playOffMatch.order }.id
-                    matchRegistrationPosition = 2 // registrationTwoId
+        val poc2: List<PoolToPlayoffMapRecord> =
+            draw.matches.filter { it.round == firstRound }.filterNot { it.registrationTwoId is Registration.Bye }
+                .map { playOffMatch ->
+                    dslContext.newRecord(POOL_TO_PLAYOFF_MAP).apply<@NotNull PoolToPlayoffMapRecord> {
+                        competitionCategoryId = draw.competitionCategoryId
+                        poolId =
+                            poolRecords.first {
+                                playOffMatch.registrationTwoId.toString().first().toString() == it.name
+                            }.id
+                        poolPosition = playOffMatch.registrationTwoId.toString().last().digitToInt()
+                        matchId = matchesFirstRound.first { it.matchOrderNumber == playOffMatch.order }.id
+                        matchRegistrationPosition = 2 // registrationTwoId
+                    }
                 }
-            }
 
         return poc1 + poc2
     }
@@ -145,7 +140,8 @@ class CompetitionDrawRepository(val dslContext: DSLContext,
         return dslContext
             .selectFrom(POOL)
             .where(POOL.COMPETITION_CATEGORY_ID.eq(competitionCategoryId).and(POOL.NAME.eq(poolName)))
-            .fetchOneInto(POOL) ?: throw NotFoundException("Pool $poolName in category $competitionCategoryId not found.")
+            .fetchOneInto(POOL)
+            ?: throw NotFoundException("Pool $poolName in category $competitionCategoryId not found.")
 
     }
 
@@ -164,7 +160,7 @@ class CompetitionDrawRepository(val dslContext: DSLContext,
     }
 
     override fun clearPoolTable() {
-       dslContext.deleteFrom(POOL).execute()
+        dslContext.deleteFrom(POOL).execute()
     }
 
     private fun Pool.toRecord(competitionCategoryId: Int): PoolRecord {
