@@ -166,4 +166,19 @@ h1, h2, h3 {
 .custom-card {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
+
+.modal__close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+.modal__content {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.modal-footer button {
+  width: 200px;
+}
 </style>

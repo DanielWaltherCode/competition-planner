@@ -4,7 +4,7 @@
     <div class="col-sm-3 p-3 p-sm-2">
       <h5 class="black text-start fw-bolder">{{ $t("draw.pool.players") }}</h5>
       <p v-for="(playerInGroup, index) in group.players" class="text-start" :key="index">
-        {{ index + 1 + ". " + getName(playerInGroup.playerDTOs) }} {{ getClub(playerInGroup.playerDTOs) }}
+        {{getName(playerInGroup.playerDTOs) }} {{ getClub(playerInGroup.playerDTOs) }}
       </p>
     </div>
     <!-- Current standing in group -->
@@ -22,7 +22,7 @@
         </thead>
         <tbody>
         <tr v-for="(standing, index) in group.groupStandingList" :key="index">
-          <td>{{getName(standing.player) }} {{ getClub(standing.player) }}</td>
+          <td class="text-start ps-3">{{index + 1 + ". " + getName(standing.player) }} {{ getClub(standing.player) }}</td>
           <td>{{standing.matchesPlayed}}</td>
           <td>{{standing.matchesWonLost.won}} - {{standing.matchesWonLost.lost}}</td>
           <td>{{standing.gamesWonLost.won}} - {{standing.gamesWonLost.lost}}</td>
@@ -30,15 +30,36 @@
         </tr>
         </tbody>
       </table>
+      <div class="d-flex justify-content-end clickable" @click="showModal = true">
+        <i v-if="hasSubGroupRanking(group.groupStandingList)" class="fas fa-info-circle">
+          {{ $t("draw.pool.subgroupStanding.explanation") }}
+        </i>
+      </div>
+      <!-- Modal -->
+      <vue-final-modal v-model="showModal" classes="modal-container" content-class="modal-content">
+        <pool-subgroup
+            :group-standing-list="group.groupStandingList"
+            v-on:close="showModal = false">
+
+        </pool-subgroup>
+      </vue-final-modal>
     </div>
+
   </div>
 </template>
 
 <script>
+import PoolSubgroup from "@/components/draw/PoolSubgroup";
 export default {
   name: "PoolDraw",
+  components: {PoolSubgroup},
   props: {
     group: Object
+  },
+  data() {
+    return {
+      showModal: false
+    }
   },
   methods: {
     getClub(playerDTOs) {
@@ -55,11 +76,33 @@ export default {
         return playerDTOs[0].firstName + " " + playerDTOs[0].lastName + "/" +
             playerDTOs[1].firstName + " " + playerDTOs[1].lastName
       }
+    },
+    hasSubGroupRanking(groupStandingList) {
+      let hasSubGroupStanding = false
+      groupStandingList.forEach(standing => {
+        if (standing.subgroupStanding !== null) {
+          hasSubGroupStanding = true
+        }
+      })
+      return hasSubGroupStanding
     }
   }
 }
 </script>
 
 <style scoped>
-
+::v-deep .modal-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+::v-deep .modal-content {
+  max-height: 90%;
+  max-width: 75%;
+  margin: 0 1rem;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.25rem;
+  background: #fff;
+}
 </style>
