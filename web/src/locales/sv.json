@@ -193,6 +193,7 @@
       "games": "Set",
       "points": "Bollar",
       "groupPoints": "Grupp-poäng",
+      "place": "Placering",
       "subgroupStanding": {
         "matchesInSubGroup": "Matcher (i undergruppen)",
         "explanation": "Förklaring av placeringar",

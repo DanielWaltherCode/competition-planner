@@ -22,7 +22,7 @@
         </thead>
         <tbody>
         <tr v-for="(standing, index) in group.groupStandingList" :key="index">
-          <td class="text-start ps-3">{{index + 1 + ". " + getName(standing.player) }} {{ getClub(standing.player) }}</td>
+          <td class="text-start ps-3">{{standing.groupPosition + ". " + getName(standing.player) }} {{ getClub(standing.player) }}</td>
           <td>{{standing.matchesPlayed}}</td>
           <td>{{standing.matchesWonLost.won}} - {{standing.matchesWonLost.lost}}</td>
           <td>{{standing.gamesWonLost.won}} - {{standing.gamesWonLost.lost}}</td>
@@ -38,7 +38,7 @@
       <!-- Modal -->
       <vue-final-modal v-model="showModal" classes="modal-container" content-class="modal-content">
         <pool-subgroup
-            :group-standing-list="group.groupStandingList"
+            :sub-group-list="group.subGroupList"
             v-on:close="showModal = false">
 
         </pool-subgroup>

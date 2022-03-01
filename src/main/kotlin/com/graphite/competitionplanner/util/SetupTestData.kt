@@ -530,30 +530,14 @@ class SetupTestData(
                 competitionCategories[0].id
             )
         )
-        registrationService.registerPlayerSingles(
-            RegistrationSinglesSpec(
-                lugiPlayers[0].id,
-                competitionCategories[1].id
-            )
-        )
+
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 lugiPlayers[1].id,
                 competitionCategories[0].id
             )
         )
-        registrationService.registerPlayerSingles(
-            RegistrationSinglesSpec(
-                umePlayers[0].id,
-                competitionCategories[1].id
-            )
-        )
-        registrationService.registerPlayerSingles(
-            RegistrationSinglesSpec(
-                otherPlayers[0].id,
-                competitionCategories[1].id
-            )
-        )
+
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 lugiPlayers[2].id,
@@ -624,6 +608,50 @@ class SetupTestData(
             RegistrationSinglesSpec(
                 umePlayers[5].id,
                 competitionCategories[0].id
+            )
+        )
+
+        // Herrar 2
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                lugiPlayers[0].id,
+                competitionCategories[1].id
+            )
+        )
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                lugiPlayers[1].id,
+                competitionCategories[1].id
+            )
+        )
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                lugiPlayers[2].id,
+                competitionCategories[1].id
+            )
+        )
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                lugiPlayers[3].id,
+                competitionCategories[1].id
+            )
+        )
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                lugiPlayers[4].id,
+                competitionCategories[1].id
+            )
+        )
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                umePlayers[0].id,
+                competitionCategories[1].id
+            )
+        )
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                otherPlayers[2].id,
+                competitionCategories[1].id
             )
         )
         registrationService.registerPlayerSingles(

@@ -34,29 +34,29 @@
       <div class="col-sm-11">
         <h3> {{ $t("draw.pool.subgroupStanding.heading") }}</h3>
         <p class="fs-6 text-black-50">{{ $t("draw.pool.subgroupStanding.introText") }}</p>
-        <div v-for="(standingList, key) in groupStandingMap" :key="key">
+        <div v-for="(standingList, key) in subGroupList" :key="key">
           <table class="table table-bordered table-responsive">
             <thead>
             <tr>
-              <th scope="col"></th>
+              <th scope="col">{{ $t("draw.pool.place")}}</th>
               <th scope="col">{{ $t("draw.pool.subgroupStanding.matchesInSubGroup") }}</th>
               <th scope="col">{{ $t("draw.pool.matches") }}</th>
-              <th scope="col">{{ $t("draw.pool.games") }}</th>
-              <th scope="col">{{ $t("draw.pool.points") }}</th>
+              <th scope="col">{{ $t("draw.pool.subgroupStanding.GAME_QUOTIENT") }}</th>
+              <th scope="col">{{ $t("draw.pool.subgroupStanding.POINT_QUOTIENT") }}</th>
               <th scope="col">{{ $t("draw.pool.groupPoints") }}</th>
               <th scope="col">{{ $t("draw.pool.subgroupStanding.reasonForPosition") }}</th>
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(standing, index) in standingList" :key="index">
-              <td class="text-start ps-3">{{ index + 1 + ". " + getName(standing.player) }} {{
+            <tr v-for="(standing, index) in standingList.groupStandingList" :key="index">
+              <td class="text-start ps-3">{{ standing.groupPosition + ". " + getName(standing.player) }} {{
                   getClub(standing.player)
                 }}
               </td>
               <td>{{ standing.subgroupStanding.matchesPlayed }}</td>
               <td>{{ standing.subgroupStanding.matchesWonLost.won }} - {{ standing.matchesWonLost.lost }}</td>
-              <td>{{ standing.subgroupStanding.gamesWonLost.won }} - {{ standing.gamesWonLost.lost }}</td>
-              <td>{{ standing.subgroupStanding.pointsWonLost.won }} - {{ standing.pointsWonLost.lost }}</td>
+              <td>{{ standing.subgroupStanding.gamesWonLost.won }}/{{ standing.gamesWonLost.lost }}</td>
+              <td>{{ standing.subgroupStanding.pointsWonLost.won }}/{{ standing.pointsWonLost.lost }}</td>
               <td>{{ standing.subgroupStanding.groupScore }}</td>
               <td>{{ $t("draw.pool.subgroupStanding." + standing.sortedBy) }}</td>
             </tr>
@@ -76,31 +76,8 @@
 <script>
 export default {
   name: "PoolSubgroup",
-  props: ["groupStandingList"],
-  data() {
-    return {
-      distinctGroupScores: [],
-      groupStandingMap: {}
-    }
-  },
-  watch: {
-    groupStandingList: function () {
-      this.setUp()
-    }
-  },
-  created() {
-    this.setUp()
-  },
-  mounted() {
-    this.setUp()
-  },
+  props: ["subGroupList"],
   methods: {
-    setUp() {
-      this.distinctGroupScores = this.getDistinctGroupScores()
-      this.distinctGroupScores.forEach(score => {
-        this.groupStandingMap[score] = this.groupStandingList.filter(standing => standing.groupScore === score)
-      })
-    },
     getClub(playerDTOs) {
       if (playerDTOs.length === 1) {
         return playerDTOs[0].club.name
@@ -116,9 +93,6 @@ export default {
             playerDTOs[1].firstName + " " + playerDTOs[1].lastName
       }
     },
-    getDistinctGroupScores() {
-      return [...new Set(this.groupStandingList.map(item => item.groupScore))]
-    }
   }
 }
 </script>

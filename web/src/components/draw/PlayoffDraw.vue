@@ -12,7 +12,12 @@
                   <tbody class="bg-white">
                   <tr>
                     <td>
-                      <div v-if="match.firstPlayer[0].firstName !== 'BYE'">
+                      <div v-if="match.firstPlayer[0].firstName === 'BYE'">
+                        <p class="mb-0 text-black-50 fs-3 text-uppercase">
+                          BYE
+                        </p>
+                      </div>
+                      <div v-else>
                         <p class="mb-0" :class="isPlayerOneWinner(match) ? 'fw-bold' : ''">
                           {{ getPlayerOne(match) }}
                         </p>
@@ -24,7 +29,12 @@
                   </tr>
                   <tr>
                     <td>
-                      <div v-if="match.secondPlayer[0].firstName !== 'BYE'">
+                      <div v-if="match.secondPlayer[0].firstName === 'BYE'">
+                        <p class="mb-0 text-black-50 fs-6 text-uppercase">
+                          BYE
+                        </p>
+                      </div>
+                      <div v-else>
                         <p class="mb-0" :class="isPlayerTwoWinner(match) ? 'fw-bold' : ''">
                           {{ getPlayerTwo(match) }}
                         </p>
@@ -42,7 +52,6 @@
           </div>
       </div>
     </section>
-
   </main>
 </template>
 
@@ -110,6 +119,9 @@ export default {
   opacity: 1;
 }
 
+div p {
+  min-height: 30px !important;
+}
 
 
 </style>

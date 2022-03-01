@@ -75,6 +75,7 @@ class TestGetDraw(@Autowired val dslContext: DSLContext, @Autowired val createDr
             groupName,
             playerList,
             emptyList(),
+            mutableListOf(),
             mutableListOf()
         )
     }

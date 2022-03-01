@@ -65,9 +65,9 @@ class GetDraw(
         val poolToPlayOffMap: List<GroupToPlayoff> = getPoolToPlayoffList(competitionCategoryId)
         val potentialMatchUpdateIds: List<Int> = poolToPlayOffMap.map { it.playoffPosition.matchId }
         val matchesThatCanBeUpdated: List<MatchAndResultDTO> =
-            playOffMatches.filter { potentialMatchUpdateIds.contains(it.id) }
+            playOffMatches.filter { potentialMatchUpdateIds.contains(it.id) }.sortedBy { it.id }
         val matchesThatCannotBeUpdated: List<MatchAndResultDTO> =
-            playOffMatches.filterNot { potentialMatchUpdateIds.contains(it.id) }
+            playOffMatches.filterNot { potentialMatchUpdateIds.contains(it.id) }.sortedBy { it.id }
 
         val placeholder = Registration.Placeholder()
         val updatedMatches = mutableListOf<MatchAndResultDTO>()
@@ -133,10 +133,17 @@ class GetDraw(
                     matchesInGroup[0].competitionCategory.id,
                     matchesInGroup[0].groupOrRound
                 )
-                groups.add(GroupDrawDTO(group, playersInGroup.toList(), matchesInGroup, groupStanding))
+                val subGroupList: MutableList<SubGroupContainer> = mutableListOf()
+                val subGroupMap = groupStanding.groupBy { it.groupScore }
+                for ((key, value) in subGroupMap) {
+                    if(value.size > 1) {
+                        subGroupList.add(SubGroupContainer(key, value))
+                    }
+                }
+                groups.add(GroupDrawDTO(group, playersInGroup.toList(), matchesInGroup, groupStanding, subGroupList))
             }
         }
-        return groups
+        return groups.sortedBy { it.name }
     }
 
     private fun getPoolToPlayoffList(competitionCategoryId: Int): List<GroupToPlayoff> {
