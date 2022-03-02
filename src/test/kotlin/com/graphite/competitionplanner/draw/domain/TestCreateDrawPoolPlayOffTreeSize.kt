@@ -147,10 +147,31 @@ class TestCreateDrawPoolPlayOffTreeSize: TestBaseCreateDraw() {
         val quarterFinals = result.matches.filter { it.round == Round.QUARTER_FINAL }
         Assertions.assertEquals(4, quarterFinals.size)
 
+        val firstQuarterFinal = quarterFinals.minByOrNull { it.order }!!
+        Assertions.assertTrue(firstQuarterFinal.contains(Registration.Placeholder("A1")))
+        val lastQuarterFinal = quarterFinals.maxByOrNull { it.order }!!
+        Assertions.assertTrue(lastQuarterFinal.contains(Registration.Placeholder("B1")))
+
         val semifinals = result.matches.filter { it.round == Round.SEMI_FINAL }
         Assertions.assertEquals(2, semifinals.size)
 
         val finals = result.matches.filter { it.round == Round.FINAL }
         Assertions.assertEquals(1, finals.size)
+    }
+
+    fun PlayOffMatch.contains(registration: Registration.Placeholder): Boolean {
+        return if (this.registrationOneId is Registration.Placeholder && this.registrationTwoId is Registration.Placeholder) {
+            val first = this.registrationOneId as Registration.Placeholder
+            val second = this.registrationTwoId as Registration.Placeholder
+            (registration.name == first.name || registration.name == second.name)
+        } else if (this.registrationOneId is Registration.Placeholder) {
+            val first = this.registrationOneId as Registration.Placeholder
+            registration.name == first.name
+        } else if (this.registrationTwoId is Registration.Placeholder) {
+            val second = this.registrationOneId as Registration.Placeholder
+            registration.name == second.name
+        } else {
+            false
+        }
     }
 }

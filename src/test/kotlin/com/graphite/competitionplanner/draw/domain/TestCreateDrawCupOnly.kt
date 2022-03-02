@@ -167,7 +167,8 @@ class TestCreateDrawCupOnly: TestBaseCreateDraw() {
             )
         )
         val registrationRanks = (1..numberOfPlayers).toList().map {
-            dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
+            // Registration 1 now becomes the highest ranked player, and so on...
+            dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = (numberOfPlayers + 1 - it))
         }
         Mockito.`when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
         Mockito.`when`(mockedRegistrationRepository.getRegistrationRanking(competitionCategory))
@@ -186,6 +187,15 @@ class TestCreateDrawCupOnly: TestBaseCreateDraw() {
         val matches = result.matches
         Assertions.assertEquals(expectedNumberOfMatches, matches.size, "Wrong number of matches generated")
         Assertions.assertEquals(expectedRound, result.startingRound)
+
+        // Assert that best registration is in match with order 1
+        val matchesStartingRound = matches.filter { it.round == expectedRound }.sortedBy { it.order }
+        val bestRankedPlayer = Registration.Real(1)
+        matchesStartingRound.first().contains(bestRankedPlayer)
+
+        // Assert that second best registration is in match with highest order
+        val secondBestRankedPlayer = Registration.Real(2)
+        matchesStartingRound.last().contains(secondBestRankedPlayer)
     }
 
     /**

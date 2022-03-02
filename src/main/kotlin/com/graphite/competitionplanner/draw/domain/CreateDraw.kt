@@ -123,6 +123,10 @@ class CreateDraw(
                 round = numberOfRounds.asRound()
             }
         }
+
+        // We reverse the order of the "bottom" half of the playoff tree so that the second-best player is placed at bottom
+        firstRoundOfMatches.takeLast(firstRoundOfMatches.size/2).reverseOrder()
+
         return firstRoundOfMatches + buildRemainingPlayOffTree(firstRoundOfMatches.size / 2)
     }
 
@@ -177,6 +181,9 @@ class CreateDraw(
             }
         }
 
+        // We reverse the order of the "bottom" half of the playoff tree so that the second-best player is placed at bottom
+        firstRoundOfMatches.takeLast(firstRoundOfMatches.size/2).reverseOrder()
+
         val placeholderMatches = buildRemainingPlayOffTree(firstRoundOfMatches.size / 2)
 
         return CupDrawSpec(1, numberOfRounds.asRound(), firstRoundOfMatches + placeholderMatches)
@@ -230,6 +237,11 @@ class CreateDraw(
 
     fun List<PlayOffMatch>.shiftOrderBy(n: Int): List<PlayOffMatch> {
         return this.map { it.apply { order += n } }
+    }
+
+    fun List<PlayOffMatch>.reverseOrder(): List<PlayOffMatch> {
+        val reversedOrder = this.map { it.order }.reversed()
+        return this.mapIndexed { index, match -> match.apply { order = reversedOrder[index] } }
     }
 
     /**
