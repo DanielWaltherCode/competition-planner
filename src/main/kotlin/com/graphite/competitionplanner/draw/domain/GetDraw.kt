@@ -24,8 +24,11 @@ class GetDraw(
         val matchesInCategory: List<MatchAndResultDTO> = matchService.getMatchesInCategory(competitionCategoryId)
 
         val playOffMatches: List<MatchAndResultDTO> = matchesInCategory.filter { it.groupOrRound.isRound() }
+
+        // Front end assumes sorted list by order. TODO: Clean up and write tests
         val updatedPlayoffMatches: List<MatchAndResultDTO> =
-            updatePlaceholderNamesInFirstRound(competitionCategoryId, playOffMatches)
+            updatePlaceholderNamesInFirstRound(competitionCategoryId, playOffMatches).sortedBy { it.matchOrderNumber }
+
         val playoffRounds: List<PlayoffRoundDTO> = convertToPlayoffRound(updatedPlayoffMatches)
         val groupDraws: List<GroupDrawDTO> =
             constructGroupDraw(matchesInCategory.filterNot { it.groupOrRound.isRound() })
