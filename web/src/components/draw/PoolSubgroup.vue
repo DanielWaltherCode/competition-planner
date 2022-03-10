@@ -34,7 +34,7 @@
       <div class="col-sm-11">
         <h3> {{ $t("draw.pool.subgroupStanding.heading") }}</h3>
         <p class="fs-6 text-black-50">{{ $t("draw.pool.subgroupStanding.introText") }}</p>
-        <div v-for="(standingList, key) in subGroupList" :key="key">
+        <div v-for="(standingList, key) in subGroupList" :key="key" class="table-responsive">
           <table class="table table-bordered table-responsive">
             <thead>
             <tr>
@@ -54,9 +54,9 @@
                 }}
               </td>
               <td>{{ standing.subgroupStanding.matchesPlayed }}</td>
-              <td>{{ standing.subgroupStanding.matchesWonLost.won }} - {{ standing.matchesWonLost.lost }}</td>
-              <td>{{ standing.subgroupStanding.gamesWonLost.won }}/{{ standing.gamesWonLost.lost }}</td>
-              <td>{{ standing.subgroupStanding.pointsWonLost.won }}/{{ standing.pointsWonLost.lost }}</td>
+              <td>{{ standing.subgroupStanding.matchesWonLost.won }} - {{ standing.subgroupStanding.matchesWonLost.lost }}</td>
+              <td>{{ standing.subgroupStanding.gamesWonLost.won }}/{{ standing.subgroupStanding.gamesWonLost.lost }}</td>
+              <td>{{ standing.subgroupStanding.pointsWonLost.won }}/{{ standing.subgroupStanding.pointsWonLost.lost }}</td>
               <td>{{ standing.subgroupStanding.groupScore }}</td>
               <td>{{ $t("draw.pool.subgroupStanding." + standing.sortedBy) }}</td>
             </tr>
@@ -98,5 +98,7 @@ export default {
 </script>
 
 <style scoped>
-
+tr td {
+  min-width: 150px;
+}
 </style>

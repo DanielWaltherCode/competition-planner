@@ -1,5 +1,5 @@
 <template>
-  <div v-if="matches.length !== 0">
+  <div v-if="matches.length !== 0" class="table-responsive">
     <table class="table table-bordered table-striped table-sm">
       <thead class="thead-dark">
       <tr>
@@ -62,5 +62,7 @@ export default {
 </script>
 
 <style scoped>
-
+tr td {
+  min-width: 150px;
+}
 </style>

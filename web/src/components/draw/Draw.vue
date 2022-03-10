@@ -76,7 +76,7 @@
                 <div class="col-sm-12">
                   <PoolDraw :group="group"/>
                 </div>
-                <div class="col-sm-12">
+                <div class="col-sm-12 pt-4">
                   <div id="matches" class="row justify-content-center ms-0">
                     <h5 class="black text-start fw-bolder"> {{$t("draw.pool.matches")}}</h5>
                     <match-list-component :matches="group.matches"/>
