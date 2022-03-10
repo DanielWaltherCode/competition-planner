@@ -243,18 +243,5 @@ export default {
 
 <style scoped>
 
-.modal__close {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-}
 
-.modal__content {
-  flex-grow: 1;
-  overflow-y: auto;
-}
-
-.modal-footer button {
-  width: 200px;
-}
 </style>

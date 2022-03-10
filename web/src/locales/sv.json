@@ -191,7 +191,21 @@
       "won": "Vunna",
       "nrMatches": "Antal matcher",
       "games": "Set",
-      "points": "Poäng"
+      "points": "Bollar",
+      "groupPoints": "Grupp-poäng",
+      "place": "Placering",
+      "subgroupStanding": {
+        "matchesInSubGroup": "Matcher (i undergruppen)",
+        "explanation": "Förklaring av placeringar",
+        "heading": "Undergrupper (spelare med samma grupp-poäng)",
+        "introText": "För att ranka de som hamnar på samma grupp-poäng skapas en ny undergrupp med bara de spelare som fick samma poäng. Här avgörs den inbördesrangordningen via inbördes möte, setkvot, bollkvot, eller - om inget annat kan skilja dem - lottdragning.",
+        "reasonForPosition": "Placering avgjordes genom:",
+        "ORIGINAL": "Ursprunglig ranking",
+        "MATCH_SCORE": "Matchresultat/inbördes möte",
+        "GAME_QUOTIENT": "Setkvot",
+        "POINT_QUOTIENT": "Bollkvot",
+        "DRAW": "Lottning"
+      }
     }
   },
   "schedule": {

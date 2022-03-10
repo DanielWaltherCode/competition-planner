@@ -530,30 +530,14 @@ class SetupTestData(
                 competitionCategories[0].id
             )
         )
-        registrationService.registerPlayerSingles(
-            RegistrationSinglesSpec(
-                lugiPlayers[0].id,
-                competitionCategories[1].id
-            )
-        )
+
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 lugiPlayers[1].id,
                 competitionCategories[0].id
             )
         )
-        registrationService.registerPlayerSingles(
-            RegistrationSinglesSpec(
-                umePlayers[0].id,
-                competitionCategories[1].id
-            )
-        )
-        registrationService.registerPlayerSingles(
-            RegistrationSinglesSpec(
-                otherPlayers[0].id,
-                competitionCategories[1].id
-            )
-        )
+
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 lugiPlayers[2].id,
@@ -626,6 +610,50 @@ class SetupTestData(
                 competitionCategories[0].id
             )
         )
+
+        // Herrar 2
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                lugiPlayers[0].id,
+                competitionCategories[1].id
+            )
+        )
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                lugiPlayers[1].id,
+                competitionCategories[1].id
+            )
+        )
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                lugiPlayers[2].id,
+                competitionCategories[1].id
+            )
+        )
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                lugiPlayers[3].id,
+                competitionCategories[1].id
+            )
+        )
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                lugiPlayers[4].id,
+                competitionCategories[1].id
+            )
+        )
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                umePlayers[0].id,
+                competitionCategories[1].id
+            )
+        )
+        registrationService.registerPlayerSingles(
+            RegistrationSinglesSpec(
+                otherPlayers[2].id,
+                competitionCategories[1].id
+            )
+        )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
                 umePlayers[2].id,
@@ -661,14 +689,36 @@ class SetupTestData(
         val draw = createDraw.execute(herrar2.id)
 
         for (group in draw.groups) {
-            for (match in group.matches) {
-                val generatedGameResult = createResult(match)
-                addResult.execute(
-                    matchRepository.getMatch2(match.id),
-                    ResultSpec(generatedGameResult),
-                    herrar2
-                )
+            if (group.name == "A") {
+                for ((index, match) in group.matches.withIndex()) {
+                    val categoryId = match.competitionCategory.id
+                    val mainPlayer = if (index == 1) match.secondPlayer.first().id else match.firstPlayer.first().id
+                    val playerToBeat = if (index == 1) match.firstPlayer.first().id else match.firstPlayer.first().id
+                    beatPlayerWithExactScore(
+                        mainPlayer = registrationRepository.getRegistrationIdForPlayerInCategory(
+                            categoryId,
+                            mainPlayer
+                        ),
+                        playerToBeat = registrationRepository.getRegistrationIdForPlayerInCategory(
+                            categoryId,
+                            playerToBeat
+                        ),
+                        mainPlayerResults = mutableListOf(11, 11, 11),
+                        playerToBeatResults = mutableListOf(9, 9, 8),
+                        competitionCategoryId = categoryId
+                    )
+                }
             }
+            else {
+                for (match in group.matches) {
+                    val generatedGameResult = createResult()
+                    resultService.addFinalMatchResult(
+                        match.id,
+                        ResultSpec(generatedGameResult)
+                    )
+                }
+            }
+
         }
 
     }
@@ -690,7 +740,40 @@ class SetupTestData(
         competitionDrawRepository.clearPoolTable()
     }
 
-    private fun createResult(match: MatchAndResultDTO): List<GameSpec> {
+    fun beatPlayerWithExactScore(
+        mainPlayer: Int,
+        playerToBeat: Int,
+        mainPlayerResults: List<Int>,
+        playerToBeatResults: List<Int>,
+        competitionCategoryId: Int
+    ) {
+        val matches = matchRepository.getMatchesInCategory(competitionCategoryId)
+        val matchesInGroupA = matches.filter { it.groupOrRound == "A" }
+
+        // Select their match
+        val match = matchesInGroupA.first {
+            (it.firstRegistrationId == mainPlayer || it.secondRegistrationId == mainPlayer)
+                    && (playerToBeat == it.firstRegistrationId || playerToBeat == it.secondRegistrationId)
+                    && it.winner == null
+        }
+
+        val gameResults: MutableList<GameSpec> = mutableListOf()
+        if (match.firstRegistrationId == mainPlayer) {
+            for (i in mainPlayerResults.indices) {
+                gameResults.add(GameSpec(i + 1, mainPlayerResults[i], playerToBeatResults[i]))
+            }
+        } else if (match.secondRegistrationId == mainPlayer) {
+            for (i in mainPlayerResults.indices) {
+                gameResults.add(GameSpec(i + 1, playerToBeatResults[i], mainPlayerResults[i]))
+            }
+        }
+        resultService.addFinalMatchResult(
+            match.id,
+            ResultSpec(gameResults)
+        )
+    }
+
+    private fun createResult(): List<GameSpec> {
         val nrGames = Random.nextInt(3, 6)
         val winningPlayer = Random.nextInt(1, 3)
 

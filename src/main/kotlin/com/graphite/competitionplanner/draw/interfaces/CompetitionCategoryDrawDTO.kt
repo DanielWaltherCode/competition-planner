@@ -85,12 +85,19 @@ data class GroupDrawDTO(
      */
     val matches: List<MatchAndResultDTO>,
 
-    val groupStandingList: List<GroupStandingDTO>
+    val groupStandingList: List<GroupStandingDTO>,
+
+    val subGroupList: List<SubGroupContainer>
 )
 
 data class PlayerInPoolDTO(
     val playerDTOs: List<PlayerWithClubDTO>,
     val playerNumber: Int
+)
+
+data class SubGroupContainer(
+    val groupScore: Int,
+    val groupStandingList: List<GroupStandingDTO>
 )
 
 /**
