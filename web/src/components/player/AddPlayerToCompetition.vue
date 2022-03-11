@@ -12,7 +12,7 @@
     <!-- Add player to singles categories -->
     <div class="row custom-card pb-4">
       <h2 class="p-3">{{ $t("player.addPlayerSingles") }}</h2>
-      <search-player-component class="justify-content-center" v-on:clear-player="singlesPlayer = null"
+      <search-player-component ref="singles-search" class="justify-content-center" v-on:clear-player="singlesPlayer = null"
                                v-on:player-found="singlesPlayer = $event"></search-player-component>
       <div v-if="singlesPlayer !== null" class="row px-4">
         <div class="col-sm-4"></div>
@@ -133,6 +133,7 @@ export default {
         })
       })
       this.singlesPlayer = null
+      this.$refs["singles-search"].clearPlayer()
       this.selectedSinglesCategories = []
     },
     registerDoublesPlayers() {

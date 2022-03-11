@@ -34,7 +34,7 @@
             <div class="col-sm-6 mb-3">
               <!-- Standard validation does not work on select menues -->
               <label for="club-select" class="form-label"> {{ $t("player.add.club") }}</label>
-              <input type="text" disabled class="form-control" v-model="player.club.name">
+              <input type="text" id="club-select" disabled class="form-control" v-model="player.club.name">
             </div>
 
             <div class="col-sm-6 mb-3">
