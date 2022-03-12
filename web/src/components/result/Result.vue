@@ -29,8 +29,8 @@
                 <td>{{ getTime(match) }}</td>
                 <td v-if="!isMobile">{{ match.competitionCategory.name }}</td>
                 <td v-if="!isMobile">
-                  <span v-if="match.matchType === 'GROUP'"> {{ $t("results.group") }}</span>
-                  {{ match.groupOrRound }}
+                  <span v-if="match.matchType === 'GROUP'"> {{ $t("results.group") + ' ' + match.groupOrRound}}</span>
+                  <span v-else>{{ $t("round." + match.groupOrRound)}}</span>
                 </td>
                 <td :class="isPlayerOneWinner(match) ? 'fw-bold': ''">{{ getPlayerOne(match) }}</td>
                 <td :class="isPlayerTwoWinner(match) ? 'fw-bold': ''">{{ getPlayerTwo(match) }}</td>
@@ -106,7 +106,8 @@ export default {
     // TODO -- Don't call getMatches() all the time, process changes locally and only reload all on hard refresh
     getMatches() {
       MatchService.getMatchesInCompetition(this.competition.id).then(res => {
-        this.matches = res.data
+        const matchesWithPlaceholders = res.data
+        this.matches = matchesWithPlaceholders.filter(match => match.firstPlayer[0].id !== -1 && match.secondPlayer[0].id !== -1)
       })
     },
     getPlayerOne: getPlayerOneWithClub,

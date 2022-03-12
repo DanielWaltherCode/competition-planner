@@ -28,9 +28,6 @@
       </tbody>
     </table>
   </div>
-  <div v-else>
-    <p>{{ $t("draw.main.notDrawnTitle") }}</p>
-  </div>
 </template>
 
 <script>

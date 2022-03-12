@@ -26,6 +26,7 @@
                 }}</span>
             </p>
           </div>
+          <p class="py-2" v-if="!isCategoryDrawnMap[registration.competitionCategory.id]">{{ $t("draw.main.notDrawnTitle") }}</p>
           <match-list-component :matches="registration.matches"/>
           <div class="d-flex justify-content-end">
             <!-- If category is already drawn, give WO -->
@@ -146,7 +147,7 @@ export default {
       this.$router.replace({params: {id: this.player.id}}).catch(() => {
       })
       this.getRegistrations(this.competition.id, this.player.id)
-    }
+    },
   }
 }
 </script>

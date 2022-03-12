@@ -176,7 +176,8 @@
       "group": "Pool",
       "drawMade": "Klassen har lottats",
       "deleteDraw": "Ta bort lottning",
-      "redraw": "Lotta om"
+      "redraw": "Lotta om",
+      "goToPlayoff": "Gå till slutspelet"
     },
     "pool": {
       "players": "Spelare i gruppen",

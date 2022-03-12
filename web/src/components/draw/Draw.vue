@@ -56,7 +56,12 @@
           <div v-if="isChosenCategoryDrawn && draw !== null">
             <div id="group-section">
               <div id="main-header">
-                <div class="d-flex justify-content-end p-3">
+                <div class="d-flex justify-content-between p-3">
+                  <div v-if="draw.playOff != null" @click="scrollToPlayoff"
+                       class="clickable px-5 py-3 text-uppercase fs-6 d-flex align-items-center">
+                    <p class="mb-0 me-1">{{$t("draw.main.goToPlayoff")}}</p>
+                    <i class="fas fa-arrow-right"></i>
+                  </div>
                   <div class="p-2 custom-card">
                     <button type="button" class="btn btn-warning me-3" @click="createDraw">{{
                         $t("draw.main.redraw")
@@ -84,7 +89,7 @@
                 </div>
               </div>
               <!-- If there is a playoff/cup -->
-              <playoff-draw v-if="draw != null && draw.playOff != null"
+              <playoff-draw id="playoff" v-if="draw != null && draw.playOff != null"
                             :playoff-rounds="draw.playOff"></playoff-draw>
             </div>
           </div>
@@ -180,6 +185,10 @@ export default {
             this.registeredPlayersLists = res.data
           })
     },
+    scrollToPlayoff() {
+      const playoffElement = document.getElementById("playoff")
+      playoffElement.scrollIntoView({behavior : "smooth"})
+    }
   }
 }
 </script>
