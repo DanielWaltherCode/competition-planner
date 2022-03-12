@@ -90,7 +90,7 @@ class TestAdvancementPoolToPlayoffWhenOneProceed : TestAdvancementPoolToPlayoff(
         val semiFinals = result.matches.inRound(Round.SEMI_FINAL)
         val matchUps = semiFinals.map { Pair(it.registrationOneId.toString(), it.registrationTwoId.toString()) }
         matchUps.assertMatchUpExist(Pair("A1", "BYE"))
-        matchUps.assertMatchUpExist(Pair("B1", "C1"))
+        matchUps.assertMatchUpExist(Pair("C1", "B1"))
     }
 
     @Test
@@ -120,7 +120,7 @@ class TestAdvancementPoolToPlayoffWhenOneProceed : TestAdvancementPoolToPlayoff(
         val semiFinals = result.matches.inRound(Round.SEMI_FINAL)
         val matchUps = semiFinals.map { Pair(it.registrationOneId.toString(), it.registrationTwoId.toString()) }
         matchUps.assertMatchUpExist(Pair("A1", "D1"))
-        matchUps.assertMatchUpExist(Pair("B1", "C1"))
+        matchUps.assertMatchUpExist(Pair("C1", "B1"))
     }
 
     @Test
@@ -153,8 +153,8 @@ class TestAdvancementPoolToPlayoffWhenOneProceed : TestAdvancementPoolToPlayoff(
         val quarterFinals = result.matches.inRound(Round.QUARTER_FINAL)
         val matchUps = quarterFinals.map { Pair(it.registrationOneId.toString(), it.registrationTwoId.toString()) }
         matchUps.assertMatchUpExist(Pair("A1", "H1"))
-        matchUps.assertMatchUpExist(Pair("B1", "G1"))
+        matchUps.assertMatchUpExist(Pair("G1", "B1"))
         matchUps.assertMatchUpExist(Pair("C1", "E1"))
-        matchUps.assertMatchUpExist(Pair("D1", "F1"))
+        matchUps.assertMatchUpExist(Pair("F1", "D1"))
     }
 }

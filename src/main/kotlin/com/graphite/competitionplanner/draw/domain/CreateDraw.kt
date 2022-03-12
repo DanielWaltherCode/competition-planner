@@ -214,25 +214,33 @@ class CreateDraw(
      *
      * @return A list of matches representing the first round in a play off
      */
-    private fun generatePlayOffMatchesForFirstRound(registrations: List<Registration>): List<PlayOffMatch> {
+    private fun generatePlayOffMatchesForFirstRound(registrations: List<Registration>, swapPlayerOrder: Boolean = true): List<PlayOffMatch> {
         return if (registrations.size == 2) {
-            listOf(
-                PlayOffMatch(
-                    registrations.first(),
-                    registrations.last(),
-                    1,
-                    Round.UNKNOWN
-                )
-            )
+            makePlayoffMatch(registrations, swapPlayerOrder)
         } else {
             val best: List<Registration> = registrations.take(2)
             val remaining: List<Registration> = registrations.drop(2)
             val first: List<PlayOffMatch> = generatePlayOffMatchesForFirstRound(listOf(best.first()) +
-                    remaining.filterIndexed { index, _ -> index % 2 == 1 })
+                    remaining.filterIndexed { index, _ -> index % 2 == 1 }, swapPlayerOrder)
             val second: List<PlayOffMatch> = generatePlayOffMatchesForFirstRound(listOf(best.last()) +
-                    remaining.filterIndexed { index, _ -> index % 2 == 0 })
+                    remaining.filterIndexed { index, _ -> index % 2 == 0 }, !swapPlayerOrder)
             first + second.shiftOrderBy(first.size)
         }
+    }
+
+    private fun makePlayoffMatch(registrations: List<Registration>, swapPlayerOrder: Boolean): List<PlayOffMatch> {
+        // We have to swap order of players if we are in the bottom half of the play off tree.
+        // E.g. A1 is placed as registration 1, while B1 will be registration 2
+        val best = if (swapPlayerOrder) registrations.first() else  registrations.last()
+        val worst = if (swapPlayerOrder) registrations.last() else  registrations.first()
+        return listOf(
+            PlayOffMatch(
+                best,
+                worst,
+                1,
+                Round.UNKNOWN
+            )
+        )
     }
 
     fun List<PlayOffMatch>.shiftOrderBy(n: Int): List<PlayOffMatch> {

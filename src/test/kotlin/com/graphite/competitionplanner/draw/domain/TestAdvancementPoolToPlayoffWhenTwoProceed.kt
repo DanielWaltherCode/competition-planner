@@ -87,7 +87,7 @@ class TestAdvancementPoolToPlayoffWhenTwoProceed : TestAdvancementPoolToPlayoff(
         val semiFinals = result.matches.inRound(Round.SEMI_FINAL)
         val matchUps = semiFinals.map { Pair(it.registrationOneId.toString(), it.registrationTwoId.toString()) }
         matchUps.assertMatchUpExist(Pair("A1", "B2"))
-        matchUps.assertMatchUpExist(Pair("B1", "A2"))
+        matchUps.assertMatchUpExist(Pair("A2", "B1"))
     }
 
     @Test
@@ -120,9 +120,9 @@ class TestAdvancementPoolToPlayoffWhenTwoProceed : TestAdvancementPoolToPlayoff(
         val quarterFinals = result.matches.inRound(Round.QUARTER_FINAL)
         val matchUps = quarterFinals.map { Pair(it.registrationOneId.toString(), it.registrationTwoId.toString()) }
         matchUps.assertMatchUpExist(Pair("A1", "BYE"))
-        matchUps.assertMatchUpExist(Pair("B1", "BYE"))
+        matchUps.assertMatchUpExist(Pair("BYE", "B1"))
         matchUps.assertMatchUpExist(Pair("C1", "B2"))
-        matchUps.assertMatchUpExist(Pair("A2", "C2"))
+        matchUps.assertMatchUpExist(Pair("C2", "A2"))
 
         Assertions.assertTrue(quarterFinals.findMatchWith("A1").order <= 2)
         Assertions.assertTrue(quarterFinals.findMatchWith("B1").order > 2)
