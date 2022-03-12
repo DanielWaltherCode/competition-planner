@@ -115,7 +115,8 @@
     "save": "Spara",
     "saveChanges": "Spara ändringar",
     "next": "Nästa",
-    "close": "Avbryt"
+    "close": "Avbryt",
+    "clear": "Rensa"
   },
   "player": {
     "sidebar": {
@@ -279,6 +280,7 @@
     "update": "Uppdatera resultat",
     "round": "Grupp/runda",
     "group": "Pool",
+    "search": "Sök på en spelare eller klubb",
     "modal": {
       "errors": {
         "TOO_FEW_SETS_REPORTED": "För få set för att avsluta matchen är inrapporterade. Dubbelkolla gärna inställningarna för klassen för att se vilka regler som är uppsatta",
