@@ -121,10 +121,92 @@ class TestAdvancementPoolToPlayoffWhenTwoProceed : TestAdvancementPoolToPlayoff(
         val matchUps = quarterFinals.map { Pair(it.registrationOneId.toString(), it.registrationTwoId.toString()) }
         matchUps.assertMatchUpExist(Pair("A1", "BYE"))
         matchUps.assertMatchUpExist(Pair("BYE", "B1"))
-        matchUps.assertMatchUpExist(Pair("C1", "B2"))
-        matchUps.assertMatchUpExist(Pair("C2", "A2"))
+        matchUps.assertMatchUpExist(Pair("C2", "B2"))
+        matchUps.assertMatchUpExist(Pair("C1", "A2"))
 
-        Assertions.assertTrue(quarterFinals.findMatchWith("A1").order <= 2)
-        Assertions.assertTrue(quarterFinals.findMatchWith("B1").order > 2)
+        Assertions.assertTrue(
+            quarterFinals.findMatchWith("A1").order == 1 && quarterFinals.findMatchWith("B1").order == 4,
+            "Seeded group winners should be on opposite sides of the play off tree"
+        )
+
+        Assertions.assertTrue(
+            quarterFinals.findMatchWith("A1").order <= 2 && quarterFinals.findMatchWith("A2").order > 2,
+            "Winners from the same pool should not be on the same side of the playoff tree."
+        )
+
+        Assertions.assertTrue(
+            quarterFinals.findMatchWith("B2").order <= 2 && quarterFinals.findMatchWith("B1").order > 2,
+            "Winners from the same pool should not be on the same side of the playoff tree."
+        )
+
+        Assertions.assertTrue(
+            quarterFinals.findMatchWith("C2").order <= 2 && quarterFinals.findMatchWith("C1").order > 2,
+            "Winners from the same pool should not be on the same side of the playoff tree."
+        )
+    }
+
+    @Test
+    fun whenThereAreFourPools() {
+        // Setup
+        val registrationRanks = (1..16).toList().map {
+            dataGenerator.newRegistrationRankDTO(competitionCategoryId = competitionCategory.id, rank = it)
+        }
+        Mockito.`when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
+        Mockito.`when`(mockedRegistrationRepository.getRegistrationRanking(competitionCategory))
+            .thenReturn(registrationRanks)
+
+        // Act
+        createDraw.execute(competitionCategory.id)
+
+        // Record the spec sent to the repository for validation
+        Mockito.verify(mockedCompetitionDrawRepository).store(TestHelper.MockitoHelper.capture(classCaptor))
+        val result = classCaptor.value as PoolAndCupDrawSpec
+
+        // Assert
+        val finalExpectedName = listOf("Placeholder", "Placeholder")
+        result.matches.assertNamesInRoundEqual(Round.FINAL, finalExpectedName)
+
+        val semiFinalExpectedNames = listOf("Placeholder", "Placeholder", "Placeholder", "Placeholder")
+        result.matches.assertNamesInRoundEqual(Round.SEMI_FINAL, semiFinalExpectedNames)
+
+        val quarterFinalExpectedNames = listOf("A1", "A2", "B1", "B2", "C1", "C2", "D1", "D2").sorted()
+        result.matches.assertNamesInRoundEqual(Round.QUARTER_FINAL, quarterFinalExpectedNames)
+
+        val quarterFinals = result.matches.inRound(Round.QUARTER_FINAL)
+        val matchUps = quarterFinals.map { Pair(it.registrationOneId.toString(), it.registrationTwoId.toString()) }
+        matchUps.assertMatchUpExist(Pair("A1", "D2"))
+        matchUps.assertMatchUpExist(Pair("C2", "B1"))
+        matchUps.assertMatchUpExist(Pair("B2", "D1"))
+        matchUps.assertMatchUpExist(Pair("C1", "A2"))
+
+        Assertions.assertTrue(
+            quarterFinals.findMatchWith("A1").order == 1 && quarterFinals.findMatchWith("B1").order == 4,
+            "Seeded group winners should be on opposite sides of the play off tree"
+        )
+
+        Assertions.assertTrue(
+            quarterFinals.findMatchWith("D1").order == 2 && quarterFinals.findMatchWith("C1").order == 3,
+            "Seeded group winners should be on opposite sides of the play off tree"
+        )
+
+        Assertions.assertTrue(
+            quarterFinals.findMatchWith("A1").order <= 2 && quarterFinals.findMatchWith("A2").order > 2,
+            "Winners from the same pool should not be on the same side of the playoff tree."
+        )
+
+        Assertions.assertTrue(
+            quarterFinals.findMatchWith("B2").order <= 2 && quarterFinals.findMatchWith("B1").order > 2,
+            "Winners from the same pool should not be on the same side of the playoff tree."
+        )
+
+        Assertions.assertTrue(
+            quarterFinals.findMatchWith("C2").order <= 2 && quarterFinals.findMatchWith("C1").order > 2,
+            "Winners from the same pool should not be on the same side of the playoff tree."
+        )
+
+        Assertions.assertTrue(
+            quarterFinals.findMatchWith("D2").order <= 2 && quarterFinals.findMatchWith("D1").order > 2,
+            "Winners from the same pool should not be on the same side of the playoff tree."
+        )
     }
 }

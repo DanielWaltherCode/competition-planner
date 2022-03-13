@@ -12,7 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest
 class TestAdvancementPoolToPlayoff: TestBaseCreateDraw() {
 
     /**
-     * Assert that the given match up exist.
+     * Assert that the given match up exist. The order of the Pair is asserted.
      */
     protected fun List<Pair<String, String>>.assertMatchUpExist(expected: Pair<String, String>) {
         Assertions.assertTrue(this.contains(expected), "Expected to find match up ${expected.first} vs ${expected.second}. All match ups: $this")

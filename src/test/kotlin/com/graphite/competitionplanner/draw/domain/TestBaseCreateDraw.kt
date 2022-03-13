@@ -32,7 +32,6 @@ class TestBaseCreateDraw {
     protected val createDraw = CreateDraw(
         mockedGetRegistrationInCompetitionCategory,
         mockedFindCompetitionCategory,
-        CreateSeed(),
         mockedRegistrationRepository,
         mockedSeedRepository,
         mockedCompetitionDrawRepository,
