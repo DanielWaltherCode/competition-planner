@@ -80,16 +80,14 @@ export default {
       })
     },
     getSearchResult(searchResult) {
-      return searchResult.firstName + " " + searchResult.lastName
+      return searchResult.firstName + " " + searchResult.lastName + " " + searchResult.club.name
     },
     clearPlayer() {
       this.player = null
-      this.selectedCategories = []
       this.$refs.autocomplete.value = ""
       this.$emit("clear-player")
     },
     handleSubmit(result) {
-      console.log(result)
       if (result === undefined || result === "") {
         return;
       }

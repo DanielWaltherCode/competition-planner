@@ -123,7 +123,7 @@ export default {
       return DrawService.isDrawMade(this.competition.id, categoryId)
     },
     getSearchResult(searchResult) {
-      return searchResult.firstName + " " + searchResult.lastName
+      return searchResult.firstName + " " + searchResult.lastName + " " + searchResult.club.name
     },
     giveWalkover(categoryId, registrationId) {
       if (confirm(this.$t("player.walkoverWarningText", {player: this.player.firstName + this.player.lastName}))) {

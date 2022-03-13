@@ -45,7 +45,7 @@
                 <td :class="isPlayerOneWinner(match) ? 'fw-bold': ''">{{ getPlayerOne(match) }}</td>
                 <td :class="isPlayerTwoWinner(match) ? 'fw-bold': ''">{{ getPlayerTwo(match) }}</td>
                 <td v-if="match !== null" class="d-flex justify-content-center">
-                  <p class="pe-2" v-for="game in match.result.gameList" :key="game.id">
+                   <p class="pe-2" v-for="game in match.result.gameList" :key="game.id">
                     {{ game.firstRegistrationResult }} - {{ game.secondRegistrationResult }}
                   </p></td>
                 <td>
@@ -189,6 +189,10 @@ h1 {
 
 th {
   text-decoration: underline;
+}
+
+tr td {
+  font-size: 90%;
 }
 
 .report-result:hover {
