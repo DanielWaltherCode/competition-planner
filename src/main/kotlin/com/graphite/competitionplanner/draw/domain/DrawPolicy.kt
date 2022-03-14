@@ -22,7 +22,7 @@ sealed class DrawPolicy(
                 when (it.drawType) {
                     DrawType.POOL_ONLY -> PoolOnlyDrawPolicy(competitionCategory)
                     DrawType.CUP_ONLY -> CupDrawPolicy(competitionCategory)
-                    DrawType.POOL_AND_CUP -> PoolAndCupDrawPolicy(competitionCategory)
+                    DrawType.POOL_AND_CUP -> PoolAndCupDrawPolicy(PoolOnlyDrawPolicy(competitionCategory), competitionCategory)
                 }
             }
         }
@@ -346,7 +346,11 @@ class CupDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(co
 
 }
 
-class PoolAndCupDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(competitionCategory) {
+class PoolAndCupDrawPolicy(
+    val poolDrawPolicy: PoolOnlyDrawPolicy,
+    competitionCategory: CompetitionCategoryDTO
+) : DrawPolicy(competitionCategory) {
+
     override fun createDraw(registrations: List<RegistrationSeedDTO>): CompetitionCategoryDrawSpec {
         val pools: List<Pool> = drawPools(registrations)
         val playOffMatches: List<PlayOffMatch> = createPoolAndCupPlayoff(pools)
@@ -358,23 +362,7 @@ class PoolAndCupDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPo
     }
 
     override fun createSeed(registrations: List<RegistrationRankingDTO>): List<RegistrationSeedDTO> {
-        val sortedHighestRankFirst: List<RegistrationRankingDTO> = registrations.toList().sortedBy { -it.rank }
-        val numberOfSeeds: Int = calculateNumberOfSeeds(registrations)
-
-        return sortedHighestRankFirst.mapIndexed { index, it ->
-            RegistrationSeedDTO(
-                it.registrationId,
-                it.competitionCategoryId,
-                seed = if (index < numberOfSeeds) index + 1 else null
-            )
-        }
-    }
-
-    private fun calculateNumberOfSeeds(registrations: List<RegistrationRankingDTO>): Int {
-        return with(registrations) {
-            if (isEmpty()) 0
-            else floor(log2(size.toDouble())).toInt()
-        }
+        return poolDrawPolicy.createSeed(registrations)
     }
 
     override fun throwExceptionIfNotEnoughRegistrations(registrations: List<RegistrationSeedDTO>) {
