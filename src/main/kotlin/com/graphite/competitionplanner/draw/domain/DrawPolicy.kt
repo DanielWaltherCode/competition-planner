@@ -8,7 +8,6 @@ import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.registration.interfaces.RegistrationRankingDTO
 import kotlin.math.ceil
-import kotlin.math.floor
 import kotlin.math.log2
 import kotlin.math.pow
 
@@ -22,7 +21,7 @@ sealed class DrawPolicy(
                 when (it.drawType) {
                     DrawType.POOL_ONLY -> PoolOnlyDrawPolicy(competitionCategory)
                     DrawType.CUP_ONLY -> CupDrawPolicy(competitionCategory)
-                    DrawType.POOL_AND_CUP -> PoolAndCupDrawPolicy(PoolOnlyDrawPolicy(competitionCategory), competitionCategory)
+                    DrawType.POOL_AND_CUP -> PoolAndCupDrawPolicy(PoolOnlyDrawPolicy(competitionCategory), CupDrawPolicy(competitionCategory), competitionCategory)
                 }
             }
         }
@@ -325,7 +324,7 @@ class CupDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(co
      *
      * @return A list of matches representing the first round in a play off
      */
-    private fun generatePlayOffMatchesForFirstRound(
+    fun generatePlayOffMatchesForFirstRound(
         registrations: List<Registration>,
         swapPlayerOrder: Boolean = true
     ): List<PlayOffMatch> {
@@ -347,13 +346,14 @@ class CupDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(co
 }
 
 class PoolAndCupDrawPolicy(
-    val poolDrawPolicy: PoolOnlyDrawPolicy,
+    private val poolDrawPolicy: PoolOnlyDrawPolicy,
+    private val cupDrawPolicy: CupDrawPolicy,
     competitionCategory: CompetitionCategoryDTO
 ) : DrawPolicy(competitionCategory) {
 
     override fun createDraw(registrations: List<RegistrationSeedDTO>): CompetitionCategoryDrawSpec {
         val pools: List<Pool> = drawPools(registrations)
-        val playOffMatches: List<PlayOffMatch> = createPoolAndCupPlayoff(pools)
+        val playOffMatches: List<PlayOffMatch> = createPoolAndCupPlayoff(pools, poolDrawPolicy.calculateNumberOfSeeds(registrations.size))
         return PoolAndCupDrawSpec(
             competitionCategory.id,
             pools,
@@ -378,7 +378,7 @@ class PoolAndCupDrawPolicy(
      *
      * @return A list of play off matches
      */
-    private fun createPoolAndCupPlayoff(pools: List<Pool>): List<PlayOffMatch> {
+    private fun createPoolAndCupPlayoff(pools: List<Pool>, numberOfSeeded: Int): List<PlayOffMatch> {
         val placeholders: List<Registration.Placeholder> =
             pools.flatMap { group ->
                 (1..competitionCategory.settings.playersToPlayOff).map { index ->
@@ -386,22 +386,18 @@ class PoolAndCupDrawPolicy(
                         group.name + index
                     )
                 }
-            }
-                .sortedBy { it.name.reversed() } // Should result in A1, B1, C1, ..., A2, B2, C2, ...
+            }.sortedBy { it.name.reversed() } // Should result in A1, B1, C1, ..., A2, B2, C2, ...
 
         // If we are not an even power of 2, then we need to add so-called BYE players to the list of registrations
         // until we reach a number that is a power of 2
         val placeholdersWithBye: List<Registration> = placeholders.tryAddByes()
         val numberOfRounds: Int = ceil(log2(placeholdersWithBye.size.toDouble())).toInt()
 
-        val firstRoundOfMatches: List<PlayOffMatch> = generatePlayOffMatchesForFirstRound(placeholdersWithBye).map {
+        val firstRoundOfMatches: List<PlayOffMatch> = generatePlayOffMatchesForFirstRound(placeholdersWithBye, numberOfSeeded).map {
             it.apply {
                 round = numberOfRounds.asRound()
             }
         }
-
-        // We reverse the order of the "bottom" half of the playoff tree so that the second-best player is placed at bottom
-        firstRoundOfMatches.takeLast(firstRoundOfMatches.size / 2).reverseOrder()
 
         return firstRoundOfMatches + buildRemainingPlayOffTree(firstRoundOfMatches.size / 2)
     }
@@ -422,45 +418,102 @@ class PoolAndCupDrawPolicy(
      */
     private fun generatePlayOffMatchesForFirstRound(
         registrations: List<Registration>,
+        numberOfSeeded: Int,
         swapPlayerOrder: Boolean = true
     ): List<PlayOffMatch> {
-        return if (registrations.size == 2) {
-            makePlayoffMatch(registrations, swapPlayerOrder)
+        if (registrations.size == 2) {
+            return makePlayoffMatch(registrations, swapPlayerOrder)
         } else {
-            val topHalf = mutableListOf<Registration>()
-            val bottomHalf = mutableListOf<Registration>()
+            val (topHalf, bottomHalf) = distributeSeededInDifferentHalves(registrations, numberOfSeeded)
+                .placeWinnersFromSamePoolOnOppositeSides()
+                .splitRemainingWinnersOnDifferentHalves()
+                .uniformlyDistributeByesOnHalves()
 
-            // Add best seeded registrations on opposite sides of play off tree
-            topHalf.add(registrations.take(2).first())
-            bottomHalf.add(registrations.take(2).last())
-            var remaining: List<Registration> = registrations.filterNot { topHalf.contains(it) || bottomHalf.contains(it) }
-
-            // Add winners from same pool to other side of play off tree
-            topHalf.addAll(remaining.filterNot { it is Registration.Bye }
-                .filter { it.toString().first() == bottomHalf.first().toString().first() })
-            bottomHalf.addAll(remaining.filterNot { it is Registration.Bye }
-                .filter { it.toString().first() == topHalf.first().toString().first() })
-            remaining = registrations.filterNot { topHalf.contains(it) || bottomHalf.contains(it) }
-
-            if (remaining.isNotEmpty()) {
-                // Add remaining
-                topHalf.addAll(
-                    listOf(remaining.take(2).first()) + remaining.drop(2).filterIndexed { index, _ -> index % 2 == 0 })
-                bottomHalf.addAll(
-                    listOf(remaining.take(2).last()) + remaining.drop(2).filterIndexed { index, _ -> index % 2 == 1 })
-            }
-    //            // Add remaining
-    //            topHalf.addAll(remaining.filterIndexed { index, _ -> index % 2 == 1 })
-    //            bottomHalf.addAll(remaining.filterIndexed { index, _ -> index % 2 == 0 })
-
-            topHalf.sortBy { it.toString().reversed() }
-            bottomHalf.sortBy { it.toString().reversed() }
-
-            val first = generatePlayOffMatchesForFirstRound(topHalf, swapPlayerOrder)
-            val second = generatePlayOffMatchesForFirstRound(bottomHalf, !swapPlayerOrder)
-            first + second.shiftOrderBy(first.size)
+            val first = cupDrawPolicy.generatePlayOffMatchesForFirstRound(topHalf, swapPlayerOrder = swapPlayerOrder)
+            val second = cupDrawPolicy.generatePlayOffMatchesForFirstRound(bottomHalf, swapPlayerOrder = !swapPlayerOrder)
+            return (first + second.shiftOrderBy(first.size).reverseOrder()).sortedBy { it.order }
         }
     }
+
+    private fun Halves.uniformlyDistributeByesOnHalves(): Halves {
+        return if (this.remaining.isEmpty()) {
+            this
+        }else {
+            if (this.topHalf.size < this.bottomHalf.size) {
+                Halves(
+                    this.topHalf + this.remaining.take(1),
+                    this.bottomHalf,
+                    this.remaining.drop(1)
+                ).uniformlyDistributeByesOnHalves()
+            } else {
+                Halves(
+                    this.topHalf,
+                    this.bottomHalf + this.remaining.take(1),
+                    this.remaining.drop(1)
+                ).uniformlyDistributeByesOnHalves()
+            }
+        }
+    }
+
+    private fun List<Registration>.findWinnersFromSamePool(winners: List<Registration>): List<Registration> {
+        val groupPrefixes = winners.map { it.toString().first() }
+        return this.filterNot { it is Registration.Bye }.filter { groupPrefixes.contains(it.toString().first()) }
+    }
+
+    private fun Halves.splitRemainingWinnersOnDifferentHalves(): Halves {
+        return if (this.remaining.isEmpty() || this.remaining.all { it is Registration.Bye }) {
+            Halves(this.topHalf, this.bottomHalf, this.remaining)
+        }else {
+            if (this.topHalf.size < this.bottomHalf.size) {
+                Halves(
+                    this.topHalf + this.remaining.take(1),
+                    this.bottomHalf,
+                    this.remaining.drop(1)
+                ).splitRemainingWinnersOnDifferentHalves()
+            } else {
+                Halves(
+                    this.topHalf,
+                    this.bottomHalf + this.remaining.take(1),
+                    this.remaining.drop(1)
+                ).splitRemainingWinnersOnDifferentHalves()
+            }
+        }
+    }
+
+    private fun Halves.placeWinnersFromSamePoolOnOppositeSides(): Halves {
+        val topHalf = this.topHalf + this.remaining.findWinnersFromSamePool(this.bottomHalf)
+        val bottomHalf = this.bottomHalf + this.remaining.findWinnersFromSamePool(this.topHalf)
+        val remaining = this.remaining.filterNot { topHalf.contains(it) || bottomHalf.contains(it) }
+        return Halves(
+            topHalf,
+            bottomHalf,
+            remaining
+        )
+    }
+
+    private fun distributeSeededInDifferentHalves(registrations: List<Registration>, numberOfSeeded: Int): Halves {
+        return if (registrations.size == 4 ) {
+            Halves(
+                listOf(registrations.get(0), registrations.get(3)),
+                listOf(registrations.get(1), registrations.get(2)),
+                emptyList()
+            )
+        } else {
+            val seeded = registrations.take(numberOfSeeded)
+            val topTwo = seeded.take(2) // TODO: rethink this
+            val rest = seeded.drop(2)
+            val remaining = registrations.drop(numberOfSeeded)
+            val topHalf = listOf(topTwo.first()) + rest.filterIndexed { index, _ -> index % 2 == 1 }
+            val bottomHalf = listOf(topTwo.last()) + rest.filterIndexed { index, _ -> index % 2 == 0 }
+            Halves(topHalf, bottomHalf, remaining)
+        }
+    }
+
+    data class Halves(
+        val topHalf: List<Registration>,
+        val bottomHalf: List<Registration>,
+        val remaining: List<Registration>
+    )
 }
 
 class PoolOnlyDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(competitionCategory) {
@@ -475,7 +528,7 @@ class PoolOnlyDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPoli
     override fun createSeed(registrations: List<RegistrationRankingDTO>): List<RegistrationSeedDTO> {
 
         val sortedHighestRankFirst: List<RegistrationRankingDTO> = registrations.toList().sortedBy { -it.rank }
-        val numberOfSeeds: Int = calculateNumberOfSeeds(registrations)
+        val numberOfSeeds: Int = calculateNumberOfSeeds(registrations.size)
 
         return sortedHighestRankFirst.mapIndexed { index, it ->
             RegistrationSeedDTO(
@@ -486,24 +539,23 @@ class PoolOnlyDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPoli
         }
     }
 
-    private fun calculateNumberOfSeeds(registrations: List<RegistrationRankingDTO>): Int {
-        return with(registrations) {
-            if (isEmpty()) 0
-            else {
-                val numberOfPools = ceil((registrations.size.toDouble() / competitionCategory.settings.playersPerGroup.toDouble())).toInt()
-                when (numberOfPools) {
-                    in 2..3 -> {
-                        2
-                    }
-                    in 4..7 -> {
-                        4
-                    }
-                    in 8..15 -> {
-                        8
-                    }
-                    else -> {
-                        16
-                    }
+    fun calculateNumberOfSeeds(numberOfRegistrations: Int): Int {
+        return if (numberOfRegistrations == 0){
+            0
+        } else {
+            val numberOfPools = ceil((numberOfRegistrations.toDouble() / competitionCategory.settings.playersPerGroup.toDouble())).toInt()
+            when (numberOfPools) {
+                in 2..3 -> {
+                    2
+                }
+                in 4..7 -> {
+                    4
+                }
+                in 8..15 -> {
+                    8
+                }
+                else -> {
+                    16
                 }
             }
         }
