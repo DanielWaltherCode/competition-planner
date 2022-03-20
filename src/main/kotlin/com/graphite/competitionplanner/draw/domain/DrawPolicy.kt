@@ -2,7 +2,6 @@ package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
-import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsDTO
 import com.graphite.competitionplanner.draw.interfaces.NotEnoughRegistrationsException
 import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
 import com.graphite.competitionplanner.draw.interfaces.Round
@@ -43,8 +42,28 @@ sealed class DrawPolicy(
      * number of seeds will always be to the power of 2, so this means you should have either 1, 2, 4, 8, 16, 32, or 64 etc.
      * seeds. All other player will not be seeded and will be randomly drawn when the draw takes place
      */
-    abstract fun createSeed(registrations: List<RegistrationRankingDTO>): List<RegistrationSeedDTO>
+    fun createSeed(registrations: List<RegistrationRankingDTO>): List<RegistrationSeedDTO> {
+        val sortedHighestRankFirst: List<RegistrationRankingDTO> = registrations.toList().sortedBy { -it.rank }
+        val numberOfSeeds: Int = calculateNumberOfSeeds(registrations.size)
 
+        return sortedHighestRankFirst.mapIndexed { index, it ->
+            RegistrationSeedDTO(
+                it.registrationId,
+                it.competitionCategoryId,
+                seed = if (index < numberOfSeeds) index + 1 else null
+            )
+        }
+    }
+
+    /**
+     * Return the number of registrations that should be considered seeded
+     */
+    abstract fun calculateNumberOfSeeds(numberOfRegistrations: Int): Int
+
+    /**
+     * Check if there are enough registrations in the competition category.
+     * @throws NotEnoughRegistrationsException When there are not enough registrations to make a draw
+     */
     abstract fun throwExceptionIfNotEnoughRegistrations(registrations: List<RegistrationSeedDTO>)
 
     /**
@@ -134,113 +153,7 @@ sealed class DrawPolicy(
         )
     }
 
-    private fun calculateNumberOfPools(numberOfRegistrations: Int, settings: GeneralSettingsDTO): Int {
-        return ceil((numberOfRegistrations.toDouble() / settings.playersPerGroup.toDouble())).toInt()
-    }
 
-    private fun createEmptyPools(numberOfPools: Int): List<Pool> {
-        return (1..numberOfPools).toList().map {
-            Pool(it.asPoolName(), emptyList(), emptyList())
-        }
-    }
-
-    /**
-     * Convert an integer to a pool name. 1 -> A, 2 -> B, ..., 22 -> W
-     */
-    private fun Int.asPoolName(): String {
-        return when (this) {
-            1 -> "A"
-            2 -> "B"
-            3 -> "C"
-            4 -> "D"
-            5 -> "E"
-            6 -> "F"
-            7 -> "G"
-            8 -> "H"
-            9 -> "I"
-            10 -> "J"
-            11 -> "K"
-            12 -> "L"
-            13 -> "M"
-            14 -> "N"
-            15 -> "O"
-            16 -> "P"
-            17 -> "Q"
-            18 -> "R"
-            19 -> "S"
-            20 -> "T"
-            21 -> "U"
-            22 -> "V"
-            else -> "X" + (this % 22).asPoolName()
-        }
-    }
-
-    /**
-     * Adds a set of registrations in a round-robin fashion to a set of pools. The first registration is added to
-     * the first pool, then the second registration is added to the second pool and so on. When all pools have
-     * received their first round of registration, the process repeats.
-     */
-    private fun addRoundRobin(pools: List<Pool>, registrations: List<Registration.Real>): List<Pool> {
-        return if (registrations.isEmpty()) {
-            pools
-        } else {
-            return if (registrations.size <= pools.size) {
-                val first: Registration.Real = registrations.first()
-                val pool: Pool = addRegistrationToPool(pools.first(), first)
-                val remaining: List<Registration.Real> = registrations.takeLast(registrations.size - 1)
-                listOf(pool) + addRoundRobin(pools.takeLast(pools.size - 1), remaining)
-            } else {
-                val round: List<Pool> = addRoundRobin(pools, registrations.take(pools.size))
-                addRoundRobin(round, registrations.takeLast(registrations.size - pools.size))
-            }
-        }
-    }
-
-    private fun addRegistrationToPool(pool: Pool, registration: Registration.Real): Pool {
-        return Pool(pool.name, pool.registrationIds + listOf(registration), pool.matches)
-    }
-
-
-    /**
-     * Generate a list of matches where every registration in the list will go up against every other registration
-     * exactly once. Example a list of registration 1, 2, 3 would result in the match ups 1 - 2, 1 - 3, and 2 - 3
-     */
-    private fun generateMatchesFor(registrations: List<Registration.Real>): List<PoolMatch> {
-        with(registrations) {
-            return if (isEmpty()) {
-                emptyList()
-            } else {
-                val remaining = takeLast(registrations.size - 1)
-                val matches = generateMatchesFor(first(), remaining)
-                matches + generateMatchesFor(remaining)
-            }
-        }
-    }
-
-    /**
-     * Returns a list of matches where each mach is between the given registration and one other in the other lists.
-     *
-     * Example: Given registration id is 1, and others contain ids 2, 3, 4. Then returned matches are:
-     * 1 - 2, 1 - 3, and 1 - 4
-     */
-    private fun generateMatchesFor(registration: Registration.Real, others: List<Registration.Real>): List<PoolMatch> {
-        return (1..others.size).map { registration }.zip(others).map { PoolMatch(it.first, it.second) }
-    }
-
-    protected fun drawPools(registrations: List<RegistrationSeedDTO>): List<Pool> {
-        val numberOfPools: Int = calculateNumberOfPools(registrations.size, competitionCategory.settings)
-        val pools: List<Pool> = createEmptyPools(numberOfPools)
-
-        val seededRegistrations: List<Registration.Real> =
-            registrations.filter { it.seed != null }.sortedBy { it.seed!! }.map { Registration.Real(it.registrationId) }
-        val nonSeededRegistrations: List<Registration.Real> =
-            registrations.filter { it.seed == null }.map { Registration.Real(it.registrationId) }
-
-        return addRoundRobin(pools, seededRegistrations + nonSeededRegistrations.shuffled())
-            .map {
-                it.apply { this.matches = generateMatchesFor(this.registrationIds) }
-            }
-    }
 }
 
 class CupDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(competitionCategory) {
@@ -260,50 +173,32 @@ class CupDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(co
             }
         }
 
-        // We reverse the order of the "bottom" half of the playoff tree so that the second-best player is placed at bottom
-//        firstRoundOfMatches.takeLast(firstRoundOfMatches.size / 2).reverseOrder()
-
         val placeholderMatches = buildRemainingPlayOffTree(firstRoundOfMatches.size / 2)
 
         return CupDrawSpec(1, numberOfRounds.asRound(), firstRoundOfMatches + placeholderMatches)
     }
 
-    override fun createSeed(registrations: List<RegistrationRankingDTO>): List<RegistrationSeedDTO> {
-        val sortedHighestRankFirst: List<RegistrationRankingDTO> = registrations.toList().sortedBy { -it.rank }
-        val numberOfSeeds: Int = calculateNumberOfSeeds(registrations)
-
-        return sortedHighestRankFirst.mapIndexed { index, it ->
-            RegistrationSeedDTO(
-                it.registrationId,
-                it.competitionCategoryId,
-                seed = if (index < numberOfSeeds) index + 1 else null
-            )
-        }
-    }
-
-    private fun calculateNumberOfSeeds(registrations: List<RegistrationRankingDTO>): Int {
-        return with(registrations) {
-            if (isEmpty()) 0
-            else {
-                when (size) {
-                    in 2..15 -> {
-                        2
-                    }
-                    in 16..31 -> {
-                        4
-                    }
-                    in 32..63 -> {
-                        8
-                    }
-                    in 64..127 -> {
-                        16
-                    }
-                    else -> {
-                        32
-                    }
+    override fun calculateNumberOfSeeds(numberOfRegistrations: Int): Int {
+        return when (numberOfRegistrations) {
+                in 0 .. 1 -> {
+                    0
+                }
+                in 2..15 -> {
+                    2
+                }
+                in 16..31 -> {
+                    4
+                }
+                in 32..63 -> {
+                    8
+                }
+                in 64..127 -> {
+                    16
+                }
+                else -> {
+                    32
                 }
             }
-        }
     }
 
     override fun throwExceptionIfNotEnoughRegistrations(registrations: List<RegistrationSeedDTO>) {
@@ -352,7 +247,7 @@ class PoolAndCupDrawPolicy(
 ) : DrawPolicy(competitionCategory) {
 
     override fun createDraw(registrations: List<RegistrationSeedDTO>): CompetitionCategoryDrawSpec {
-        val pools: List<Pool> = drawPools(registrations)
+        val pools: List<Pool> = (poolDrawPolicy.createDraw(registrations) as PoolDrawSpec).pools
         val playOffMatches: List<PlayOffMatch> = createPoolAndCupPlayoff(pools, poolDrawPolicy.calculateNumberOfSeeds(registrations.size))
         return PoolAndCupDrawSpec(
             competitionCategory.id,
@@ -361,8 +256,8 @@ class PoolAndCupDrawPolicy(
         )
     }
 
-    override fun createSeed(registrations: List<RegistrationRankingDTO>): List<RegistrationSeedDTO> {
-        return poolDrawPolicy.createSeed(registrations)
+    override fun calculateNumberOfSeeds(numberOfRegistrations: Int): Int {
+        return poolDrawPolicy.calculateNumberOfSeeds(numberOfRegistrations)
     }
 
     override fun throwExceptionIfNotEnoughRegistrations(registrations: List<RegistrationSeedDTO>) {
@@ -421,8 +316,8 @@ class PoolAndCupDrawPolicy(
         numberOfSeeded: Int,
         swapPlayerOrder: Boolean = true
     ): List<PlayOffMatch> {
-        if (registrations.size == 2) {
-            return makePlayoffMatch(registrations, swapPlayerOrder)
+        return if (registrations.size == 2) {
+            makePlayoffMatch(registrations, swapPlayerOrder)
         } else {
             val (topHalf, bottomHalf) = distributeSeededInDifferentHalves(registrations, numberOfSeeded)
                 .placeWinnersFromSamePoolOnOppositeSides()
@@ -431,7 +326,7 @@ class PoolAndCupDrawPolicy(
 
             val first = cupDrawPolicy.generatePlayOffMatchesForFirstRound(topHalf, swapPlayerOrder = swapPlayerOrder)
             val second = cupDrawPolicy.generatePlayOffMatchesForFirstRound(bottomHalf, swapPlayerOrder = !swapPlayerOrder)
-            return (first + second.shiftOrderBy(first.size).reverseOrder()).sortedBy { it.order }
+            (first + second.shiftOrderBy(first.size).reverseOrder()).sortedBy { it.order }
         }
     }
 
@@ -494,13 +389,13 @@ class PoolAndCupDrawPolicy(
     private fun distributeSeededInDifferentHalves(registrations: List<Registration>, numberOfSeeded: Int): Halves {
         return if (registrations.size == 4 ) {
             Halves(
-                listOf(registrations.get(0), registrations.get(3)),
-                listOf(registrations.get(1), registrations.get(2)),
+                listOf(registrations[0], registrations[3]),
+                listOf(registrations[1], registrations[2]),
                 emptyList()
             )
         } else {
             val seeded = registrations.take(numberOfSeeded)
-            val topTwo = seeded.take(2) // TODO: rethink this
+            val topTwo = seeded.take(2)
             val rest = seeded.drop(2)
             val remaining = registrations.drop(numberOfSeeded)
             val topHalf = listOf(topTwo.first()) + rest.filterIndexed { index, _ -> index % 2 == 1 }
@@ -525,26 +420,11 @@ class PoolOnlyDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPoli
         )
     }
 
-    override fun createSeed(registrations: List<RegistrationRankingDTO>): List<RegistrationSeedDTO> {
-
-        val sortedHighestRankFirst: List<RegistrationRankingDTO> = registrations.toList().sortedBy { -it.rank }
-        val numberOfSeeds: Int = calculateNumberOfSeeds(registrations.size)
-
-        return sortedHighestRankFirst.mapIndexed { index, it ->
-            RegistrationSeedDTO(
-                it.registrationId,
-                it.competitionCategoryId,
-                seed = if (index < numberOfSeeds) index + 1 else null
-            )
-        }
-    }
-
-    fun calculateNumberOfSeeds(numberOfRegistrations: Int): Int {
-        return if (numberOfRegistrations == 0){
-            0
-        } else {
-            val numberOfPools = ceil((numberOfRegistrations.toDouble() / competitionCategory.settings.playersPerGroup.toDouble())).toInt()
-            when (numberOfPools) {
+    override fun calculateNumberOfSeeds(numberOfRegistrations: Int): Int {
+        return when (numberOfPools(numberOfRegistrations)) {
+                in 0 .. 1 -> {
+                    0
+                }
                 in 2..3 -> {
                     2
                 }
@@ -558,10 +438,116 @@ class PoolOnlyDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPoli
                     16
                 }
             }
-        }
     }
 
     override fun throwExceptionIfNotEnoughRegistrations(registrations: List<RegistrationSeedDTO>) {
         if (registrations.size < 2) throw NotEnoughRegistrationsException("Failed to draw pool only. Requires at least two registrations.")
+    }
+
+    private fun drawPools(registrations: List<RegistrationSeedDTO>): List<Pool> {
+        val numberOfPools: Int = numberOfPools(registrations.size)
+        val pools: List<Pool> = createEmptyPools(numberOfPools)
+
+        val seededRegistrations: List<Registration.Real> =
+            registrations.filter { it.seed != null }.sortedBy { it.seed!! }.map { Registration.Real(it.registrationId) }
+        val nonSeededRegistrations: List<Registration.Real> =
+            registrations.filter { it.seed == null }.map { Registration.Real(it.registrationId) }
+
+        return addRoundRobin(pools, seededRegistrations + nonSeededRegistrations.shuffled())
+            .map {
+                it.apply { this.matches = generateMatchesFor(this.registrationIds) }
+            }
+    }
+
+    private fun createEmptyPools(numberOfPools: Int): List<Pool> {
+        return (1..numberOfPools).toList().map {
+            Pool(it.asPoolName(), emptyList(), emptyList())
+        }
+    }
+
+    private fun numberOfPools(numberOfRegistrations: Int): Int {
+        return ceil((numberOfRegistrations.toDouble() / competitionCategory.settings.playersPerGroup.toDouble())).toInt()
+    }
+
+    /**
+     * Convert an integer to a pool name. 1 -> A, 2 -> B, ..., 22 -> W
+     */
+    private fun Int.asPoolName(): String {
+        return when (this) {
+            1 -> "A"
+            2 -> "B"
+            3 -> "C"
+            4 -> "D"
+            5 -> "E"
+            6 -> "F"
+            7 -> "G"
+            8 -> "H"
+            9 -> "I"
+            10 -> "J"
+            11 -> "K"
+            12 -> "L"
+            13 -> "M"
+            14 -> "N"
+            15 -> "O"
+            16 -> "P"
+            17 -> "Q"
+            18 -> "R"
+            19 -> "S"
+            20 -> "T"
+            21 -> "U"
+            22 -> "V"
+            else -> "X" + (this % 22).asPoolName()
+        }
+    }
+
+    /**
+     * Adds a set of registrations in a round-robin fashion to a set of pools. The first registration is added to
+     * the first pool, then the second registration is added to the second pool and so on. When all pools have
+     * received their first round of registration, the process repeats.
+     */
+    private fun addRoundRobin(pools: List<Pool>, registrations: List<Registration.Real>): List<Pool> {
+        return if (registrations.isEmpty()) {
+            pools
+        } else {
+            return if (registrations.size <= pools.size) {
+                val first: Registration.Real = registrations.first()
+                val pool: Pool = addRegistrationToPool(pools.first(), first)
+                val remaining: List<Registration.Real> = registrations.takeLast(registrations.size - 1)
+                listOf(pool) + addRoundRobin(pools.takeLast(pools.size - 1), remaining)
+            } else {
+                val round: List<Pool> = addRoundRobin(pools, registrations.take(pools.size))
+                addRoundRobin(round, registrations.takeLast(registrations.size - pools.size))
+            }
+        }
+    }
+
+    private fun addRegistrationToPool(pool: Pool, registration: Registration.Real): Pool {
+        return Pool(pool.name, pool.registrationIds + listOf(registration), pool.matches)
+    }
+
+    /**
+     * Generate a list of matches where every registration in the list will go up against every other registration
+     * exactly once. Example a list of registration 1, 2, 3 would result in the match ups 1 - 2, 1 - 3, and 2 - 3
+     */
+    private fun generateMatchesFor(registrations: List<Registration.Real>): List<PoolMatch> {
+        with(registrations) {
+            return if (isEmpty()) {
+                emptyList()
+            } else {
+                val remaining = takeLast(registrations.size - 1)
+                val matches = generateMatchesFor(first(), remaining)
+                matches + generateMatchesFor(remaining)
+            }
+        }
+    }
+
+    /**
+     * Returns a list of matches where each mach is between the given registration and one other in the other lists.
+     *
+     * Example: Given registration id is 1, and others contain ids 2, 3, 4. Then returned matches are:
+     * 1 - 2, 1 - 3, and 1 - 4
+     */
+    private fun generateMatchesFor(registration: Registration.Real, others: List<Registration.Real>): List<PoolMatch> {
+        return (1..others.size).map { registration }.zip(others).map { PoolMatch(it.first, it.second) }
     }
 }
