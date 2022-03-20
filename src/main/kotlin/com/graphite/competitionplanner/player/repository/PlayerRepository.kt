@@ -116,7 +116,7 @@ class PlayerRepository(val dslContext: DSLContext) : IPlayerRepository {
     }
 
     override fun findByName(startOfName: String): List<PlayerWithClubDTO> {
-        val records = dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(
+        val records = dslContext.select().distinctOn(PLAYER.ID).from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(
             PLAYER.FIRST_NAME.startsWithIgnoreCase(startOfName)
                 .or(PLAYER.LAST_NAME.startsWithIgnoreCase(startOfName))
         ).fetch()

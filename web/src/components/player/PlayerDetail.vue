@@ -26,6 +26,7 @@
                 }}</span>
             </p>
           </div>
+          <p class="py-2" v-if="!isCategoryDrawnMap[registration.competitionCategory.id]">{{ $t("draw.main.notDrawnTitle") }}</p>
           <match-list-component :matches="registration.matches"/>
           <div class="d-flex justify-content-end">
             <!-- If category is already drawn, give WO -->
@@ -122,7 +123,7 @@ export default {
       return DrawService.isDrawMade(this.competition.id, categoryId)
     },
     getSearchResult(searchResult) {
-      return searchResult.firstName + " " + searchResult.lastName
+      return searchResult.firstName + " " + searchResult.lastName + " " + searchResult.club.name
     },
     giveWalkover(categoryId, registrationId) {
       if (confirm(this.$t("player.walkoverWarningText", {player: this.player.firstName + this.player.lastName}))) {
@@ -146,7 +147,7 @@ export default {
       this.$router.replace({params: {id: this.player.id}}).catch(() => {
       })
       this.getRegistrations(this.competition.id, this.player.id)
-    }
+    },
   }
 }
 </script>
