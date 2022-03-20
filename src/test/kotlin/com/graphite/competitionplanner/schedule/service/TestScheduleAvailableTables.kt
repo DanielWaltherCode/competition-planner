@@ -18,7 +18,7 @@ import java.time.LocalDate
 @SpringBootTest
 class TestScheduleAvailableTables(
     @Autowired val util: Util,
-    @Autowired val scheduleService: ScheduleService,
+    @Autowired val availableTablesService: AvailableTablesService,
     @Autowired val competitionRepository: CompetitionRepository,
     @Autowired val createCompetition: CreateCompetition
 ) {
@@ -41,7 +41,7 @@ class TestScheduleAvailableTables(
             15,
             LocalDate.now()
         )
-        registeredTables = scheduleService.updateTablesAvailableFullDay(competitionId, spec)
+        registeredTables = availableTablesService.updateTablesAvailableFullDay(competitionId, spec)
     }
 
     @AfterEach
@@ -51,7 +51,7 @@ class TestScheduleAvailableTables(
 
     @Test
     fun getTablesAvailableForFullDay() {
-        val availableTables = scheduleService.getTablesAvailableByDay(competitionId, LocalDate.now())
+        val availableTables = availableTablesService.getTablesAvailableByDay(competitionId, LocalDate.now())
         Assertions.assertNotNull(availableTables)
         Assertions.assertTrue(availableTables.isNotEmpty())
         Assertions.assertEquals(availableTables[0].nrTables, 15)
@@ -59,7 +59,7 @@ class TestScheduleAvailableTables(
 
     @Test
     fun updateTablesAvailable() {
-        val availableTables = scheduleService.getTablesAvailableByDay(competitionId, LocalDate.now())
+        val availableTables = availableTablesService.getTablesAvailableByDay(competitionId, LocalDate.now())
         val tableToUpdate = availableTables[0]
         val newNrTables = 18
         val spec = AvailableTablesSpec(
@@ -67,7 +67,7 @@ class TestScheduleAvailableTables(
             tableToUpdate.day,
             tableToUpdate.hour
         )
-        val updatedAvailableTable = scheduleService.updateTablesAvailable(tableToUpdate.id, competitionId, spec)
+        val updatedAvailableTable = availableTablesService.updateTablesAvailable(tableToUpdate.id, competitionId, spec)
         Assertions.assertEquals(newNrTables, updatedAvailableTable.nrTables)
         Assertions.assertEquals(tableToUpdate.id, updatedAvailableTable.id)
         Assertions.assertEquals(tableToUpdate.day, updatedAvailableTable.day)

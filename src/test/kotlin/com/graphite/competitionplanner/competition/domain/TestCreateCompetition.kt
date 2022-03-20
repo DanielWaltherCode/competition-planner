@@ -4,7 +4,9 @@ import com.graphite.competitionplanner.club.domain.FindClub
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
 import com.graphite.competitionplanner.schedule.api.AvailableTablesWholeCompetitionSpec
-import com.graphite.competitionplanner.schedule.service.ScheduleService
+import com.graphite.competitionplanner.schedule.service.AvailableTablesService
+import com.graphite.competitionplanner.schedule.service.DailyStartEndService
+import com.graphite.competitionplanner.schedule.service.ScheduleMetadataService
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
@@ -18,8 +20,13 @@ class TestCreateCompetition {
     val dataGenerator = DataGenerator()
     private val mockedFindClub = mock(FindClub::class.java)
     private val mockedRepository = mock(ICompetitionRepository::class.java)
-    private val mockedScheduleService = mock(ScheduleService::class.java)
-    val createCompetition = CreateCompetition(mockedRepository, mockedFindClub, mockedScheduleService)
+    private val mockedScheduleMetadataService = mock(ScheduleMetadataService::class.java)
+    private val mockedDailyStartEndService = mock(DailyStartEndService::class.java)
+    private val mockedAvailableTablesService = mock(AvailableTablesService::class.java)
+    val createCompetition = CreateCompetition(
+        mockedRepository, mockedFindClub, mockedScheduleMetadataService, mockedDailyStartEndService,
+        mockedAvailableTablesService
+    )
 
     @Test
     fun shouldStoreCompetitionIfEntityIsOk() {
@@ -79,8 +86,8 @@ class TestCreateCompetition {
         createCompetition.execute(spec)
 
         // Assert
-        verify(mockedScheduleService, times(1)).addDefaultScheduleMetadata(dto.id)
-        verify(mockedScheduleService, times(1)).addDefaultScheduleMetadata(anyInt())
+        verify(mockedScheduleMetadataService, times(1)).addDefaultScheduleMetadata(dto.id)
+        verify(mockedScheduleMetadataService, times(1)).addDefaultScheduleMetadata(anyInt())
     }
 
     @Test
@@ -94,8 +101,8 @@ class TestCreateCompetition {
         createCompetition.execute(spec)
 
         // Assert
-        verify(mockedScheduleService, times(1)).addDailyStartAndEndForWholeCompetition(dto.id)
-        verify(mockedScheduleService, times(1)).addDailyStartAndEndForWholeCompetition(anyInt())
+        verify(mockedDailyStartEndService, times(1)).addDailyStartAndEndForWholeCompetition(dto.id)
+        verify(mockedDailyStartEndService, times(1)).addDailyStartAndEndForWholeCompetition(anyInt())
     }
 
     @Test
@@ -109,11 +116,11 @@ class TestCreateCompetition {
         createCompetition.execute(spec)
 
         // Assert
-        verify(mockedScheduleService, times(1)).registerTablesAvailableForWholeCompetition(
+        verify(mockedAvailableTablesService, times(1)).registerTablesAvailableForWholeCompetition(
             dto.id,
             AvailableTablesWholeCompetitionSpec(0)
         )
-        verify(mockedScheduleService, times(1)).registerTablesAvailableForWholeCompetition(
+        verify(mockedAvailableTablesService, times(1)).registerTablesAvailableForWholeCompetition(
             anyInt(),
             TestHelper.MockitoHelper.anyObject()
         )

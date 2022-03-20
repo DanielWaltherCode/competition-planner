@@ -24,6 +24,102 @@
 
         <!-- Main content -->
         <div id="main" class="col-md-9 ps-0">
+          <!-- General information about competition -->
+          <div class="row p-3 m-md-2 custom-card">
+            <div>
+              <h3 class="p-3">{{ $t("schedule.generalInfo.heading") }}</h3>
+              <!-- Daily start end -->
+              <div class="col-sm-8 m-auto">
+                <div>
+                  <h4>{{ $t("schedule.generalInfo.startEnd") }}</h4>
+                  <p>{{ $t("schedule.generalInfo.startEndHelper") }}
+                    <span> <router-link to="/overview">{{
+                        $t("schedule.generalInfo.startEndHelperHere")
+                      }}</router-link> </span>
+                  </p>
+                </div>
+                <div class="table-container">
+                  <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                      <th scope="col"> {{ $t("schedule.main.day") }}</th>
+                      <th scope="col"> {{ $t("schedule.generalInfo.startTime") }}</th>
+                      <th scope="col"> {{ $t("schedule.generalInfo.endTime") }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(day, counter) in dailyStartEndDTO.dailyStartEndList" :key="counter">
+                      <td>
+                        {{ day.day }}
+                      </td>
+                      <td>
+                        <vue-timepicker v-model="day.startTime"
+                                        v-on:change="setDailyStartEnd(day)"></vue-timepicker>
+                      </td>
+                      <td>
+                        <vue-timepicker v-model="day.endTime"
+                                        v-on:change="setDailyStartEnd(day)"></vue-timepicker>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Available tables -->
+              <div class="other-settings col-sm-8 m-auto">
+                <div>
+                  <h5> {{ $t("schedule.generalInfo.availableTablesHeading") }}</h5>
+                  <p>{{ $t("schedule.generalInfo.availableTablesHelper") }}
+                    <span> <router-link to="/schedule-advanced">{{
+                        $t("schedule.generalInfo.availableTablesHelperHere")
+                      }}</router-link> </span>
+                  </p>
+                  <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                      <th scope="col"> {{ $t("schedule.main.day") }}</th>
+                      <th scope="col"> {{ $t("schedule.generalInfo.nrTables") }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(tableDay, counter) in availableTables" :key="counter">
+                      <td>
+                        {{ tableDay.day }}
+                      </td>
+                      <td>
+                        <p v-if="tableDay.nrTables === -1">{{ $t("schedule.generalInfo.cannotChangeTables") }}</p>
+                        <select v-if="tableDay.nrTables !== -1" id="table-selection" class="form-control"
+                                v-model="tableDay.nrTables"
+                                v-on:change="setAvailableTables(tableDay.day)">
+                          <option value="0"> {{ $t("schedule.generalInfo.availableTablesNotSet") }}</option>
+                          <option v-for="i in 100" :key="i" :value="i">
+                            {{ i }}
+                          </option>
+                        </select>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- Average time per match -->
+                <div>
+                  <h5>{{ $t("schedule.generalInfo.averageMatchTimeHeading") }}</h5>
+                  <p>{{ $t("schedule.generalInfo.averageMatchTimeHelper") }}</p>
+                  <select id="match-length-selection" class="form-control" v-model="scheduleMetadata.minutesPerMatch"
+                          v-on:change="updateMinutesPerMatch">
+                    <option v-for="i in minutesPerMatchOptions" :key="i" :value="i">
+                      {{ i + " " + $t("schedule.generalInfo.minutes") }}
+                    </option>
+                  </select>
+                  <br>
+                  <br>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Choose date and time for individual categories -->
           <div id="categories" class="row custom-card m-md-2">
             <div>
               <h3 class="p-4">{{ $t("schedule.main.categoryStartTimes") }}</h3>
@@ -61,7 +157,7 @@
                             v-model="category.startInterval">
                       <option v-for="(interval, counter) in categoryStartTimeDTO.startTimeFormOptions.startIntervals"
                               v-bind:key="counter" :value="interval"
-                              >
+                      >
                         {{ getInterval(interval) }}
                       </option>
                     </select>
@@ -76,104 +172,12 @@
                 </tbody>
               </table>
               <div>
-                <button type="button" class="btn btn-primary" @click="saveStartTime">{{$t("general.saveChanges")}}</button>
+                <button type="button" class="btn btn-primary" @click="saveStartTime">{{ $t("general.saveChanges") }}
+                </button>
               </div>
             </div>
-            </div>
-            <!-- General information about competition -->
-            <div class="row p-3 m-md-2 custom-card">
-              <div>
-                <h3 class="p-3">{{ $t("schedule.generalInfo.heading") }}</h3>
-                <!-- Daily start end -->
-                <div class="col-sm-8 m-auto">
-                  <div>
-                    <h4>{{ $t("schedule.generalInfo.startEnd") }}</h4>
-                    <p>{{ $t("schedule.generalInfo.startEndHelper") }}
-                      <span> <router-link to="/overview">{{
-                          $t("schedule.generalInfo.startEndHelperHere")
-                        }}</router-link> </span>
-                    </p>
-                  </div>
-                  <div class="table-container">
-                    <table class="table table-bordered">
-                      <thead>
-                      <tr>
-                        <th scope="col"> {{ $t("schedule.main.day") }}</th>
-                        <th scope="col"> {{ $t("schedule.generalInfo.startTime") }}</th>
-                        <th scope="col"> {{ $t("schedule.generalInfo.endTime") }}</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      <tr v-for="(day, counter) in dailyStartEndDTO.dailyStartEndList" :key="counter">
-                        <td>
-                          {{ day.day }}
-                        </td>
-                        <td>
-                          <vue-timepicker v-model="day.startTime"
-                                          v-on:change="setDailyStartEnd(day)"></vue-timepicker>
-                        </td>
-                        <td>
-                          <vue-timepicker v-model="day.endTime"
-                                          v-on:change="setDailyStartEnd(day)"></vue-timepicker>
-                        </td>
-                      </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-
-                <!-- Available tables -->
-                <div class="other-settings col-sm-8 m-auto">
-                  <div>
-                    <h5> {{ $t("schedule.generalInfo.availableTablesHeading") }}</h5>
-                    <p>{{ $t("schedule.generalInfo.availableTablesHelper") }}
-                      <span> <router-link to="/schedule-advanced">{{
-                          $t("schedule.generalInfo.availableTablesHelperHere")
-                        }}</router-link> </span>
-                    </p>
-                    <table class="table table-bordered">
-                      <thead>
-                      <tr>
-                        <th scope="col"> {{ $t("schedule.main.day") }}</th>
-                        <th scope="col"> {{ $t("schedule.generalInfo.nrTables") }}</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      <tr v-for="(tableDay, counter) in availableTables" :key="counter">
-                        <td>
-                          {{ tableDay.day }}
-                        </td>
-                        <td>
-                          <p v-if="tableDay.nrTables === -1">{{ $t("schedule.generalInfo.cannotChangeTables") }}</p>
-                          <select v-if="tableDay.nrTables !== -1" id="table-selection" class="form-control"
-                                  v-model="tableDay.nrTables"
-                                  v-on:change="setAvailableTables(tableDay.day)">
-                            <option value="0"> {{ $t("schedule.generalInfo.availableTablesNotSet") }}</option>
-                            <option v-for="i in 100" :key="i" :value="i">
-                              {{ i }}
-                            </option>
-                          </select>
-                        </td>
-                      </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <!-- Average time per match -->
-                  <div>
-                    <h5>{{ $t("schedule.generalInfo.averageMatchTimeHeading") }}</h5>
-                    <p>{{ $t("schedule.generalInfo.averageMatchTimeHelper") }}</p>
-                    <select id="match-length-selection" class="form-control" v-model="scheduleMetadata.minutesPerMatch"
-                            v-on:change="updateMinutesPerMatch">
-                      <option v-for="i in minutesPerMatchOptions" :key="i" :value="i">
-                        {{ i + " " + $t("schedule.generalInfo.minutes") }}
-                      </option>
-                    </select>
-                    <br>
-                    <br>
-                  </div>
-                </div>
-              </div>
           </div>
+
         </div>
       </div>
     </div>
