@@ -116,7 +116,7 @@ class TestPoolAndCupDrawPolicyPlacementOfSeededInFirstRound {
     )
 
     @TestFactory
-    fun testPlacementOfSeededRegistrationsWhenTwoAreSeeded() = testDataWhenTwoAreSeeded
+    fun testingPlacementOfSeededRegistrations() = testDataWhenTwoAreSeeded
         .map { testData ->
             DynamicTest.dynamicTest(
                 "When pool size is ${testData.playersPerGroup} and ${testData.playersToPlayoff} " +
@@ -155,7 +155,7 @@ class TestPoolAndCupDrawPolicyPlacementOfSeededInFirstRound {
 
                 assertWinnersFromSamePoolAreNotOnSameHalves(matchesInFirstRound.take(matchesInFirstRound.size / 2))
                 assertWinnersFromSamePoolAreNotOnSameHalves(matchesInFirstRound.takeLast(matchesInFirstRound.size / 2))
-//                assertThatSecondPlaceWinnersAreNotMatchedAgainstByes(matchesInFirstRound) TODO: This fails in some cases
+//                assertThatSecondPlaceWinnersAreNotMatchedAgainstByes(matchesInFirstRound)
             }
         }
 
@@ -166,7 +166,8 @@ class TestPoolAndCupDrawPolicyPlacementOfSeededInFirstRound {
 
         Assertions.assertTrue(
             matchesWithSecondPlaceWinners.none { it.registrationOneId.toString() == "BYE" || it.registrationTwoId.toString() == "BYE" },
-            "There seems to be a second place winner that was matched against a BYE in first round. BYEs should be matched against pool winners in first round. Matches: $matchesWithSecondPlaceWinners"
+            "There seems to be a second place winner that was matched against a BYE in first round. " +
+                    "BYEs should be matched against pool winners in first round. Matches: $matchesWithSecondPlaceWinners"
         )
     }
 

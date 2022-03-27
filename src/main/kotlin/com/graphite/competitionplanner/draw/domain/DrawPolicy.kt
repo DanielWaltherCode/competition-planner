@@ -157,14 +157,13 @@ sealed class DrawPolicy(
 }
 
 class CupDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(competitionCategory) {
+
     override fun createDraw(registrations: List<RegistrationSeedDTO>): CompetitionCategoryDrawSpec {
         // If we are not an even power of 2, then we need to add so-called BYE players to the list of registrations
         // until we reach a number that is a power of 2
-        // TODO: Do we randomize the unseeded players?
-//        val seededRegistrations = registrations.filter { it.seed != null }.map { Registration.Real(it.id) }
-//        val unseededRegistrations = registrations.filter { it.seed == null }.map { Registration.Real(it.id) }.shuffled()
-//        val registrationsWithBye = (seededRegistrations + unseededRegistrations).tryAddByes()
-        val registrationsWithBye = registrations.map { Registration.Real(it.registrationId) }.tryAddByes()
+        val seededRegistrations = registrations.filter { it.seed != null }.map { Registration.Real(it.registrationId) }.shuffleSeeded()
+        val unseededRegistrations = registrations.filter { it.seed == null }.map { Registration.Real(it.registrationId) }.shuffled()
+        val registrationsWithBye = (seededRegistrations + unseededRegistrations).tryAddByes()
         val numberOfRounds = ceil(log2(registrationsWithBye.size.toDouble())).toInt()
 
         val firstRoundOfMatches = generatePlayOffMatchesForFirstRound(registrationsWithBye).map {
@@ -203,6 +202,14 @@ class CupDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(co
 
     override fun throwExceptionIfNotEnoughRegistrations(registrations: List<RegistrationSeedDTO>) {
         if (registrations.size < 2) throw NotEnoughRegistrationsException("Failed to draw cup only. Requires at least two registrations.")
+    }
+
+    private fun List<Registration>.shuffleSeeded(): List<Registration> {
+        return if (this.size == 2) {
+            this
+        } else {
+            this.take(this.size / 2).shuffleSeeded() + this.drop( this.size / 2 ).shuffled()
+        }
     }
 
     /**
@@ -394,13 +401,21 @@ class PoolAndCupDrawPolicy(
                 emptyList()
             )
         } else {
-            val seeded = registrations.take(numberOfSeeded)
+            val seeded = registrations.take(numberOfSeeded).shuffleSeeded()
             val topTwo = seeded.take(2)
             val rest = seeded.drop(2)
             val remaining = registrations.drop(numberOfSeeded)
             val topHalf = listOf(topTwo.first()) + rest.filterIndexed { index, _ -> index % 2 == 1 }
             val bottomHalf = listOf(topTwo.last()) + rest.filterIndexed { index, _ -> index % 2 == 0 }
             Halves(topHalf, bottomHalf, remaining)
+        }
+    }
+
+    private fun List<Registration>.shuffleSeeded(): List<Registration> {
+        return if (this.size == 2) {
+            this
+        } else {
+            this.take(this.size / 2).shuffleSeeded() + this.drop( this.size / 2 ).shuffled()
         }
     }
 

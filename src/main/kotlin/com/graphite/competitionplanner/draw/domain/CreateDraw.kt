@@ -42,20 +42,6 @@ class CreateDraw(
         seedRepository.setSeeds(registrationsWithSeeds)
         return drawRepository.store(spec)
     }
-
-    private fun throwExceptionIfNotEnoughRegistrations(
-        registrations: List<RegistrationSeedDTO>,
-        settings: GeneralSettingsDTO
-    ) {
-        when (settings.drawType) {
-            DrawType.POOL_ONLY -> if (registrations.size < 2) throw NotEnoughRegistrationsException("Failed to draw pool only. Requires at least two registrations.")
-            DrawType.CUP_ONLY -> if (registrations.size < 2) throw NotEnoughRegistrationsException("Failed to draw cup only. Requires at least two registrations.")
-            DrawType.POOL_AND_CUP -> if ((settings.playersToPlayOff == 1 && registrations.size <= settings.playersPerGroup) || (registrations.size < 2)) throw NotEnoughRegistrationsException(
-                "Failed to draw pool and cup. Too few people would have advanced to playoff."
-            )
-        }
-    }
-
 }
 
 sealed class CompetitionCategoryDrawSpec(
