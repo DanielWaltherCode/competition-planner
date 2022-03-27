@@ -15,7 +15,7 @@ import java.time.LocalTime
 @SpringBootTest
 class TestScheduleDailyTimes(
     @Autowired val util: Util,
-    @Autowired val scheduleService: ScheduleService,
+    @Autowired val dailyStartEndService: DailyStartEndService,
     @Autowired val competitionRepository: CompetitionRepository,
     @Autowired val createCompetition: CreateCompetition
 ) {
@@ -43,14 +43,14 @@ class TestScheduleDailyTimes(
     @Test
     fun getDailyStartEndForCompetition() {
         // This should be registered already when competition is added
-        val dailyStartEnd = scheduleService.getDailyStartAndEndForWholeCompetition(competitionId)
+        val dailyStartEnd = dailyStartEndService.getDailyStartAndEndForWholeCompetition(competitionId)
         Assertions.assertNotNull(dailyStartEnd)
         Assertions.assertTrue(dailyStartEnd.dailyStartEndList.isNotEmpty())
     }
 
     @Test
     fun getDailyStartEndForDay() {
-        val dailyStartEnd = scheduleService.getDailyStartAndEnd(competitionId, LocalDate.now())
+        val dailyStartEnd = dailyStartEndService.getDailyStartAndEnd(competitionId, LocalDate.now())
             ?: fail("Expected to find daily start end")
         Assertions.assertNotNull(dailyStartEnd)
         Assertions.assertNotNull(dailyStartEnd.id)
@@ -62,7 +62,7 @@ class TestScheduleDailyTimes(
     @Test
     fun updateDailyStartAndEnd() {
         // Update start and end times for first day of competition
-        val dailyStartEnd = scheduleService.getDailyStartAndEnd(competitionId, LocalDate.now())
+        val dailyStartEnd = dailyStartEndService.getDailyStartAndEnd(competitionId, LocalDate.now())
             ?: fail("Expected to find daily start end")
         val newStartTime = LocalTime.of(10, 0)
         val newEndTime = LocalTime.of(19, 0)
@@ -73,7 +73,7 @@ class TestScheduleDailyTimes(
             newEndTime
         )
         val updatedDailyStartAndEnd =
-            scheduleService.updateDailyStartAndEnd(dailyStartEnd.id, competitionId, updateSpec)
+            dailyStartEndService.updateDailyStartAndEnd(dailyStartEnd.id, competitionId, updateSpec)
                 ?: fail("Expected to find daily start end")
 
         Assertions.assertNotNull(updatedDailyStartAndEnd)

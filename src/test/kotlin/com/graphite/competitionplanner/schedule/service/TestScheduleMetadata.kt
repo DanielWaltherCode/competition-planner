@@ -17,7 +17,7 @@ import java.time.LocalDate
 @SpringBootTest
 class TestScheduleMetadata(
     @Autowired val util: Util,
-    @Autowired val scheduleService: ScheduleService,
+    @Autowired val scheduleMetadataService: ScheduleMetadataService,
     @Autowired val competitionRepository: CompetitionRepository,
     @Autowired val createCompetition: CreateCompetition
 ) {
@@ -45,7 +45,7 @@ class TestScheduleMetadata(
 
     @Test
     fun getScheduleMetadata() {
-        val scheduleMetadataDTO = scheduleService.getScheduleMetadata(competitionId)
+        val scheduleMetadataDTO = scheduleMetadataService.getScheduleMetadata(competitionId)
         Assertions.assertNotNull(scheduleMetadataDTO)
         Assertions.assertNotNull(scheduleMetadataDTO.id)
         Assertions.assertNotNull(scheduleMetadataDTO.minutesPerMatch)
@@ -56,7 +56,7 @@ class TestScheduleMetadata(
 
     @Test
     fun updateScheduleMetadata() {
-        val originalMetadataDTO = scheduleService.getScheduleMetadata(competitionId)
+        val originalMetadataDTO = scheduleMetadataService.getScheduleMetadata(competitionId)
         val newPauseInGroup = 20 // Minutes
 
         val specToAddd = ScheduleMetadataSpec(
@@ -66,7 +66,7 @@ class TestScheduleMetadata(
             originalMetadataDTO.pauseBetweenPlayoffMatches
         )
 
-        val updatedDTO = scheduleService.updateScheduleMetadata(originalMetadataDTO.id, competitionId, specToAddd)
+        val updatedDTO = scheduleMetadataService.updateScheduleMetadata(originalMetadataDTO.id, competitionId, specToAddd)
         Assertions.assertEquals(updatedDTO.minutesPerMatch, originalMetadataDTO.minutesPerMatch)
         Assertions.assertEquals(updatedDTO.pauseAfterGroupStage, originalMetadataDTO.pauseAfterGroupStage)
         Assertions.assertEquals(updatedDTO.pauseBetweenGroupMatches, newPauseInGroup)
