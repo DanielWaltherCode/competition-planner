@@ -63,7 +63,7 @@
                     <i class="fas fa-arrow-right"></i>
                   </div>
                   <div class="p-2 custom-card">
-                    <button type="button" class="btn btn-warning me-3" @click="createDraw">{{
+                    <button type="button" class="btn btn-warning me-3" @click="reDraw">{{
                         $t("draw.main.redraw")
                       }}
                     </button>
@@ -156,6 +156,21 @@ export default {
           this.$toasted.success(this.$tc("toasts.categoryDrawn")).goAway(3000)
           this.draw = res.data
           this.isChosenCategoryDrawn = true
+        }).catch(() => {
+          this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
+        })
+      }
+    },
+    reDraw() {
+      if (confirm(this.$tc("confirm.redraw"))) {
+        DrawService.deleteDraw(this.competition.id, this.chosenCategory.id).then(() => {
+          DrawService.createDraw(this.competition.id, this.chosenCategory.id).then(res => {
+            this.$toasted.success(this.$tc("toasts.categoryDrawn")).goAway(3000)
+            this.draw = res.data
+            this.isChosenCategoryDrawn = true
+          }).catch(() => {
+            this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
+          })
         }).catch(() => {
           this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
         })
