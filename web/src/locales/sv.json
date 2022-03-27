@@ -230,11 +230,9 @@
       "dropdownPlaceholder": "Välj en klass",
       "intervals": {
         "NOT_SELECTED": "Välj något åt mig",
-        "EARLY_MORNING": "Tidig förmiddag",
-        "LATE_MORNING": "Sen förmiddag",
-        "EARLY_AFTERNOON": "Tidig eftermiddag",
-        "LATE_AFTERNOON": "Sen eftermiddag",
-        "EVENING": "Kväll"
+        "MORNING": "Tidig förmiddag (09.00-13.00)",
+        "AFTERNOON": "Eftermiddag (13.00-17.00)",
+        "EVENING": "Kväll (17.00-21.00)"
       }
     },
     "generalInfo": {
@@ -370,7 +368,7 @@
     "categoryDrawn": "Klassen är nu lottad",
     "categoryDeleted": "Klassen är borttagen",
     "categoryDrawDeleted": "Lottningen är borttagen",
-    "startTimesSet": "Start",
+    "startTimesSet": "Starttider satta",
     "resultRegistered": "Resultatet är sparat",
     "temporaryResultRegistered": "Tillfälligt resultatet är sparat",
     "error": {

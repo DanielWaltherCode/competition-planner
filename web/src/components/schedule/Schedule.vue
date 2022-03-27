@@ -27,7 +27,13 @@
           <!-- General information about competition -->
           <div class="row p-3 m-md-2 custom-card">
             <div>
-              <h3 class="p-3">{{ $t("schedule.generalInfo.heading") }}</h3>
+              <div>
+                <h3 class="p-3">{{ $t("schedule.generalInfo.heading") }}</h3>
+                <div class="d-flex justify-content-end">
+                  <button type="button" class="btn btn-primary m-1" @click="saveChanges">{{ $t("general.saveChanges") }}
+                  </button>
+                </div>
+              </div>
               <!-- Daily start end -->
               <div class="col-sm-8 m-auto">
                 <div>
@@ -53,12 +59,10 @@
                         {{ day.day }}
                       </td>
                       <td>
-                        <vue-timepicker v-model="day.startTime"
-                                        v-on:change="setDailyStartEnd(day)"></vue-timepicker>
+                        <vue-timepicker v-model="day.startTime"></vue-timepicker>
                       </td>
                       <td>
-                        <vue-timepicker v-model="day.endTime"
-                                        v-on:change="setDailyStartEnd(day)"></vue-timepicker>
+                        <vue-timepicker v-model="day.endTime"></vue-timepicker>
                       </td>
                     </tr>
                     </tbody>
@@ -90,8 +94,7 @@
                       <td>
                         <p v-if="tableDay.nrTables === -1">{{ $t("schedule.generalInfo.cannotChangeTables") }}</p>
                         <select v-if="tableDay.nrTables !== -1" id="table-selection" class="form-control"
-                                v-model="tableDay.nrTables"
-                                v-on:change="setAvailableTables(tableDay.day)">
+                                v-model="tableDay.nrTables">
                           <option value="0"> {{ $t("schedule.generalInfo.availableTablesNotSet") }}</option>
                           <option v-for="i in 100" :key="i" :value="i">
                             {{ i }}
@@ -106,8 +109,7 @@
                 <div>
                   <h5>{{ $t("schedule.generalInfo.averageMatchTimeHeading") }}</h5>
                   <p>{{ $t("schedule.generalInfo.averageMatchTimeHelper") }}</p>
-                  <select id="match-length-selection" class="form-control" v-model="scheduleMetadata.minutesPerMatch"
-                          v-on:change="updateMinutesPerMatch">
+                  <select id="match-length-selection" class="form-control" v-model="scheduleMetadata.minutesPerMatch">
                     <option v-for="i in minutesPerMatchOptions" :key="i" :value="i">
                       {{ i + " " + $t("schedule.generalInfo.minutes") }}
                     </option>
@@ -140,8 +142,7 @@
                   <td>{{ category.categoryDTO.categoryName }}</td>
                   <!-- Select date -->
                   <td>
-                    <select id="date-selection" class="form-control"
-                            v-on:change="saveStartTime(category)" v-model="category.playingDay">
+                    <select id="date-selection" class="form-control" v-model="category.playingDay">
                       <option value="null"> {{ $t("schedule.main.notSelected") }}</option>
                       <option v-for="(day, counter) in categoryStartTimeDTO.startTimeFormOptions.availableDays"
                               v-bind:key="counter" :value="getPlayingDate(day)">
@@ -152,7 +153,6 @@
                   <!-- Select interval during day -->
                   <td>
                     <select id="interval-selection" class="form-control"
-                            v-on:change="saveStartTime(category)"
                             :disabled="category.playingDay === null || category.playingDay === 'null'"
                             v-model="category.startInterval">
                       <option v-for="(interval, counter) in categoryStartTimeDTO.startTimeFormOptions.startIntervals"
@@ -165,19 +165,13 @@
                   <!-- Select exact start time -->
                   <td>
                     <vue-timepicker v-model="category.exactStartTime"
-                                    v-on:change="saveStartTime(category)"
                                     :disabled="category.startInterval === 'NOT_SELECTED'"></vue-timepicker>
                   </td>
                 </tr>
                 </tbody>
               </table>
-              <div>
-                <button type="button" class="btn btn-primary" @click="saveStartTime">{{ $t("general.saveChanges") }}
-                </button>
-              </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -246,7 +240,7 @@ export default {
       return this.$t("schedule.main.intervals." + interval)
     },
     getTime(time) {
-      if (time === null || time.HH === "" || time.mm === "") {
+      if (time === null || time === undefined || time.HH === "" || time.mm === "") {
         return null
       } else if (typeof time === "object") {
         return `${time.HH}:${time.mm}`
@@ -263,6 +257,12 @@ export default {
     },
     formattedDate: getFormattedDate,
     formatTime: getHoursMinutes,
+    saveChanges() {
+      this.saveStartTimes()
+      this.saveDailyStartEndTimes()
+      this.saveAvailableTables()
+      this.updateMinutesPerMatch()
+    },
     saveStartTime(category) {
       const exactStartTime = this.getTime(category.exactStartTime)
       const objectToSave = {
@@ -272,13 +272,15 @@ export default {
       }
       CategoryStartTimeService.updateCategoryStartTime(category.id,
           this.competition.id, category.categoryDTO.categoryId, objectToSave).then(() => {
-        this.$toasted.success(this.$tc("toasts.startTimesSet")).goAway(3000)
       })
     },
     saveStartTimes() {
       this.categoryStartTimeDTO.categoryStartTimeList.forEach(category => {
         this.saveStartTime(category)
       })
+    },
+    saveDailyStartEndTimes() {
+      this.dailyStartEndDTO.dailyStartEndList.forEach(object => this.setDailyStartEnd(object))
     },
     setDailyStartEnd(dailyStartEndObject) {
       const startTime = this.getTime(dailyStartEndObject.startTime)
@@ -293,11 +295,9 @@ export default {
     /*
     * Available tables
      */
-    setAvailableTables(day) {
+    saveAvailableTables() {
       this.availableTables.forEach(tableDay => {
-        if (tableDay.day === day) {
-          AvailableTablesService.updateTablesForDay(this.competition.id, tableDay)
-        }
+        AvailableTablesService.updateTablesForDay(this.competition.id, tableDay)
       })
     },
     getAvailableTablesForCompetition() {

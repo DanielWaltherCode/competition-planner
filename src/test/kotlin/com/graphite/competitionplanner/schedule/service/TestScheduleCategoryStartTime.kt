@@ -105,7 +105,7 @@ class TestScheduleCategoryStartTime(
         // Add categories
         categoryStartTimeService.updateCategoryStartTime(
             startTimeOne.id, competitionCategory1, CategoryStartTimeSpec(
-                LocalDate.now(), StartInterval.EARLY_MORNING, null
+                LocalDate.now(), StartInterval.MORNING, null
             )
         )
         categoryStartTimeService.updateCategoryStartTime(
@@ -121,7 +121,7 @@ class TestScheduleCategoryStartTime(
         val startTime2 = categoryStartTimes.categoryStartTimeList[1]
 
         Assertions.assertEquals(LocalDate.now(), startTime1.playingDay)
-        Assertions.assertEquals(StartInterval.EARLY_MORNING, startTime1.startInterval)
+        Assertions.assertEquals(StartInterval.MORNING, startTime1.startInterval)
         Assertions.assertEquals(null, startTime1.exactStartTime)
 
         Assertions.assertEquals(LocalDate.now().plusDays(1), startTime2.playingDay)
