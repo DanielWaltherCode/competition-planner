@@ -214,6 +214,9 @@ class TestCupOnly(
         val draw = repository.get(competitionCategory.id)
         Assertions.assertEquals(0, draw.groups.size)
         Assertions.assertEquals(0, draw.playOff.size)
+
+        val status = competitionCategoryRepository.get(competitionCategory.id).status
+        Assertions.assertEquals(CompetitionCategoryStatus.ACTIVE.name, status, "Status of category was not reset")
     }
 
     @Test
