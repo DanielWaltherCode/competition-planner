@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.draw.api
 
 import com.graphite.competitionplanner.draw.domain.CreateDraw
+import com.graphite.competitionplanner.draw.domain.DeleteDraw
 import com.graphite.competitionplanner.draw.domain.GetDraw
 import com.graphite.competitionplanner.draw.interfaces.CompetitionCategoryDrawDTO
 import com.graphite.competitionplanner.draw.service.DrawService
@@ -13,7 +14,8 @@ import org.springframework.web.bind.annotation.*
 class CompetitionDrawApi(
     val createDraw: CreateDraw,
     val drawService: DrawService,
-    val getDraw: GetDraw
+    val getDraw: GetDraw,
+    val deleteDraw: DeleteDraw
 ) {
 
     // Can be used both to create initial draw and to make a new draw if desired
@@ -37,7 +39,7 @@ class CompetitionDrawApi(
 
     @DeleteMapping
     fun deleteDraw(@PathVariable competitionCategoryId: Int) {
-        return drawService.deleteDraw(competitionCategoryId)
+        deleteDraw.execute(competitionCategoryId)
     }
 
     @GetMapping("/is-draw-made")

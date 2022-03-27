@@ -35,11 +35,6 @@ class DrawService(
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    fun deleteDraw(competitionCategoryId: Int) {
-        matchRepository.deleteMatchesForCategory(competitionCategoryId)
-        competitionDrawRepository.deleteGroupsInCategory(competitionCategoryId)
-    }
-
     fun getDraw(competitionCategoryId: Int): DrawDTO {
         val metadata = findCompetitionCategory.byId(competitionCategoryId).settings
         if (DrawType.valueOf(metadata.drawType.name) == DrawType.CUP_ONLY) {
