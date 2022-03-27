@@ -66,7 +66,17 @@ class CompetitionDrawRepository(
 
 
     override fun delete(competitionCategoryId: Int) {
-        dslContext.deleteFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
+        try {
+            dslContext.transaction { _ ->
+                competitionCategoryRepository.setStatus(competitionCategoryId, CompetitionCategoryStatus.ACTIVE)
+                dslContext.deleteFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
+                dslContext.deleteFrom(POOL).where(POOL.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
+            }
+        } catch (exception: RuntimeException) {
+            logger.error("Failed to delete draw for competition category with id $competitionCategoryId")
+            logger.error("Exception message: ${exception.message}")
+            throw RuntimeException("Something went wrong")
+        }
     }
 
     private fun storeCupDraw(draw: CupDrawSpec) {

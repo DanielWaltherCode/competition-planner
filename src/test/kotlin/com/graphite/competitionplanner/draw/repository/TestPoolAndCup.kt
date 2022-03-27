@@ -106,8 +106,67 @@ class TestPoolAndCup(
         Assertions.assertEquals(CompetitionCategoryStatus.DRAWN.name, status)
     }
 
+    @Test
+    fun canDeletePoolAndCupDraw() {
+        // Setup
+        val club = clubRepository.store(dataGenerator.newClubSpec())
+        val competition = club.addCompetition()
+        val competitionCategory = competition.createCategory()
+        val players = club.addPlayers(4)
+        val registrations = competitionCategory.registerPlayers(players)
+        val registrationIds = registrations.map { Registration.Real(it.id) }
+        val poolA = Pool(
+            name = "A",
+            registrationIds = registrationIds,
+            matches = listOf(PoolMatch(registrationIds[0], registrationIds[1]))
+        )
+        val poolB = Pool(
+            name = "B",
+            registrationIds = registrationIds,
+            matches = listOf(PoolMatch(registrationIds[2], registrationIds[3]))
+        )
+        val semifinals = listOf(
+            PlayOffMatch(
+                registrationOneId = Registration.Placeholder("A1"),
+                registrationTwoId = Registration.Bye,
+                order = 1,
+                round = Round.SEMI_FINAL
+            ),
+            PlayOffMatch(
+                registrationOneId = Registration.Placeholder("B1"),
+                registrationTwoId = Registration.Placeholder("A2"),
+                order = 2,
+                round = Round.SEMI_FINAL
+            )
+        )
+        val final = PlayOffMatch(
+            registrationOneId = Registration.Placeholder(),
+            registrationTwoId = Registration.Placeholder(),
+            order = 1,
+            round = Round.FINAL
+        )
+        val spec = PoolAndCupDrawSpec(
+            competitionCategoryId = competitionCategory.id,
+            pools = listOf(poolA, poolB),
+            matches = semifinals + listOf(final),
+        )
+
+        val result = repository.store(spec)
+
+        // Act
+        repository.delete(result.competitionCategoryId)
+
+        // Assert
+        val draw = repository.get(competitionCategory.id)
+        Assertions.assertEquals(0, draw.groups.size)
+        Assertions.assertEquals(0, draw.playOff.size)
+
+        val status = competitionCategoryRepository.get(competitionCategory.id).status
+        Assertions.assertEquals(CompetitionCategoryStatus.ACTIVE.name, status, "Status of category was not reset")
+    }
+
     private fun List<PlayoffRoundDTO>.inRound(round: Round): PlayoffRoundDTO {
-        return this.filter { it.round == round }.first()
+        return this.first { it.round == round }
     }
 
 }

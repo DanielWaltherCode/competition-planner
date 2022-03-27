@@ -23,7 +23,8 @@ interface ICompetitionDrawRepository {
     fun get(competitionCategoryId: Int): CompetitionCategoryDrawDTO
 
     /**
-     *  Delete the draw for the given competition category. This will delete any matches and groups
+     *  Delete the draw for the given competition category. This will delete any matches and groups, as well as mark
+     *  the competition category as not drawn.
      *
      *  @param competitionCategoryId Id of the competition category
      */
