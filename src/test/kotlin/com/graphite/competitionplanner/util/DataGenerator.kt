@@ -22,6 +22,7 @@ import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.service.ResultDTO
+import com.graphite.competitionplanner.schedule.domain.ScheduleMatchDto
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import java.time.LocalDate
@@ -499,6 +500,18 @@ class DataGenerator {
     ) = RegistrationDTO(
         id,
         date
+    )
+
+    fun newScheduleMatchDTO(
+        id: Int = this.matchId++,
+        competitionCategoryId: Int = this.competitionCategoryId++,
+        firstPlayer: List<Int> = listOf(1),
+        secondPlayer: List<Int> = listOf(2)
+    ) = ScheduleMatchDto(
+        id,
+        competitionCategoryId,
+        firstPlayer,
+        secondPlayer
     )
 
     /**

@@ -3,6 +3,9 @@ package com.graphite.competitionplanner.schedule.repository
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.schedule.api.*
+import com.graphite.competitionplanner.schedule.domain.ScheduleMatchDto
+import com.graphite.competitionplanner.schedule.domain.TimeInterval
+import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
 import com.graphite.competitionplanner.tables.records.ScheduleAvailableTablesRecord
 import com.graphite.competitionplanner.tables.records.ScheduleCategoryRecord
 import com.graphite.competitionplanner.tables.records.ScheduleDailyTimesRecord
@@ -12,7 +15,7 @@ import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 @Repository
-class ScheduleRepository(private val dslContext: DSLContext) {
+class ScheduleRepository(private val dslContext: DSLContext): IScheduleRepository {
 
     // Schedule metadata methods
     fun addScheduleMetadata(
@@ -234,5 +237,9 @@ class ScheduleRepository(private val dslContext: DSLContext) {
         return dslContext.selectFrom(SCHEDULE_DAILY_TIMES)
             .where(SCHEDULE_DAILY_TIMES.COMPETITION_ID.eq(competitionId))
             .fetchInto(SCHEDULE_DAILY_TIMES)
+    }
+
+    override fun getMatchesIn(competitionId: Int, date: LocalDate, timeInterval: TimeInterval): List<ScheduleMatchDto> {
+        TODO("Not yet implemented")
     }
 }
