@@ -233,7 +233,8 @@
         "MORNING": "Tidig förmiddag (09.00-13.00)",
         "AFTERNOON": "Eftermiddag (13.00-17.00)",
         "EVENING": "Kväll (17.00-21.00)"
-      }
+      },
+      "table": "Bordsnummer"
     },
     "generalInfo": {
       "heading": "Viktiga övergripande inställningar",
