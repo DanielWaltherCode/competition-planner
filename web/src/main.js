@@ -17,6 +17,7 @@ import {vfmPlugin} from 'vue-final-modal'
 
 Vue.use(vfmPlugin)
 import VModal from 'vue-js-modal'
+import UserService from "@/common/api-services/user.service";
 
 Vue.use(VModal)
 Vue.use(Toasted)
@@ -56,12 +57,10 @@ Axios.interceptors.response.use((response) => {
         return response
     },
     function (error) {
-        // const currentRequest = error.config
-        // const refreshToken = store.getters.refreshToken
+        const currentRequest = error.config
+        const refreshToken = store.getters.refreshToken
         console.log(error)
         if (error.response.status === 401) {
-            logout(error)
-            /*
             if (refreshToken != null) {
                 // If previous request tried to refresh token but failed, abort here
                 console.log("original request: " + currentRequest.url)
@@ -76,6 +75,7 @@ Axios.interceptors.response.use((response) => {
                     return Axios(currentRequest);
                 }).catch(() => {
                     // Failed to refresh token
+                    console.log("Couldn't refresh token")
                     logout(error)
                 })
             }
@@ -83,11 +83,8 @@ Axios.interceptors.response.use((response) => {
             else {
                logout(error)
             }
-
         }
-        */
-
-    }})
+    })
 
 function logout(error) {
     store.commit("logout")
