@@ -1,15 +1,20 @@
 package com.graphite.competitionplanner.schedule.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
+import kotlin.time.toDuration
 
 @Component
 class TrySchedule(
-    val repository: IScheduleRepository
+    val repository: IScheduleRepository,
+    val createSchedule: CreateSchedule
 ) {
 
     /**
@@ -21,15 +26,42 @@ class TrySchedule(
     fun execute(competitionId: Int, spec: PreScheduleSpec, settings: ScheduleSettingsDTO): PreScheduleDto {
         val matches = repository.getMatchesIn(competitionId, spec.playDate, spec.timeInterval)
         val competitionCategoryIds = matches.map { it.competitionCategoryId }.distinct()
-//        val averageMatchTime = settings.averageMatchTime
-//        val numberOfTables = settings.numberOfTables
-        //TODO: Run algorithm for matches, averageMatchTime, and numberOfTables
+        val matchDtos = matches.map { it.toMatchDTO() }
+        val schedule = createSchedule.execute(matchDtos, settings)
+
+        val numberOfTimeslots = schedule.timeslots.count()
+        val durationOfInterval = spec.timeInterval.toDuration()
+        val durationRequiredToFitAllTimeslots = settings.averageMatchTime.times(numberOfTimeslots)
+        val enoughTime = durationOfInterval > durationRequiredToFitAllTimeslots
+
         return PreScheduleDto(
-            true,
-            LocalDateTime.now(),
+            enoughTime,
+            LocalDateTime.now(), // TODO: Consider if we should use UTC?
             spec.playDate,
             spec.timeInterval,
             competitionCategoryIds)
+    }
+
+    fun TimeInterval.toDuration(): Duration {
+        return when(this) {
+            TimeInterval.MORNING -> (13-9).toDuration(TimeUnit.HOURS)
+            TimeInterval.AFTERNOON -> (17-13).toDuration(TimeUnit.HOURS)
+            TimeInterval.EVENING -> (21-17).toDuration(TimeUnit.HOURS)
+        }
+    }
+
+    fun ScheduleMatchDto.toMatchDTO(): MatchDTO {
+        return MatchDTO(
+            this.id,
+            null,
+            null,
+            this.competitionCategoryId,
+            "POOL", // Not used
+            this.firstTeamPlayerIds,
+            this.secondTeamPlayerIds,
+            0, // Not used
+            "A" // Not used
+        )
     }
 }
 
