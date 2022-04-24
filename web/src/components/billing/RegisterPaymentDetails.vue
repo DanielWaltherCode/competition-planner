@@ -88,7 +88,7 @@ export default {
     }
   },
   mounted() {
-    ClubService.getPaymentInfo(this.competition.organizerClub.id).then(res => {
+    ClubService.getPaymentInfo(this.competition.organizerId).then(res => {
       this.paymentInfo = res.data
     }).catch(() => {
       this.$toasted.error(this.$tc("billing.paymentInfo.toastErrorFetch")).goAway(5000)
@@ -96,7 +96,7 @@ export default {
   },
   methods: {
     updatePaymentInfo() {
-      ClubService.updatePaymentInfo(this.competition.organizerClub.id, this.paymentInfo.id, this.paymentInfo).then(() => {
+      ClubService.updatePaymentInfo(this.competition.organizerId, this.paymentInfo.id, this.paymentInfo).then(() => {
         this.$toasted.success(this.$tc("billing.paymentInfo.toastSaveSuccess")).goAway(3000)
       }).catch(() => {
         this.$toasted.error(this.$tc("billing.paymentInfo.toastErrorUpdate")).goAway(5000)

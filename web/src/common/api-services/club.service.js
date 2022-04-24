@@ -11,6 +11,9 @@ const ClubService = {
     },
     updatePaymentInfo(clubId, paymentId, paymentInfoSpec) {
         return Axios.put(`${RESOURCE_NAME}/${clubId}/payment-info/${paymentId}`, paymentInfoSpec, {withCredentials: true})
+    },
+    getClub(clubId) {
+        return Axios.get(`${RESOURCE_NAME}/${clubId}`, {withCredentials: true})
     }
 }
 

@@ -87,8 +87,8 @@ export default {
       displayChoice: 'SETTINGS',
       activeCategory: null,
       competitionCategories: [],
-      possibleCategories: [],
       possibleMetaDataValues: Object,
+      allCompetitionCategories: [],
       newCategory: null,
       isDrawMade: false
     }
@@ -96,7 +96,11 @@ export default {
   computed: {
     competition: function () {
       return this.$store.getters.competition
-    }
+    },
+    possibleCategories() {
+      const alreadyAddedCategoryIds = this.competitionCategories.map(val => val.category.id)
+      return this.allCompetitionCategories.filter(category => !alreadyAddedCategoryIds.includes(category.id))
+    },
   },
   mounted() {
     // Fetch categories already set up in the competition
@@ -109,7 +113,7 @@ export default {
 
     // Fetch possible categories
     CategoryService.getCategories().then(res => {
-      this.possibleCategories = res.data.filter(category => category.name !== "BYE")
+      this.allCompetitionCategories = res.data.filter(category => category.name !== "BYE")
     })
     CategoryService.getPossibleMetaDataValues(this.competition.id).then(res => {
       this.possibleMetaDataValues = res.data
@@ -133,6 +137,8 @@ export default {
         this.activeCategory = addedCategory
         this.isDrawMade = false
         this.newCategory = null
+      }).catch(() => {
+        this.$toasted.error(this.$tc("toasts.categoryNotAdded")).goAway(5000)
       })
     },
     save() {

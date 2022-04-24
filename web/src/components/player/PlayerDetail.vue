@@ -6,7 +6,7 @@
                     :search="searchPlayers"
                     auto-select
                     :get-result-value="getSearchResult"
-                    :placeholder="$t('player.search')"
+                    :placeholder="$t('player.searchRegistered')"
                     @submit="handleSubmit">
       </autocomplete>
     </div>

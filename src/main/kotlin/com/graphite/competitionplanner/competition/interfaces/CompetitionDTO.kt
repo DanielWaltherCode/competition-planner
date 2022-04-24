@@ -12,6 +12,7 @@ data class CompetitionDTO(
     val location: LocationDTO,
     val name: String,
     val welcomeText: String,
+    val competitionLevel: CompetitionLevel,
     val organizerId: Int,
     @JsonFormat(pattern = "yyyy-MM-dd")
     val startDate: LocalDate,
