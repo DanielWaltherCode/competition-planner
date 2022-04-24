@@ -33,6 +33,7 @@ class TestScheduleAvailableTables(
                 name = "Ein Testturnament",
                 welcomeText = "Välkomna till Eurofinans",
                 organizingClubId = util.getClubIdOrDefault("Lugi"),
+                "A",
                 startDate = LocalDate.now(),
                 endDate = LocalDate.now().plusDays(10)
             )

@@ -244,6 +244,7 @@ class DataGenerator {
         name: String = "Test Competition",
         welcomeText: String = "Välkommna till TestCompetition",
         organizingClubId: Int = newClubDTO().id,
+        competitionLevel: CompetitionLevel = CompetitionLevel.A,
         startDate: LocalDate = LocalDate.now(),
         endDate: LocalDate = LocalDate.now().plusDays(3)
     ) = CompetitionDTO(
@@ -251,6 +252,7 @@ class DataGenerator {
         location,
         name,
         welcomeText,
+        competitionLevel,
         organizingClubId,
         startDate,
         endDate
@@ -387,6 +389,7 @@ class DataGenerator {
         name: String = "TestCompetition",
         location: LocationSpec = LocationSpec("Arena IK"),
         welcomeText: String = "Välkommna till TestCompetition",
+        competitionLevel: String = "A",
         organizingClubId: Int = newClubDTO().id,
         startDate: LocalDate = LocalDate.now(),
         endDate: LocalDate = LocalDate.now().plusDays(3)
@@ -395,6 +398,7 @@ class DataGenerator {
         name,
         welcomeText,
         organizingClubId,
+        competitionLevel,
         startDate,
         endDate
     )
@@ -403,12 +407,14 @@ class DataGenerator {
         name: String = "TestCompetition",
         location: LocationSpec = LocationSpec("Arena IK"),
         welcomeText: String = "Välkommna till TestCompetition",
+        competitionLevel: String = "A",
         startDate: LocalDate = LocalDate.now(),
         endDate: LocalDate = LocalDate.now().plusDays(3)
     ) = CompetitionUpdateSpec(
         location,
         name,
         welcomeText,
+        competitionLevel,
         startDate,
         endDate
     )

@@ -32,6 +32,7 @@ class TestScheduleMetadata(
                 name = "Eurofinans 2021",
                 welcomeText = "Välkomna till Eurofinans",
                 organizingClubId = util.getClubIdOrDefault("Lugi"),
+                competitionLevel = "A",
                 startDate = LocalDate.now(),
                 endDate = LocalDate.now().plusDays(10)
             )

@@ -22,6 +22,7 @@ class TestCompetitionSpec {
                 "Svedala",
                 "Välkommen",
                 0,
+                "B",
                 startDate,
                 endDate
             )
@@ -37,6 +38,7 @@ class TestCompetitionSpec {
                 "Svedala",
                 "Välkommen",
                 0,
+                "B",
                 startDate,
                 startDate
             )
@@ -51,6 +53,7 @@ class TestCompetitionSpec {
                 "",
                 "Välkommen",
                 0,
+                "A",
                 LocalDate.of(1999, 10, 18),
                 LocalDate.of(1999, 10, 19)
             )
@@ -65,6 +68,7 @@ class TestCompetitionSpec {
                 "   ",
                 "Välkommen",
                 0,
+                "A",
                 LocalDate.of(1999, 10, 18),
                 LocalDate.of(1999, 10, 19)
             )
