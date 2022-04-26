@@ -240,6 +240,12 @@ class ScheduleRepository(private val dslContext: DSLContext): IScheduleRepositor
     }
 
     override fun getMatchesIn(competitionId: Int, date: LocalDate, timeInterval: TimeInterval): List<ScheduleMatchDto> {
+//        dslContext.select(MATCH.ID)
+//        .from(MATCH)
+//        .join(PRE_SCHEDULE).on(MATCH.COMPETITION_CATEGORY_ID.eq(PRE_SCHEDULE.COMPETITION_CATEGORY))
+//        .where(PRE_SCHEDULE.COMPETITION_ID.eq(competitionId)
+//        .and(PRE_SCHEDULE.DATE.eq(date)
+//        .and(PRE_SCHEDULE.TIME_INTERVAL.eq(timeInterval)))
         TODO("Not yet implemented")
     }
 }
