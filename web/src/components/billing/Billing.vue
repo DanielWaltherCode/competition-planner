@@ -103,6 +103,7 @@ export default {
       costSummary: null,
       playerCostSummary: null,
       paymentInfo: null,
+      organizingClub: null
     }
   },
   computed: {
@@ -118,6 +119,12 @@ export default {
       }
     }).catch(() => {
       this.$toasted.error(this.$tc("billing.toasts.club-error")).goAway(5000)
+    })
+
+    ClubService.getClub(this.competition.organizingClubId).then(res => {
+      this.organizingClub = res.data
+    }).catch(err => {
+      console.log("Couldn't fetch club name", err)
     })
   },
   methods: {
@@ -137,7 +144,7 @@ export default {
       })
     },
     getPdf() {
-      ClubService.getPaymentInfo(this.competition.organizerClub.id).then(res => {
+      ClubService.getPaymentInfo(this.competition.organizerId).then(res => {
         this.paymentInfo = res.data
         this.generalPdfSetup(true)
       }).catch(() => {

@@ -15,33 +15,37 @@
       </button>
     </div>
     <div class="row">
-      <form id="input-form" v-if="player !== null" class="rounded row p-3">
+      <form id="input-form" class="rounded row p-3">
         <div class="col-md-11">
           <div class="row mx-auto">
             <div class="col-sm-6 mb-3">
               <label for="firstName" class="text-start form-label"> {{ $t("player.add.firstName") }}</label>
-              <input type="text" disabled class="form-control"
+              <input v-if="player !== null" type="text" disabled class="form-control"
                      id="firstName" v-model="player.firstName">
+              <input v-else type="text" disabled class="form-control">
             </div>
 
             <div class="col-sm-6 mb-3">
               <label for="lastName" class="text-start form-label"> {{ $t("player.add.lastName") }}</label>
-              <input type="text" disabled class="form-control"
+              <input v-if="player !== null" type="text" disabled class="form-control"
                      v-model="player.lastName"
                      id="lastName">
+              <input v-else type="text" disabled class="form-control">
             </div>
 
             <div class="col-sm-6 mb-3">
               <!-- Standard validation does not work on select menues -->
               <label for="club-select" class="form-label"> {{ $t("player.add.club") }}</label>
-              <input type="text" id="club-select" disabled class="form-control" v-model="player.club.name">
+              <input v-if="player !== null" type="text" id="club-select" disabled class="form-control" v-model="player.club.name">
+              <input v-else type="text" disabled class="form-control">
             </div>
 
             <div class="col-sm-6 mb-3">
               <label for="dateOfBirth" class="text-start form-label"> {{ $t("player.add.dateOfBirth") }}</label>
-              <input disabled class="form-control"
+              <input v-if="player !== null" disabled class="form-control"
                      :placeholder="getFormattedDate(player.dateOfBirth)"
                      id="dateOfBirth">
+              <input v-else type="text" disabled class="form-control">
             </div>
           </div>
         </div>

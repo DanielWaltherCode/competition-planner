@@ -1,0 +1,1 @@
+alter table competition add column competition_level VARCHAR(10);

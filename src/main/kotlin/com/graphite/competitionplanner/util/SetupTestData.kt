@@ -8,6 +8,7 @@ import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.club.repository.ClubRepository
 import com.graphite.competitionplanner.competition.domain.CreateCompetition
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
+import com.graphite.competitionplanner.competition.interfaces.CompetitionLevel
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
 import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
@@ -373,6 +374,7 @@ class SetupTestData(
                 name = "Eurofinans 2021",
                 welcomeText = "Välkomna till Eurofinans",
                 organizingClubId = util.getClubIdOrDefault("Lugi"),
+                competitionLevel=CompetitionLevel.A.name,
                 startDate = LocalDate.now(),
                 endDate = LocalDate.now().plusDays(3)
             )
@@ -383,6 +385,7 @@ class SetupTestData(
                 name = "Bollstadion Cup",
                 welcomeText = "Umeå, kallt, öde, men vi har badminton!",
                 organizingClubId = util.getClubIdOrDefault("Umeå IK"),
+                competitionLevel=CompetitionLevel.B.name,
                 startDate = LocalDate.now(),
                 endDate = LocalDate.now().plusDays(2)
             )
@@ -392,6 +395,7 @@ class SetupTestData(
                 location = LocationSpec("Svedala"),
                 name = "Svedala Open",
                 welcomeText = "Bonustävling!",
+                competitionLevel=CompetitionLevel.C.name,
                 organizingClubId = util.getClubIdOrDefault("Övriga"),
                 startDate = LocalDate.now().plusMonths(1),
                 endDate = LocalDate.now().plusMonths(1).plusDays(3)

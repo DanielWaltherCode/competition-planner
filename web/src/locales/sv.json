@@ -57,17 +57,19 @@
     "title": "Tävlingsöversikt",
     "name": "Namn",
     "info": "Tävlingsinformation",
+    "level": "Tävlingsstandard",
     "startDate": "Startdatum",
     "endDate": "Slutdatum",
-    "location": "Plats"
+    "location": "Plats",
+    "tooltip": "Både start- och slutdatum måste vara i framtiden och slutdatum måste vara antingen samma dag som startdatum eller senare"
   },
   "categories": {
     "title": "Klasser",
     "overview": "Översikt",
     "gameRules": "Matchregler",
     "noCategories": "Inga klasser är skapade än så länge",
-    "createNew": "Skapa ny klass",
-    "addClass": "Lägg till klassen",
+    "createNew": "Lägg till ny klass i tävlingen",
+    "addClass": "Lägg till",
     "delete": "Ta bort klassen",
     "alreadyAddedCategories": "Tillagda klasser",
     "chooseClass": "Välj klass",
@@ -123,7 +125,7 @@
       "title": "Spelaralternativ",
       "overview": "Anmälda spelare",
       "addNew": "Anmäl spelare i tävlingsklass",
-      "detail": "Detaljinfo om enskild spelare",
+      "detail": "Hantera spelare",
       "create": "Skapa spelare"
     },
     "create": {
@@ -131,6 +133,7 @@
       "text": "Om en spelare inte har en giltig svensk licens (och därmed inte finns i vår databas) kan de läggas till manuellt här. De kan sedan registreras för klasser i tävlingen. Notera dock att de inte har någon ranking eller seedning."
     },
     "search": "Sök på spelare",
+    "searchRegistered": "Sök på spelare som är anmäld i tävlingen",
     "title": "Spelare",
     "headingHelper": "Här kan du se spelare som är anmälda till tävlingen. Du kan också manuellt lägga till nya spelare. I de flesta fall anmäler dock klubbarna själva sina spelare online och de dyker sedan automatiskt upp här.",
     "registeredPlayers": "Anmälda spelare",
@@ -151,7 +154,7 @@
       "lastName": "Efternamn",
       "club": "Klubb",
       "dateOfBirth": "Födelsedatum",
-      "buttonText": "Lägg till spelare",
+      "buttonText": "Anmäl spelare",
       "clear": "Rensa spelare"
     },
     "info": "Spelarinfo",
@@ -310,7 +313,7 @@
     "firstTableHeading": "Kostnadssammanfattning för ",
     "secondHeading": "Kostnad på spelarnivå",
     "createPdf": "Skapa faktura",
-    "updatePaymentInfo": "Uppdatera betalinformation",
+    "updatePaymentInfo": "Ange betalningsinformation",
     "table1": {
       "category": "Klass",
       "nrStarts": "Antal starter",
@@ -367,6 +370,7 @@
     "categoryUpdated": "Klassen är uppdaterad",
     "categoryDrawn": "Klassen är nu lottad",
     "categoryDeleted": "Klassen är borttagen",
+    "categoryNotAdded": "Kunde inte lägga till klassen",
     "categoryDrawDeleted": "Lottningen är borttagen",
     "startTimesSet": "Starttider satta",
     "resultRegistered": "Resultatet är sparat",

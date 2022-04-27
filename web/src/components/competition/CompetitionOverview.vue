@@ -12,16 +12,28 @@
             <div class="form-group mb-4">
               <div class="d-flex align-items-center mb-2">
                 <i class="fas fa-location-arrow me-2"></i>
-                <label for="competition-location" class="form-label mb-0">{{getString("newCompetition.location")}}</label>
+                <label for="competition-location"
+                       class="form-label mb-0">{{ getString("newCompetition.location") }}</label>
               </div>
               <input type="text" class="form-control" id="competition-location" v-model="competition.location.name">
-          </div>
+            </div>
             <div class="mb-4">
               <div class="d-flex align-items-center mb-2">
                 <i class="fas fa-user-friends me-2"></i>
                 <label for="competition-name" class="form-label mb-0">{{ getString("newCompetition.name") }}</label>
               </div>
               <input type="text" class="form-control" id="competition-name" v-model="competition.name">
+            </div>
+            <div class="mb-4">
+              <div class="d-flex align-items-center mb-2">
+                <i class="fas fa-angle-up me-2"></i>
+                <label for="competition-level" class="form-label mb-0">{{ getString("newCompetition.level") }}</label>
+              </div>
+              <select class="form-select" v-model="competition.competitionLevel">
+                <option v-for="level in possibleLevels" :key="level">
+                  {{level}}
+                </option>
+              </select>
             </div>
             <div class="mb-4">
               <div class="d-flex align-items-center mb-2">
@@ -61,7 +73,8 @@ export default {
   name: "Overview",
   data() {
     return {
-      competitionUpdated: false
+      competitionUpdated: false,
+      possibleLevels: []
     }
   },
   computed: {
@@ -71,6 +84,11 @@ export default {
     competition: function () {
       return this.$store.getters.competition
     },
+  },
+  mounted() {
+    CompetitionService.getPossibleLevels().then(res => {
+      this.possibleLevels = res.data
+    })
   },
   methods: {
     getString(string) {
@@ -83,6 +101,7 @@ export default {
         },
         "name": this.competition.name,
         "welcomeText": this.competition.welcomeText,
+        "competitionLevel": this.competition.competitionLevel,
         "startDate": this.competition.startDate,
         "endDate": this.competition.endDate,
       }
@@ -92,8 +111,8 @@ export default {
         this.competitionUpdated = true
         this.$toasted.success(this.$tc("toasts.competitionUpdated")).goAway(3000)
       }).catch(() => {
-        this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
-        }
+            this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
+          }
       )
     }
   }

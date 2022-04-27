@@ -66,5 +66,11 @@ class CompetitionApi(
     fun getPossibleRounds(): Array<Round> {
         return Round.values()
     }
+
+    // Get possible competition level options
+    @GetMapping("/levels")
+    fun getPossibleCompetitionLevels(): Array<CompetitionLevel> {
+        return CompetitionLevel.values()
+    }
 }
 

@@ -105,6 +105,7 @@ class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository
         val record = dslContext.newRecord(Competition.COMPETITION)
         record.location = this.location.name
         record.name = this.name
+        record.competitionLevel = this.competitionLevel
         record.welcomeText = this.welcomeText
         record.startDate = this.startDate
         record.endDate = this.endDate
@@ -117,6 +118,7 @@ class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository
         record.name = this.name
         record.welcomeText = this.welcomeText
         record.organizingClub = this.organizingClubId
+        record.competitionLevel = this.competitionLevel
         record.startDate = this.startDate
         record.endDate = this.endDate
         return record
@@ -128,6 +130,7 @@ class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository
             LocationDTO(this.location),
             this.name,
             this.welcomeText,
+            CompetitionLevel.valueOf(this.competitionLevel),
             this.organizingClub,
             this.startDate,
             this.endDate

@@ -29,6 +29,7 @@ class TestScheduleDailyTimes(
                 name = "Ein Testturnament",
                 welcomeText = "Välkomna till Eurofinans",
                 organizingClubId = util.getClubIdOrDefault("Lugi"),
+                competitionLevel = "A",
                 startDate = LocalDate.now(),
                 endDate = LocalDate.now().plusDays(10)
             )
