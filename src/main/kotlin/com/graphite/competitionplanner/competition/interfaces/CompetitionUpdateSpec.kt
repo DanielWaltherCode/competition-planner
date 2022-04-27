@@ -6,6 +6,7 @@ data class CompetitionUpdateSpec(
     val location: LocationSpec,
     val name: String,
     val welcomeText: String,
+    val competitionLevel: String,
     val startDate: LocalDate,
     val endDate: LocalDate?
 ) {

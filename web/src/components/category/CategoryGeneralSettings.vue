@@ -2,21 +2,6 @@
   <div v-if="category.settings != null" class="p-2 p-md-3">
     <p v-if="isDrawMade" class="fs-4 fw-bolder"> {{$t("categories.cannotUpdate")}}</p>
     <div class="row">
-      <div class="col-sm-12 col-md-6 mb-3">
-        <label class="h5 form-label" for="inputCost">{{ $t("categorySettings.cost") }}</label>
-        <input v-model="category.settings.cost" type="text" class="form-control" id="inputCost" :disabled="isDrawMade">
-      </div>
-      <div class="col-sm-12 col-md-6 mb-3">
-        <label class="h5 form-label"
-               for="inputNumberOfPlayersPerPool">{{ $t("categorySettings.playersPerGroup") }}</label>
-        <select v-model="category.settings.playersPerGroup" id="inputNumberOfPlayersPerPool" class="form-select" :disabled="isDrawMade">
-          <option v-for="i in 3" :key="i">
-            {{ i + 2 }}
-          </option>
-        </select>
-      </div>
-    </div>
-    <div class="row my-4">
       <fieldset class="col mb-3">
         <label class="h5 form-label">{{ $t("categorySettings.drawType") }}</label>
         <div class="col"></div>
@@ -27,6 +12,21 @@
             {{ $t("categorySettings.drawTypes." + drawType) }}</label>
         </div>
       </fieldset>
+    </div>
+    <div class="row my-5">
+      <div class="col-sm-12 col-md-6 mb-3">
+        <label class="h5 form-label" for="inputCost">{{ $t("categorySettings.cost") }}</label>
+        <input v-model="category.settings.cost" type="text" class="form-control" id="inputCost" :disabled="isDrawMade">
+      </div>
+      <div class="col-sm-12 col-md-6 mb-3" v-if="category.settings.drawType !== 'CUP_ONLY'">
+        <label class="h5 form-label"
+               for="inputNumberOfPlayersPerPool">{{ $t("categorySettings.playersPerGroup") }}</label>
+        <select v-model="category.settings.playersPerGroup" id="inputNumberOfPlayersPerPool" class="form-select" :disabled="isDrawMade">
+          <option v-for="i in 3" :key="i">
+            {{ i + 2 }}
+          </option>
+        </select>
+      </div>
     </div>
     <div v-if="category.settings.drawType === 'POOL_AND_CUP'" class="row">
       <div class="col-sm-12 col-md-6 d-flex flex-column justify-content-end">

@@ -7,6 +7,7 @@ data class CompetitionSpec(
     val name: String,
     val welcomeText: String,
     val organizingClubId: Int,
+    val competitionLevel: String,
     val startDate: LocalDate,
     val endDate: LocalDate?
 ) {

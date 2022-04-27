@@ -72,15 +72,16 @@ class UserService(
         val tokenRecord = userRepository.getRefreshToken(refreshToken)
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No such refresh token found")
 
-        if (SecurityHelper.validateToken(tokenRecord.refreshToken)) {
+        try {
+            SecurityHelper.validateToken(tokenRecord.refreshToken)
             val user: UserDTO = getUserById(tokenRecord.userId)
             val accessToken = SecurityHelper.generateAccessToken(user)
             val newRefreshToken = SecurityHelper.generateRefreshToken(user)
             storeRefreshToken(newRefreshToken, user.email)
             return LoginDTO(accessToken, newRefreshToken)
         }
-        else {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Refresh token not valid")
+        catch (ex: Exception) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Refresh token expired")
         }
     }
 

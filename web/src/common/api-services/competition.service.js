@@ -17,7 +17,10 @@ const CompetitionService = {
     },
     getPossibleRounds() {
         return Axios.get(`${RESOURCE_NAME}/rounds`, {withCredentials: true})
-    }
+    },
+    getPossibleLevels() {
+        return Axios.get(`${RESOURCE_NAME}/levels`, {withCredentials: true})
+    },
 }
 
 export default CompetitionService

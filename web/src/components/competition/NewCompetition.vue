@@ -27,6 +27,18 @@
         </div>
         <div class="mb-4">
           <div class="d-flex align-items-center mb-2">
+            <i class="fas fa-angle-up me-2"></i>
+            <label for="competition-level" class="form-label mb-0">{{ getString("newCompetition.level") }}</label>
+          </div>
+            <select class="form-select" v-model="level" @change="noLevel = false">
+              <option v-for="level in possibleLevels" :key="level">
+                {{level}}
+              </option>
+            </select>
+            <p class="fs-6 text-danger" v-if="noLevel"> {{ $t("validations.required") }}</p>
+        </div>
+        <div class="mb-4">
+          <div class="d-flex align-items-center mb-2">
             <i class="fas fa-file-signature me-2"></i>
             <label for="info" class="form-label mb-0">{{ getString("newCompetition.info") }}</label>
           </div>
@@ -36,6 +48,7 @@
           <div class="d-flex align-items-center mb-2">
             <i class="fas fa-calendar-day me-2"></i>
             <label for="start-date" class="form-label mb-0">{{ getString("newCompetition.startDate") }}</label>
+            <i class="fas fa-info-circle mx-3" data-toggle="tooltip" data-placement="top" :title="$t('newCompetition.tooltip')"></i>
           </div>
           <input type="date" class="form-control" id="start-date" @change="noStartDate = false" v-model="startDate">
           <p class="fs-6 text-danger" v-if="noStartDate"> {{ $t("validations.required") }}</p>
@@ -67,9 +80,10 @@ export default {
   data() {
     return {
       competitionName: null,
-      info: null,
+      info: "",
       startDate: null,
       endDate: null,
+      level: null,
       competitionLocation: null,
       competitionAdded: false,
       competition: "",
@@ -77,12 +91,19 @@ export default {
       noStartDate: false,
       noEndDate: false,
       noCompetitionLocation: false,
+      noLevel: false,
+      possibleLevels: []
     }
   },
   computed: {
     user: function () {
       return this.$store.getters.user
     }
+  },
+  mounted() {
+    CompetitionService.getPossibleLevels().then(res => {
+      this.possibleLevels = res.data
+    })
   },
   methods: {
     getString(string) {
@@ -95,6 +116,10 @@ export default {
       }
       if (!this.competitionLocation) {
         this.noCompetitionLocation = true
+        return false
+      }
+      if (!this.level) {
+        this.noLevel = true
         return false
       }
       if (!this.startDate) {
@@ -117,6 +142,7 @@ export default {
         },
         "name": this.competitionName,
         "welcomeText": this.info,
+        "competitionLevel": this.level,
         "organizingClubId": this.user.clubNoAddressDTO.id,
         "startDate": this.startDate,
         "endDate": this.endDate,
