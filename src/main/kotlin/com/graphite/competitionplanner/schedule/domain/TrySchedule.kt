@@ -24,7 +24,10 @@ class TrySchedule(
      * @return True if all matches for all categories can be played within the time interval. Else false
      */
     fun execute(competitionId: Int, spec: PreScheduleSpec, settings: ScheduleSettingsDTO): PreScheduleDto {
-        val matches = repository.getMatchesIn(competitionId, spec.playDate, spec.timeInterval)
+        // TODO: We might want to guard against the spec having a play date that is not consistent with when the competition is taking place
+
+        repository.storePreSchedule(competitionId, spec)
+        val matches = repository.getPreScheduledMatches(competitionId, spec.playDate, spec.timeInterval)
         val competitionCategoryIds = matches.map { it.competitionCategoryId }.distinct()
         val matchDtos = matches.map { it.toMatchDTO() }
         val schedule = createSchedule.execute(matchDtos, settings)
@@ -39,14 +42,15 @@ class TrySchedule(
             LocalDateTime.now(), // TODO: Consider if we should use UTC?
             spec.playDate,
             spec.timeInterval,
-            competitionCategoryIds)
+            competitionCategoryIds
+        )
     }
 
     fun TimeInterval.toDuration(): Duration {
-        return when(this) {
-            TimeInterval.MORNING -> (13-9).toDuration(TimeUnit.HOURS)
-            TimeInterval.AFTERNOON -> (17-13).toDuration(TimeUnit.HOURS)
-            TimeInterval.EVENING -> (21-17).toDuration(TimeUnit.HOURS)
+        return when (this) {
+            TimeInterval.MORNING -> (13 - 9).toDuration(TimeUnit.HOURS)
+            TimeInterval.AFTERNOON -> (17 - 13).toDuration(TimeUnit.HOURS)
+            TimeInterval.EVENING -> (21 - 17).toDuration(TimeUnit.HOURS)
         }
     }
 

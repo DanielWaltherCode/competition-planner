@@ -22,7 +22,9 @@ import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.service.ResultDTO
+import com.graphite.competitionplanner.schedule.domain.PreScheduleSpec
 import com.graphite.competitionplanner.schedule.domain.ScheduleMatchDto
+import com.graphite.competitionplanner.schedule.domain.TimeInterval
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import java.time.LocalDate
@@ -518,6 +520,16 @@ class DataGenerator {
         competitionCategoryId,
         firstPlayer,
         secondPlayer
+    )
+
+    fun newPreScheduleSpec(
+        playDate: LocalDate = LocalDate.now(),
+        timeInterval: TimeInterval = TimeInterval.MORNING,
+        competitionCategoryId: Int = this.competitionCategoryId++
+    ) = PreScheduleSpec(
+        playDate,
+        timeInterval,
+        competitionCategoryId
     )
 
     /**

@@ -29,7 +29,7 @@ class TestTrySchedule {
             averageMatchTime = Duration.minutes(20),
             numberOfTables = 5,
         )
-        `when`(mockedScheduleRepository.getMatchesIn(competitionId, spec.playDate, spec.timeInterval)).thenReturn(
+        `when`(mockedScheduleRepository.getPreScheduledMatches(competitionId, spec.playDate, spec.timeInterval)).thenReturn(
             listOf(
                 dataGenerator.newScheduleMatchDTO(competitionCategoryId = 3),
                 dataGenerator.newScheduleMatchDTO(competitionCategoryId = 4),
@@ -60,7 +60,7 @@ class TestTrySchedule {
             averageMatchTime = Duration.minutes(60),
             numberOfTables = 1,
         )
-        `when`(mockedScheduleRepository.getMatchesIn(competitionId, spec.playDate, spec.timeInterval)).thenReturn(
+        `when`(mockedScheduleRepository.getPreScheduledMatches(competitionId, spec.playDate, spec.timeInterval)).thenReturn(
             listOf(
                 dataGenerator.newScheduleMatchDTO(competitionCategoryId = 3),
                 dataGenerator.newScheduleMatchDTO(competitionCategoryId = 4),

@@ -3,14 +3,17 @@ package com.graphite.competitionplanner.schedule.repository
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.schedule.api.*
+import com.graphite.competitionplanner.schedule.domain.PreScheduleSpec
 import com.graphite.competitionplanner.schedule.domain.ScheduleMatchDto
 import com.graphite.competitionplanner.schedule.domain.TimeInterval
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
+import com.graphite.competitionplanner.tables.Player
 import com.graphite.competitionplanner.tables.records.ScheduleAvailableTablesRecord
 import com.graphite.competitionplanner.tables.records.ScheduleCategoryRecord
 import com.graphite.competitionplanner.tables.records.ScheduleDailyTimesRecord
 import com.graphite.competitionplanner.tables.records.ScheduleMetadataRecord
 import org.jooq.DSLContext
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
@@ -239,13 +242,44 @@ class ScheduleRepository(private val dslContext: DSLContext): IScheduleRepositor
             .fetchInto(SCHEDULE_DAILY_TIMES)
     }
 
-    override fun getMatchesIn(competitionId: Int, date: LocalDate, timeInterval: TimeInterval): List<ScheduleMatchDto> {
-//        dslContext.select(MATCH.ID)
-//        .from(MATCH)
-//        .join(PRE_SCHEDULE).on(MATCH.COMPETITION_CATEGORY_ID.eq(PRE_SCHEDULE.COMPETITION_CATEGORY))
-//        .where(PRE_SCHEDULE.COMPETITION_ID.eq(competitionId)
-//        .and(PRE_SCHEDULE.DATE.eq(date)
-//        .and(PRE_SCHEDULE.TIME_INTERVAL.eq(timeInterval)))
-        TODO("Not yet implemented")
+    override fun getPreScheduledMatches(competitionId: Int, date: LocalDate, timeInterval: TimeInterval): List<ScheduleMatchDto> {
+        val matches = dslContext.select(
+            MATCH.ID,
+            MATCH.COMPETITION_CATEGORY_ID,
+            MATCH.FIRST_REGISTRATION_ID,
+            MATCH.SECOND_REGISTRATION_ID)
+        .from(MATCH)
+        .join(PRE_SCHEDULE).on(MATCH.COMPETITION_CATEGORY_ID.eq(PRE_SCHEDULE.COMPETITION_CATEGORY_ID))
+        .where(PRE_SCHEDULE.COMPETITION_ID.eq(competitionId)
+        .and(PRE_SCHEDULE.PLAY_DATE.eq(date))
+        .and(PRE_SCHEDULE.TIME_INTERVAL.eq(timeInterval.name)))
+
+        return matches.map {
+            ScheduleMatchDto(
+                it.get(MATCH.ID),
+                it.get(MATCH.COMPETITION_CATEGORY_ID),
+                getPlayerIdsForRegistrationId(it.get(MATCH.FIRST_REGISTRATION_ID)),
+                getPlayerIdsForRegistrationId(it.get(MATCH.SECOND_REGISTRATION_ID))
+            )
+        }
+
+    }
+
+    override fun storePreSchedule(competitionId: Int, spec: PreScheduleSpec) {
+        try {
+            dslContext.insertInto(PRE_SCHEDULE,
+                PRE_SCHEDULE.COMPETITION_ID, PRE_SCHEDULE.PLAY_DATE, PRE_SCHEDULE.TIME_INTERVAL, PRE_SCHEDULE.COMPETITION_CATEGORY_ID)
+                .values(competitionId, spec.playDate, spec.timeInterval.name, spec.competitionCategoryId)
+                .execute()
+        } catch(_: DuplicateKeyException) {
+            // If user tries to store same pre-schedule multiple times we simply ignore it. The function is idempotent.
+        }
+    }
+
+    private fun getPlayerIdsForRegistrationId(registrationId: Int): List<Int> {
+        val records = dslContext.select(PLAYER_REGISTRATION.PLAYER_ID)
+            .from(PLAYER_REGISTRATION)
+            .where(PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId))
+        return records.map { it.get(PLAYER_REGISTRATION.PLAYER_ID) }
     }
 }
