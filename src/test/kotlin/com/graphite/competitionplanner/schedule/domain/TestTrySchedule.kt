@@ -8,6 +8,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlin.time.Duration
 
 
@@ -29,7 +30,13 @@ class TestTrySchedule {
             averageMatchTime = Duration.minutes(20),
             numberOfTables = 5,
         )
-        `when`(mockedScheduleRepository.getPreScheduledMatches(competitionId, spec.playDate, spec.timeInterval)).thenReturn(
+        `when`(
+            mockedScheduleRepository.getPreScheduledMatches(
+                competitionId,
+                spec.playDate,
+                spec.timeInterval
+            )
+        ).thenReturn(
             listOf(
                 dataGenerator.newScheduleMatchDTO(competitionCategoryId = 3),
                 dataGenerator.newScheduleMatchDTO(competitionCategoryId = 4),
@@ -47,6 +54,11 @@ class TestTrySchedule {
         )
 
         Assertions.assertTrue(result.success, "Three 20-min matches should fit within 4 hours.")
+        Assertions.assertEquals(
+            LocalDateTime.of(spec.playDate.year, spec.playDate.month, spec.playDate.dayOfMonth, 10, 0),
+            result.estimatedEndTime,
+            "Three matches á 20 minute starting at 9AM should end around 10 AM"
+        )
         Assertions.assertEquals(spec.playDate, result.playDate, "Returned wrong play date")
         Assertions.assertEquals(spec.timeInterval, result.timeInterval, "Returned wrong time interval")
     }
@@ -60,7 +72,13 @@ class TestTrySchedule {
             averageMatchTime = Duration.minutes(60),
             numberOfTables = 1,
         )
-        `when`(mockedScheduleRepository.getPreScheduledMatches(competitionId, spec.playDate, spec.timeInterval)).thenReturn(
+        `when`(
+            mockedScheduleRepository.getPreScheduledMatches(
+                competitionId,
+                spec.playDate,
+                spec.timeInterval
+            )
+        ).thenReturn(
             listOf(
                 dataGenerator.newScheduleMatchDTO(competitionCategoryId = 3),
                 dataGenerator.newScheduleMatchDTO(competitionCategoryId = 4),
@@ -79,7 +97,15 @@ class TestTrySchedule {
             "Not the correct competition categories in the response"
         )
 
-        Assertions.assertFalse(result.success, "Five 1-hour long matches cannot fit within a 4-hour interval on 1 table.")
+        Assertions.assertFalse(
+            result.success,
+            "Five 1-hour long matches cannot fit within a 4-hour interval on 1 table."
+        )
+        Assertions.assertEquals(
+            LocalDateTime.of(spec.playDate.year, spec.playDate.month, spec.playDate.dayOfMonth, 14, 0),
+            result.estimatedEndTime,
+            "Five matches á 60 minute starting at 9AM should end around 2PM"
+        )
         Assertions.assertEquals(spec.playDate, result.playDate, "Returned wrong play date")
         Assertions.assertEquals(spec.timeInterval, result.timeInterval, "Returned wrong time interval")
     }

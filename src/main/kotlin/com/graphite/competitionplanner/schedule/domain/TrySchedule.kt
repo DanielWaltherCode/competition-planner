@@ -7,6 +7,7 @@ import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
 import kotlin.time.toDuration
@@ -35,11 +36,13 @@ class TrySchedule(
         val numberOfTimeslots = schedule.timeslots.count()
         val durationOfInterval = spec.timeInterval.toDuration()
         val durationRequiredToFitAllTimeslots = settings.averageMatchTime.times(numberOfTimeslots)
+
         val enoughTime = durationOfInterval > durationRequiredToFitAllTimeslots
+        val estimatedEndTime = LocalDateTime.of(spec.playDate, spec.timeInterval.startTime()).plusMinutes(durationRequiredToFitAllTimeslots.inWholeMinutes)
 
         return PreScheduleDto(
             enoughTime,
-            LocalDateTime.now(), // TODO: Consider if we should use UTC?
+            estimatedEndTime, // TODO: Consider if we should use UTC?
             spec.playDate,
             spec.timeInterval,
             competitionCategoryIds
@@ -51,6 +54,14 @@ class TrySchedule(
             TimeInterval.MORNING -> (13 - 9).toDuration(TimeUnit.HOURS)
             TimeInterval.AFTERNOON -> (17 - 13).toDuration(TimeUnit.HOURS)
             TimeInterval.EVENING -> (21 - 17).toDuration(TimeUnit.HOURS)
+        }
+    }
+
+    fun TimeInterval.startTime(): LocalTime {
+        return when (this) {
+            TimeInterval.MORNING -> LocalTime.of(9, 0, 0)
+            TimeInterval.AFTERNOON -> LocalTime.of(13, 0, 0)
+            TimeInterval.EVENING -> LocalTime.of(17, 0, 0)
         }
     }
 
