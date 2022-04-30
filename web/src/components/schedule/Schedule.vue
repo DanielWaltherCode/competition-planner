@@ -9,7 +9,7 @@
       <div class="row">
 
         <!-- Sidebar -->
-        <div class="sidebar col-md-3">
+        <div class="sidebar col-md-3 col-lg-2">
           <div class="sidebar-header">
             <h4> {{ $t("schedule.sidebar.alternatives") }}</h4>
           </div>
@@ -23,7 +23,7 @@
         </div>
 
         <!-- Main content -->
-        <div id="main" class="col-md-9 ps-0">
+        <div id="main" class="col-md-9 col-lg-10 ps-0">
           <!-- General information about competition -->
           <div class="row p-3 m-md-2 custom-card">
             <div>
@@ -134,7 +134,6 @@
                   <th scope="col">{{ $t("schedule.main.category") }}</th>
                   <th scope="col">{{ $t("schedule.main.day") }}</th>
                   <th scope="col">{{ $t("schedule.main.timeSpan") }}</th>
-                  <th scope="col">{{ $t("schedule.main.startTime") }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -162,14 +161,40 @@
                       </option>
                     </select>
                   </td>
-                  <!-- Select exact start time -->
-                  <td>
-                    <vue-timepicker v-model="category.exactStartTime"
-                                    :disabled="category.startInterval === 'NOT_SELECTED'"></vue-timepicker>
-                  </td>
                 </tr>
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          <!-- See generated schedule -->
+          <div class="table-container col-sm-12 mx-auto my-4" v-if="generatedSchedule != null">
+            <table class="table table-bordered">
+              <thead>
+              <tr>
+                <th></th>
+                <th :colspan="generatedSchedule.scheduleItemList.length">{{ $t("schedule.main.table") }}</th>
+              </tr>
+              <tr>
+                <th>Tid</th>
+                <th v-for="item in generatedSchedule.scheduleItemList" :key="item.tableNumber"> {{ item.tableNumber }}
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr v-for="time in generatedSchedule.validStartTimes" :key="time">
+                <td>{{ getHoursMinutes(new Date(time)) }}</td>
+                <td v-for="item in generatedSchedule.scheduleItemList"
+                    :style="{backgroundColor: colorCategoryMap[getCategoryAtTableTime(item.tableNumber, time)]}"
+                    :key="item.tableNumber" style="font-size: 80%"> {{ getCategoryAtTableTime(item.tableNumber, time) }}
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="row">
+            <div class="col-1">
+
             </div>
           </div>
         </div>
@@ -186,6 +211,7 @@ import DailyStartEndService from "@/common/api-services/schedule/daily-start-end
 import AvailableTablesService from "@/common/api-services/schedule/available-tables.service";
 import ScheduleMetadataService from "@/common/api-services/schedule/schedule-metadata.service";
 import CategoryService from "@/common/api-services/category.service";
+import ScheduleGeneralService from "@/common/api-services/schedule/schedule-general.service";
 
 export default {
   name: "Schedule",
@@ -199,7 +225,14 @@ export default {
       dailyStartEndDTO: {},
       availableTables: null,
       scheduleMetadata: {},
-      minutesPerMatchOptions: [15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
+      minutesPerMatchOptions: [15, 20, 25, 30, 35, 40, 45, 50, 55, 60],
+      generatedSchedule: null,
+      distinctPlannedCategories: [],
+      colors: ["#46b1c9", "#84c0c6", "#9fb7b9", "#bcc1ba", "#f2e2d2", "#dcd6f7", "#d8d2e1", "#c5d5e4",
+        "#a6b1e1", "#cacfd6", "#d6e5e3", "#ce7da5", "#bee5bf", "#dff3e3", "#ffd1ba",
+        "#b5ffe1", "#93e5ab", "#65b891", "#47682c", "#8c7051", "#ef3054",
+        "#d3d57c", "#c7aa74", "#957964", "#0081a7", "#00afb9", "#fdfcdc", "#fed9b7", "#f07167"],
+      colorCategoryMap: {}
     }
   },
   computed: {
@@ -215,11 +248,13 @@ export default {
     this.getDailyStartEnd()
     this.getAvailableTablesForCompetition()
     this.getScheduleMetadata()
+    this.getGeneratedSchedule()
   },
   methods: {
     reRoute() {
       this.$router.push("schedule-advanced")
     },
+    getHoursMinutes: getHoursMinutes,
     getPlayingDate(date) {
       if (date === null) {
         return this.$t("schedule.main.notSelected")
@@ -234,6 +269,18 @@ export default {
           }
       ).catch(err => {
         console.log("Couldn't fetch daily start end, ", err)
+      })
+    },
+    getGeneratedSchedule() {
+      ScheduleGeneralService.getExcelSchedule(this.competition.id).then(res => {
+        this.generatedSchedule = res.data
+        console.log("Fetch schedule")
+        for (let i = 0; i < this.generatedSchedule.distinctCategories.length; i++) {
+          const category = this.generatedSchedule.distinctCategories[i]
+          this.colorCategoryMap[category.name] = this.colors[i]
+        }
+      }).catch(err => {
+        console.log("Couldn't fetch generated schedule", err)
       })
     },
     getInterval(interval) {
@@ -317,6 +364,30 @@ export default {
     },
     updateMinutesPerMatch() {
       ScheduleMetadataService.updateMinutesPerMatch(this.competition.id, {minutesPerMatch: this.scheduleMetadata.minutesPerMatch})
+    },
+    // Returns the category playing at a given table at a given time or empty string if no match is planned at that time
+    getCategoryAtTableTime(table, time) {
+      if (this.generatedSchedule == null) {
+        return ""
+      }
+
+      let stringToReturn = ""
+      this.generatedSchedule.scheduleItemList.forEach(item => {
+        if (item.tableNumber === table) {
+          item.matchesAtTable.forEach(match => {
+            const matchTime = new Date(match.startTime)
+            const timeWeAreLookingFor = new Date(time)
+            if (matchTime.getTime() === timeWeAreLookingFor.getTime()) {
+              stringToReturn = this.createCategoryMatchString(match)
+            }
+          })
+        }
+      })
+      return stringToReturn
+    },
+    // Returns e.g. "Herrar 1 (Group A)"
+    createCategoryMatchString(categoryMatch) {
+      return categoryMatch.category.name // " (" + categoryMatch.groupOrRound + ")"
     }
   }
 }
