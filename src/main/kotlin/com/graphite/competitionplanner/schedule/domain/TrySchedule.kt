@@ -38,7 +38,10 @@ class TrySchedule(
         val durationRequiredToFitAllTimeslots = settings.averageMatchTime.times(numberOfTimeslots)
 
         val enoughTime = durationOfInterval > durationRequiredToFitAllTimeslots
-        val estimatedEndTime = LocalDateTime.of(spec.playDate, spec.timeInterval.startTime()).plusMinutes(durationRequiredToFitAllTimeslots.inWholeMinutes)
+        val estimatedEndTime = LocalDateTime.of(spec.playDate, spec.timeInterval.startTime())
+            .plusMinutes(durationRequiredToFitAllTimeslots.inWholeMinutes)
+
+        repository.update(competitionCategoryIds, estimatedEndTime, enoughTime)
 
         return PreScheduleDto(
             enoughTime,

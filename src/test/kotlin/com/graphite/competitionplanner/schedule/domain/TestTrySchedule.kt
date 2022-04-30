@@ -5,7 +5,9 @@ import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
+import org.mockito.Mockito.times
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.verify
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -61,6 +63,8 @@ class TestTrySchedule {
         )
         Assertions.assertEquals(spec.playDate, result.playDate, "Returned wrong play date")
         Assertions.assertEquals(spec.timeInterval, result.timeInterval, "Returned wrong time interval")
+
+        verify(mockedScheduleRepository, times(1)).update(listOf(3, 4, 7), result.estimatedEndTime, result.success)
     }
 
     @Test
@@ -108,5 +112,7 @@ class TestTrySchedule {
         )
         Assertions.assertEquals(spec.playDate, result.playDate, "Returned wrong play date")
         Assertions.assertEquals(spec.timeInterval, result.timeInterval, "Returned wrong time interval")
+
+        verify(mockedScheduleRepository, times(1)).update(listOf(3, 4, 7, 9, 11), result.estimatedEndTime, result.success)
     }
 }
