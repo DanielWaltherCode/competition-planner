@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @SpringBootTest
 class TestPreSchedule @Autowired constructor(
@@ -55,6 +56,33 @@ class TestPreSchedule @Autowired constructor(
         Assertions.assertDoesNotThrow {
             scheduleRepository.storePreSchedule(competition.id, preSchedule)
         }
+    }
+
+    @Test
+    fun testUpdatingPreSchedule() {
+        // Setup
+        val club = newClub()
+        val competition = club.addCompetition()
+        val competitionCategory1 = competition.addCompetitionCategory("Herrar 1")
+        val competitionCategory2 = competition.addCompetitionCategory("Herrar 2")
+        val preSchedule1 = dataGenerator.newPreScheduleSpec(competitionCategoryId = competitionCategory1.id)
+        val preSchedule2 = dataGenerator.newPreScheduleSpec(competitionCategoryId = competitionCategory2.id)
+        scheduleRepository.storePreSchedule(competition.id, preSchedule1)
+        scheduleRepository.storePreSchedule(competition.id, preSchedule2)
+
+        val estimatedTime = LocalDateTime.of(2022, 1, 3, 9, 0, 0)
+        val success = false
+
+        // Act
+        scheduleRepository.update(listOf(competitionCategory1.id, competitionCategory2.id), estimatedTime, success)
+
+        // Assert
+        val preSchedule = scheduleRepository.getPreSchedule(competition.id)
+
+        Assertions.assertTrue(
+            preSchedule.all { it.success == success && it.estimatedEndTime == estimatedTime },
+            "At least one of the competition categories was not updated: $preSchedule"
+        )
     }
 
     @Test
@@ -105,7 +133,11 @@ class TestPreSchedule @Autowired constructor(
         Assertions.assertEquals(3, eveningMatches.size, "Not the correct number of matches returned.")
     }
 
-    fun CompetitionCategoryDTO.addMatches(numberOfMatches: Int, first: RegistrationSinglesDTO, second: RegistrationSinglesDTO): List<Match> {
+    fun CompetitionCategoryDTO.addMatches(
+        numberOfMatches: Int,
+        first: RegistrationSinglesDTO,
+        second: RegistrationSinglesDTO
+    ): List<Match> {
         return (1..numberOfMatches).map {
             matchRepository.store(
                 dataGenerator.newMatchSpec(

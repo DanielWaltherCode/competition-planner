@@ -2,12 +2,10 @@ package com.graphite.competitionplanner.schedule.repository
 
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategory
 import com.graphite.competitionplanner.schedule.api.*
-import com.graphite.competitionplanner.schedule.domain.PreScheduleSpec
-import com.graphite.competitionplanner.schedule.domain.ScheduleMatchDto
-import com.graphite.competitionplanner.schedule.domain.TimeInterval
+import com.graphite.competitionplanner.schedule.domain.*
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
-import com.graphite.competitionplanner.tables.Player
 import com.graphite.competitionplanner.tables.records.ScheduleAvailableTablesRecord
 import com.graphite.competitionplanner.tables.records.ScheduleCategoryRecord
 import com.graphite.competitionplanner.tables.records.ScheduleDailyTimesRecord
@@ -16,9 +14,10 @@ import org.jooq.DSLContext
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Repository
-class ScheduleRepository(private val dslContext: DSLContext): IScheduleRepository {
+class ScheduleRepository(private val dslContext: DSLContext) : IScheduleRepository {
 
     // Schedule metadata methods
     fun addScheduleMetadata(
@@ -105,8 +104,10 @@ class ScheduleRepository(private val dslContext: DSLContext): IScheduleRepositor
     ) {
         dslContext.update(SCHEDULE_AVAILABLE_TABLES)
             .set(SCHEDULE_AVAILABLE_TABLES.NR_TABLES, availableTablesFullDaySpec.nrTables)
-            .where(SCHEDULE_AVAILABLE_TABLES.DAY.eq(availableTablesFullDaySpec.day)
-                .and(SCHEDULE_AVAILABLE_TABLES.COMPETITION_ID.eq(competitionId)))
+            .where(
+                SCHEDULE_AVAILABLE_TABLES.DAY.eq(availableTablesFullDaySpec.day)
+                    .and(SCHEDULE_AVAILABLE_TABLES.COMPETITION_ID.eq(competitionId))
+            )
             .execute()
     }
 
@@ -119,7 +120,9 @@ class ScheduleRepository(private val dslContext: DSLContext): IScheduleRepositor
 
     fun getTablesAvailableByDay(competitionId: Int, day: LocalDate): List<ScheduleAvailableTablesRecord> {
         return dslContext.selectFrom(SCHEDULE_AVAILABLE_TABLES)
-            .where(SCHEDULE_AVAILABLE_TABLES.COMPETITION_ID.eq(competitionId).and(SCHEDULE_AVAILABLE_TABLES.DAY.eq(day)))
+            .where(
+                SCHEDULE_AVAILABLE_TABLES.COMPETITION_ID.eq(competitionId).and(SCHEDULE_AVAILABLE_TABLES.DAY.eq(day))
+            )
             .orderBy(SCHEDULE_AVAILABLE_TABLES.HOUR)
             .fetchInto(SCHEDULE_AVAILABLE_TABLES)
     }
@@ -131,12 +134,14 @@ class ScheduleRepository(private val dslContext: DSLContext): IScheduleRepositor
     }
 
     // Category start time methods -- sets day and time for when category is held
-    fun addCategoryStartTime(competitionCategoryId: Int, categoryStartTimeSpec: CategoryStartTimeSpec): ScheduleCategoryRecord {
+    fun addCategoryStartTime(
+        competitionCategoryId: Int,
+        categoryStartTimeSpec: CategoryStartTimeSpec
+    ): ScheduleCategoryRecord {
         val record = dslContext.newRecord(SCHEDULE_CATEGORY)
         val startInterval = if (categoryStartTimeSpec.startInterval == null) {
             null
-        }
-        else {
+        } else {
             categoryStartTimeSpec.startInterval.name
         }
         record.playingDay = categoryStartTimeSpec.playingDay
@@ -156,8 +161,10 @@ class ScheduleRepository(private val dslContext: DSLContext): IScheduleRepositor
     // Currently sorted on day but should be sorted on parts of day and time as well
     fun getAllCategoryStartTimesInCompetition(competitionId: Int): List<ScheduleCategoryRecord> {
         return dslContext
-            .select(SCHEDULE_CATEGORY.ID, SCHEDULE_CATEGORY.PLAYING_DAY, SCHEDULE_CATEGORY.START_INTERVAL,
-        SCHEDULE_CATEGORY.EXACT_START_TIME, SCHEDULE_CATEGORY.COMPETITON_CATEGORY_ID)
+            .select(
+                SCHEDULE_CATEGORY.ID, SCHEDULE_CATEGORY.PLAYING_DAY, SCHEDULE_CATEGORY.START_INTERVAL,
+                SCHEDULE_CATEGORY.EXACT_START_TIME, SCHEDULE_CATEGORY.COMPETITON_CATEGORY_ID
+            )
             .from(COMPETITION)
             .join(COMPETITION_CATEGORY).on(COMPETITION_CATEGORY.COMPETITION_ID.eq(COMPETITION.ID))
             .join(SCHEDULE_CATEGORY).on(SCHEDULE_CATEGORY.COMPETITON_CATEGORY_ID.eq(COMPETITION_CATEGORY.ID))
@@ -175,8 +182,7 @@ class ScheduleRepository(private val dslContext: DSLContext): IScheduleRepositor
 
         val startInterval = if (categoryStartTimeSpec.startInterval == null) {
             null
-        }
-        else {
+        } else {
             categoryStartTimeSpec.startInterval.name
         }
 
@@ -214,7 +220,7 @@ class ScheduleRepository(private val dslContext: DSLContext): IScheduleRepositor
         dailyStartAndEndId: Int,
         competitionId: Int,
         dailyStartAndEndSpec: DailyStartAndEndSpec
-    ): ScheduleDailyTimesRecord  {
+    ): ScheduleDailyTimesRecord {
         val record = dslContext.newRecord(SCHEDULE_DAILY_TIMES)
         record.id = dailyStartAndEndId
         record.day = dailyStartAndEndSpec.day
@@ -242,17 +248,24 @@ class ScheduleRepository(private val dslContext: DSLContext): IScheduleRepositor
             .fetchInto(SCHEDULE_DAILY_TIMES)
     }
 
-    override fun getPreScheduledMatches(competitionId: Int, date: LocalDate, timeInterval: TimeInterval): List<ScheduleMatchDto> {
+    override fun getPreScheduledMatches(
+        competitionId: Int,
+        date: LocalDate,
+        timeInterval: TimeInterval
+    ): List<ScheduleMatchDto> {
         val matches = dslContext.select(
             MATCH.ID,
             MATCH.COMPETITION_CATEGORY_ID,
             MATCH.FIRST_REGISTRATION_ID,
-            MATCH.SECOND_REGISTRATION_ID)
-        .from(MATCH)
-        .join(PRE_SCHEDULE).on(MATCH.COMPETITION_CATEGORY_ID.eq(PRE_SCHEDULE.COMPETITION_CATEGORY_ID))
-        .where(PRE_SCHEDULE.COMPETITION_ID.eq(competitionId)
-        .and(PRE_SCHEDULE.PLAY_DATE.eq(date))
-        .and(PRE_SCHEDULE.TIME_INTERVAL.eq(timeInterval.name)))
+            MATCH.SECOND_REGISTRATION_ID
+        )
+            .from(MATCH)
+            .join(PRE_SCHEDULE).on(MATCH.COMPETITION_CATEGORY_ID.eq(PRE_SCHEDULE.COMPETITION_CATEGORY_ID))
+            .where(
+                PRE_SCHEDULE.COMPETITION_ID.eq(competitionId)
+                    .and(PRE_SCHEDULE.PLAY_DATE.eq(date))
+                    .and(PRE_SCHEDULE.TIME_INTERVAL.eq(timeInterval.name))
+            )
 
         return matches.map {
             ScheduleMatchDto(
@@ -267,13 +280,57 @@ class ScheduleRepository(private val dslContext: DSLContext): IScheduleRepositor
 
     override fun storePreSchedule(competitionId: Int, spec: PreScheduleSpec) {
         try {
-            dslContext.insertInto(PRE_SCHEDULE,
-                PRE_SCHEDULE.COMPETITION_ID, PRE_SCHEDULE.PLAY_DATE, PRE_SCHEDULE.TIME_INTERVAL, PRE_SCHEDULE.COMPETITION_CATEGORY_ID)
+            dslContext.insertInto(
+                PRE_SCHEDULE,
+                PRE_SCHEDULE.COMPETITION_ID,
+                PRE_SCHEDULE.PLAY_DATE,
+                PRE_SCHEDULE.TIME_INTERVAL,
+                PRE_SCHEDULE.COMPETITION_CATEGORY_ID
+            )
                 .values(competitionId, spec.playDate, spec.timeInterval.name, spec.competitionCategoryId)
                 .execute()
-        } catch(_: DuplicateKeyException) {
+        } catch (_: DuplicateKeyException) {
             // If user tries to store same pre-schedule multiple times we simply ignore it. The function is idempotent.
         }
+    }
+
+    override fun getPreSchedule(competitionId: Int): List<CompetitionCategoryPreSchedule> {
+        val records = dslContext.select(
+            PRE_SCHEDULE.PLAY_DATE,
+            PRE_SCHEDULE.TIME_INTERVAL,
+            PRE_SCHEDULE.COMPETITION_CATEGORY_ID,
+            PRE_SCHEDULE.ESTIMATED_END_TIME,
+            PRE_SCHEDULE.SUCCESS,
+            COMPETITION_CATEGORY.STATUS,
+            CATEGORY.CATEGORY_NAME
+        )
+            .from(PRE_SCHEDULE)
+            .join(COMPETITION_CATEGORY).on(PRE_SCHEDULE.COMPETITION_CATEGORY_ID.eq(COMPETITION_CATEGORY.ID))
+            .join(CATEGORY).on(COMPETITION_CATEGORY.CATEGORY.eq(CATEGORY.ID))
+            .where(PRE_SCHEDULE.COMPETITION_ID.eq(competitionId))
+            .fetch()
+
+        return records.map {
+            CompetitionCategoryPreSchedule(
+                it.get(PRE_SCHEDULE.SUCCESS),
+                it.get(PRE_SCHEDULE.ESTIMATED_END_TIME),
+                it.get(PRE_SCHEDULE.PLAY_DATE),
+                TimeInterval.valueOf(it.get(PRE_SCHEDULE.TIME_INTERVAL)),
+                CompetitionCategory(
+                    it.get(PRE_SCHEDULE.COMPETITION_CATEGORY_ID),
+                    it.get(COMPETITION_CATEGORY.STATUS),
+                    it.get(CATEGORY.CATEGORY_NAME)
+                )
+            )
+        }
+    }
+
+    override fun update(competitionCategoryIds: List<Int>, estimatedEndTime: LocalDateTime, success: Boolean) {
+        dslContext.update(PRE_SCHEDULE)
+            .set(PRE_SCHEDULE.ESTIMATED_END_TIME, estimatedEndTime)
+            .set(PRE_SCHEDULE.SUCCESS, success)
+            .where(PRE_SCHEDULE.COMPETITION_CATEGORY_ID.`in`(competitionCategoryIds))
+            .execute()
     }
 
     private fun getPlayerIdsForRegistrationId(registrationId: Int): List<Int> {

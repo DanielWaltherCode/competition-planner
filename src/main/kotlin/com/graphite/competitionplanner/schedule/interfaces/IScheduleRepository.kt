@@ -32,6 +32,12 @@ interface IScheduleRepository {
      */
     fun getPreSchedule(competitionId: Int): List<CompetitionCategoryPreSchedule>
 
-    // TODO: Implement
-//    fun update(competitionCategoryIds: List<Int>, estimatedEndTime: LocalDateTime, success: Boolean)
+    /**
+     * Update the estimated end time and success status of the competition categories
+     *
+     * @param competitionCategoryIds IDs of competition categories to update pre-schedule status on
+     * @param estimatedEndTime Time to set on the competition categories
+     * @param success Pre-schedule success status to set on the competition categories
+     */
+    fun update(competitionCategoryIds: List<Int>, estimatedEndTime: LocalDateTime, success: Boolean)
 }
