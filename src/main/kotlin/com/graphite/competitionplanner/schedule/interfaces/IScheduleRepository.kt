@@ -1,9 +1,8 @@
 package com.graphite.competitionplanner.schedule.interfaces
 
-import com.graphite.competitionplanner.schedule.domain.PreScheduleSpec
-import com.graphite.competitionplanner.schedule.domain.ScheduleMatchDto
-import com.graphite.competitionplanner.schedule.domain.TimeInterval
+import com.graphite.competitionplanner.schedule.domain.*
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 interface IScheduleRepository {
 
@@ -25,4 +24,14 @@ interface IScheduleRepository {
      * @param spec The pre-schedule to store
      */
     fun storePreSchedule(competitionId: Int, spec: PreScheduleSpec)
+
+    /**
+     * Get the currently stored pre-schedule for the given competition
+     *
+     * @param competitionId ID of the competition
+     */
+    fun getPreSchedule(competitionId: Int): List<CompetitionCategoryPreSchedule>
+
+    // TODO: Implement
+//    fun update(competitionCategoryIds: List<Int>, estimatedEndTime: LocalDateTime, success: Boolean)
 }
