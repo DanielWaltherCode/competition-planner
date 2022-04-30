@@ -14,7 +14,7 @@ const DailyStartEndService = {
     getDailyStartEndForCompetition(competitionId) {
         return Axios.get(`/schedule/${competitionId}/daily-start-end`,
             {withCredentials: true})
-    },
+    }
 }
 
 export default DailyStartEndService
