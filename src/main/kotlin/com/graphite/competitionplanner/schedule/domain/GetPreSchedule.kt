@@ -27,10 +27,11 @@ data class CompetitionCategoryPreSchedule(
     val success: Boolean,
 
     /**
-     * The estimated time when the last match is ending. This can be outside the time interval
+     * The estimated time when the last match is ending. This can be outside the time interval. If this value is null
+     * it means that no estimated time have been calculated yet.
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    val estimatedEndTime: LocalDateTime,
+    val estimatedEndTime: LocalDateTime?,
 
     /**
      * Date when the competition categories should be played

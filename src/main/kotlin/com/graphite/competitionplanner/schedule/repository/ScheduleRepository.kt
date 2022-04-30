@@ -290,7 +290,13 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
                 .values(competitionId, spec.playDate, spec.timeInterval.name, spec.competitionCategoryId)
                 .execute()
         } catch (_: DuplicateKeyException) {
-            // If user tries to store same pre-schedule multiple times we simply ignore it. The function is idempotent.
+            // If user tries to store a new pre-schedule settings for an already pre-scheduled competition category we
+            // instead update the settings.
+            dslContext.update(PRE_SCHEDULE)
+                .set(PRE_SCHEDULE.PLAY_DATE, spec.playDate)
+                .set(PRE_SCHEDULE.TIME_INTERVAL, spec.timeInterval.name)
+                .where(PRE_SCHEDULE.COMPETITION_CATEGORY_ID.eq(spec.competitionCategoryId))
+                .execute()
         }
     }
 

@@ -59,6 +59,31 @@ class TestPreSchedule @Autowired constructor(
     }
 
     @Test
+    fun testStoreUpdatedTimeIntervalAndDate() {
+        // Setup
+        val club = newClub()
+        val competition = club.addCompetition()
+        val competitionCategory = competition.addCompetitionCategory()
+        val preSchedule = dataGenerator.newPreScheduleSpec(competitionCategoryId = competitionCategory.id)
+        scheduleRepository.storePreSchedule(competition.id, preSchedule)
+
+        // Act & Assert
+        val updatePreSchedule = dataGenerator.newPreScheduleSpec(
+            competitionCategoryId = competitionCategory.id,
+            playDate = LocalDate.now().plusDays(1),
+            timeInterval = TimeInterval.AFTERNOON
+        )
+        Assertions.assertDoesNotThrow {
+            scheduleRepository.storePreSchedule(competition.id, updatePreSchedule)
+        }
+
+        val result = scheduleRepository.getPreSchedule(competition.id)
+        Assertions.assertEquals(1, result.size, "Wrong number of pre-schedules returned")
+        Assertions.assertEquals(updatePreSchedule.timeInterval, result.first().timeInterval)
+        Assertions.assertEquals(updatePreSchedule.playDate, result.first().playDate)
+    }
+
+    @Test
     fun testUpdatingPreSchedule() {
         // Setup
         val club = newClub()

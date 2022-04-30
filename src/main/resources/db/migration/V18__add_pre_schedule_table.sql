@@ -9,4 +9,4 @@ create table pre_schedule
 );
 
 CREATE UNIQUE INDEX idx_pre_schedule
-    ON pre_schedule(competition_id, play_date, time_interval, competition_category_id);
+    ON pre_schedule(competition_id, competition_category_id);
