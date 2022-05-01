@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.schedule.domain
 
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
+import com.graphite.competitionplanner.schedule.service.StartInterval
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -27,7 +28,7 @@ class TestTrySchedule {
     fun whenAllMatchesFitInTimeInterval() {
         // Setup
         val competitionId = 1
-        val spec = PreScheduleSpec(LocalDate.now(), TimeInterval.MORNING, 22)
+        val spec = PreScheduleSpec(LocalDate.now(), StartInterval.MORNING, 22)
         val settings = dataGenerator.newScheduleSettingsDTO(
             averageMatchTime = Duration.minutes(20),
             numberOfTables = 5,
@@ -71,7 +72,7 @@ class TestTrySchedule {
     fun whenNotAllMatchesFitInTimeInterval() {
         // Setup
         val competitionId = 1
-        val spec = PreScheduleSpec(LocalDate.now(), TimeInterval.MORNING, 22)
+        val spec = PreScheduleSpec(LocalDate.now(), StartInterval.MORNING, 22)
         val settings = dataGenerator.newScheduleSettingsDTO(
             averageMatchTime = Duration.minutes(60),
             numberOfTables = 1,

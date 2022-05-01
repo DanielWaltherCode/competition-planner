@@ -6,6 +6,7 @@ import com.graphite.competitionplanner.competitioncategory.repository.Competitio
 import com.graphite.competitionplanner.schedule.api.*
 import com.graphite.competitionplanner.schedule.domain.*
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
+import com.graphite.competitionplanner.schedule.service.StartInterval
 import com.graphite.competitionplanner.tables.records.ScheduleAvailableTablesRecord
 import com.graphite.competitionplanner.tables.records.ScheduleCategoryRecord
 import com.graphite.competitionplanner.tables.records.ScheduleDailyTimesRecord
@@ -251,7 +252,7 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
     override fun getPreScheduledMatches(
         competitionId: Int,
         date: LocalDate,
-        timeInterval: TimeInterval
+        timeInterval: StartInterval
     ): List<ScheduleMatchDto> {
         val matches = dslContext.select(
             MATCH.ID,
@@ -321,7 +322,7 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
                 it.get(PRE_SCHEDULE.SUCCESS),
                 it.get(PRE_SCHEDULE.ESTIMATED_END_TIME),
                 it.get(PRE_SCHEDULE.PLAY_DATE),
-                TimeInterval.valueOf(it.get(PRE_SCHEDULE.TIME_INTERVAL)),
+                StartInterval.valueOf(it.get(PRE_SCHEDULE.TIME_INTERVAL)),
                 CompetitionCategory(
                     it.get(PRE_SCHEDULE.COMPETITION_CATEGORY_ID),
                     it.get(COMPETITION_CATEGORY.STATUS),

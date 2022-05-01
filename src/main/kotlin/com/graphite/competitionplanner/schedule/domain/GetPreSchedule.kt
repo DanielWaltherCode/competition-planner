@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.schedule.domain
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategory
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
+import com.graphite.competitionplanner.schedule.service.StartInterval
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -42,7 +43,7 @@ data class CompetitionCategoryPreSchedule(
     /**
      * Time interval for when the competition categories should be played
      */
-    val timeInterval: TimeInterval,
+    val timeInterval: StartInterval,
 
     /**
      * The competition category

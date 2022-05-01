@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.schedule.interfaces
 
 import com.graphite.competitionplanner.schedule.domain.*
+import com.graphite.competitionplanner.schedule.service.StartInterval
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -14,7 +15,7 @@ interface IScheduleRepository {
      * @param timeInterval Time interval when the competition category has been pre-scheduled
      * @return Matches for all the competition categories that has been scheduled for the given date and time interval
      */
-    fun getPreScheduledMatches(competitionId: Int, date: LocalDate, timeInterval: TimeInterval): List<ScheduleMatchDto>
+    fun getPreScheduledMatches(competitionId: Int, date: LocalDate, timeInterval: StartInterval): List<ScheduleMatchDto>
 
     /**
      * Store a pre-schedule for a competition. If the given pre-schedule has already been stored nothing will change.

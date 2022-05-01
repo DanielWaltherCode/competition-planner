@@ -11,8 +11,8 @@ import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesDTO
 import com.graphite.competitionplanner.result.interfaces.IResultRepository
-import com.graphite.competitionplanner.schedule.domain.TimeInterval
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
+import com.graphite.competitionplanner.schedule.service.StartInterval
 import com.graphite.competitionplanner.util.BaseRepositoryTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -71,7 +71,7 @@ class TestPreSchedule @Autowired constructor(
         val updatePreSchedule = dataGenerator.newPreScheduleSpec(
             competitionCategoryId = competitionCategory.id,
             playDate = LocalDate.now().plusDays(1),
-            timeInterval = TimeInterval.AFTERNOON
+            timeInterval = StartInterval.AFTERNOON
         )
         Assertions.assertDoesNotThrow {
             scheduleRepository.storePreSchedule(competition.id, updatePreSchedule)
@@ -134,7 +134,7 @@ class TestPreSchedule @Autowired constructor(
             dataGenerator.newPreScheduleSpec(
                 competitionCategoryId = menCompetitionCategory.id,
                 playDate = today,
-                timeInterval = TimeInterval.EVENING
+                timeInterval = StartInterval.EVENING
             )
         )
         scheduleRepository.storePreSchedule(
@@ -142,7 +142,7 @@ class TestPreSchedule @Autowired constructor(
             dataGenerator.newPreScheduleSpec(
                 competitionCategoryId = womenCompetitionCategory.id,
                 playDate = today,
-                timeInterval = TimeInterval.MORNING
+                timeInterval = StartInterval.MORNING
             )
         )
 
@@ -150,8 +150,8 @@ class TestPreSchedule @Autowired constructor(
         womenCompetitionCategory.addMatches(4, erikaRegistration, matildaRegistration)
 
         // Act
-        val morningMatches = scheduleRepository.getPreScheduledMatches(competition.id, today, TimeInterval.MORNING)
-        val eveningMatches = scheduleRepository.getPreScheduledMatches(competition.id, today, TimeInterval.EVENING)
+        val morningMatches = scheduleRepository.getPreScheduledMatches(competition.id, today, StartInterval.MORNING)
+        val eveningMatches = scheduleRepository.getPreScheduledMatches(competition.id, today, StartInterval.EVENING)
 
         // Assert
         Assertions.assertEquals(4, morningMatches.size, "Not the correct number of matches returned.")

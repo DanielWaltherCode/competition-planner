@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
+import com.graphite.competitionplanner.schedule.service.StartInterval
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -26,6 +27,8 @@ class TrySchedule(
      */
     fun execute(competitionId: Int, spec: PreScheduleSpec, settings: ScheduleSettingsDTO): PreScheduleDto {
         // TODO: We might want to guard against the spec having a play date that is not consistent with when the competition is taking place
+        // TODO: We now have to handle the NOT_SELECTED time interval case
+        // TODO: When we change from e.g. MORNING -> EVENING we also need to update status of the categories in MORNING as they may fit now.
 
         repository.storePreSchedule(competitionId, spec)
         val matches = repository.getPreScheduledMatches(competitionId, spec.playDate, spec.timeInterval)
@@ -52,19 +55,21 @@ class TrySchedule(
         )
     }
 
-    fun TimeInterval.toDuration(): Duration {
+    fun StartInterval.toDuration(): Duration {
         return when (this) {
-            TimeInterval.MORNING -> (13 - 9).toDuration(TimeUnit.HOURS)
-            TimeInterval.AFTERNOON -> (17 - 13).toDuration(TimeUnit.HOURS)
-            TimeInterval.EVENING -> (21 - 17).toDuration(TimeUnit.HOURS)
+            StartInterval.MORNING -> (13 - 9).toDuration(TimeUnit.HOURS)
+            StartInterval.AFTERNOON -> (17 - 13).toDuration(TimeUnit.HOURS)
+            StartInterval.EVENING -> (21 - 17).toDuration(TimeUnit.HOURS)
+            else -> 0.toDuration(TimeUnit.HOURS)
         }
     }
 
-    fun TimeInterval.startTime(): LocalTime {
+    fun StartInterval.startTime(): LocalTime {
         return when (this) {
-            TimeInterval.MORNING -> LocalTime.of(9, 0, 0)
-            TimeInterval.AFTERNOON -> LocalTime.of(13, 0, 0)
-            TimeInterval.EVENING -> LocalTime.of(17, 0, 0)
+            StartInterval.MORNING -> LocalTime.of(9, 0, 0)
+            StartInterval.AFTERNOON -> LocalTime.of(13, 0, 0)
+            StartInterval.EVENING -> LocalTime.of(17, 0, 0)
+            else -> LocalTime.of(0, 0, 0)
         }
     }
 
@@ -121,7 +126,7 @@ data class PreScheduleSpec(
     /**
      * Time interval for the categories to play
      */
-    val timeInterval: TimeInterval,
+    val timeInterval: StartInterval,
 
     /**
      * ID of the competition category to add to the given time interval
@@ -153,7 +158,7 @@ data class PreScheduleDto(
     /**
      * Time interval for when the competition categories should be played
      */
-    val timeInterval: TimeInterval,
+    val timeInterval: StartInterval,
 
     /**
      * List of competition category ids pre-scheduled for the same date and time interval.
