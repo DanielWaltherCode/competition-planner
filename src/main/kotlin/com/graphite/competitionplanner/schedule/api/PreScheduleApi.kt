@@ -20,21 +20,22 @@ class PreScheduleApi(
     val scheduleRepository: ScheduleRepository
 ) {
 
-    @GetMapping("pre-schedule")
+    @GetMapping("pre-schedule/")
     fun getPreSchedule(
-        @PathVariable competitionId: Int
+        @PathVariable competitionId: Int,
     ): List<CompetitionCategoryPreSchedule> {
         return getPreSchedule.execute(competitionId)
     }
 
-    @PostMapping("pre-schedule")
+    @PostMapping("pre-schedule/{competitionCategoryId}")
     fun tryPreSchedule(
         @PathVariable competitionId: Int,
+        @PathVariable competitionCategoryId: Int,
         @RequestBody spec: PreScheduleSpec
     ): PreScheduleDto {
         // TODO: Implement fetching scheduling settings
 //        val scheduleSettings = scheduleRepository.getScheduleMetadata(competitionId)
-        return trySchedule.execute(competitionId, spec,
+        return trySchedule.execute(competitionId, competitionCategoryId, spec,
             ScheduleSettingsDTO( // TODO: This data has to be read from database.
                 Duration.minutes(15),
                 1000,

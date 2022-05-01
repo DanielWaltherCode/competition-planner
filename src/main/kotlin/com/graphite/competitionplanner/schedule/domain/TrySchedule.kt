@@ -25,12 +25,12 @@ class TrySchedule(
      *
      * @return True if all matches for all categories can be played within the time interval. Else false
      */
-    fun execute(competitionId: Int, spec: PreScheduleSpec, settings: ScheduleSettingsDTO): PreScheduleDto {
+    fun execute(competitionId: Int, competitionCategoryId: Int, spec: PreScheduleSpec, settings: ScheduleSettingsDTO): PreScheduleDto {
         // TODO: We might want to guard against the spec having a play date that is not consistent with when the competition is taking place
         // TODO: We now have to handle the NOT_SELECTED time interval case
         // TODO: When we change from e.g. MORNING -> EVENING we also need to update status of the categories in MORNING as they may fit now.
 
-        repository.storePreSchedule(competitionId, spec)
+        repository.storePreSchedule(competitionId, competitionCategoryId, spec)
         val matches = repository.getPreScheduledMatches(competitionId, spec.playDate, spec.timeInterval)
         val competitionCategoryIds = matches.map { it.competitionCategoryId }.distinct()
         val matchDtos = matches.map { it.toMatchDTO() }
@@ -127,11 +127,6 @@ data class PreScheduleSpec(
      * Time interval for the categories to play
      */
     val timeInterval: StartInterval,
-
-    /**
-     * ID of the competition category to add to the given time interval
-     */
-    val competitionCategoryId: Int
 )
 
 /**

@@ -22,9 +22,10 @@ interface IScheduleRepository {
      * This function is idempotent i.e. calling it multiple time will have the same effect.
      *
      * @param competitionId ID of competition
+     * @param competitionCategoryId ID of the competition category
      * @param spec The pre-schedule to store
      */
-    fun storePreSchedule(competitionId: Int, spec: PreScheduleSpec)
+    fun storePreSchedule(competitionId: Int, competitionCategoryId: Int,  spec: PreScheduleSpec)
 
     /**
      * Get the currently stored pre-schedule for the given competition

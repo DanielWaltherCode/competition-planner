@@ -28,7 +28,7 @@ class TestTrySchedule {
     fun whenAllMatchesFitInTimeInterval() {
         // Setup
         val competitionId = 1
-        val spec = PreScheduleSpec(LocalDate.now(), StartInterval.MORNING, 22)
+        val spec = PreScheduleSpec(LocalDate.now(), StartInterval.MORNING)
         val settings = dataGenerator.newScheduleSettingsDTO(
             averageMatchTime = Duration.minutes(20),
             numberOfTables = 5,
@@ -48,7 +48,7 @@ class TestTrySchedule {
         )
 
         // Act
-        val result = trySchedule.execute(competitionId, spec, settings)
+        val result = trySchedule.execute(competitionId, 22,spec, settings)
 
         // Assert
         Assertions.assertTrue(
@@ -72,7 +72,7 @@ class TestTrySchedule {
     fun whenNotAllMatchesFitInTimeInterval() {
         // Setup
         val competitionId = 1
-        val spec = PreScheduleSpec(LocalDate.now(), StartInterval.MORNING, 22)
+        val spec = PreScheduleSpec(LocalDate.now(), StartInterval.MORNING)
         val settings = dataGenerator.newScheduleSettingsDTO(
             averageMatchTime = Duration.minutes(60),
             numberOfTables = 1,
@@ -94,7 +94,7 @@ class TestTrySchedule {
         )
 
         // Act
-        val result = trySchedule.execute(competitionId, spec, settings)
+        val result = trySchedule.execute(competitionId, 22, spec, settings)
 
         // Assert
         Assertions.assertTrue(

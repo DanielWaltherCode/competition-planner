@@ -525,11 +525,9 @@ class DataGenerator {
     fun newPreScheduleSpec(
         playDate: LocalDate = LocalDate.now(),
         timeInterval: StartInterval = StartInterval.MORNING,
-        competitionCategoryId: Int = this.competitionCategoryId++
     ) = PreScheduleSpec(
         playDate,
         timeInterval,
-        competitionCategoryId
     )
 
     /**

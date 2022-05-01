@@ -49,12 +49,12 @@ class TestPreSchedule @Autowired constructor(
         val club = newClub()
         val competition = club.addCompetition()
         val competitionCategory = competition.addCompetitionCategory()
-        val preSchedule = dataGenerator.newPreScheduleSpec(competitionCategoryId = competitionCategory.id)
+        val preSchedule = dataGenerator.newPreScheduleSpec()
 
         // Act & Assert
-        scheduleRepository.storePreSchedule(competition.id, preSchedule)
+        scheduleRepository.storePreSchedule(competition.id, competitionCategory.id, preSchedule)
         Assertions.assertDoesNotThrow {
-            scheduleRepository.storePreSchedule(competition.id, preSchedule)
+            scheduleRepository.storePreSchedule(competition.id, competitionCategory.id, preSchedule)
         }
     }
 
@@ -64,17 +64,16 @@ class TestPreSchedule @Autowired constructor(
         val club = newClub()
         val competition = club.addCompetition()
         val competitionCategory = competition.addCompetitionCategory()
-        val preSchedule = dataGenerator.newPreScheduleSpec(competitionCategoryId = competitionCategory.id)
-        scheduleRepository.storePreSchedule(competition.id, preSchedule)
+        val preSchedule = dataGenerator.newPreScheduleSpec()
+        scheduleRepository.storePreSchedule(competition.id, competitionCategory.id, preSchedule)
 
         // Act & Assert
         val updatePreSchedule = dataGenerator.newPreScheduleSpec(
-            competitionCategoryId = competitionCategory.id,
             playDate = LocalDate.now().plusDays(1),
             timeInterval = StartInterval.AFTERNOON
         )
         Assertions.assertDoesNotThrow {
-            scheduleRepository.storePreSchedule(competition.id, updatePreSchedule)
+            scheduleRepository.storePreSchedule(competition.id, competitionCategory.id, updatePreSchedule)
         }
 
         val result = scheduleRepository.getPreSchedule(competition.id)
@@ -90,10 +89,10 @@ class TestPreSchedule @Autowired constructor(
         val competition = club.addCompetition()
         val competitionCategory1 = competition.addCompetitionCategory("Herrar 1")
         val competitionCategory2 = competition.addCompetitionCategory("Herrar 2")
-        val preSchedule1 = dataGenerator.newPreScheduleSpec(competitionCategoryId = competitionCategory1.id)
-        val preSchedule2 = dataGenerator.newPreScheduleSpec(competitionCategoryId = competitionCategory2.id)
-        scheduleRepository.storePreSchedule(competition.id, preSchedule1)
-        scheduleRepository.storePreSchedule(competition.id, preSchedule2)
+        val preSchedule1 = dataGenerator.newPreScheduleSpec()
+        val preSchedule2 = dataGenerator.newPreScheduleSpec()
+        scheduleRepository.storePreSchedule(competition.id, competitionCategory1.id, preSchedule1)
+        scheduleRepository.storePreSchedule(competition.id, competitionCategory2.id, preSchedule2)
 
         val estimatedTime = LocalDateTime.of(2022, 1, 3, 9, 0, 0)
         val success = false
@@ -131,16 +130,16 @@ class TestPreSchedule @Autowired constructor(
         val today = LocalDate.now()
         scheduleRepository.storePreSchedule(
             competition.id,
+            menCompetitionCategory.id,
             dataGenerator.newPreScheduleSpec(
-                competitionCategoryId = menCompetitionCategory.id,
                 playDate = today,
                 timeInterval = StartInterval.EVENING
             )
         )
         scheduleRepository.storePreSchedule(
             competition.id,
+            womenCompetitionCategory.id,
             dataGenerator.newPreScheduleSpec(
-                competitionCategoryId = womenCompetitionCategory.id,
                 playDate = today,
                 timeInterval = StartInterval.MORNING
             )

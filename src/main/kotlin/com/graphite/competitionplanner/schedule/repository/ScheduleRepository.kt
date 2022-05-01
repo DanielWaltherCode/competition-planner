@@ -279,7 +279,7 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
 
     }
 
-    override fun storePreSchedule(competitionId: Int, spec: PreScheduleSpec) {
+    override fun storePreSchedule(competitionId: Int, competitionCategoryId: Int, spec: PreScheduleSpec) {
         try {
             dslContext.insertInto(
                 PRE_SCHEDULE,
@@ -288,7 +288,7 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
                 PRE_SCHEDULE.TIME_INTERVAL,
                 PRE_SCHEDULE.COMPETITION_CATEGORY_ID
             )
-                .values(competitionId, spec.playDate, spec.timeInterval.name, spec.competitionCategoryId)
+                .values(competitionId, spec.playDate, spec.timeInterval.name, competitionCategoryId)
                 .execute()
         } catch (_: DuplicateKeyException) {
             // If user tries to store a new pre-schedule settings for an already pre-scheduled competition category we
@@ -296,7 +296,7 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
             dslContext.update(PRE_SCHEDULE)
                 .set(PRE_SCHEDULE.PLAY_DATE, spec.playDate)
                 .set(PRE_SCHEDULE.TIME_INTERVAL, spec.timeInterval.name)
-                .where(PRE_SCHEDULE.COMPETITION_CATEGORY_ID.eq(spec.competitionCategoryId))
+                .where(PRE_SCHEDULE.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
                 .execute()
         }
     }
