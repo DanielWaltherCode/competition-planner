@@ -22,8 +22,11 @@ import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.service.ResultDTO
+import com.graphite.competitionplanner.schedule.domain.PreScheduleSpec
+import com.graphite.competitionplanner.schedule.domain.ScheduleMatchDto
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
+import com.graphite.competitionplanner.schedule.service.StartInterval
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.random.Random
@@ -505,6 +508,26 @@ class DataGenerator {
     ) = RegistrationDTO(
         id,
         date
+    )
+
+    fun newScheduleMatchDTO(
+        id: Int = this.matchId++,
+        competitionCategoryId: Int = this.competitionCategoryId++,
+        firstPlayer: List<Int> = listOf(1),
+        secondPlayer: List<Int> = listOf(2)
+    ) = ScheduleMatchDto(
+        id,
+        competitionCategoryId,
+        firstPlayer,
+        secondPlayer
+    )
+
+    fun newPreScheduleSpec(
+        playDate: LocalDate = LocalDate.now(),
+        timeInterval: StartInterval = StartInterval.MORNING,
+    ) = PreScheduleSpec(
+        playDate,
+        timeInterval,
     )
 
     /**
