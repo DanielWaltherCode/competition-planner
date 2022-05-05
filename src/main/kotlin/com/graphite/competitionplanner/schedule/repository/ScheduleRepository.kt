@@ -7,11 +7,13 @@ import com.graphite.competitionplanner.schedule.api.*
 import com.graphite.competitionplanner.schedule.domain.*
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
 import com.graphite.competitionplanner.schedule.service.StartInterval
+import com.graphite.competitionplanner.tables.records.MatchScheduleRecord
 import com.graphite.competitionplanner.tables.records.ScheduleAvailableTablesRecord
 import com.graphite.competitionplanner.tables.records.ScheduleCategoryRecord
 import com.graphite.competitionplanner.tables.records.ScheduleDailyTimesRecord
 import com.graphite.competitionplanner.tables.records.ScheduleMetadataRecord
 import org.jooq.DSLContext
+import org.jooq.Record6
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
@@ -338,6 +340,93 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
             .set(PRE_SCHEDULE.SUCCESS, success)
             .where(PRE_SCHEDULE.COMPETITION_CATEGORY_ID.`in`(competitionCategoryIds))
             .execute()
+    }
+
+    override fun storeTimeTable(competitionId: Int, timeTable: List<TimeTableSlotSpec>) {
+        val records = timeTable.map { it.toRecord(competitionId) }
+        dslContext.batchInsert(records).execute()
+    }
+
+    override fun getTimeTable(competitionId: Int): List<TimeTableSlotDto> {
+        val records = dslContext.select(
+            MATCH_SCHEDULE.ID,
+            MATCH_SCHEDULE.START_TIME,
+            MATCH_SCHEDULE.LOCATION,
+            MATCH_SCHEDULE.TABLE_NUMBER,
+            MATCH.ID,
+            MATCH.COMPETITION_CATEGORY_ID)
+            .from(MATCH_SCHEDULE)
+            .leftJoin(MATCH).on(MATCH.MATCH_SCHEDULE_ID.eq(MATCH_SCHEDULE.ID))
+            .where(MATCH_SCHEDULE.COMPETITION_ID.eq(competitionId))
+
+        return records.map { it.toTimeTableSlotDto() }
+    }
+
+    override fun addMatchToTimeTableSlot(id: Int, matchId: Int): List<MatchToTimeTableSlot> {
+        dslContext.update(MATCH)
+            .set(MATCH.MATCH_SCHEDULE_ID, id)
+            .where(MATCH.ID.eq(matchId))
+            .execute()
+
+        val records = dslContext.select(
+            MATCH_SCHEDULE.ID,
+            MATCH_SCHEDULE.START_TIME,
+            MATCH_SCHEDULE.LOCATION,
+            MATCH_SCHEDULE.TABLE_NUMBER,
+            MATCH.ID,
+            MATCH.COMPETITION_CATEGORY_ID
+        )
+            .from(MATCH_SCHEDULE)
+            .leftJoin(MATCH).on(MATCH.MATCH_SCHEDULE_ID.eq(MATCH_SCHEDULE.ID))
+            .where(MATCH_SCHEDULE.ID.eq(id))
+
+        return records.map { it.toMatchToTimeTableSlot() }
+    }
+
+    private fun Record6<Int, LocalDateTime, String, Int, Int, Int>.toMatchToTimeTableSlot(): MatchToTimeTableSlot {
+        return MatchToTimeTableSlot(
+            this.get(MATCH.ID),
+            this.get(MATCH.COMPETITION_CATEGORY_ID),
+            this.get(MATCH_SCHEDULE.ID),
+            this.get(MATCH_SCHEDULE.START_TIME),
+            this.get(MATCH_SCHEDULE.TABLE_NUMBER),
+            this.get(MATCH_SCHEDULE.LOCATION),
+        )
+    }
+
+    private fun Record6<Int, LocalDateTime, String, Int, Int, Int>.toTimeTableSlotDto(): TimeTableSlotDto {
+
+        val matchId = this.get(MATCH.ID)
+        val competitionCategoryId = this.get(MATCH.COMPETITION_CATEGORY_ID)
+
+        val matchInfo: List<MatchInfo> = if (matchId != null) {
+            listOf(
+                MatchInfo(
+                    matchId,
+                    competitionCategoryId
+                )
+            )
+        } else {
+            emptyList()
+        }
+
+        return TimeTableSlotDto(
+            this.get(MATCH_SCHEDULE.ID),
+            this.get(MATCH_SCHEDULE.START_TIME),
+            this.get(MATCH_SCHEDULE.TABLE_NUMBER),
+            this.get(MATCH_SCHEDULE.LOCATION),
+            true, // TODO Fix
+            matchInfo
+        )
+    }
+
+    private fun TimeTableSlotSpec.toRecord(competitionId: Int): MatchScheduleRecord {
+        val record = dslContext.newRecord(MATCH_SCHEDULE)
+        record.competitionId = competitionId
+        record.startTime = this.startTime
+        record.tableNumber = this.tableNumber
+        record.location = this.location
+        return record
     }
 
     private fun getPlayerIdsForRegistrationId(registrationId: Int): List<Int> {

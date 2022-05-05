@@ -22,6 +22,7 @@ import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.service.ResultDTO
+import com.graphite.competitionplanner.schedule.domain.MatchToTimeTableSlot
 import com.graphite.competitionplanner.schedule.domain.PreScheduleSpec
 import com.graphite.competitionplanner.schedule.domain.ScheduleMatchDto
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
@@ -528,6 +529,22 @@ class DataGenerator {
     ) = PreScheduleSpec(
         playDate,
         timeInterval,
+    )
+
+    fun newMatchToTimeTableSlot(
+        matchId: Int = this.matchId++,
+        competitionCategoryId: Int = this.competitionCategoryId++,
+        timeTableSlotId: Int = 1,
+        startTime: LocalDateTime = LocalDateTime.now(),
+        tableNumber: Int = 7,
+        location: String = "Lule Energi Arena",
+    ) = MatchToTimeTableSlot(
+        matchId,
+        competitionCategoryId,
+        timeTableSlotId,
+        startTime,
+        tableNumber,
+        location
     )
 
     /**
