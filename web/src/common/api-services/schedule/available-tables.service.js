@@ -2,17 +2,12 @@ import Axios from "axios";
 
 const AvailableTablesService = {
     addTablesForDay(competitionId, availableTablesSpec) {
-        return Axios.post(`/schedule/${competitionId}/available-tables/full-day`,
+        return Axios.post(`/schedule/${competitionId}/available-tables`,
             availableTablesSpec,
             {withCredentials: true})
     },
     updateTablesForDay(competitionId, availableTablesSpec) {
-        return Axios.put(`/schedule/${competitionId}/available-tables/full-day`,
-            availableTablesSpec,
-            {withCredentials: true})
-    },
-    updateAvailableTable(availableTablesId, competitionId, availableTablesSpec) {
-        return Axios.put(`/schedule/${competitionId}/available-tables/${availableTablesId}`,
+        return Axios.put(`/schedule/${competitionId}/available-tables`,
             availableTablesSpec,
             {withCredentials: true})
     },

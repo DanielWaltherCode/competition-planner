@@ -12,9 +12,8 @@ create table schedule_available_tables(
     id SERIAL PRIMARY KEY,
     nr_tables INTEGER not null,
     day DATE,
-    hour TIME,
     competition_id INTEGER references competition(id) ON DELETE CASCADE NOT NULL,
-    UNIQUE(competition_id, day, hour)
+    unique(competition_id, day)
 );
 
 /**
