@@ -3,10 +3,12 @@ package com.graphite.competitionplanner.schedule.repository
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategory
+import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.schedule.api.*
 import com.graphite.competitionplanner.schedule.domain.*
-import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
+import com.graphite.competitionplanner.schedule.interfaces.*
 import com.graphite.competitionplanner.schedule.service.StartInterval
+import com.graphite.competitionplanner.tables.records.MatchRecord
 import com.graphite.competitionplanner.tables.records.MatchScheduleRecord
 import com.graphite.competitionplanner.tables.records.ScheduleAvailableTablesRecord
 import com.graphite.competitionplanner.tables.records.ScheduleCategoryRecord
@@ -347,19 +349,21 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
         dslContext.batchInsert(records).execute()
     }
 
-    override fun getTimeTable(competitionId: Int): List<TimeTableSlotDto> {
+    override fun getTimeTable(competitionId: Int): List<TimeTableSlotToMatch> {
         val records = dslContext.select(
             MATCH_SCHEDULE.ID,
             MATCH_SCHEDULE.START_TIME,
             MATCH_SCHEDULE.LOCATION,
             MATCH_SCHEDULE.TABLE_NUMBER,
             MATCH.ID,
-            MATCH.COMPETITION_CATEGORY_ID)
+            MATCH.COMPETITION_CATEGORY_ID
+        )
             .from(MATCH_SCHEDULE)
             .leftJoin(MATCH).on(MATCH.MATCH_SCHEDULE_ID.eq(MATCH_SCHEDULE.ID))
             .where(MATCH_SCHEDULE.COMPETITION_ID.eq(competitionId))
+            .orderBy(MATCH_SCHEDULE.ID.asc())
 
-        return records.map { it.toTimeTableSlotDto() }
+        return records.map { it.toTimeTableSlotToMatch() }
     }
 
     override fun addMatchToTimeTableSlot(id: Int, matchId: Int): List<MatchToTimeTableSlot> {
@@ -383,6 +387,58 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
         return records.map { it.toMatchToTimeTableSlot() }
     }
 
+    override fun updateMatchesTimeTablesSlots(matchTimeTableSlots: List<UpdateMatchToTimeTableSlotSpec>) {
+        val records = matchTimeTableSlots.map { it.toRecord() }
+        dslContext.batchUpdate(records).execute()
+    }
+
+    override fun getScheduleMatches(competitionCategoryId: Int, matchType: MatchType): List<ScheduleMatchDto> {
+        val matches = dslContext.select(
+            MATCH.ID,
+            MATCH.COMPETITION_CATEGORY_ID,
+            MATCH.FIRST_REGISTRATION_ID,
+            MATCH.SECOND_REGISTRATION_ID
+        )
+            .from(MATCH)
+            .where(
+                MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
+                    .and(MATCH.MATCH_TYPE.eq(matchType.name))
+            )
+
+        return matches.map {
+            ScheduleMatchDto(
+                it.get(MATCH.ID),
+                it.get(MATCH.COMPETITION_CATEGORY_ID),
+                getPlayerIdsForRegistrationId(it.get(MATCH.FIRST_REGISTRATION_ID)),
+                getPlayerIdsForRegistrationId(it.get(MATCH.SECOND_REGISTRATION_ID))
+            )
+        }
+    }
+
+    override fun getTimeTableSlotRecords(
+        competitionId: Int,
+        startTime: LocalDateTime,
+        tableNumbers: List<Int>,
+        location: String
+    ): List<MatchScheduleRecord> {
+        return dslContext.selectFrom(MATCH_SCHEDULE)
+            .where(
+                MATCH_SCHEDULE.COMPETITION_ID.eq(competitionId)
+                    .and(MATCH_SCHEDULE.LOCATION.eq(location))
+                    .and(MATCH_SCHEDULE.TABLE_NUMBER.`in`(tableNumbers))
+                    .and(MATCH_SCHEDULE.START_TIME.greaterOrEqual(startTime))
+            )
+            .orderBy(MATCH_SCHEDULE.START_TIME.asc(), MATCH_SCHEDULE.TABLE_NUMBER.asc())
+            .fetch()
+    }
+
+    private fun UpdateMatchToTimeTableSlotSpec.toRecord(): MatchRecord {
+        val record = dslContext.newRecord(MATCH)
+        record.id = this.matchId
+        record.matchScheduleId = this.timeTableSlotId
+        return record
+    }
+
     private fun Record6<Int, LocalDateTime, String, Int, Int, Int>.toMatchToTimeTableSlot(): MatchToTimeTableSlot {
         return MatchToTimeTableSlot(
             this.get(MATCH.ID),
@@ -394,28 +450,25 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
         )
     }
 
-    private fun Record6<Int, LocalDateTime, String, Int, Int, Int>.toTimeTableSlotDto(): TimeTableSlotDto {
+    private fun Record6<Int, LocalDateTime, String, Int, Int, Int>.toTimeTableSlotToMatch(): TimeTableSlotToMatch {
 
         val matchId = this.get(MATCH.ID)
         val competitionCategoryId = this.get(MATCH.COMPETITION_CATEGORY_ID)
 
-        val matchInfo: List<MatchInfo> = if (matchId != null) {
-            listOf(
-                MatchInfo(
+        val matchInfo: TimeTableSlotMatchInfo? = if (matchId != null) {
+                TimeTableSlotMatchInfo(
                     matchId,
                     competitionCategoryId
                 )
-            )
         } else {
-            emptyList()
+            null
         }
 
-        return TimeTableSlotDto(
+        return TimeTableSlotToMatch(
             this.get(MATCH_SCHEDULE.ID),
             this.get(MATCH_SCHEDULE.START_TIME),
             this.get(MATCH_SCHEDULE.TABLE_NUMBER),
             this.get(MATCH_SCHEDULE.LOCATION),
-            true, // TODO Fix
             matchInfo
         )
     }

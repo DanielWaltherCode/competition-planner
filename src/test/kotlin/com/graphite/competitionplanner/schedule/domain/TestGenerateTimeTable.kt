@@ -13,8 +13,7 @@ import kotlin.time.toDuration
 class TestGenerateTimeTable {
 
     private val mockedScheduleRepository: IScheduleRepository = Mockito.mock(IScheduleRepository::class.java)
-    private val generateTimeTable = GenerateTimeTable(mockedScheduleRepository)
-    private val dataGenerator = DataGenerator()
+    private val timeTableSlotHandler = TimeTableSlotHandler(mockedScheduleRepository)
 
     @Test
     fun testGenerateTimeTables() {
@@ -26,6 +25,6 @@ class TestGenerateTimeTable {
         val dates = listOf(LocalDate.of(2022, 6, 1), LocalDate.of(2022, 6, 2))
 
         // Act
-        generateTimeTable.execute(competitionId, numberOfTables, estimatedMatchTime, location, dates)
+        timeTableSlotHandler.init(competitionId, numberOfTables, estimatedMatchTime, location, dates)
     }
 }

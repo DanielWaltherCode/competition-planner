@@ -1,6 +1,8 @@
 package com.graphite.competitionplanner.schedule.domain
 
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
+import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotDto
+import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotSpec
 import com.graphite.competitionplanner.util.plusDuration
 import org.springframework.stereotype.Component
 import java.time.LocalDate
@@ -9,14 +11,15 @@ import java.time.LocalTime
 import kotlin.time.Duration
 
 @Component
-class GenerateTimeTable(
+class TimeTableSlotHandler(
     val repository: IScheduleRepository
 ) {
 
-    private val nine = LocalTime.of(9, 0, 0)
-    private val seventeen = LocalTime.of(17, 0, 0)
-
-    fun execute(competitionId: Int, numberOfTables: Int, estimatedMatchTime: Duration, location: String, dates: List<LocalDate>) {
+    // TODO: Make this more configurable
+    fun init(competitionId: Int, numberOfTables: Int, estimatedMatchTime: Duration, location: String, dates: List<LocalDate>) {
+        // TODO: Make input parameters
+        val nine = LocalTime.of(9, 0, 0)
+        val seventeen = LocalTime.of(17, 0, 0)
 
         val timeSlots = dates.flatMap { date: LocalDate ->
             generateStartTimes(
@@ -51,20 +54,5 @@ class GenerateTimeTable(
         }
         return startTimes
     }
-
 }
 
-data class TimeTableSlotSpec(
-    /**
-     * Start time of the time slot
-     */
-    val startTime: LocalDateTime,
-    /**
-     * Table number
-     */
-    val tableNumber: Int,
-    /**
-     * Location e.g. Arena A or Arena B. It is user defined
-     */
-    val location: String
-)

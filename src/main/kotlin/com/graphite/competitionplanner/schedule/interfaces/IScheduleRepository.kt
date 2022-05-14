@@ -1,7 +1,9 @@
 package com.graphite.competitionplanner.schedule.interfaces
 
+import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.schedule.domain.*
 import com.graphite.competitionplanner.schedule.service.StartInterval
+import com.graphite.competitionplanner.tables.records.MatchScheduleRecord
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -25,7 +27,7 @@ interface IScheduleRepository {
      * @param competitionCategoryId ID of the competition category
      * @param spec The pre-schedule to store
      */
-    fun storePreSchedule(competitionId: Int, competitionCategoryId: Int,  spec: PreScheduleSpec)
+    fun storePreSchedule(competitionId: Int, competitionCategoryId: Int, spec: PreScheduleSpec)
 
     /**
      * Get the currently stored pre-schedule for the given competition
@@ -52,12 +54,12 @@ interface IScheduleRepository {
     fun storeTimeTable(competitionId: Int, timeTable: List<TimeTableSlotSpec>)
 
     /**
-     * Return the timetable for the given competition
+     * Return a list of mapping from matches to TimeTableSlots
      *
      * @param competitionId ID of the competition
-     * @return The timetable
+     * @return A list of mapping from matches to TimeTableSlots ordered by the ID of the TimeTableSlots in ascending order
      */
-    fun getTimeTable(competitionId: Int): List<TimeTableSlotDto>
+    fun getTimeTable(competitionId: Int): List<TimeTableSlotToMatch>
 
     /**
      * Add a match to the TimeTableSlot and return all matches that are now booked in that TimeTableSlot
@@ -67,4 +69,37 @@ interface IScheduleRepository {
      * @return List of matches that are now booked to the same timeslots
      */
     fun addMatchToTimeTableSlot(id: Int, matchId: Int): List<MatchToTimeTableSlot>
+
+    /**
+     * Batch update the TimeTableSlots for the given matches
+     *
+     * @param matchTimeTableSlots A list of matches and what TimeTableSlots they should be mapped to.
+     */
+    fun updateMatchesTimeTablesSlots(matchTimeTableSlots: List<UpdateMatchToTimeTableSlotSpec>)
+
+    /**
+     * Get matches that belong to the given competition category and match type
+     *
+     * @param competitionCategoryId ID of the competition category
+     * @param matchType Type of match
+     * @return List of matches
+     */
+    fun getScheduleMatches(competitionCategoryId: Int, matchType: MatchType): List<ScheduleMatchDto>
+
+    /**
+     * Get the TimeTableSlot records for the given competition that matches the filter
+     *
+     * @param competitionId ID of the competition. Only TimeTableSlots of the competition are returned
+     * @param startTime Only TimeTableSlots that has a start time greater or equal are returned
+     * @param tableNumbers Only TimeTableSlots that has any of the table numbers are returned
+     * @param location Only TimeTableSlots that matches the location are returned
+     *
+     * @return A list of TimeTableSlotsRecords that matches the filter are returned and ordered by start time and table number
+     */
+    fun getTimeTableSlotRecords(
+        competitionId: Int,
+        startTime: LocalDateTime,
+        tableNumbers: List<Int>,
+        location: String
+    ): List<MatchScheduleRecord>
 }

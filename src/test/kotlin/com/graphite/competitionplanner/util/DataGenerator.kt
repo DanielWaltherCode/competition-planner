@@ -22,7 +22,7 @@ import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.service.ResultDTO
-import com.graphite.competitionplanner.schedule.domain.MatchToTimeTableSlot
+import com.graphite.competitionplanner.schedule.interfaces.MatchToTimeTableSlot
 import com.graphite.competitionplanner.schedule.domain.PreScheduleSpec
 import com.graphite.competitionplanner.schedule.domain.ScheduleMatchDto
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO

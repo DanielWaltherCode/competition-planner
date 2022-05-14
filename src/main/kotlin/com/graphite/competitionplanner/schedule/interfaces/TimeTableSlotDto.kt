@@ -1,22 +1,10 @@
-package com.graphite.competitionplanner.schedule.domain
+package com.graphite.competitionplanner.schedule.interfaces
 
-import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
-import org.springframework.stereotype.Component
 import java.time.LocalDateTime
-
-@Component
-class GetTimeTable(
-    val repository: IScheduleRepository
-) {
-
-    fun execute(competitionId: Int): List<TimeTableSlotDto> {
-        return repository.getTimeTable(competitionId)
-    }
-}
 
 /**
  * A TimeTableSlot represents a place and time were a match can take place. The place is defined by the table number
- * and location, and the time is defined by the start time of the timeslot.
+ * and location. The time is defined as the start time of the timeslot.
  */
 data class TimeTableSlotDto(
     /**
@@ -48,10 +36,10 @@ data class TimeTableSlotDto(
      * Basic information about the match scheduled for this time slot. If the list is empty, then no match has been
      * assigned to this TableTimeSlot.
      */
-    var matchInfo: List<MatchInfo>
+    var matchInfo: List<TimeTableSlotMatchInfo>
 )
 
-data class MatchInfo(
+data class TimeTableSlotMatchInfo(
     /**
      * ID of the match
      */
