@@ -95,7 +95,67 @@ class TestMatchScheduler {
     }
 
     @Test
-    fun getCompetitionSchedule() {
-        Assertions.assertTrue(false, "TODO")
+    fun testGetCompetitionSchedule() {
+        // Setup
+        val competitionId = 192
+        val now = LocalDateTime.now()
+        val matchesToSlots = listOf(
+            dataGenerator.newTimeTableSlotToMatch(id = 1, startTime = now, tableNumber = 1, matchInfo = dataGenerator.newTimeTableMatchInfo(id = 2)),
+            dataGenerator.newTimeTableSlotToMatch(id = 2, startTime = now, tableNumber = 2, matchInfo = dataGenerator.newTimeTableMatchInfo(id = 3)),
+            dataGenerator.newTimeTableSlotToMatch(id = 2, startTime = now, tableNumber = 2, matchInfo = dataGenerator.newTimeTableMatchInfo(id = 4)),
+            dataGenerator.newTimeTableSlotToMatch(id = 3, startTime = now, tableNumber = 3, matchInfo = null),
+            dataGenerator.newTimeTableSlotToMatch(id = 4, startTime = now, tableNumber = 4, matchInfo = dataGenerator.newTimeTableMatchInfo(id = 5))
+        )
+        Mockito.`when`(mockedScheduleRepository.getTimeTable(competitionId)).thenReturn(matchesToSlots)
+
+        // Act
+        val schedule = matchScheduler.getSchedule(competitionId)
+
+        // Assert
+        Assertions.assertEquals(4, schedule.size, "Not the correct number of TimeTableSlots")
+
+        Assertions.assertFalse(schedule.first { it.id == 1 }.isDoubleBocked, "Not expecting a double booking in first TimeTableSlot")
+        Assertions.assertEquals(1, schedule.first { it.id == 1 }.matchInfo.size, "Not the expected number of match infos in TimeTableSlot")
+
+        Assertions.assertTrue(schedule.first { it.id == 2 }.isDoubleBocked, "Expected a double booking in second TimeTableSlot")
+        Assertions.assertEquals(2, schedule.first { it.id == 2 }.matchInfo.size, "Not the expected number of match infos in TimeTableSlot")
+
+        Assertions.assertFalse(schedule.first { it.id == 3 }.isDoubleBocked, "Not expecting a double booking")
+        Assertions.assertEquals(0, schedule.first { it.id == 3 }.matchInfo.size, "Not the expected number of match infos in TimeTableSlot")
+
+        Assertions.assertFalse(schedule.first { it.id == 4 }.isDoubleBocked, "Not expecting a double booking")
+        Assertions.assertEquals(1, schedule.first { it.id == 4 }.matchInfo.size, "Not the expected number of match infos in TimeTableSlot")
+    }
+
+    @Test
+    fun testGetCompetitionScheduleSortOrder() {
+        // Setup
+        val competitionId = 192
+        val now = LocalDateTime.now()
+        val matchesToSlots = listOf(
+            dataGenerator.newTimeTableSlotToMatch(id = 1, startTime = now, tableNumber = 2, location = "A"),
+            dataGenerator.newTimeTableSlotToMatch(id = 2, startTime = now, tableNumber = 2, location = "B"),
+            dataGenerator.newTimeTableSlotToMatch(id = 3, startTime = now, tableNumber = 1, location = "A"),
+            dataGenerator.newTimeTableSlotToMatch(id = 4, startTime = now, tableNumber = 1, location = "B"),
+            dataGenerator.newTimeTableSlotToMatch(id = 5, startTime = now.plusMinutes(10), tableNumber = 2, location = "A"),
+            dataGenerator.newTimeTableSlotToMatch(id = 6, startTime = now.plusMinutes(10), tableNumber = 2, location = "B"),
+            dataGenerator.newTimeTableSlotToMatch(id = 7, startTime = now.plusMinutes(10), tableNumber = 1, location = "A"),
+            dataGenerator.newTimeTableSlotToMatch(id = 8, startTime = now.plusMinutes(10), tableNumber = 1, location = "B"),
+            dataGenerator.newTimeTableSlotToMatch(id = 9, startTime = now.plusMinutes(30), tableNumber = 2, location = "A"),
+            dataGenerator.newTimeTableSlotToMatch(id = 10, startTime = now.plusMinutes(30), tableNumber = 2, location = "B"),
+            dataGenerator.newTimeTableSlotToMatch(id = 11, startTime = now.plusMinutes(20), tableNumber = 1, location = "A"),
+            dataGenerator.newTimeTableSlotToMatch(id = 12, startTime = now.plusMinutes(20), tableNumber = 1, location = "B"),
+        )
+        Mockito.`when`(mockedScheduleRepository.getTimeTable(competitionId)).thenReturn(matchesToSlots)
+
+        // TimeTableSlot ids if sorted by location -> start time -> table number
+        val expectedOrder = listOf(3, 1, 7, 5, 11, 9, 4, 2, 8, 6, 12, 10)
+
+        // Act
+        val schedule = matchScheduler.getSchedule(competitionId)
+
+        // Assert
+        val timeTableSlotIds = schedule.map { it.id }
+        Assertions.assertEquals(expectedOrder, timeTableSlotIds)
     }
 }

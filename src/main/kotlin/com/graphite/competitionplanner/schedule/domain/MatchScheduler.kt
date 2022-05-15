@@ -3,10 +3,7 @@ package com.graphite.competitionplanner.schedule.domain
 import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
-import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
-import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotMatchInfo
-import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotDto
-import com.graphite.competitionplanner.schedule.interfaces.UpdateMatchToTimeTableSlotSpec
+import com.graphite.competitionplanner.schedule.interfaces.*
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
@@ -72,10 +69,30 @@ class MatchScheduler( // TODO: Come up with a better name. CompetitionScheduler?
      * @param competitionId ID of the competition
      * @return List of TimeTableSlots sorted by location, time and table in ascending order
      */
-    fun get(competitionId: Int): List<TimeTableSlotDto> {
-        // TODO: Sort and post-process
+    fun getSchedule(competitionId: Int): List<TimeTableSlotDto> {
         val matchesToSlots = repository.getTimeTable(competitionId)
-        return emptyList()
+        val schedule = mergeTimeTableSlots(matchesToSlots)
+        return schedule.sortedWith(compareBy(TimeTableSlotDto::location, TimeTableSlotDto::startTime, TimeTableSlotDto::tableNumber))
+    }
+
+    private fun mergeTimeTableSlots(list: List<TimeTableSlotToMatch>): List<TimeTableSlotDto> {
+        if (list.isEmpty()) {
+            return emptyList()
+        } else {
+            val id = list.first().id
+            val (sameTimeSlots, otherTimeSlots) = list.partition { it.id == id }
+
+            val matchInfos = sameTimeSlots.mapNotNull { it.matchInfo }
+            val timeTableSlot = TimeTableSlotDto(
+                sameTimeSlots.first().id,
+                sameTimeSlots.first().startTime,
+                sameTimeSlots.first().tableNumber,
+                sameTimeSlots.first().location,
+                sameTimeSlots.size > 1,
+                matchInfos
+            )
+            return listOf(timeTableSlot) + mergeTimeTableSlots(otherTimeSlots)
+        }
     }
 
     /**

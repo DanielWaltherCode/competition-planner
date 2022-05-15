@@ -9,18 +9,17 @@ import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.result.interfaces.IResultRepository
-import com.graphite.competitionplanner.schedule.domain.*
-import com.graphite.competitionplanner.schedule.interfaces.*
+import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
+import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotSpec
+import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotToMatch
+import com.graphite.competitionplanner.schedule.interfaces.UpdateMatchToTimeTableSlotSpec
 import com.graphite.competitionplanner.tables.records.MatchRecord
 import com.graphite.competitionplanner.util.BaseRepositoryTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.concurrent.TimeUnit
-import kotlin.time.toDuration
 
 @SpringBootTest
 class TestTimeTable @Autowired constructor(
@@ -45,28 +44,25 @@ class TestTimeTable @Autowired constructor(
 ) {
 
     @Test
-    fun testStoreTimeTable() {
+    fun testGetTimeTable() {
         // Setup
-        val club = newClub()
-        val competition = club.addCompetition()
-        val numberOfTables = 5
-        val estimatedMatchTime = 25.toDuration(TimeUnit.MINUTES)
-        val location = "Arena A"
-        val dates = listOf(LocalDate.of(2022, 6, 1), LocalDate.of(2022, 6, 2))
-        val timeTableSlotHandler = TimeTableSlotHandler(repository)
+        val (match1, match2, slot1, slot2, competition) = setupTestData()
+        val updateSpec1 = listOf(
+            UpdateMatchToTimeTableSlotSpec(match1.id, slot1.id),
+            UpdateMatchToTimeTableSlotSpec(match2.id, slot1.id)
+        )
+        repository.updateMatchesTimeTablesSlots(updateSpec1)
 
         // Act
-        timeTableSlotHandler.init(competition.id, numberOfTables, estimatedMatchTime, location, dates)
         val timeTable = repository.getTimeTable(competition.id)
 
         // Assert
-        Assertions.assertTrue(timeTable.isNotEmpty())
+        Assertions.assertEquals(3, timeTable.size, "Not the expected number of items")
 
         val zipWithNext = timeTable.zipWithNext()
         for ((s1, s2) in zipWithNext) {
-            Assertions.assertTrue(s1.id < s2.id, "The returned list is not sorted by TimeTableSlot id in ascending order")
+            Assertions.assertTrue(s1.id <= s2.id, "The returned list is not sorted by TimeTableSlot id in ascending order")
         }
-
     }
 
     @Test

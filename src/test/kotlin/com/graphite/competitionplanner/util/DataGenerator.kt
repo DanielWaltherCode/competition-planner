@@ -27,6 +27,8 @@ import com.graphite.competitionplanner.schedule.domain.PreScheduleSpec
 import com.graphite.competitionplanner.schedule.domain.ScheduleMatchDto
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
+import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotMatchInfo
+import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotToMatch
 import com.graphite.competitionplanner.schedule.service.StartInterval
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -545,6 +547,28 @@ class DataGenerator {
         startTime,
         tableNumber,
         location
+    )
+
+    fun newTimeTableSlotToMatch(
+        id: Int = 1,
+        startTime: LocalDateTime = LocalDateTime.now(),
+        tableNumber: Int = 1,
+        location: String = "Hall A",
+        matchInfo: TimeTableSlotMatchInfo? = null
+    ) = TimeTableSlotToMatch(
+        id,
+        startTime,
+        tableNumber,
+        location,
+        matchInfo
+    )
+
+    fun newTimeTableMatchInfo(
+        id: Int = 44,
+        competitionCategoryId: Int = 33
+    ) = TimeTableSlotMatchInfo(
+        id,
+        competitionCategoryId
     )
 
     /**
