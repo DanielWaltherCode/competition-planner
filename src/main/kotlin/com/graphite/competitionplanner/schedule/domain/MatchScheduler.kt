@@ -24,8 +24,8 @@ class MatchScheduler( // TODO: Come up with a better name. CompetitionScheduler?
      * Maps a match to a specific TimeTableSlot. This is more of a utility function were an administrator
      * can easily move one match to a new TimeTableSlot.
      */
-    fun addMatchToTimeTableSlot(tableSlotId: Int, matchId: Int): TimeTableSlotDto {
-        val matchesInSameSlot = repository.addMatchToTimeTableSlot(tableSlotId, matchId)
+    fun mapMatchToTimeTableSlot(matchToTimeTableSlot: UpdateMatchToTimeTableSlotSpec): TimeTableSlotDto {
+        val matchesInSameSlot = repository.addMatchToTimeTableSlot(matchToTimeTableSlot)
 
         return TimeTableSlotDto(
             matchesInSameSlot.first().timeTableSlotId,

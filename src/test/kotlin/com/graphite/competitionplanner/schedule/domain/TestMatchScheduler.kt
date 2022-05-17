@@ -22,21 +22,17 @@ class TestMatchScheduler {
     @Test
     fun addingMatchToEmptySlot() {
         // Setup
-        val timeSlotId = 100
-        val matchId = 223
+        val spec = dataGenerator.newUpdateMatchToTimeTableSlotSpec(223, 100)
         Mockito.`when`(
-            mockedScheduleRepository.addMatchToTimeTableSlot(
-                timeSlotId,
-                matchId
-            )
+            mockedScheduleRepository.addMatchToTimeTableSlot(spec)
         ).thenReturn(
             listOf(
-                dataGenerator.newMatchToTimeTableSlot(matchId = matchId, timeTableSlotId = timeSlotId)
+                dataGenerator.newMatchToTimeTableSlot(matchId = spec.matchId, timeTableSlotId = spec.timeTableSlotId)
             )
         )
 
         // Act
-        val timeTableSlot = matchScheduler.addMatchToTimeTableSlot(timeSlotId, matchId)
+        val timeTableSlot = matchScheduler.mapMatchToTimeTableSlot(spec)
 
         // Assert
         Assertions.assertFalse(
@@ -48,23 +44,20 @@ class TestMatchScheduler {
     @Test
     fun addingMatchToOccupiedSlot() {
         // Setup
-        val timeSlotId = 100
         val matchId = 223
         val matchId2 = 231
+        val spec = dataGenerator.newUpdateMatchToTimeTableSlotSpec(matchId, 100)
         Mockito.`when`(
-            mockedScheduleRepository.addMatchToTimeTableSlot(
-                timeSlotId,
-                matchId
-            )
+            mockedScheduleRepository.addMatchToTimeTableSlot(spec)
         ).thenReturn(
             listOf(
-                dataGenerator.newMatchToTimeTableSlot(matchId = matchId, timeTableSlotId = timeSlotId),
-                dataGenerator.newMatchToTimeTableSlot(matchId = matchId2, timeTableSlotId = timeSlotId)
+                dataGenerator.newMatchToTimeTableSlot(matchId = matchId, timeTableSlotId = spec.timeTableSlotId),
+                dataGenerator.newMatchToTimeTableSlot(matchId = matchId2, timeTableSlotId = spec.timeTableSlotId)
             )
         )
 
         // Act
-        val timeTableSlot = matchScheduler.addMatchToTimeTableSlot(timeSlotId, matchId)
+        val timeTableSlot = matchScheduler.mapMatchToTimeTableSlot(spec)
 
         // Assert
         Assertions.assertTrue(

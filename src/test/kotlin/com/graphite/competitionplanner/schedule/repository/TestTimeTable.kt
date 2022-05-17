@@ -154,8 +154,8 @@ class TestTimeTable @Autowired constructor(
         val (match1, match2, slot1, _) = setupTestData()
 
         // Act
-        val afterFirst = repository.addMatchToTimeTableSlot(slot1.id, match1.id)
-        val afterSecond = repository.addMatchToTimeTableSlot(slot1.id, match2.id)
+        val afterFirst = repository.addMatchToTimeTableSlot(dataGenerator.newUpdateMatchToTimeTableSlotSpec(match1.id, slot1.id))
+        val afterSecond = repository.addMatchToTimeTableSlot(dataGenerator.newUpdateMatchToTimeTableSlotSpec(match2.id, slot1.id))
 
         // Assert
         Assertions.assertEquals(1, afterFirst.size, "Not the expected number of items")

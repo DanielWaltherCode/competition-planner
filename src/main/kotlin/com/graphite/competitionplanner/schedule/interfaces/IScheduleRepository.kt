@@ -68,7 +68,7 @@ interface IScheduleRepository {
      * @param matchId ID of the match
      * @return List of matches that are now booked to the same timeslots
      */
-    fun addMatchToTimeTableSlot(id: Int, matchId: Int): List<MatchToTimeTableSlot>
+    fun addMatchToTimeTableSlot(matchToTimeTableSlotSpec: UpdateMatchToTimeTableSlotSpec): List<MatchToTimeTableSlot>
 
     /**
      * Batch update the TimeTableSlots for the given matches

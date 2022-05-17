@@ -10,6 +10,18 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import kotlin.time.Duration
 
+
+/**
+ * This is the class that handles all the modifications to the TimeTableSlots. Operations that alter these slots can be
+ * - Changing play date
+ * - Changing average time per game
+ * - Adding lunch breaks
+ * - Changing number of tables available
+ * - Changing locations
+ * - etc.
+ *
+ * Any operations to the TimeTableSlots will override any unpublished schema.
+ */
 @Component
 class TimeTableSlotHandler(
     val repository: IScheduleRepository
