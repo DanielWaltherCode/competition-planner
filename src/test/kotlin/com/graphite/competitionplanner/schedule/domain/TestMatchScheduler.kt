@@ -22,7 +22,7 @@ class TestMatchScheduler {
     @Test
     fun addingMatchToEmptySlot() {
         // Setup
-        val spec = dataGenerator.newUpdateMatchToTimeTableSlotSpec(223, 100)
+        val spec = dataGenerator.newMapMatchToTimeTableSlotSpec(223, 100)
         Mockito.`when`(
             mockedScheduleRepository.addMatchToTimeTableSlot(spec)
         ).thenReturn(
@@ -46,7 +46,7 @@ class TestMatchScheduler {
         // Setup
         val matchId = 223
         val matchId2 = 231
-        val spec = dataGenerator.newUpdateMatchToTimeTableSlotSpec(matchId, 100)
+        val spec = dataGenerator.newMapMatchToTimeTableSlotSpec(matchId, 100)
         Mockito.`when`(
             mockedScheduleRepository.addMatchToTimeTableSlot(spec)
         ).thenReturn(
@@ -84,7 +84,7 @@ class TestMatchScheduler {
         val tables = listOf(1, 2, 3)
         val startTime = LocalDateTime.now()
         val location = "Lundaparken A"
-        matchScheduler.scheduleCompetitionCategory(competitionId, competitionCategoryId, matchType, tables, startTime, location)
+//        matchScheduler.scheduleCompetitionCategory(competitionId, competitionCategoryId, matchType, tables, startTime, location)
     }
 
     @Test

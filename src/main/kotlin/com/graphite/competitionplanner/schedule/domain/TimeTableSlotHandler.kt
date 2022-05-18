@@ -1,7 +1,6 @@
 package com.graphite.competitionplanner.schedule.domain
 
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
-import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotDto
 import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotSpec
 import com.graphite.competitionplanner.util.plusDuration
 import org.springframework.stereotype.Component

@@ -12,7 +12,7 @@ import com.graphite.competitionplanner.result.interfaces.IResultRepository
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
 import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotSpec
 import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotToMatch
-import com.graphite.competitionplanner.schedule.interfaces.UpdateMatchToTimeTableSlotSpec
+import com.graphite.competitionplanner.schedule.interfaces.MapMatchToTimeTableSlotSpec
 import com.graphite.competitionplanner.tables.records.MatchRecord
 import com.graphite.competitionplanner.util.BaseRepositoryTest
 import org.junit.jupiter.api.Assertions
@@ -48,8 +48,8 @@ class TestTimeTable @Autowired constructor(
         // Setup
         val (match1, match2, slot1, slot2, competition) = setupTestData()
         val updateSpec1 = listOf(
-            UpdateMatchToTimeTableSlotSpec(match1.id, slot1.id),
-            UpdateMatchToTimeTableSlotSpec(match2.id, slot1.id)
+            MapMatchToTimeTableSlotSpec(match1.id, slot1.id),
+            MapMatchToTimeTableSlotSpec(match2.id, slot1.id)
         )
         repository.updateMatchesTimeTablesSlots(updateSpec1)
 
@@ -154,8 +154,8 @@ class TestTimeTable @Autowired constructor(
         val (match1, match2, slot1, _) = setupTestData()
 
         // Act
-        val afterFirst = repository.addMatchToTimeTableSlot(dataGenerator.newUpdateMatchToTimeTableSlotSpec(match1.id, slot1.id))
-        val afterSecond = repository.addMatchToTimeTableSlot(dataGenerator.newUpdateMatchToTimeTableSlotSpec(match2.id, slot1.id))
+        val afterFirst = repository.addMatchToTimeTableSlot(dataGenerator.newMapMatchToTimeTableSlotSpec(match1.id, slot1.id))
+        val afterSecond = repository.addMatchToTimeTableSlot(dataGenerator.newMapMatchToTimeTableSlotSpec(match2.id, slot1.id))
 
         // Assert
         Assertions.assertEquals(1, afterFirst.size, "Not the expected number of items")
@@ -168,13 +168,13 @@ class TestTimeTable @Autowired constructor(
         val (match1, match2, slot1, slot2, _) = setupTestData()
 
         val updateSpec1 = listOf(
-            UpdateMatchToTimeTableSlotSpec(match1.id, slot1.id),
-            UpdateMatchToTimeTableSlotSpec(match2.id, slot1.id)
+            MapMatchToTimeTableSlotSpec(match1.id, slot1.id),
+            MapMatchToTimeTableSlotSpec(match2.id, slot1.id)
         )
 
         val updateSpec2 = listOf(
-            UpdateMatchToTimeTableSlotSpec(match1.id, slot2.id),
-            UpdateMatchToTimeTableSlotSpec(match2.id, slot2.id)
+            MapMatchToTimeTableSlotSpec(match1.id, slot2.id),
+            MapMatchToTimeTableSlotSpec(match2.id, slot2.id)
         )
 
         // Act

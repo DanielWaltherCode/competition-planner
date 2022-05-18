@@ -24,7 +24,7 @@ class MatchScheduler( // TODO: Come up with a better name. CompetitionScheduler?
      * Maps a match to a specific TimeTableSlot. This is more of a utility function were an administrator
      * can easily move one match to a new TimeTableSlot.
      */
-    fun mapMatchToTimeTableSlot(matchToTimeTableSlot: UpdateMatchToTimeTableSlotSpec): TimeTableSlotDto {
+    fun mapMatchToTimeTableSlot(matchToTimeTableSlot: MapMatchToTimeTableSlotSpec): TimeTableSlotDto {
         val matchesInSameSlot = repository.addMatchToTimeTableSlot(matchToTimeTableSlot)
 
         return TimeTableSlotDto(
@@ -47,7 +47,7 @@ class MatchScheduler( // TODO: Come up with a better name. CompetitionScheduler?
      *
      * @param matchToTimeTableSlots Mapping from matches to TimeTableSlots
      */
-    fun addMultipleMatchToTimeTableSlot(matchToTimeTableSlots: List<UpdateMatchToTimeTableSlotSpec>) {
+    fun addMultipleMatchToTimeTableSlot(matchToTimeTableSlots: List<MapMatchToTimeTableSlotSpec>) {
         repository.updateMatchesTimeTablesSlots(matchToTimeTableSlots)
     }
 
@@ -132,11 +132,11 @@ class MatchScheduler( // TODO: Come up with a better name. CompetitionScheduler?
         // TODO: Check that we get enough timeTableSlots back to contain all matches. Otherwise potential index error
         // TODO: For now. Catch potential IndexOutOfBounds error and log it
         try {
-            val updateSpec = mutableListOf<UpdateMatchToTimeTableSlotSpec>()
+            val updateSpec = mutableListOf<MapMatchToTimeTableSlotSpec>()
             var index = 0
             for (timeslot in schedule.timeslots) {
                 for (match in timeslot.matches) {
-                    updateSpec.add(UpdateMatchToTimeTableSlotSpec(match.id, timeTableSlots[index].id))
+                    updateSpec.add(MapMatchToTimeTableSlotSpec(match.id, timeTableSlots[index].id))
                     index++
                 }
             }

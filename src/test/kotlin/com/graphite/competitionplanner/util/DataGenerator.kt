@@ -29,7 +29,7 @@ import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotMatchInfo
 import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotToMatch
-import com.graphite.competitionplanner.schedule.interfaces.UpdateMatchToTimeTableSlotSpec
+import com.graphite.competitionplanner.schedule.interfaces.MapMatchToTimeTableSlotSpec
 import com.graphite.competitionplanner.schedule.service.StartInterval
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -550,10 +550,10 @@ class DataGenerator {
         location
     )
 
-    fun newUpdateMatchToTimeTableSlotSpec(
+    fun newMapMatchToTimeTableSlotSpec(
         matchId: Int = this.matchId++,
         timeTableSlotId: Int = 1
-    ) = UpdateMatchToTimeTableSlotSpec(
+    ) = MapMatchToTimeTableSlotSpec(
         matchId,
         timeTableSlotId
     )

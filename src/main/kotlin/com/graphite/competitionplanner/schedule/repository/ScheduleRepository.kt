@@ -366,7 +366,7 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
         return records.map { it.toTimeTableSlotToMatch() }
     }
 
-    override fun addMatchToTimeTableSlot(spec: UpdateMatchToTimeTableSlotSpec): List<MatchToTimeTableSlot> {
+    override fun addMatchToTimeTableSlot(spec: MapMatchToTimeTableSlotSpec): List<MatchToTimeTableSlot> {
         dslContext.update(MATCH)
             .set(MATCH.MATCH_SCHEDULE_ID, spec.timeTableSlotId)
             .where(MATCH.ID.eq(spec.matchId))
@@ -387,7 +387,7 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
         return records.map { it.toMatchToTimeTableSlot() }
     }
 
-    override fun updateMatchesTimeTablesSlots(matchTimeTableSlots: List<UpdateMatchToTimeTableSlotSpec>) {
+    override fun updateMatchesTimeTablesSlots(matchTimeTableSlots: List<MapMatchToTimeTableSlotSpec>) {
         val records = matchTimeTableSlots.map { it.toRecord() }
         dslContext.batchUpdate(records).execute()
     }
@@ -432,7 +432,7 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
             .fetch()
     }
 
-    private fun UpdateMatchToTimeTableSlotSpec.toRecord(): MatchRecord {
+    private fun MapMatchToTimeTableSlotSpec.toRecord(): MatchRecord {
         val record = dslContext.newRecord(MATCH)
         record.id = this.matchId
         record.matchScheduleId = this.timeTableSlotId

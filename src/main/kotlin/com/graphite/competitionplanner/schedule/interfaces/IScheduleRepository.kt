@@ -68,14 +68,14 @@ interface IScheduleRepository {
      * @param matchId ID of the match
      * @return List of matches that are now booked to the same timeslots
      */
-    fun addMatchToTimeTableSlot(matchToTimeTableSlotSpec: UpdateMatchToTimeTableSlotSpec): List<MatchToTimeTableSlot>
+    fun addMatchToTimeTableSlot(matchToTimeTableSlotSpec: MapMatchToTimeTableSlotSpec): List<MatchToTimeTableSlot>
 
     /**
      * Batch update the TimeTableSlots for the given matches
      *
      * @param matchTimeTableSlots A list of matches and what TimeTableSlots they should be mapped to.
      */
-    fun updateMatchesTimeTablesSlots(matchTimeTableSlots: List<UpdateMatchToTimeTableSlotSpec>)
+    fun updateMatchesTimeTablesSlots(matchTimeTableSlots: List<MapMatchToTimeTableSlotSpec>)
 
     /**
      * Get matches that belong to the given competition category and match type
