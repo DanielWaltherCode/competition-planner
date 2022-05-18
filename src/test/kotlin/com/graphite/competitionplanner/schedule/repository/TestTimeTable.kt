@@ -187,11 +187,11 @@ class TestTimeTable @Autowired constructor(
         val match2AfterSecondUpdate = matchRepository.getMatch(match2.id)
 
         // Assert
-        Assertions.assertEquals(slot1.id, match1AfterFirstUpdate.matchScheduleId)
-        Assertions.assertEquals(slot1.id, match2AfterFirstUpdate.matchScheduleId)
+        Assertions.assertEquals(slot1.id, match1AfterFirstUpdate.matchTimeSlotId)
+        Assertions.assertEquals(slot1.id, match2AfterFirstUpdate.matchTimeSlotId)
 
-        Assertions.assertEquals(slot2.id, match1AfterSecondUpdate.matchScheduleId)
-        Assertions.assertEquals(slot2.id, match2AfterSecondUpdate.matchScheduleId)
+        Assertions.assertEquals(slot2.id, match1AfterSecondUpdate.matchTimeSlotId)
+        Assertions.assertEquals(slot2.id, match2AfterSecondUpdate.matchTimeSlotId)
 
         Assertions.assertEquals(match1.matchType, match1AfterSecondUpdate.matchType, "Wrong values updated!")
         Assertions.assertEquals(match2.matchType, match2AfterSecondUpdate.matchType, "Wrong values updated!")

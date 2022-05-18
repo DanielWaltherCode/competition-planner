@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.schedule.interfaces
 import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.schedule.domain.*
 import com.graphite.competitionplanner.schedule.service.StartInterval
-import com.graphite.competitionplanner.tables.records.MatchScheduleRecord
+import com.graphite.competitionplanner.tables.records.MatchTimeSlotRecord
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -101,5 +101,5 @@ interface IScheduleRepository {
         startTime: LocalDateTime,
         tableNumbers: List<Int>,
         location: String
-    ): List<MatchScheduleRecord>
+    ): List<MatchTimeSlotRecord>
 }
