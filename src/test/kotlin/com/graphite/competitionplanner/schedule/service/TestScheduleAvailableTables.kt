@@ -4,7 +4,6 @@ import com.graphite.competitionplanner.competition.domain.CreateCompetition
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
 import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
-import com.graphite.competitionplanner.schedule.api.AvailableTablesFullDaySpec
 import com.graphite.competitionplanner.schedule.api.AvailableTablesSpec
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.AfterEach
@@ -23,7 +22,7 @@ class TestScheduleAvailableTables(
     @Autowired val createCompetition: CreateCompetition
 ) {
     var competitionId = 0
-    var registeredTables = listOf<AvailableTablesDTO>()
+    lateinit var registeredTables: AvailableTablesDTO
 
     @BeforeEach
     fun addCompetition() {
@@ -38,11 +37,11 @@ class TestScheduleAvailableTables(
                 endDate = LocalDate.now().plusDays(10)
             )
         ).id
-        val spec = AvailableTablesFullDaySpec(
+        val spec = AvailableTablesSpec(
             15,
             LocalDate.now()
         )
-        registeredTables = availableTablesService.updateTablesAvailableFullDay(competitionId, spec)
+        registeredTables = availableTablesService.updateTablesAvailable(competitionId, spec)
     }
 
     @AfterEach
@@ -52,7 +51,7 @@ class TestScheduleAvailableTables(
 
     @Test
     fun getTablesAvailableForFullDay() {
-        val availableTables = availableTablesService.getTablesAvailableByDay(competitionId, LocalDate.now())
+        val availableTables = availableTablesService.getTablesAvailable(competitionId)
         Assertions.assertNotNull(availableTables)
         Assertions.assertTrue(availableTables.isNotEmpty())
         Assertions.assertEquals(availableTables[0].nrTables, 15)
@@ -60,18 +59,15 @@ class TestScheduleAvailableTables(
 
     @Test
     fun updateTablesAvailable() {
-        val availableTables = availableTablesService.getTablesAvailableByDay(competitionId, LocalDate.now())
-        val tableToUpdate = availableTables[0]
+        val tableToUpdate = availableTablesService.getTablesAvailableByDay(competitionId, LocalDate.now())
         val newNrTables = 18
         val spec = AvailableTablesSpec(
             newNrTables,
-            tableToUpdate.day,
-            tableToUpdate.hour
+            LocalDate.now(),
         )
-        val updatedAvailableTable = availableTablesService.updateTablesAvailable(tableToUpdate.id, competitionId, spec)
+        val updatedAvailableTable = availableTablesService.updateTablesAvailable(competitionId, spec)
         Assertions.assertEquals(newNrTables, updatedAvailableTable.nrTables)
         Assertions.assertEquals(tableToUpdate.id, updatedAvailableTable.id)
         Assertions.assertEquals(tableToUpdate.day, updatedAvailableTable.day)
-        Assertions.assertEquals(tableToUpdate.hour, updatedAvailableTable.hour)
     }
 }

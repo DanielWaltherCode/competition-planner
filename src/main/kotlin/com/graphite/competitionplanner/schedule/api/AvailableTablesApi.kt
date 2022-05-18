@@ -20,7 +20,7 @@ class AvailableTablesApi(
     fun getTablesAvailableByDay(
         @PathVariable competitionId: Int,
         @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") day: LocalDate
-    ): List<AvailableTablesDTO> {
+    ): AvailableTablesDTO {
         return availableTablesService.getTablesAvailableByDay(competitionId, day)
     }
 
@@ -44,37 +44,14 @@ class AvailableTablesApi(
         return availableTablesService.registerTablesAvailable(competitionId, availableTablesSpec)
     }
 
-    @PutMapping("/{availableTablesId}")
+    @PutMapping()
     fun updateTablesAvailable(
         @PathVariable competitionId: Int,
-        @PathVariable availableTablesId: Int,
         @RequestBody availableTablesSpec: AvailableTablesSpec
     ): AvailableTablesDTO {
-        return availableTablesService.updateTablesAvailable(availableTablesId, competitionId, availableTablesSpec)
+        return availableTablesService.updateTablesAvailable(competitionId, availableTablesSpec)
     }
 
-    @DeleteMapping("/{availableTablesId}")
-    fun deleteTablesAvailable(
-        @PathVariable availableTablesId: Int
-    ) {
-        scheduleRepository.deleteTablesAvailable(availableTablesId)
-    }
-
-    @PostMapping("/full-day")
-    fun registerTablesAvailableFullDay(
-        @PathVariable competitionId: Int,
-        @RequestBody availableTablesFullDaySpec: AvailableTablesFullDaySpec
-    ): List<AvailableTablesDTO> {
-        return availableTablesService.registerTablesAvailableFullDay(competitionId, availableTablesFullDaySpec)
-    }
-
-    @PutMapping("/full-day")
-    fun updateTablesAvailableFullDay(
-        @PathVariable competitionId: Int,
-        @RequestBody availableTablesFullDaySpec: AvailableTablesFullDaySpec
-    ): List<AvailableTablesDTO> {
-        return availableTablesService.updateTablesAvailableFullDay(competitionId, availableTablesFullDaySpec)
-    }
 }
 
 // Set all time slots for time to same number of tables
@@ -82,14 +59,8 @@ data class AvailableTablesWholeCompetitionSpec(
     val nrTables: Int
 )
 
-data class AvailableTablesFullDaySpec(
-    val nrTables: Int,
-    val day: LocalDate
-)
-
 // Here number of tables can be scheduled per hour
 data class AvailableTablesSpec(
     val nrTables: Int,
     val day: LocalDate,
-    val hour: LocalTime
 )
