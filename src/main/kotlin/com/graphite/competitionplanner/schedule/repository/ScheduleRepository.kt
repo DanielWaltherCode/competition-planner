@@ -3,15 +3,14 @@ package com.graphite.competitionplanner.schedule.repository
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategory
+import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.schedule.api.*
 import com.graphite.competitionplanner.schedule.domain.*
-import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
+import com.graphite.competitionplanner.schedule.interfaces.*
 import com.graphite.competitionplanner.schedule.service.StartInterval
-import com.graphite.competitionplanner.tables.records.ScheduleAvailableTablesRecord
-import com.graphite.competitionplanner.tables.records.ScheduleCategoryRecord
-import com.graphite.competitionplanner.tables.records.ScheduleDailyTimesRecord
-import com.graphite.competitionplanner.tables.records.ScheduleMetadataRecord
+import com.graphite.competitionplanner.tables.records.*
 import org.jooq.DSLContext
+import org.jooq.Record6
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
@@ -323,6 +322,144 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
                 .set(PRE_SCHEDULE.SUCCESS, success)
                 .where(PRE_SCHEDULE.COMPETITION_CATEGORY_ID.`in`(competitionCategoryIds))
                 .execute()
+    }
+
+    override fun storeTimeTable(competitionId: Int, timeTable: List<TimeTableSlotSpec>) {
+        val records = timeTable.map { it.toRecord(competitionId) }
+        dslContext.batchInsert(records).execute()
+    }
+
+    override fun getTimeTable(competitionId: Int): List<TimeTableSlotToMatch> {
+        val records = dslContext.select(
+            MATCH_TIME_SLOT.ID,
+            MATCH_TIME_SLOT.START_TIME,
+            MATCH_TIME_SLOT.LOCATION,
+            MATCH_TIME_SLOT.TABLE_NUMBER,
+            MATCH.ID,
+            MATCH.COMPETITION_CATEGORY_ID
+        )
+            .from(MATCH_TIME_SLOT)
+            .leftJoin(MATCH).on(MATCH.MATCH_TIME_SLOT_ID.eq(MATCH_TIME_SLOT.ID))
+            .where(MATCH_TIME_SLOT.COMPETITION_ID.eq(competitionId))
+            .orderBy(MATCH_TIME_SLOT.ID.asc())
+
+        return records.map { it.toTimeTableSlotToMatch() }
+    }
+
+    override fun addMatchToTimeTableSlot(spec: MapMatchToTimeTableSlotSpec): List<MatchToTimeTableSlot> {
+        dslContext.update(MATCH)
+            .set(MATCH.MATCH_TIME_SLOT_ID, spec.timeTableSlotId)
+            .where(MATCH.ID.eq(spec.matchId))
+            .execute()
+
+        val records = dslContext.select(
+            MATCH_TIME_SLOT.ID,
+            MATCH_TIME_SLOT.START_TIME,
+            MATCH_TIME_SLOT.LOCATION,
+            MATCH_TIME_SLOT.TABLE_NUMBER,
+            MATCH.ID,
+            MATCH.COMPETITION_CATEGORY_ID
+        )
+            .from(MATCH_TIME_SLOT)
+            .leftJoin(MATCH).on(MATCH.MATCH_TIME_SLOT_ID.eq(MATCH_TIME_SLOT.ID))
+            .where(MATCH_TIME_SLOT.ID.eq(spec.timeTableSlotId))
+
+        return records.map { it.toMatchToTimeTableSlot() }
+    }
+
+    override fun updateMatchesTimeTablesSlots(matchTimeTableSlots: List<MapMatchToTimeTableSlotSpec>) {
+        val records = matchTimeTableSlots.map { it.toRecord() }
+        dslContext.batchUpdate(records).execute()
+    }
+
+    override fun getScheduleMatches(competitionCategoryId: Int, matchType: MatchType): List<ScheduleMatchDto> {
+        val matches = dslContext.select(
+            MATCH.ID,
+            MATCH.COMPETITION_CATEGORY_ID,
+            MATCH.FIRST_REGISTRATION_ID,
+            MATCH.SECOND_REGISTRATION_ID
+        )
+            .from(MATCH)
+            .where(
+                MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
+                    .and(MATCH.MATCH_TYPE.eq(matchType.name))
+            )
+
+        return matches.map {
+            ScheduleMatchDto(
+                it.get(MATCH.ID),
+                it.get(MATCH.COMPETITION_CATEGORY_ID),
+                getPlayerIdsForRegistrationId(it.get(MATCH.FIRST_REGISTRATION_ID)),
+                getPlayerIdsForRegistrationId(it.get(MATCH.SECOND_REGISTRATION_ID))
+            )
+        }
+    }
+
+    override fun getTimeTableSlotRecords(
+        competitionId: Int,
+        startTime: LocalDateTime,
+        tableNumbers: List<Int>,
+        location: String
+    ): List<MatchTimeSlotRecord> {
+        return dslContext.selectFrom(MATCH_TIME_SLOT)
+            .where(
+                MATCH_TIME_SLOT.COMPETITION_ID.eq(competitionId)
+                    .and(MATCH_TIME_SLOT.LOCATION.eq(location))
+                    .and(MATCH_TIME_SLOT.TABLE_NUMBER.`in`(tableNumbers))
+                    .and(MATCH_TIME_SLOT.START_TIME.greaterOrEqual(startTime))
+            )
+            .orderBy(MATCH_TIME_SLOT.START_TIME.asc(), MATCH_TIME_SLOT.TABLE_NUMBER.asc())
+            .fetch()
+    }
+
+    private fun MapMatchToTimeTableSlotSpec.toRecord(): MatchRecord {
+        val record = dslContext.newRecord(MATCH)
+        record.id = this.matchId
+        record.matchTimeSlotId = this.timeTableSlotId
+        return record
+    }
+
+    private fun Record6<Int, LocalDateTime, String, Int, Int, Int>.toMatchToTimeTableSlot(): MatchToTimeTableSlot {
+        return MatchToTimeTableSlot(
+            this.get(MATCH.ID),
+            this.get(MATCH.COMPETITION_CATEGORY_ID),
+            this.get(MATCH_TIME_SLOT.ID),
+            this.get(MATCH_TIME_SLOT.START_TIME),
+            this.get(MATCH_TIME_SLOT.TABLE_NUMBER),
+            this.get(MATCH_TIME_SLOT.LOCATION),
+        )
+    }
+
+    private fun Record6<Int, LocalDateTime, String, Int, Int, Int>.toTimeTableSlotToMatch(): TimeTableSlotToMatch {
+
+        val matchId = this.get(MATCH.ID)
+        val competitionCategoryId = this.get(MATCH.COMPETITION_CATEGORY_ID)
+
+        val matchInfo: TimeTableSlotMatchInfo? = if (matchId != null) {
+                TimeTableSlotMatchInfo(
+                    matchId,
+                    competitionCategoryId
+                )
+        } else {
+            null
+        }
+
+        return TimeTableSlotToMatch(
+            this.get(MATCH_TIME_SLOT.ID),
+            this.get(MATCH_TIME_SLOT.START_TIME),
+            this.get(MATCH_TIME_SLOT.TABLE_NUMBER),
+            this.get(MATCH_TIME_SLOT.LOCATION),
+            matchInfo
+        )
+    }
+
+    private fun TimeTableSlotSpec.toRecord(competitionId: Int): MatchTimeSlotRecord {
+        val record = dslContext.newRecord(MATCH_TIME_SLOT)
+        record.competitionId = competitionId
+        record.startTime = this.startTime
+        record.tableNumber = this.tableNumber
+        record.location = this.location
+        return record
     }
 
     private fun getPlayerIdsForRegistrationId(registrationId: Int): List<Int> {

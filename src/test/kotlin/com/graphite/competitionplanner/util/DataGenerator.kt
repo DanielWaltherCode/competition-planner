@@ -22,10 +22,14 @@ import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.service.ResultDTO
+import com.graphite.competitionplanner.schedule.interfaces.MatchToTimeTableSlot
 import com.graphite.competitionplanner.schedule.domain.PreScheduleSpec
 import com.graphite.competitionplanner.schedule.domain.ScheduleMatchDto
 import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
+import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotMatchInfo
+import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotToMatch
+import com.graphite.competitionplanner.schedule.interfaces.MapMatchToTimeTableSlotSpec
 import com.graphite.competitionplanner.schedule.service.StartInterval
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -528,6 +532,52 @@ class DataGenerator {
     ) = PreScheduleSpec(
         playDate,
         timeInterval,
+    )
+
+    fun newMatchToTimeTableSlot(
+        matchId: Int = this.matchId++,
+        competitionCategoryId: Int = this.competitionCategoryId++,
+        timeTableSlotId: Int = 1,
+        startTime: LocalDateTime = LocalDateTime.now(),
+        tableNumber: Int = 7,
+        location: String = "Lule Energi Arena",
+    ) = MatchToTimeTableSlot(
+        matchId,
+        competitionCategoryId,
+        timeTableSlotId,
+        startTime,
+        tableNumber,
+        location
+    )
+
+    fun newMapMatchToTimeTableSlotSpec(
+        matchId: Int = this.matchId++,
+        timeTableSlotId: Int = 1
+    ) = MapMatchToTimeTableSlotSpec(
+        matchId,
+        timeTableSlotId
+    )
+
+    fun newTimeTableSlotToMatch(
+        id: Int = 1,
+        startTime: LocalDateTime = LocalDateTime.now(),
+        tableNumber: Int = 1,
+        location: String = "Hall A",
+        matchInfo: TimeTableSlotMatchInfo? = null
+    ) = TimeTableSlotToMatch(
+        id,
+        startTime,
+        tableNumber,
+        location,
+        matchInfo
+    )
+
+    fun newTimeTableMatchInfo(
+        id: Int = 44,
+        competitionCategoryId: Int = 33
+    ) = TimeTableSlotMatchInfo(
+        id,
+        competitionCategoryId
     )
 
     /**
