@@ -56,7 +56,7 @@ val getDaysOfCompetition: GetDaysOfCompetition) {
         return dailyStartEndRecordToDTO(record)
     }
 
-    fun getDailyStartAndEnd(competitionId: Int, day: LocalDate): DailyStartAndEndDTO? {
+    fun getDailyStartAndEnd(competitionId: Int, day: LocalDate): DailyStartAndEndDTO {
         val record = scheduleRepository.getDailyStartAndEnd(competitionId, day)
         return dailyStartEndRecordToDTO(record)
     }
@@ -69,10 +69,7 @@ val getDaysOfCompetition: GetDaysOfCompetition) {
     }
 
 
-    private fun dailyStartEndRecordToDTO(dailyTimesRecord: ScheduleDailyTimesRecord?): DailyStartAndEndDTO? {
-        if (dailyTimesRecord == null) {
-            return null
-        }
+    private fun dailyStartEndRecordToDTO(dailyTimesRecord: ScheduleDailyTimesRecord): DailyStartAndEndDTO {
         return DailyStartAndEndDTO(
             dailyTimesRecord.id,
             dailyTimesRecord.day,
@@ -93,7 +90,7 @@ data class DailyStartAndEndDTO(
 )
 
 data class DailyStartAndEndWithOptionsDTO(
-    val dailyStartEndList: List<DailyStartAndEndDTO?>,
+    val dailyStartEndList: List<DailyStartAndEndDTO>,
     @JsonFormat(pattern = "yyyy-MM-dd")
     val availableDays: List<LocalDate>
 )
