@@ -2,13 +2,15 @@ package com.graphite.competitionplanner.schedule.service
 
 import com.graphite.competitionplanner.schedule.api.MinutesPerMatchSpec
 import com.graphite.competitionplanner.schedule.api.ScheduleMetadataSpec
+import com.graphite.competitionplanner.schedule.domain.TimeTableSlotHandler
 import com.graphite.competitionplanner.schedule.repository.ScheduleRepository
 import com.graphite.competitionplanner.tables.records.ScheduleMetadataRecord
 import org.springframework.stereotype.Service
 
 @Service
 class ScheduleMetadataService(
-    val scheduleRepository: ScheduleRepository
+    val scheduleRepository: ScheduleRepository,
+    @org.springframework.context.annotation.Lazy val timeTableSlotHandler: TimeTableSlotHandler
 ) {
 
     // Schedule metadata methods
@@ -23,11 +25,13 @@ class ScheduleMetadataService(
         metadataSpec: ScheduleMetadataSpec
     ): ScheduleMetadataDTO {
         val metadataRecord = scheduleRepository.updateScheduleMetadata(scheduleMetadataId, competitionId, metadataSpec)
+        timeTableSlotHandler.init(competitionId)
         return metadataRecordToDTO(metadataRecord)
     }
 
     fun updateMinutesPerMatch(competitionId: Int, minutesPerMatchSpec: MinutesPerMatchSpec) {
         scheduleRepository.updateMinutesPerMatch(competitionId, minutesPerMatchSpec)
+        timeTableSlotHandler.init(competitionId)
     }
 
     fun addDefaultScheduleMetadata(competitionId: Int) {

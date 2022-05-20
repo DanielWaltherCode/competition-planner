@@ -9,7 +9,7 @@ data class CompetitionSpec(
     val organizingClubId: Int,
     val competitionLevel: String,
     val startDate: LocalDate,
-    val endDate: LocalDate?
+    val endDate: LocalDate
 ) {
     init {
         require(name.isNotEmpty()) { "Name cannot be empty." }
