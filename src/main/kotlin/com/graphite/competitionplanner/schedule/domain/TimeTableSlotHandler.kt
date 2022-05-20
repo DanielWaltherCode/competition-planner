@@ -1,12 +1,15 @@
 package com.graphite.competitionplanner.schedule.domain
 
+import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
 import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotSpec
+import com.graphite.competitionplanner.schedule.service.AvailableTablesService
+import com.graphite.competitionplanner.schedule.service.DailyStartAndEndDTO
+import com.graphite.competitionplanner.schedule.service.DailyStartEndService
+import com.graphite.competitionplanner.schedule.service.ScheduleMetadataService
 import com.graphite.competitionplanner.util.plusDuration
 import org.springframework.stereotype.Component
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 import kotlin.time.Duration
 
 
@@ -23,33 +26,42 @@ import kotlin.time.Duration
  */
 @Component
 class TimeTableSlotHandler(
-    val repository: IScheduleRepository
+    val repository: IScheduleRepository,
+    val scheduleAvailableTablesService: AvailableTablesService,
+    val scheduleMetadataService: ScheduleMetadataService,
+    val dailyStartEndService: DailyStartEndService,
+    val findCompetitions: FindCompetitions
 ) {
 
-    // TODO: Make this more configurable
-    fun init(competitionId: Int, numberOfTables: Int, estimatedMatchTime: Duration, location: String, dates: List<LocalDate>) {
-        // TODO: Make input parameters
-        val nine = LocalTime.of(9, 0, 0)
-        val seventeen = LocalTime.of(17, 0, 0)
+    fun init(competitionId: Int) {
+        val nrTables = scheduleAvailableTablesService.getTablesAvailable(competitionId)
+        val matchDuration = scheduleMetadataService.getScheduleMetadata(competitionId).minutesPerMatch
+        val dailyStartAndEndList = dailyStartEndService.getDailyStartAndEndForWholeCompetition(competitionId).dailyStartEndList
+        val competitionInfo = findCompetitions.byId(competitionId)
+        val timeSlots = mutableListOf<TimeTableSlotSpec>()
 
-        val timeSlots = dates.flatMap { date: LocalDate ->
-            generateStartTimes(
-                LocalDateTime.of(date, nine),
-                LocalDateTime.of(date, seventeen),
-                estimatedMatchTime
-            ).flatMap { starTime ->
-                (1..numberOfTables).map { tableNumber ->
+        for (dailyStartEndDTO in dailyStartAndEndList) {
+            val validStartTimes = generateStartTimes(
+                    LocalDateTime.of(dailyStartEndDTO.day, dailyStartEndDTO.startTime),
+                    LocalDateTime.of(dailyStartEndDTO.day, dailyStartEndDTO.endTime),
+                    Duration.minutes(matchDuration)
+            )
+            val dailyNrTables = nrTables.first { it.day == dailyStartEndDTO.day }
+
+            timeSlots.addAll(validStartTimes.flatMap {startTime ->
+                (1..dailyNrTables.nrTables).map { tableNumber ->
                     TimeTableSlotSpec(
-                        starTime,
-                        tableNumber,
-                        location
+                            startTime,
+                            tableNumber,
+                            competitionInfo.location.name
                     )
                 }
-            }
+
+            })
         }
-
+        // If successful to this point, delete any previously stored time slots
+        repository.deleteTimeTable(competitionId)
         repository.storeTimeTable(competitionId, timeSlots)
-
     }
 
     private fun generateStartTimes(

@@ -54,6 +54,11 @@ interface IScheduleRepository {
     fun storeTimeTable(competitionId: Int, timeTable: List<TimeTableSlotSpec>)
 
     /**
+     * Deletes the saved match time slots for a given competition
+     */
+    fun deleteTimeTable(competitionId: Int)
+
+    /**
      * Return a list of mapping from matches to TimeTableSlots
      *
      * @param competitionId ID of the competition
