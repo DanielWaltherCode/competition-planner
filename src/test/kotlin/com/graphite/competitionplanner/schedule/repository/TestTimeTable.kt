@@ -96,6 +96,37 @@ class TestTimeTable @Autowired constructor(
     }
 
     @Test
+    fun testUniqueIndex() {
+        // Setup
+        val club = newClub()
+        val competition1 = club.addCompetition()
+        val competition2 = club.addCompetition()
+        val locationMalmo = "Malmö Arena"
+
+        var now = LocalDateTime.now()
+        now = LocalDateTime.of(now.year, now.month, now.dayOfMonth, now.hour, now.minute, now.second)
+        val slot1 = TimeTableSlotSpec(now, 1, locationMalmo)
+        val slot2 = TimeTableSlotSpec(now, 2, locationMalmo)
+
+        // Act & Assert
+        Assertions.assertDoesNotThrow {
+            repository.storeTimeTable(competition1.id, listOf(slot1, slot2))
+        }
+        Assertions.assertDoesNotThrow {
+            repository.storeTimeTable(competition2.id, listOf(slot1, slot2))
+        }
+        val throw1 = Assertions.assertThrows(RuntimeException::class.java) {
+            repository.storeTimeTable(competition1.id, listOf(slot1, slot2))
+        }
+        Assertions.assertEquals("Failed to store time table for competition id ${competition1.id}", throw1.message)
+
+        val throw2 = Assertions.assertThrows(RuntimeException::class.java) {
+            repository.storeTimeTable(competition2.id, listOf(slot1, slot2))
+        }
+        Assertions.assertEquals("Failed to store time table for competition id ${competition2.id}", throw2.message)
+    }
+
+    @Test
     fun testGetTimeTableSlotRecords() {
         // Setup
         val club = newClub()
