@@ -8,7 +8,7 @@ data class CompetitionUpdateSpec(
     val welcomeText: String,
     val competitionLevel: String,
     val startDate: LocalDate,
-    val endDate: LocalDate?
+    val endDate: LocalDate
 ) {
     init {
         require(name.isNotEmpty()) { "Name cannot be empty." }

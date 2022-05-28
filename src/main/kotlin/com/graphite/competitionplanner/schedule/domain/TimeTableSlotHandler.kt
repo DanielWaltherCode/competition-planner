@@ -19,8 +19,6 @@ import kotlin.time.Duration
  * - Changing average time per game
  * - Adding lunch breaks
  * - Changing number of tables available
- * - Changing locations
- * - etc.
  *
  * Any operations to the TimeTableSlots will override any unpublished schema.
  */

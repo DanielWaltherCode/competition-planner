@@ -8,7 +8,7 @@ create table match_time_slot
 );
 
 CREATE UNIQUE INDEX idx_match_time_slot
-    ON match_time_slot(start_time, table_number, location);
+    ON match_time_slot(competition_id, start_time, table_number, location);
 
 alter table match add match_time_slot_id int;
 

@@ -30,7 +30,6 @@ class TestGenerateTimeTable(
         val competition = findCompetitions.thatBelongTo(clubId)[0]
         var tmpDate = competition.startDate
         while (tmpDate < competition.endDate) {
-            println("Updating available tables")
             availableTablesService.updateTablesAvailable(competition.id, AvailableTablesSpec(10, tmpDate))
             tmpDate =  tmpDate.plusDays(1)
         }

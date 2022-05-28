@@ -11,6 +11,7 @@ import com.graphite.competitionplanner.schedule.service.StartInterval
 import com.graphite.competitionplanner.tables.records.*
 import org.jooq.DSLContext
 import org.jooq.Record6
+import org.slf4j.LoggerFactory
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
@@ -18,6 +19,8 @@ import java.time.LocalDateTime
 
 @Repository
 class ScheduleRepository(private val dslContext: DSLContext) : IScheduleRepository {
+
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     // Schedule metadata methods
     fun addScheduleMetadata(
@@ -326,7 +329,12 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
 
     override fun storeTimeTable(competitionId: Int, timeTable: List<TimeTableSlotSpec>) {
         val records = timeTable.map { it.toRecord(competitionId) }
-        dslContext.batchInsert(records).execute()
+        try {
+            dslContext.batchInsert(records).execute()
+        } catch (exception: DuplicateKeyException) {
+            logger.error("Exception message: ${exception.message}")
+            throw RuntimeException("Failed to store time table for competition id $competitionId")
+        }
     }
 
     override fun deleteTimeTable(competitionId: Int) {
