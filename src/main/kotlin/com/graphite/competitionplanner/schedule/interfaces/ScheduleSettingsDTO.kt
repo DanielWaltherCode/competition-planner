@@ -1,12 +1,11 @@
-package com.graphite.competitionplanner.schedule.domain.entity
+package com.graphite.competitionplanner.schedule.interfaces
 
-import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.util.plusDuration
 import java.time.LocalDateTime
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 
-internal data class ScheduleSettings(
+data class ScheduleSettingsDTO(
     val averageMatchTime: Duration,
     val numberOfTables: Int,
     val startTime: LocalDateTime,
@@ -18,7 +17,4 @@ internal data class ScheduleSettings(
         require(startTime.plusDuration(averageMatchTime) <= endTime)
         { "Time difference between start time and end time is to little considering the average play time per match" }
     }
-
-    constructor(dto: ScheduleSettingsDTO) : this(dto.averageMatchTime, dto.numberOfTables, dto.startTime, dto.endTime)
 }
-

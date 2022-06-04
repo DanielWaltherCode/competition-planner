@@ -5,10 +5,7 @@ import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.competition.interfaces.*
-import com.graphite.competitionplanner.schedule.domain.entity.Match
-import com.graphite.competitionplanner.schedule.domain.entity.MatchType
 import com.graphite.competitionplanner.draw.interfaces.Round
-import com.graphite.competitionplanner.schedule.domain.entity.ScheduleSettings
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.draw.service.MatchSpec
 import com.graphite.competitionplanner.match.domain.GameResult
@@ -24,9 +21,8 @@ import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.service.ResultDTO
 import com.graphite.competitionplanner.schedule.interfaces.MatchToTimeTableSlot
 import com.graphite.competitionplanner.schedule.domain.PreScheduleSpec
-import com.graphite.competitionplanner.schedule.domain.ScheduleMatchDto
-import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
-import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
+import com.graphite.competitionplanner.schedule.interfaces.ScheduleMatchDto
+import com.graphite.competitionplanner.schedule.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotMatchInfo
 import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotToMatch
 import com.graphite.competitionplanner.schedule.interfaces.MapMatchToTimeTableSlotSpec
@@ -47,39 +43,39 @@ class DataGenerator {
     private var competitionCategoryId = 0
     private var registrationId = 1
 
-    internal fun newMatch(
-        id: Int = matchId++,
-        competitionCategoryId: Int = 0,
-        startTime: LocalDateTime = LocalDateTime.now(),
-        endTime: LocalDateTime = LocalDateTime.now().plusMinutes(15),
-        matchType: MatchType = MatchType("POOL"),
-        firstPlayer: List<Int> = listOf(playerId++),
-        secondPlayer: List<Int> = listOf(playerId++),
-        orderNumber: Int = 0,
-        groupOrRound: String = "GROUP A"
-    ) = Match(
-        id,
-        competitionCategoryId,
-        startTime,
-        endTime,
-        matchType,
-        firstPlayer,
-        secondPlayer,
-        orderNumber,
-        groupOrRound
-    )
-
-    internal fun newScheduleSettings(
-        averageMatchTime: Duration = Duration.minutes(15),
-        numberOfTables: Int = 8,
-        startTime: LocalDateTime = LocalDateTime.now(),
-        endTime: LocalDateTime = LocalDateTime.now().plusHours(8)
-    ) = ScheduleSettings(
-        averageMatchTime,
-        numberOfTables,
-        startTime,
-        endTime
-    )
+//    internal fun newMatch(
+//        id: Int = matchId++,
+//        competitionCategoryId: Int = 0,
+//        startTime: LocalDateTime = LocalDateTime.now(),
+//        endTime: LocalDateTime = LocalDateTime.now().plusMinutes(15),
+//        matchType: MatchType = MatchType("POOL"),
+//        firstPlayer: List<Int> = listOf(playerId++),
+//        secondPlayer: List<Int> = listOf(playerId++),
+//        orderNumber: Int = 0,
+//        groupOrRound: String = "GROUP A"
+//    ) = Match(
+//        id,
+//        competitionCategoryId,
+//        startTime,
+//        endTime,
+//        matchType,
+//        firstPlayer,
+//        secondPlayer,
+//        orderNumber,
+//        groupOrRound
+//    )
+//
+//    internal fun newScheduleSettings(
+//        averageMatchTime: Duration = Duration.minutes(15),
+//        numberOfTables: Int = 8,
+//        startTime: LocalDateTime = LocalDateTime.now(),
+//        endTime: LocalDateTime = LocalDateTime.now().plusHours(8)
+//    ) = ScheduleSettings(
+//        averageMatchTime,
+//        numberOfTables,
+//        startTime,
+//        endTime
+//    )
 
     internal fun newLocationSpec(
         name: String = "Svedala Arena"
@@ -142,28 +138,6 @@ class DataGenerator {
         firstRegistrationId,
         secondRegistrationId,
         matchOrderNumber,
-        groupOrRound
-    )
-
-    fun newMatchDTO(
-        id: Int = matchId++,
-        competitionCategoryId: Int = 0,
-        startTime: LocalDateTime = LocalDateTime.now(),
-        endTime: LocalDateTime = LocalDateTime.now().plusMinutes(15),
-        matchType: String = "POOL",
-        firstPlayer: List<Int> = listOf(newPlayerDTO(firstName = "Lars", lastName = "Åkesson").id),
-        secondPlayer: List<Int> = listOf(newPlayerDTO(firstName = "Lars", lastName = "Åkesson").id),
-        orderNumber: Int = 0,
-        groupOrRound: String = "GROUP A"
-    ) = MatchDTO(
-        id,
-        startTime,
-        endTime,
-        competitionCategoryId,
-        matchType,
-        firstPlayer,
-        secondPlayer,
-        orderNumber,
         groupOrRound
     )
 
@@ -587,7 +561,7 @@ class DataGenerator {
      * @param numberOfPlayers Number of players in the pool
      * @param categoryId Category the pool / players belong to
      */
-    fun poolOf(numberOfPlayers: Int = 4, categoryId: Int = 2): List<MatchDTO> {
+    fun poolOf(numberOfPlayers: Int = 4, categoryId: Int = 2): List<ScheduleMatchDto> {
         assert(numberOfPlayers > 1) { "Yo! Think I can create a pool with less than 2 players?!" }
         assert(numberOfPlayers < 11) { "Not that many! Maximum of 10 players per pool." }
 
@@ -595,20 +569,15 @@ class DataGenerator {
         val players =
             (0..numberOfPlayers).map { newPlayerDTO(firstName = "Player" + postFixes[it], lastName = "LastName") }
 
-        val matches = mutableListOf<MatchDTO>()
+        val matches = mutableListOf<ScheduleMatchDto>()
         for (i in 0..numberOfPlayers) {
             for (j in i + 1..numberOfPlayers) {
                 matches.add(
-                    MatchDTO(
+                    ScheduleMatchDto(
                         matchId++,
-                        null,
-                        null,
                         categoryId,
-                        "POOL",
                         listOf(players[i].id),
                         listOf(players[j].id),
-                        0,
-                        "GROUP"
                     )
                 )
             }
@@ -620,18 +589,13 @@ class DataGenerator {
     /**
      * Pool with 4 players i.e. 6 matches
      */
-    fun pool1(categoryId: Int = 1): List<MatchDTO> {
+    fun pool1(categoryId: Int = 1): List<ScheduleMatchDto> {
         return pool1.map {
-            MatchDTO(
+            ScheduleMatchDto(
                 it.id,
-                it.startTime,
-                it.endTime,
                 categoryId,
-                it.matchType,
-                it.firstPlayer,
-                it.secondPlayer,
-                it.matchOrderNumber,
-                it.groupOrRound
+                it.firstTeamPlayerIds,
+                it.secondTeamPlayerIds,
             )
         }
     }
@@ -639,18 +603,13 @@ class DataGenerator {
     /**
      * Pool with 4 players i.e. 6 matches
      */
-    fun pool2(categoryId: Int = 1): List<MatchDTO> {
+    fun pool2(categoryId: Int = 1): List<ScheduleMatchDto> {
         return pool2.map {
-            MatchDTO(
+            ScheduleMatchDto(
                 it.id,
-                it.startTime,
-                it.endTime,
                 categoryId,
-                it.matchType,
-                it.firstPlayer,
-                it.secondPlayer,
-                it.matchOrderNumber,
-                it.groupOrRound
+                it.firstTeamPlayerIds,
+                it.secondTeamPlayerIds,
             )
         }
     }
@@ -658,18 +617,13 @@ class DataGenerator {
     /**
      * Pool with 3 players i.e 3 matches
      */
-    fun pool3(categoryId: Int = 1): List<MatchDTO> {
+    fun pool3(categoryId: Int = 1): List<ScheduleMatchDto> {
         return pool3.map {
-            MatchDTO(
+            ScheduleMatchDto(
                 it.id,
-                it.startTime,
-                it.endTime,
                 categoryId,
-                it.matchType,
-                it.firstPlayer,
-                it.secondPlayer,
-                it.matchOrderNumber,
-                it.groupOrRound
+                it.firstTeamPlayerIds,
+                it.secondTeamPlayerIds,
             )
         }
     }
@@ -683,30 +637,12 @@ class DataGenerator {
     private val p4 = PlayerDTO(4, "Sture", "Sundberg", club.id, birthDate)
 
     private val pool1 = listOf(
-        MatchDTO(
-            1, null, null, 1, "POOL",
-            listOf(p1.id), listOf(p2.id), 0, "GROUP"
-        ),
-        MatchDTO(
-            2, null, null, 1, "POOL",
-            listOf(p1.id), listOf(p3.id), 0, "GROUP"
-        ),
-        MatchDTO(
-            3, null, null, 1, "POOL",
-            listOf(p1.id), listOf(p4.id), 0, "GROUP"
-        ),
-        MatchDTO(
-            4, null, null, 1, "POOL",
-            listOf(p2.id), listOf(p3.id), 0, "GROUP"
-        ),
-        MatchDTO(
-            5, null, null, 1, "POOL",
-            listOf(p2.id), listOf(p4.id), 0, "GROUP"
-        ),
-        MatchDTO(
-            6, null, null, 1, "POOL",
-            listOf(p3.id), listOf(p4.id), 0, "GROUP"
-        )
+        ScheduleMatchDto(1, 0, listOf(p1.id), listOf(p2.id)),
+        ScheduleMatchDto(2, 0, listOf(p1.id), listOf(p3.id)),
+        ScheduleMatchDto(3, 0, listOf(p1.id), listOf(p4.id)),
+        ScheduleMatchDto(4, 0, listOf(p2.id), listOf(p3.id)),
+        ScheduleMatchDto(5, 0, listOf(p2.id), listOf(p4.id)),
+        ScheduleMatchDto(6, 0, listOf(p3.id), listOf(p4.id))
     )
 
     private val p5 = PlayerDTO(5, "Elin", "Malsson", club.id, birthDate)
@@ -715,30 +651,12 @@ class DataGenerator {
     private val p8 = PlayerDTO(8, "Lena", "Sinè", club.id, birthDate)
 
     private val pool2 = listOf(
-        MatchDTO(
-            7, null, null, 1, "POOL",
-            listOf(p5.id), listOf(p6.id), 0, "GROUP"
-        ),
-        MatchDTO(
-            8, null, null, 1, "POOL",
-            listOf(p5.id), listOf(p7.id), 0, "GROUP"
-        ),
-        MatchDTO(
-            9, null, null, 1, "POOL",
-            listOf(p5.id), listOf(p8.id), 0, "GROUP"
-        ),
-        MatchDTO(
-            10, null, null, 1, "POOL",
-            listOf(p6.id), listOf(p7.id), 0, "GROUP"
-        ),
-        MatchDTO(
-            11, null, null, 1, "POOL",
-            listOf(p6.id), listOf(p8.id), 0, "GROUP"
-        ),
-        MatchDTO(
-            12, null, null, 1, "POOL",
-            listOf(p7.id), listOf(p8.id), 0, "GROUP"
-        )
+        ScheduleMatchDto(7, 0, listOf(p5.id), listOf(p6.id)),
+        ScheduleMatchDto(8, 0, listOf(p5.id), listOf(p7.id)),
+        ScheduleMatchDto(9, 0, listOf(p5.id), listOf(p8.id)),
+        ScheduleMatchDto(10, 0, listOf(p6.id), listOf(p7.id)),
+        ScheduleMatchDto(11, 0, listOf(p6.id), listOf(p8.id)),
+        ScheduleMatchDto(12, 0, listOf(p7.id), listOf(p8.id))
     )
 
     private val p9 = PlayerDTO(9, "Patrik", "Larsson", club.id, birthDate)
@@ -746,18 +664,9 @@ class DataGenerator {
     private val p11 = PlayerDTO(11, "Tintin", "Snäll", club.id, birthDate)
 
     private val pool3 = listOf(
-        MatchDTO(
-            13, null, null, 1, "POOL",
-            listOf(p9.id), listOf(p10.id), 0, "GROUP"
-        ),
-        MatchDTO(
-            14, null, null, 1, "POOL",
-            listOf(p9.id), listOf(p11.id), 0, "GROUP"
-        ),
-        MatchDTO(
-            15, null, null, 1, "POOL",
-            listOf(p10.id), listOf(p11.id), 0, "GROUP"
-        )
+        ScheduleMatchDto(13, 0, listOf(p9.id), listOf(p10.id)),
+        ScheduleMatchDto(14, 0, listOf(p9.id), listOf(p11.id)),
+        ScheduleMatchDto(15, 0, listOf(p10.id), listOf(p11.id))
     )
 
 }
