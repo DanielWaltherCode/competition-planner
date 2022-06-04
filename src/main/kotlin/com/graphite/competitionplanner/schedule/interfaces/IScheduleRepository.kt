@@ -69,11 +69,10 @@ interface IScheduleRepository {
     /**
      * Add a match to the TimeTableSlot and return all matches that are now booked in that TimeTableSlot
      *
-     * @param id ID of the TimeTableSlot
-     * @param matchId ID of the match
+     * @param spec Specification for mapping a match to a TimeTableSlot
      * @return List of matches that are now booked to the same timeslots
      */
-    fun addMatchToTimeTableSlot(matchToTimeTableSlotSpec: MapMatchToTimeTableSlotSpec): List<MatchToTimeTableSlot>
+    fun addMatchToTimeTableSlot(spec: MapMatchToTimeTableSlotSpec): List<MatchToTimeTableSlot>
 
     /**
      * Batch update the TimeTableSlots for the given matches
@@ -107,4 +106,12 @@ interface IScheduleRepository {
         tableNumbers: List<Int>,
         location: String
     ): List<MatchTimeSlotRecord>
+
+    /**
+     * Publish the schedule of the competition
+     *
+     * @param competitionId ID of the competition to publish the schedule for.
+     */
+    fun publishSchedule(competitionId: Int)
+
 }

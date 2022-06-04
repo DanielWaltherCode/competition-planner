@@ -9,10 +9,10 @@ import java.time.LocalDateTime
 import kotlin.time.Duration
 
 /**
- * Class that can map matches to TimeTableSlots
+ * Class that provides methods to schedule matches within the same competition.
  */
 @Component
-class MatchScheduler( // TODO: Come up with a better name. CompetitionScheduler?
+class CompetitionScheduler(
     val repository: IScheduleRepository,
     val createSchedule: CreateSchedule
 ) {
@@ -57,9 +57,8 @@ class MatchScheduler( // TODO: Come up with a better name. CompetitionScheduler?
      * match db-table. This will allow a user to continue editing a schedule without changing the already published
      * schedule. Almost like you save a draft.
      */
-    fun publishSchedule() {
-        // TODO: Implement
-        // repository.publishSchedule()
+    fun publishSchedule(competitionId: Int) {
+        repository.publishSchedule(competitionId)
     }
 
     /**

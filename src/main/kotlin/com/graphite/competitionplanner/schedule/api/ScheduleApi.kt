@@ -1,25 +1,30 @@
 package com.graphite.competitionplanner.schedule.api
 
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
+import com.graphite.competitionplanner.schedule.domain.CompetitionScheduler
 import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleItemDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleMatchDTO
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
 @RestController
 @RequestMapping("/schedule/{competitionId}/")
-class ScheduleApi {
+class ScheduleApi(
+    val competitionScheduler: CompetitionScheduler
+) {
 
     @GetMapping("excel-table")
     fun getScheduleOverview(): ExcelScheduleDTO {
         return generateDummyExcelSchedule()
     }
 
+    @PutMapping("publish")
+    fun publishSchedule(@PathVariable competitionId: Int) {
+        competitionScheduler.publishSchedule(competitionId)
+    }
 
     private fun generateDummyExcelSchedule(): ExcelScheduleDTO {
         val scheduleItemList = mutableListOf<ExcelScheduleItemDTO>()
