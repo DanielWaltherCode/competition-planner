@@ -121,7 +121,7 @@ class CompetitionScheduler(
             Duration.minutes(15), // Not used
             tables.size,
             LocalDateTime.now(), // Not used
-            LocalDateTime.now() // Not used
+            LocalDateTime.now().plusMinutes(60) // Not used
         )
         val schedule = createSchedule.execute(matches, settings)
         val timeTableSlots = repository.getTimeTableSlotRecords(competitionId, startTime, tables, location)
@@ -143,5 +143,8 @@ class CompetitionScheduler(
             logger.error("Input parameters: MatchType = $matchType, TableNumbers = ${tables.joinToString { "," }}, StartTime = $startTime, Location = $location")
         }
     }
-}
 
+    fun clearSchedule(competitionId: Int) {
+        repository.clearSchedule(competitionId)
+    }
+}

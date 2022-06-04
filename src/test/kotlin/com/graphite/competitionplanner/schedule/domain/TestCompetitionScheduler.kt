@@ -84,7 +84,8 @@ class TestCompetitionScheduler {
         val tables = listOf(1, 2, 3)
         val startTime = LocalDateTime.now()
         val location = "Lundaparken A"
-//        matchScheduler.scheduleCompetitionCategory(competitionId, competitionCategoryId, matchType, tables, startTime, location)
+
+        competitionScheduler.scheduleCompetitionCategory(competitionId, competitionCategoryId, matchType, tables, startTime, location)
     }
 
     @Test

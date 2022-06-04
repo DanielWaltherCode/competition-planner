@@ -26,6 +26,11 @@ class ScheduleApi(
         competitionScheduler.publishSchedule(competitionId)
     }
 
+    @DeleteMapping
+    fun clearSchedule(@PathVariable competitionId: Int) {
+        competitionScheduler.clearSchedule(competitionId)
+    }
+
     private fun generateDummyExcelSchedule(): ExcelScheduleDTO {
         val scheduleItemList = mutableListOf<ExcelScheduleItemDTO>()
         scheduleItemList.add(generateDummyExcelScheduleItem(1, "Herrar 1", "morning", "Group"))

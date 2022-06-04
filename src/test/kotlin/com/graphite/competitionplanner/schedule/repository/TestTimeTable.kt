@@ -271,7 +271,6 @@ class TestTimeTable @Autowired constructor(
         // Assert
         val match1AfterPublish = matchRepository.getMatch(match1.id)
         val match2AfterPublish = matchRepository.getMatch(match2.id)
-
         Assertions.assertEquals(slot1.startTime, match1AfterPublish.startTime, "Not the correct start time ")
         Assertions.assertEquals(
             null,
@@ -283,6 +282,40 @@ class TestTimeTable @Autowired constructor(
         val match4AfterPublish = matchRepository.getMatch(match4.id)
         Assertions.assertEquals(null, match3AfterPublish.startTime, "Published schedule for wrong competition.")
         Assertions.assertEquals(null, match4AfterPublish.startTime, "Published schedule for wrong competition.")
+    }
+
+    @Test
+    fun testClearSchedule() {
+        // Setup
+        val (match1, match2, slot1, slot2, competition) = setupTestData() // Another competition
+        repository.updateMatchesTimeTablesSlots(
+            listOf(
+                MapMatchToTimeTableSlotSpec(match1.id, slot1.id),
+                MapMatchToTimeTableSlotSpec(match2.id, slot2.id)
+            )
+        )
+
+        val (match3, match4, slot3, slot4, _) = setupTestData() // Another competition
+        repository.updateMatchesTimeTablesSlots(
+            listOf(
+                MapMatchToTimeTableSlotSpec(match3.id, slot3.id),
+                MapMatchToTimeTableSlotSpec(match4.id, slot4.id)
+            )
+        )
+
+        // Act
+        repository.clearSchedule(competition.id)
+
+        // Assert
+        val match1AfterClear = matchRepository.getMatch(match1.id)
+        val match2AfterClear = matchRepository.getMatch(match2.id)
+        Assertions.assertNull(match1AfterClear.matchTimeSlotId, "Expected that match was not linked to a TimeTableSlot")
+        Assertions.assertNull(match2AfterClear.matchTimeSlotId, "Expected that match was not linked to a TimeTableSlot")
+
+        val match3AfterClear = matchRepository.getMatch(match3.id)
+        val match4AfterClear = matchRepository.getMatch(match4.id)
+        Assertions.assertNotNull(match3AfterClear.matchTimeSlotId, "Cleared schedule for wrong competition.")
+        Assertions.assertNotNull(match4AfterClear.matchTimeSlotId, "Cleared schedule for wrong competition.")
     }
 
     data class TestData(
