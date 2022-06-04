@@ -46,7 +46,7 @@ class TestTimeTable @Autowired constructor(
     @Test
     fun testGetTimeTable() {
         // Setup
-        val (match1, match2, slot1, slot2, competition) = setupTestData()
+        val (match1, match2, slot1, _, competition) = setupTestData()
         val updateSpec1 = listOf(
             MapMatchToTimeTableSlotSpec(match1.id, slot1.id),
             MapMatchToTimeTableSlotSpec(match2.id, slot1.id)
@@ -61,7 +61,10 @@ class TestTimeTable @Autowired constructor(
 
         val zipWithNext = timeTable.zipWithNext()
         for ((s1, s2) in zipWithNext) {
-            Assertions.assertTrue(s1.id <= s2.id, "The returned list is not sorted by TimeTableSlot id in ascending order")
+            Assertions.assertTrue(
+                s1.id <= s2.id,
+                "The returned list is not sorted by TimeTableSlot id in ascending order"
+            )
         }
     }
 
@@ -84,7 +87,8 @@ class TestTimeTable @Autowired constructor(
         repository.storeTimeTable(competition.id, listOf(slot6, slot5, slot1, slot2, slot3, slot4))
 
         // Act
-        val result = repository.getTimeTableSlotRecords(competition.id, now.minusMinutes(1), listOf(1, 2, 3), locationMalmo)
+        val result =
+            repository.getTimeTableSlotRecords(competition.id, now.minusMinutes(1), listOf(1, 2, 3), locationMalmo)
 
         // Assert
         Assertions.assertTrue(slot1.startTime == result[0].startTime && slot1.tableNumber == result[0].tableNumber)
@@ -142,11 +146,24 @@ class TestTimeTable @Autowired constructor(
         repository.storeTimeTable(competition.id, listOf(slot1, slot2, slot3, slot4))
 
         // Act & Assert
-        val result = repository.getTimeTableSlotRecords(-1, LocalDateTime.now().minusMinutes(10), listOf(1), locationMalmo)
+        val result =
+            repository.getTimeTableSlotRecords(-1, LocalDateTime.now().minusMinutes(10), listOf(1), locationMalmo)
         Assertions.assertEquals(0, result.size, "The competition id does not exist. Expected empty result.")
 
-        assertCorrectRecordsReturned(3, competition.id, LocalDateTime.now().minusMinutes(10), listOf(1, 2), locationMalmo)
-        assertCorrectRecordsReturned(2, competition.id, LocalDateTime.now().plusMinutes(10), listOf(1, 2), locationMalmo)
+        assertCorrectRecordsReturned(
+            3,
+            competition.id,
+            LocalDateTime.now().minusMinutes(10),
+            listOf(1, 2),
+            locationMalmo
+        )
+        assertCorrectRecordsReturned(
+            2,
+            competition.id,
+            LocalDateTime.now().plusMinutes(10),
+            listOf(1, 2),
+            locationMalmo
+        )
         assertCorrectRecordsReturned(2, competition.id, LocalDateTime.now().minusMinutes(10), listOf(1), locationMalmo)
         assertCorrectRecordsReturned(1, competition.id, LocalDateTime.now().minusMinutes(10), listOf(3), locationLund)
     }
@@ -185,8 +202,10 @@ class TestTimeTable @Autowired constructor(
         val (match1, match2, slot1, _) = setupTestData()
 
         // Act
-        val afterFirst = repository.addMatchToTimeTableSlot(dataGenerator.newMapMatchToTimeTableSlotSpec(match1.id, slot1.id))
-        val afterSecond = repository.addMatchToTimeTableSlot(dataGenerator.newMapMatchToTimeTableSlotSpec(match2.id, slot1.id))
+        val afterFirst =
+            repository.addMatchToTimeTableSlot(dataGenerator.newMapMatchToTimeTableSlotSpec(match1.id, slot1.id))
+        val afterSecond =
+            repository.addMatchToTimeTableSlot(dataGenerator.newMapMatchToTimeTableSlotSpec(match2.id, slot1.id))
 
         // Assert
         Assertions.assertEquals(1, afterFirst.size, "Not the expected number of items")
@@ -226,6 +245,44 @@ class TestTimeTable @Autowired constructor(
 
         Assertions.assertEquals(match1.matchType, match1AfterSecondUpdate.matchType, "Wrong values updated!")
         Assertions.assertEquals(match2.matchType, match2AfterSecondUpdate.matchType, "Wrong values updated!")
+    }
+
+    @Test
+    fun testPublishSchedule() {
+        // Setup
+        val (match1, match2, slot1, _, competition) = setupTestData() // Competition 1
+        repository.updateMatchesTimeTablesSlots(
+            listOf(
+                MapMatchToTimeTableSlotSpec(match1.id, slot1.id),
+            )
+        )
+
+        val (match3, match4, slot3, slot4, _) = setupTestData() // Another competition
+        repository.updateMatchesTimeTablesSlots(
+            listOf(
+                MapMatchToTimeTableSlotSpec(match3.id, slot3.id),
+                MapMatchToTimeTableSlotSpec(match4.id, slot4.id)
+            )
+        )
+
+        // Act
+        repository.publishSchedule(competition.id)
+
+        // Assert
+        val match1AfterPublish = matchRepository.getMatch(match1.id)
+        val match2AfterPublish = matchRepository.getMatch(match2.id)
+
+        Assertions.assertEquals(slot1.startTime, match1AfterPublish.startTime, "Not the correct start time ")
+        Assertions.assertEquals(
+            null,
+            match2AfterPublish.startTime,
+            "Match was not linked to a time slot, so there should not be a published start time."
+        )
+
+        val match3AfterPublish = matchRepository.getMatch(match3.id)
+        val match4AfterPublish = matchRepository.getMatch(match4.id)
+        Assertions.assertEquals(null, match3AfterPublish.startTime, "Published schedule for wrong competition.")
+        Assertions.assertEquals(null, match4AfterPublish.startTime, "Published schedule for wrong competition.")
     }
 
     data class TestData(

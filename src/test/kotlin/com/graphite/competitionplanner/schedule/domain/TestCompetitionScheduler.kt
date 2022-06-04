@@ -11,13 +11,13 @@ import java.time.LocalDateTime
 
 
 @SpringBootTest
-class TestMatchScheduler {
+class TestCompetitionScheduler {
 
     private val mockedScheduleRepository: IScheduleRepository = Mockito.mock(IScheduleRepository::class.java)
     private val createSchedule = CreateSchedule()
     private val dataGenerator = DataGenerator()
 
-    private val matchScheduler = MatchScheduler(mockedScheduleRepository, createSchedule)
+    private val competitionScheduler = CompetitionScheduler(mockedScheduleRepository, createSchedule)
 
     @Test
     fun addingMatchToEmptySlot() {
@@ -32,7 +32,7 @@ class TestMatchScheduler {
         )
 
         // Act
-        val timeTableSlot = matchScheduler.mapMatchToTimeTableSlot(spec)
+        val timeTableSlot = competitionScheduler.mapMatchToTimeTableSlot(spec)
 
         // Assert
         Assertions.assertFalse(
@@ -57,7 +57,7 @@ class TestMatchScheduler {
         )
 
         // Act
-        val timeTableSlot = matchScheduler.mapMatchToTimeTableSlot(spec)
+        val timeTableSlot = competitionScheduler.mapMatchToTimeTableSlot(spec)
 
         // Assert
         Assertions.assertTrue(
@@ -102,7 +102,7 @@ class TestMatchScheduler {
         Mockito.`when`(mockedScheduleRepository.getTimeTable(competitionId)).thenReturn(matchesToSlots)
 
         // Act
-        val schedule = matchScheduler.getSchedule(competitionId)
+        val schedule = competitionScheduler.getSchedule(competitionId)
 
         // Assert
         Assertions.assertEquals(4, schedule.size, "Not the correct number of TimeTableSlots")
@@ -145,7 +145,7 @@ class TestMatchScheduler {
         val expectedOrder = listOf(3, 1, 7, 5, 11, 9, 4, 2, 8, 6, 12, 10)
 
         // Act
-        val schedule = matchScheduler.getSchedule(competitionId)
+        val schedule = competitionScheduler.getSchedule(competitionId)
 
         // Assert
         val timeTableSlotIds = schedule.map { it.id }
