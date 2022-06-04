@@ -1,16 +1,10 @@
 package com.graphite.competitionplanner.schedule.domain
 
-import com.graphite.competitionplanner.schedule.domain.entity.Match
-import com.graphite.competitionplanner.schedule.domain.entity.Schedule
-import com.graphite.competitionplanner.schedule.domain.entity.ScheduleSettings
-import com.graphite.competitionplanner.schedule.domain.entity.Timeslot
-import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
-import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleDTO
-import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
-import com.graphite.competitionplanner.util.plusDuration
+import com.graphite.competitionplanner.schedule.interfaces.ScheduleDTO
+import com.graphite.competitionplanner.schedule.interfaces.ScheduleSettingsDTO
+import com.graphite.competitionplanner.schedule.interfaces.TimeslotDTO
+import com.graphite.competitionplanner.schedule.interfaces.ScheduleMatchDto
 import org.springframework.stereotype.Component
-import java.time.temporal.ChronoUnit
-import kotlin.time.DurationUnit
 
 @Component
 class CreateSchedule {
@@ -26,49 +20,19 @@ class CreateSchedule {
      * all time. This leads to the schedule being divided into equally sized timeslots where the maximum number of
      * matches that can be played simultaneously is equal to the number of tables.
      */
-    fun execute(matches: List<MatchDTO>, scheduleSettings: ScheduleSettingsDTO): ScheduleDTO {
-        val matchesToBeScheduled = matches.map { dto -> Match(dto) }
-        return ScheduleDTO(execute(matchesToBeScheduled, ScheduleSettings(scheduleSettings)))
+    fun execute(matches: List<ScheduleMatchDto>, scheduleSettings: ScheduleSettingsDTO): ScheduleDTO {
+        return createSchedule(matches, ScheduleDTO(0, emptyList(), scheduleSettings))
     }
 
-    internal fun execute(matches: List<Match>, settings: ScheduleSettings): Schedule {
-        val schedule = createSchedule(matches, Schedule(0, emptyList(), settings))
-        return assignTimeInformationOnMatches(schedule)
-    }
-
-    private fun assignTimeInformationOnMatches(schedule: Schedule): Schedule {
-        with(schedule) {
-            val timeslots = timeslots.map { it.assignTimeToMatches(settings) }
-            return Schedule(id, timeslots, settings)
-        }
-    }
-
-    private fun Timeslot.assignTimeToMatches(settings: ScheduleSettings): Timeslot {
-        val dayInMinutes = settings.startTime.until(settings.endTime, ChronoUnit.MINUTES)
-        val timeslotsPerDay = dayInMinutes / settings.averageMatchTime.toLong(DurationUnit.MINUTES)
-        val timeslotOrderForTheDay = this.orderNumber % timeslotsPerDay
-        val dayOfTimeslot = this.orderNumber / timeslotsPerDay
-        val matchStart = settings.startTime.plusDays(dayOfTimeslot)
-            .plusDuration(settings.averageMatchTime * timeslotOrderForTheDay.toInt())
-        val matchEnd = settings.startTime.plusDays(dayOfTimeslot)
-            .plusDuration(settings.averageMatchTime * (timeslotOrderForTheDay + 1).toInt())
-
-        return Timeslot(
-            this.orderNumber,
-            this.matches.map { match -> Match(match, matchStart, matchEnd) }
-        )
-    }
-
-    private fun createSchedule(tempMatches: List<Match>, scheduleTest: Schedule): Schedule {
-
+    private fun createSchedule(tempMatches: List<ScheduleMatchDto>, scheduleTest: ScheduleDTO): ScheduleDTO {
         var remainingMatches = tempMatches
 
         var schedule = scheduleTest.copy()
 
         while (remainingMatches.isNotEmpty()) {
-            for (category in remainingMatches.groupByCategory()) { // Round robin per category
+            for (category in remainingMatches.groupByCategory()) { // Round-robin per category
                 // Since we consider players from all remaining matches (i.e all categories),
-                // players that belongs to two categories will essentially have a higher priority
+                // players that belong to two categories will essentially have a higher priority
                 val playerPriorities = calculatePlayerPriorityBasedOn(remainingMatches)
                 val matchPriorities = calculateMatchPriorityBasedOn(category.matches, playerPriorities)
                 val highestPriority = matchPriorities.maxByOrNull{ match -> match.priority }
@@ -85,7 +49,7 @@ class CreateSchedule {
      */
     private data class MatchesGroupedOnCategory(
         val competitionCategoryId: Int,
-        var matches: List<Match>
+        var matches: List<ScheduleMatchDto>
     )
 
     /**
@@ -100,14 +64,14 @@ class CreateSchedule {
      * Helper data class to keep track of a match's priority
      */
     private data class MatchPriority(
-        val match: Match,
+        val match: ScheduleMatchDto,
         val priority: Int
     )
 
     /**
      * A player with more matches left to play will get a higher priority
      */
-    private fun calculatePlayerPriorityBasedOn(matches: List<Match>): List<PlayerPriority> {
+    private fun calculatePlayerPriorityBasedOn(matches: List<ScheduleMatchDto>): List<PlayerPriority> {
         val playerIds = matches.flatMap { it.playerIds() }
         val distinctPlayerIds = playerIds.distinct()
         return distinctPlayerIds.map { distinctId ->
@@ -121,7 +85,7 @@ class CreateSchedule {
      * Return a list of matches with their assigned priorities
      */
     private fun calculateMatchPriorityBasedOn(
-        matches: List<Match>,
+        matches: List<ScheduleMatchDto>,
         playerPriorities: List<PlayerPriority>
     ): List<MatchPriority> {
         with(playerPriorities) {
@@ -129,17 +93,17 @@ class CreateSchedule {
         }
     }
 
-    private fun List<PlayerPriority>.calculatePriorityFor(match: Match): Int {
+    private fun List<PlayerPriority>.calculatePriorityFor(match: ScheduleMatchDto): Int {
         return this.filter { match.playerIds().contains(it.playerId) }.sumOf { it.priority }
     }
 
     /**
      * Returns a new schedule that contains the given match
      */
-    private fun Schedule.add(match: Match): Schedule {
+    private fun ScheduleDTO.add(match: ScheduleMatchDto): ScheduleDTO {
         val timeslots =
             placeMatchInFirstAvailableTimeslot(this.timeslots, match, this.settings.numberOfTables, this.timeslots.size)
-        return Schedule(0, timeslots, this.settings)
+        return ScheduleDTO(0, timeslots, this.settings)
     }
 
     /**
@@ -149,13 +113,13 @@ class CreateSchedule {
      * - and any of the players in the match is not scheduled in that timeslot already.
      */
     private fun placeMatchInFirstAvailableTimeslot(
-        timeslots: List<Timeslot>,
-        match: Match,
+        timeslots: List<TimeslotDTO>,
+        match: ScheduleMatchDto,
         numberOfTables: Int,
         nextTimeSlotId: Int
-    ): List<Timeslot> {
+    ): List<TimeslotDTO> {
         return if (timeslots.isEmpty())
-            listOf(Timeslot(nextTimeSlotId, listOf(match)))
+            listOf(TimeslotDTO(nextTimeSlotId, listOf(match)))
         else {
             if (numberOfTables == timeslots.first().matches.size || timeslots.first().contains(match.playerIds())
             ) {
@@ -176,21 +140,21 @@ class CreateSchedule {
     /**
      * Return a list of player ids that belongs to this match
      */
-    private fun Match.playerIds(): List<Int> {
+    private fun ScheduleMatchDto.playerIds(): List<Int> {
         return this.firstTeamPlayerIds + this.secondTeamPlayerIds
     }
 
     /**
      * Returns true if and only if the timeslot contains any of the new player ids
      */
-    private fun Timeslot.contains(newPlayerIds: List<Int>): Boolean {
+    private fun TimeslotDTO.contains(newPlayerIds: List<Int>): Boolean {
         return !this.playerIds.none { i: Int -> newPlayerIds.contains(i) }
     }
 
     /**
      * Returns a list of matches grouped by category
      */
-    private fun List<Match>.groupByCategory(): List<MatchesGroupedOnCategory> {
+    private fun List<ScheduleMatchDto>.groupByCategory(): List<MatchesGroupedOnCategory> {
         val categories = this.map { it.competitionCategoryId }.distinct()
         return categories.map {
             MatchesGroupedOnCategory(

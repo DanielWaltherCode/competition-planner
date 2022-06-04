@@ -1,8 +1,7 @@
 package com.graphite.competitionplanner.schedule.domain
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
-import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
+import com.graphite.competitionplanner.schedule.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
 import com.graphite.competitionplanner.schedule.service.StartInterval
 import org.springframework.stereotype.Component
@@ -33,8 +32,7 @@ class TrySchedule(
         repository.storePreSchedule(competitionId, competitionCategoryId, spec)
         val matches = repository.getPreScheduledMatches(competitionId, spec.playDate, spec.timeInterval)
         val competitionCategoryIds = matches.map { it.competitionCategoryId }.distinct()
-        val matchDtos = matches.map { it.toMatchDTO() }
-        val schedule = createSchedule.execute(matchDtos, settings)
+        val schedule = createSchedule.execute(matches, settings)
 
         val numberOfTimeslots = schedule.timeslots.count()
         val durationOfInterval = spec.timeInterval.toDuration()
@@ -72,46 +70,7 @@ class TrySchedule(
             else -> LocalTime.of(0, 0, 0)
         }
     }
-
-    fun ScheduleMatchDto.toMatchDTO(): MatchDTO {
-        return MatchDTO(
-            this.id,
-            null,
-            null,
-            this.competitionCategoryId,
-            "POOL", // Not used
-            this.firstTeamPlayerIds,
-            this.secondTeamPlayerIds,
-            0, // Not used
-            "A" // Not used
-        )
-    }
 }
-
-/**
- * The match dto from a scheduling perspective. Contains necessary information used by the scheduling algorithm.
- */
-data class ScheduleMatchDto(
-    /**
-     * ID of the match
-     */
-    val id: Int,
-
-    /**
-     * ID of the competition category that the match belongs to
-     */
-    val competitionCategoryId: Int,
-
-    /**
-     * IDs of players in first team
-     */
-    val firstTeamPlayerIds: List<Int>,
-
-    /**
-     * IDs of players in second team
-     */
-    val secondTeamPlayerIds: List<Int>
-)
 
 /**
  * Data class to pre-schedule a competition category for a given date and time interval

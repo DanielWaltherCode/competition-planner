@@ -1,8 +1,7 @@
 package com.graphite.competitionplanner.schedule.domain
 
 import com.graphite.competitionplanner.draw.service.MatchType
-import com.graphite.competitionplanner.schedule.domain.interfaces.MatchDTO
-import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
+import com.graphite.competitionplanner.schedule.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.schedule.interfaces.*
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -119,14 +118,13 @@ class MatchScheduler( // TODO: Come up with a better name. CompetitionScheduler?
         location: String
     ) {
         val matches = repository.getScheduleMatches(competitionCategoryId, matchType)
-        val matchDtos = matches.map { it.toMatchDTO() } // Map for compatability
         val settings = ScheduleSettingsDTO(
             Duration.minutes(15), // Not used
             tables.size,
             LocalDateTime.now(), // Not used
             LocalDateTime.now() // Not used
         )
-        val schedule = createSchedule.execute(matchDtos, settings)
+        val schedule = createSchedule.execute(matches, settings)
         val timeTableSlots = repository.getTimeTableSlotRecords(competitionId, startTime, tables, location)
 
         // TODO: Check that we get enough timeTableSlots back to contain all matches. Otherwise potential index error
@@ -145,20 +143,6 @@ class MatchScheduler( // TODO: Come up with a better name. CompetitionScheduler?
             logger.error("Encountered error when scheduling for competition $competitionId and competition category $competitionCategoryId")
             logger.error("Input parameters: MatchType = $matchType, TableNumbers = ${tables.joinToString { "," }}, StartTime = $startTime, Location = $location")
         }
-    }
-
-    fun ScheduleMatchDto.toMatchDTO(): MatchDTO {
-        return MatchDTO(
-            this.id,
-            null,
-            null,
-            this.competitionCategoryId,
-            "POOL", // Not used
-            this.firstTeamPlayerIds,
-            this.secondTeamPlayerIds,
-            0, // Not used
-            "A" // Not used
-        )
     }
 }
 

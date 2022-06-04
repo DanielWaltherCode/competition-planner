@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.schedule.api
 
 import com.graphite.competitionplanner.schedule.domain.*
-import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleSettingsDTO
+import com.graphite.competitionplanner.schedule.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.schedule.repository.ScheduleRepository
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

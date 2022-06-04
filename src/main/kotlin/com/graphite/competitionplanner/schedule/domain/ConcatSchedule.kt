@@ -1,8 +1,7 @@
 package com.graphite.competitionplanner.schedule.domain
 
-import com.graphite.competitionplanner.schedule.domain.interfaces.ScheduleDTO
-import com.graphite.competitionplanner.schedule.domain.entity.Schedule
-import com.graphite.competitionplanner.schedule.domain.entity.Timeslot
+import com.graphite.competitionplanner.schedule.interfaces.ScheduleDTO
+import com.graphite.competitionplanner.schedule.interfaces.TimeslotDTO
 import org.springframework.stereotype.Component
 
 @Component
@@ -16,15 +15,10 @@ class ConcatSchedule {
      * tables.
      */
     fun execute(first: ScheduleDTO, second: ScheduleDTO): ScheduleDTO {
-        val concatenated = execute(Schedule(first), Schedule(second))
-        return ScheduleDTO(concatenated)
-    }
-
-    internal fun execute(first: Schedule, second: Schedule): Schedule {
         val numberOfTimeslotsInFirst = first.timeslots.size
         val relabeledTimeslots = second.timeslots.map {
-            Timeslot(it.orderNumber + numberOfTimeslotsInFirst, it.matches)
+            TimeslotDTO(it.orderNumber + numberOfTimeslotsInFirst, it.matches)
         }
-        return Schedule(0, first.timeslots + (relabeledTimeslots), first.settings)
+        return ScheduleDTO(0, first.timeslots + (relabeledTimeslots), first.settings)
     }
 }

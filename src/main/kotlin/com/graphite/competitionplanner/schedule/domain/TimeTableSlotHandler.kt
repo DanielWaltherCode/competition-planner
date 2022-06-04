@@ -4,7 +4,6 @@ import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
 import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotSpec
 import com.graphite.competitionplanner.schedule.service.AvailableTablesService
-import com.graphite.competitionplanner.schedule.service.DailyStartAndEndDTO
 import com.graphite.competitionplanner.schedule.service.DailyStartEndService
 import com.graphite.competitionplanner.schedule.service.ScheduleMetadataService
 import com.graphite.competitionplanner.util.plusDuration
