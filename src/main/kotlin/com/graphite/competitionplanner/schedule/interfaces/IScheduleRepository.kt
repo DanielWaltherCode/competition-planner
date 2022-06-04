@@ -114,4 +114,10 @@ interface IScheduleRepository {
      */
     fun publishSchedule(competitionId: Int)
 
+    /**
+     * Clears the mapping between matches and TimeTableSlots for a given competition
+     *
+     * @param competitionId ID of the competition to clear the schedule for.
+     */
+    fun clearSchedule(competitionId: Int)
 }
