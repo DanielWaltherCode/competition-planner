@@ -3,7 +3,6 @@ package com.graphite.competitionplanner.schedule.domain
 import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.schedule.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.schedule.interfaces.*
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import kotlin.time.Duration
@@ -16,8 +15,6 @@ class CompetitionScheduler(
     val repository: IScheduleRepository,
     val createSchedule: CreateSchedule
 ) {
-
-    private val logger = LoggerFactory.getLogger(javaClass)
 
     /**
      * Maps a match to a specific TimeTableSlot. This is more of a utility function were an administrator
@@ -126,8 +123,6 @@ class CompetitionScheduler(
         val schedule = createSchedule.execute(matches, settings)
         val timeTableSlots = repository.getTimeTableSlotRecords(competitionId, startTime, tables, location)
 
-        // TODO: Check that we get enough timeTableSlots back to contain all matches. Otherwise potential index error
-        // TODO: For now. Catch potential IndexOutOfBounds error and log it
         try {
             val updateSpec = mutableListOf<MapMatchToTimeTableSlotSpec>()
             var index = 0
@@ -139,10 +134,95 @@ class CompetitionScheduler(
             }
             repository.updateMatchesTimeTablesSlots(updateSpec)
         } catch (ex: IndexOutOfBoundsException) {
-            logger.error("Encountered error when scheduling for competition $competitionId and competition category $competitionCategoryId")
-            logger.error("Input parameters: MatchType = $matchType, TableNumbers = ${tables.joinToString { "," }}, StartTime = $startTime, Location = $location")
+            throw IndexOutOfBoundsException("Not all matches fit the schedule. Please consider adding more tables or start earlier.")
         }
     }
+
+    /**
+     * Schedules all matches of a specific type belonging to a competition category in such a way that matches are
+     * scheduled as early as possible on the given tables.
+     *
+     * This method will prevent two matches from being booked on the same TimeTableSlot but will throw exception if
+     * not all matches can fit in the schedule
+     *
+     * NOTE: This function does not guarantee that a player won't be double booked in the same timeslot which can
+     * happen if a player in the given competition category also participate in another competition category within
+     * the same competition.
+     *
+     * @param competitionId ID of the competition
+     * @param competitionCategoryId ID of the competition category whose matches will be scheduled
+     * @param matchType The type of matches in the given category to be scheduled
+     * @param tables Table numbers that the matches will be scheduled at
+     * @param location The location the matches will be scheduled at
+     * @throws IndexOutOfBoundsException When not all matches can be scheduled on the given tables
+     */
+    fun appendMatchesToTables(
+        competitionId: Int,
+        competitionCategoryId: Int,
+        matchType: MatchType,
+        tables: List<Int>,
+        location: String
+    ) {
+        val matches = repository.getScheduleMatches(competitionCategoryId, matchType)
+        val settings = ScheduleSettingsDTO(
+            Duration.minutes(15), // Not used
+            tables.size,
+            LocalDateTime.now(), // Not used
+            LocalDateTime.now().plusMinutes(60) // Not used
+        )
+
+        val currentSchedule = getSchedule(competitionId)
+        val blocks = getScheduleBlocks(currentSchedule.filter { tables.contains(it.tableNumber) && it.location == location })
+        val updateSpecs = createUpdateSpecs(settings, blocks, matches)
+
+        repository.updateMatchesTimeTablesSlots(updateSpecs)
+    }
+
+    private fun createUpdateSpecs(settings: ScheduleSettingsDTO, blocks: List<ScheduleBlock>, matches: List<ScheduleMatchDto>): List<MapMatchToTimeTableSlotSpec> {
+        return if (blocks.isEmpty()) {
+            if (matches.isNotEmpty()) {
+                throw IndexOutOfBoundsException("Not all matches fit the schedule. Please consider adding more tables or start earlier.")
+            }
+            emptyList()
+        } else {
+            val block = blocks.first()
+            val (schedule, remaining) = createSchedule.execute(matches, settings, block.limit)
+            val updateSpec = mutableListOf<MapMatchToTimeTableSlotSpec>()
+            var index = 0
+            for (timeslot in schedule.timeslots) {
+                for (match in timeslot.matches) {
+                    updateSpec.add(MapMatchToTimeTableSlotSpec(match.id, block.timeTableSlots[index].id))
+                    index++
+                }
+                index = block.numberOfTables
+            }
+
+            updateSpec + createUpdateSpecs(settings, blocks.drop(1), remaining)
+        }
+    }
+
+    private fun getScheduleBlocks(tableSlots: List<TimeTableSlotDto>): List<ScheduleBlock> {
+        val groupedByTime = tableSlots.groupBy { it.startTime }
+            .map { (startTime, slots) -> Pair(startTime, slots.filter { slot -> slot.matchInfo.isEmpty() }) }
+        return mergeRowsToBlocks(groupedByTime)
+    }
+
+    private fun mergeRowsToBlocks(groupedByTime: List<Pair<LocalDateTime, List<TimeTableSlotDto>>>): List<ScheduleBlock> {
+        return if (groupedByTime.isEmpty()) {
+            emptyList()
+        } else {
+            val numberOfTables = groupedByTime.first().second.size
+            val (sameSize, other) = groupedByTime.partition { it.second.size == numberOfTables }
+
+            listOf(ScheduleBlock(sameSize.size, numberOfTables, sameSize.flatMap { it.second })) + mergeRowsToBlocks(other)
+        }
+    }
+
+    private data class ScheduleBlock(
+        val limit: Int,
+        val numberOfTables: Int,
+        val timeTableSlots: List<TimeTableSlotDto>
+    )
 
     fun clearSchedule(competitionId: Int) {
         repository.clearSchedule(competitionId)
