@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.schedule.api
 
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
+import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.schedule.domain.CompetitionScheduler
 import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleItemDTO
@@ -24,6 +25,55 @@ class ScheduleApi(
     @PutMapping("publish")
     fun publishSchedule(@PathVariable competitionId: Int) {
         competitionScheduler.publishSchedule(competitionId)
+    }
+
+    @PutMapping("category/{competitionCategoryId}")
+    fun scheduleCategory(
+        @PathVariable competitionId: Int,
+        @PathVariable competitionCategoryId: Int,
+        @RequestBody spec: ScheduleCategorySpec
+    ) {
+        when(spec.mode) {
+            ScheduleMode.ABSOLUTE -> competitionScheduler.scheduleCompetitionCategory(
+                competitionId, competitionCategoryId, spec.matchType, spec.tableNumbers, spec.startTime!!, spec.location)
+            ScheduleMode.APPEND -> competitionScheduler.appendMatchesToTables(
+                competitionId, competitionCategoryId, spec.matchType, spec.tableNumbers, spec.location)
+        }
+    }
+
+    data class ScheduleCategorySpec(
+        /**
+         * Scheduling mode
+         */
+        val mode: ScheduleMode,
+        /**
+         * Type of matches to schedule
+         */
+        val matchType: MatchType,
+        /**
+         * Tables to schedule the matches on
+         */
+        val tableNumbers: List<Int>,
+        /**
+         * Location where the matches are scheduled
+         */
+        val location: String,
+        /**
+         * When the first matches will be scheduled. Only applicable if mode is ABSOLUTE
+         */
+        val startTime: LocalDateTime?
+    )
+
+    enum class ScheduleMode {
+        /**
+         * Start scheduling matches on first available time slot on the given tables
+         */
+        APPEND,
+
+        /**
+         * Start scheduling matches at the given time on the given tables
+         */
+        ABSOLUTE
     }
 
     @DeleteMapping

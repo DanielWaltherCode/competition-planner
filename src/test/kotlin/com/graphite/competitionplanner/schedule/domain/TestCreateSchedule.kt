@@ -1,8 +1,11 @@
 package com.graphite.competitionplanner.schedule.domain
 
+import com.graphite.competitionplanner.schedule.interfaces.ScheduleMatchDto
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
@@ -14,9 +17,9 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
      * A pool of 3 players only has one independent match that can be played at any time
      */
     private final val dataGenerator = DataGenerator()
-    val pool1 = dataGenerator.pool1()
-    val pool2 = dataGenerator.pool2()
-    val pool3 = dataGenerator.pool3()
+    private final val pool1 = dataGenerator.pool1()
+    private final val pool2 = dataGenerator.pool2()
+    private final val pool3 = dataGenerator.pool3()
 
     @Test
     fun oneTableForAllMatches() {
@@ -242,5 +245,82 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
                 dataGenerator.newScheduleSettingsDTO(numberOfTables = 0)
             )
         }
+    }
+
+    data class TestData(
+        val limit: Int,
+        val numberOfTables: Int,
+        val matches: List<ScheduleMatchDto>
+    )
+
+    private val inputTestData = listOf(
+        TestData(1, 1,pool1 + pool2 + pool3),
+        TestData(1, 2,pool1 + pool2 + pool3),
+        TestData(1, 3,pool1 + pool2 + pool3),
+        TestData(2, 1,pool1 + pool2 + pool3),
+        TestData(2, 2,pool1 + pool2 + pool3),
+        TestData(2, 3,pool1 + pool2 + pool3),
+        TestData(3, 1,pool1 + pool2 + pool3),
+        TestData(3, 2,pool1 + pool2 + pool3),
+        TestData(3, 3,pool1 + pool2 + pool3),
+        TestData(4, 1,pool1 + pool2 + pool3),
+        TestData(4, 2,pool1 + pool2 + pool3),
+        TestData(4, 3,pool1 + pool2 + pool3),
+        TestData(5, 1,pool1 + pool2 + pool3),
+        TestData(5, 2,pool1 + pool2 + pool3),
+        TestData(5, 3,pool1 + pool2 + pool3),
+    )
+
+    @TestFactory
+    fun testCreateScheduleWithLimit3() = inputTestData
+        .map { testData ->
+            DynamicTest.dynamicTest("When limit is ${testData.limit} and number of tables is ${testData.numberOfTables}") {
+                // Act
+                val (schedule, remainingMatches) = createSchedule.execute(
+                    testData.matches,
+                    dataGenerator.newScheduleSettingsDTO(numberOfTables = testData.numberOfTables),
+                    testData.limit
+                )
+
+                // Assert
+                Assertions.assertEquals(
+                    testData.limit,
+                    schedule.timeslots.size,
+                    "Limit set to ${testData.limit} timeslot"
+                )
+                Assertions.assertTrue(
+                    schedule.timeslots.all { it.matches.size == testData.numberOfTables },
+                    "At least one timeslot did not have ${testData.numberOfTables} matches"
+                )
+                Assertions.assertEquals(
+                    testData.matches.size - testData.limit * testData.numberOfTables,
+                    remainingMatches.size
+                )
+                Assertions.assertTrue(
+                    remainingMatches.intersect(schedule.timeslots.flatMap { it.matches }.toSet()).isEmpty(),
+                    "At least one match has been scheduled and is also part of the remaining matches"
+                )
+            }
+
+    }
+
+    @Test
+    fun shouldHandleLimitHigherThanNumberOfNeededTimeslots() {
+        // Setup
+        val matches = pool1
+        val limit = 4
+        val expectedTimeslotsNeeded = 3
+
+        // Act
+        val (schedule, remainingMatches) = createSchedule.execute(
+            matches,
+            dataGenerator.newScheduleSettingsDTO(numberOfTables = 2),
+            limit
+        )
+
+        // Assert
+        Assertions.assertEquals(expectedTimeslotsNeeded, schedule.timeslots.size,
+            "Expected that $expectedTimeslotsNeeded timeslots was sufficient to schedule all matches, even though limit was set to $limit")
+        Assertions.assertTrue(remainingMatches.isEmpty(), "There should not be any remaining matches")
     }
 }

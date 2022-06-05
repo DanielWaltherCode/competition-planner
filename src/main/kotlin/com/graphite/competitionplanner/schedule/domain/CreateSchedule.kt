@@ -20,11 +20,26 @@ class CreateSchedule {
      * all time. This leads to the schedule being divided into equally sized timeslots where the maximum number of
      * matches that can be played simultaneously is equal to the number of tables.
      */
-    fun execute(matches: List<ScheduleMatchDto>, scheduleSettings: ScheduleSettingsDTO): ScheduleDTO {
-        return createSchedule(matches, ScheduleDTO(0, emptyList(), scheduleSettings))
+    fun execute(matches: List<ScheduleMatchDto>, settings: ScheduleSettingsDTO): ScheduleDTO {
+        return createSchedule(matches, ScheduleDTO(0, emptyList(), settings))
     }
 
-    private fun createSchedule(tempMatches: List<ScheduleMatchDto>, scheduleTest: ScheduleDTO): ScheduleDTO {
+    /**
+     * Tries to schedule as many matches as possible within the limited number of time slots.
+     *
+     * @param matches Matches to schedule
+     * @param settings Scheduling settings
+     * @param limit Maximum number of timeslots to use
+     * @return A schedule as well as any remaining matches that where not scheduled.
+     */
+    fun execute(matches: List<ScheduleMatchDto>, settings: ScheduleSettingsDTO, limit: Int): Pair<ScheduleDTO, List<ScheduleMatchDto>> {
+        val schedule = createSchedule(matches, ScheduleDTO(0, emptyList(), settings))
+        val scheduledMatches = schedule.timeslots.take(limit).flatMap { it.matches }
+        val remaining = matches.filterNot { scheduledMatches.contains(it) }
+        return Pair(ScheduleDTO(schedule.id, schedule.timeslots.take(limit), settings), remaining)
+    }
+
+    private fun createSchedule(tempMatches: List<ScheduleMatchDto>, scheduleTest: ScheduleDTO): ScheduleDTO  {
         var remainingMatches = tempMatches
 
         var schedule = scheduleTest.copy()
