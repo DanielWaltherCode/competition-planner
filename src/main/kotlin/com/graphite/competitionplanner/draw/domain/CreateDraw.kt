@@ -4,17 +4,14 @@ import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitio
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.interfaces.*
-import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCompetitionCategory
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.registration.interfaces.RegistrationRankingDTO
 import org.springframework.stereotype.Component
 
 @Component
 class CreateDraw(
-    val getRegistrationsInCompetitionCategory: GetRegistrationsInCompetitionCategory,
     val findCompetitionCategory: FindCompetitionCategory,
     val repository: IRegistrationRepository,
-    val seedRepository: ISeedRepository,
     val drawRepository: ICompetitionDrawRepository,
     val competitionCategoryRepository: ICompetitionCategoryRepository
 ) {
@@ -51,7 +48,6 @@ sealed class CompetitionCategoryDrawSpec(
 
 class CupDrawSpec(
     competitionCategoryId: Int,
-    val startingRound: Round,
     val matches: List<PlayOffMatch>
 ) : CompetitionCategoryDrawSpec(competitionCategoryId)
 

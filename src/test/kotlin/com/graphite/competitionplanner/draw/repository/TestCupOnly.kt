@@ -47,7 +47,6 @@ class TestCupOnly(
         val registrations = competitionCategory.registerPlayers(players)
         val spec = CupDrawSpec(
             competitionCategoryId = competitionCategory.id,
-            startingRound = Round.FINAL,
             matches = listOf(
                 PlayOffMatch(
                     registrationOneId = Registration.Real(registrations.first().id),
@@ -85,7 +84,6 @@ class TestCupOnly(
         val registrations = competitionCategory.registerPlayers(players)
         val spec = CupDrawSpec(
             competitionCategoryId = competitionCategory.id,
-            startingRound = Round.FINAL,
             matches = listOf(
                 PlayOffMatch(
                     registrationOneId = Registration.Real(registrations.first().id),
@@ -121,7 +119,6 @@ class TestCupOnly(
         val registrations = competitionCategory.registerPlayers(players)
         val spec = CupDrawSpec(
             competitionCategoryId = competitionCategory.id,
-            startingRound = Round.FINAL,
             matches = listOf(
                 PlayOffMatch(
                     registrationOneId = Registration.Placeholder(),
@@ -159,7 +156,6 @@ class TestCupOnly(
 
         val spec = CupDrawSpec(
             competitionCategoryId = competitionCategory.id,
-            startingRound = Round.QUARTER_FINAL,
             matches = listOf(
                 PlayOffMatch(
                     registrationOneId = Registration.Real(registrationOne.id),
@@ -188,7 +184,6 @@ class TestCupOnly(
         val registrations = competitionCategory.registerPlayers(players)
         val spec = CupDrawSpec(
             competitionCategoryId = competitionCategory.id,
-            startingRound = Round.SEMI_FINAL,
             matches = listOf(
                 PlayOffMatch(
                     registrationOneId = Registration.Real(registrations.first().id),
@@ -229,7 +224,6 @@ class TestCupOnly(
         val registrations = competitionCategory.registerPlayers(players)
         val spec = CupDrawSpec(
             competitionCategoryId = competitionCategory.id,
-            startingRound = Round.SEMI_FINAL,
             matches = listOf(
                 PlayOffMatch(
                     registrationOneId = Registration.Real(registrations[0].id),
