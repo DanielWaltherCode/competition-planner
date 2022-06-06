@@ -36,16 +36,17 @@ class CreateDraw(
         val drawPolicy = DrawPolicy.createDrawStrategy(competitionCategory)
         val registrationsWithSeeds = drawPolicy.createSeed(registrationRankings)
         drawPolicy.throwExceptionIfNotEnoughRegistrations(registrationsWithSeeds)
-        val spec = drawPolicy.createDraw(registrationsWithSeeds)
 
-        // TODO: Following two repository calls have to be a transaction to ensure integrity of the draw
-        seedRepository.setSeeds(registrationsWithSeeds)
+        val spec = drawPolicy.createDraw(registrationsWithSeeds)
+        spec.seeding = registrationsWithSeeds
+
         return drawRepository.store(spec)
     }
 }
 
 sealed class CompetitionCategoryDrawSpec(
-    val competitionCategoryId: Int
+    val competitionCategoryId: Int,
+    var seeding: List<RegistrationSeedDTO> = emptyList()
 )
 
 class CupDrawSpec(

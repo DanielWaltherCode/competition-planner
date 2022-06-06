@@ -45,6 +45,7 @@ class CompetitionDrawRepository(
     override fun store(draw: CompetitionCategoryDrawSpec): CompetitionCategoryDrawDTO {
         try {
             dslContext.transaction { _ ->
+                storeSeeding(draw.seeding)
                 competitionCategoryRepository.setStatus(draw.competitionCategoryId, CompetitionCategoryStatus.DRAWN)
                 when (draw) {
                     is CupDrawSpec -> storeCupDraw(draw)
@@ -76,6 +77,18 @@ class CompetitionDrawRepository(
             logger.error("Failed to delete draw for competition category with id $competitionCategoryId")
             logger.error("Exception message: ${exception.message}")
             throw RuntimeException("Something went wrong")
+        }
+    }
+
+    fun storeSeeding(registrationSeeds: List<RegistrationSeedDTO>) {
+        for (registration in registrationSeeds) {
+            dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
+                .set(COMPETITION_CATEGORY_REGISTRATION.SEED, registration.seed)
+                .where(
+                    COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(registration.competitionCategoryId)
+                        .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(registration.registrationId))
+                )
+                .execute()
         }
     }
 
