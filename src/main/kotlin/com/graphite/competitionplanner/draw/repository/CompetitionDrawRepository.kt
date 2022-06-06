@@ -7,7 +7,6 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetiti
 import com.graphite.competitionplanner.draw.domain.*
 import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.draw.service.*
-import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.tables.records.*
 import org.jetbrains.annotations.NotNull
 import org.jooq.DSLContext
@@ -18,7 +17,6 @@ import org.springframework.context.annotation.Lazy
 @Repository
 class CompetitionDrawRepository(
     val dslContext: DSLContext,
-    val matchService: MatchService,
     val competitionCategoryRepository: ICompetitionCategoryRepository,
     @Lazy val getDraw: GetDraw
 ) : ICompetitionDrawRepository {
@@ -45,6 +43,7 @@ class CompetitionDrawRepository(
     override fun store(draw: CompetitionCategoryDrawSpec): CompetitionCategoryDrawDTO {
         try {
             dslContext.transaction { _ ->
+                storeSeeding(draw.seeding)
                 competitionCategoryRepository.setStatus(draw.competitionCategoryId, CompetitionCategoryStatus.DRAWN)
                 when (draw) {
                     is CupDrawSpec -> storeCupDraw(draw)
@@ -76,6 +75,19 @@ class CompetitionDrawRepository(
             logger.error("Failed to delete draw for competition category with id $competitionCategoryId")
             logger.error("Exception message: ${exception.message}")
             throw RuntimeException("Something went wrong")
+        }
+    }
+
+    fun storeSeeding(registrationSeeds: List<RegistrationSeedDTO>) {
+        dslContext.batched {
+            for (dto in registrationSeeds) {
+                dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
+                    .set(COMPETITION_CATEGORY_REGISTRATION.SEED, dto.seed)
+                    .where(
+                        COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(dto.competitionCategoryId)
+                            .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(dto.registrationId))
+                    ).execute()
+            }
         }
     }
 
@@ -171,6 +183,18 @@ class CompetitionDrawRepository(
 
     override fun clearPoolTable() {
         dslContext.deleteFrom(POOL).execute()
+    }
+
+    override fun getSeeds(competitionCategoryId: Int): List<RegistrationSeedDTO> {
+        val records = dslContext.select()
+            .from(COMPETITION_CATEGORY_REGISTRATION)
+            .where(
+                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId).and(
+                    COMPETITION_CATEGORY_REGISTRATION.SEED.isNotNull
+                )
+            )
+            .fetchInto(COMPETITION_CATEGORY_REGISTRATION)
+        return records.map { RegistrationSeedDTO(it.registrationId, it.competitionCategoryId, it.seed) }
     }
 
     private fun Pool.toRecord(competitionCategoryId: Int): PoolRecord {

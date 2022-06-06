@@ -4,17 +4,14 @@ import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitio
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.interfaces.*
-import com.graphite.competitionplanner.registration.domain.GetRegistrationsInCompetitionCategory
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.registration.interfaces.RegistrationRankingDTO
 import org.springframework.stereotype.Component
 
 @Component
 class CreateDraw(
-    val getRegistrationsInCompetitionCategory: GetRegistrationsInCompetitionCategory,
     val findCompetitionCategory: FindCompetitionCategory,
     val repository: IRegistrationRepository,
-    val seedRepository: ISeedRepository,
     val drawRepository: ICompetitionDrawRepository,
     val competitionCategoryRepository: ICompetitionCategoryRepository
 ) {
@@ -36,21 +33,21 @@ class CreateDraw(
         val drawPolicy = DrawPolicy.createDrawStrategy(competitionCategory)
         val registrationsWithSeeds = drawPolicy.createSeed(registrationRankings)
         drawPolicy.throwExceptionIfNotEnoughRegistrations(registrationsWithSeeds)
-        val spec = drawPolicy.createDraw(registrationsWithSeeds)
 
-        // TODO: Following two repository calls have to be a transaction to ensure integrity of the draw
-        seedRepository.setSeeds(registrationsWithSeeds)
+        val spec = drawPolicy.createDraw(registrationsWithSeeds)
+        spec.seeding = registrationsWithSeeds
+
         return drawRepository.store(spec)
     }
 }
 
 sealed class CompetitionCategoryDrawSpec(
-    val competitionCategoryId: Int
+    val competitionCategoryId: Int,
+    var seeding: List<RegistrationSeedDTO> = emptyList()
 )
 
 class CupDrawSpec(
     competitionCategoryId: Int,
-    val startingRound: Round,
     val matches: List<PlayOffMatch>
 ) : CompetitionCategoryDrawSpec(competitionCategoryId)
 

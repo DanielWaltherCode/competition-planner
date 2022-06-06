@@ -17,7 +17,7 @@ interface ICompetitionDrawRepository {
     /**
      * Returns the matches from a resulting draw of a specific competition category
      *
-     * @param competitionCategoryId Id of the competition category
+     * @param competitionCategoryId  of the competition category
      * @return The matches for a competition category
      */
     fun get(competitionCategoryId: Int): CompetitionCategoryDrawDTO
@@ -26,7 +26,7 @@ interface ICompetitionDrawRepository {
      *  Delete the draw for the given competition category. This will delete any matches and groups, as well as mark
      *  the competition category as not drawn.
      *
-     *  @param competitionCategoryId Id of the competition category
+     *  @param competitionCategoryId  of the competition category
      */
     fun delete(competitionCategoryId: Int)
 
@@ -54,4 +54,12 @@ interface ICompetitionDrawRepository {
      * Should only be used to clear test data
      */
     fun clearPoolTable()
+
+    /**
+     * Return a list of the seeded registrations of a given competition category
+     *
+     * @param competitionCategoryId ID of the competition category
+     * @return List of seeds
+     */
+    fun getSeeds(competitionCategoryId: Int): List<RegistrationSeedDTO>
 }

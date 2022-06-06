@@ -2,13 +2,15 @@ package com.graphite.competitionplanner.draw.interfaces
 
 data class RegistrationSeedDTO(
     /**
-     * Id of the registration
+     * ID of the registration
      */
     val registrationId: Int,
+
     /**
-     * Id of the competition category
+     * ID of the competition category
      */
     val competitionCategoryId: Int,
+
     /**
      * The seed of this registration. It represents a relative rank compared to other registrations in the same
      * competition category.
