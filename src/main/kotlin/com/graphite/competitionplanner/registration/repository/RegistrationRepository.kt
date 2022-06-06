@@ -6,8 +6,6 @@ import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
-import com.graphite.competitionplanner.draw.interfaces.ISeedRepository
-import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.interfaces.*
@@ -24,7 +22,7 @@ import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 @Repository
-class RegistrationRepository(val dslContext: DSLContext) : IRegistrationRepository, ISeedRepository {
+class RegistrationRepository(val dslContext: DSLContext) : IRegistrationRepository {
 
     fun addRegistrationWithId(id: Int, date: LocalDate): RegistrationRecord {
         val registration: RegistrationRecord = dslContext.newRecord(REGISTRATION)
@@ -79,28 +77,6 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             .from(COMPETITION_CATEGORY_REGISTRATION)
             .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
             .fetchInto(Int::class.java)
-    }
-
-    fun setSeed(registrationId: Int, competitionCategoryId: Int, seed: Int) {
-        dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
-            .set(COMPETITION_CATEGORY_REGISTRATION.SEED, seed)
-            .where(
-                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
-                    .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(registrationId))
-            )
-            .execute()
-    }
-
-    // Get seeds in competition category
-    fun getSeeds(competitionCategoryId: Int): List<CompetitionCategoryRegistrationRecord> {
-        return dslContext.select()
-            .from(COMPETITION_CATEGORY_REGISTRATION)
-            .where(
-                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId).and(
-                    COMPETITION_CATEGORY_REGISTRATION.SEED.isNotNull
-                )
-            )
-            .fetchInto(COMPETITION_CATEGORY_REGISTRATION)
     }
 
     fun clearPlayingIn() = dslContext.deleteFrom(COMPETITION_CATEGORY_REGISTRATION).execute()
@@ -422,18 +398,6 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         record.competitionCategoryId = competitionCategory
         record.store()
         return record
-    }
-
-    override fun setSeeds(registrationSeeds: List<RegistrationSeedDTO>) {
-        for (registration in registrationSeeds) {
-            dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
-                .set(COMPETITION_CATEGORY_REGISTRATION.SEED, registration.seed)
-                .where(
-                    COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(registration.competitionCategoryId)
-                        .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(registration.registrationId))
-                )
-                .execute()
-        }
     }
 }
 
