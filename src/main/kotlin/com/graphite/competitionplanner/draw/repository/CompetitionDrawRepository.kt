@@ -79,14 +79,15 @@ class CompetitionDrawRepository(
     }
 
     fun storeSeeding(registrationSeeds: List<RegistrationSeedDTO>) {
-        for (registration in registrationSeeds) {
-            dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
-                .set(COMPETITION_CATEGORY_REGISTRATION.SEED, registration.seed)
-                .where(
-                    COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(registration.competitionCategoryId)
-                        .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(registration.registrationId))
-                )
-                .execute()
+        dslContext.batched {
+            for (dto in registrationSeeds) {
+                dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
+                    .set(COMPETITION_CATEGORY_REGISTRATION.SEED, dto.seed)
+                    .where(
+                        COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(dto.competitionCategoryId)
+                            .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(dto.registrationId))
+                    ).execute()
+            }
         }
     }
 
