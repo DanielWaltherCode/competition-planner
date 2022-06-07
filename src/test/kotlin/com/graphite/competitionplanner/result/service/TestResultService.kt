@@ -101,7 +101,7 @@ class TestResultService(
     fun cleanUp() {
         val matches = matchService.getMatchesInCategory(competitionCategoryId)
         for (match in matches) {
-            resultRepository.deleteMatchResult(match.id)
+            resultRepository.deleteResults(match.id)
         }
         // Remove pool draw
         competitionDrawRepository.deleteGroupsInCategory(competitionCategoryId)
@@ -138,10 +138,11 @@ class TestResultService(
 
     @Test
     fun testUpdateFullResults() {
+        // Setup
         addResult()
-        val originalSize = resultRepository.countResults()
+        val originalSize = matchRepository.getMatch2(match.id).result.size
 
-        // Update
+        // Act
         val gameList = mutableListOf<GameSpec>()
         gameList.add(GameSpec(1, 11, 9))
         gameList.add(GameSpec(2, 11, 6))
@@ -150,25 +151,9 @@ class TestResultService(
         val updatedResult = resultService.addFinalMatchResult(match.id, resultSpec)
 
         //Assertions
-        val newSize = resultRepository.countResults()
-        Assertions.assertEquals(originalSize, newSize)
-        Assertions.assertEquals(6, updatedResult.gameList.get(1).secondRegistrationResult)
-    }
-
-    @Test
-    fun testUpdateResultsInOneGame() {
-        addResult()
-        val result = resultService.getResult(match.id)
-        val originalSize = resultRepository.countResults()
-
-        // Update
-        val gameSpec = GameSpec(2, 11, 6)
-        val updatedResult = resultService.updateGameResult(match.id, result.gameList.get(1).gameId, gameSpec)
-
-        //Assertions
-        val newSize = resultRepository.countResults()
-        Assertions.assertEquals(originalSize, newSize)
-        Assertions.assertEquals(6, updatedResult.gameList.get(1).secondRegistrationResult)
+        val newSize = matchRepository.getMatch2(match.id).result.size
+        Assertions.assertEquals(originalSize, newSize, "Size of result set changed")
+        Assertions.assertEquals(6, updatedResult.gameList[1].secondRegistrationResult)
     }
 
 }

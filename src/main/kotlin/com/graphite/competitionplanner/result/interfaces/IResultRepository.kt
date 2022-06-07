@@ -1,24 +1,17 @@
 package com.graphite.competitionplanner.result.interfaces
 
-import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.service.GameDTO
 import com.graphite.competitionplanner.result.service.ResultDTO
 
 interface IResultRepository {
 
     /**
-     * Store a new result to the given match
+     * Return the game result for a given match
+     *
      * @param matchId ID of the match
-     * @return The newly stored game result
+     * @return List of results
      */
-    fun storeResult(matchId: Int, gameResult: GameSpec): GameDTO
-
-    /**
-     * Get the results for the given match
-     * @param matchId ID of the match
-     * @return List of game results for the match
-     */
-    fun getResults(matchId: Int): List<GameDTO>
+    fun getResult(matchId: Int): List<GameDTO>
 
     /**
      * Get the results from all matches.
