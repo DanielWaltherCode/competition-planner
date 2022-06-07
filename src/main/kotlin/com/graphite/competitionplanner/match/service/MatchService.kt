@@ -3,7 +3,6 @@ package com.graphite.competitionplanner.match.service
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.match.repository.MatchRepository
-import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.registration.service.SimpleCompetitionCategoryDTO
@@ -52,11 +51,6 @@ class MatchService(
     fun getMatchesInCompetitionForRegistration(competitionId: Int, registrationId: Int): List<MatchAndResultDTO> {
         val matchRecords = matchRepository.getMatchesInCompetitionForRegistration(competitionId, registrationId)
         return transformToMatchAndResultDTO(matchRecords)
-    }
-
-    // TODO: Move to ResultService?
-    fun setWinner(matchId: Int, winnerRegistrationId: Int) {
-        matchRepository.setWinner(matchId, winnerRegistrationId)
     }
 
     fun transformToMatchAndResultDTO(matches: List<MatchRecord>): List<MatchAndResultDTO> {
@@ -109,21 +103,6 @@ class MatchService(
     }
 
 }
-
-
-data class MatchDTO(
-    val id: Int,
-    val startTime: LocalDateTime?,
-    val endTime: LocalDateTime?,
-    val competitionCategory: SimpleCompetitionCategoryDTO,
-    val matchType: String,
-    val firstPlayer: List<PlayerWithClubDTO>,
-    val secondPlayer: List<PlayerWithClubDTO>,
-    val matchOrderNumber: Int,
-    val groupOrRound: String, // Either group name (e.g. Group "A") or the round like Round of 64, Quarterfinals
-    val wasWalkover: Boolean,
-    val winner: List<PlayerDTO>
-)
 
 data class MatchAndResultDTO(
     val id: Int,

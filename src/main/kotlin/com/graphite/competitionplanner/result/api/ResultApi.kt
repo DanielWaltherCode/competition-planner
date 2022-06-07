@@ -1,22 +1,22 @@
 package com.graphite.competitionplanner.result.api
 
-import com.graphite.competitionplanner.result.repository.ResultRepository
+import com.graphite.competitionplanner.result.domain.AddPartialResult
+import com.graphite.competitionplanner.result.interfaces.IResultRepository
 import com.graphite.competitionplanner.result.service.ResultDTO
 import com.graphite.competitionplanner.result.service.ResultService
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/result/{competitionId}")
-class ResultApi(val resultService: ResultService, val resultRepository: ResultRepository) {
-
-    @PutMapping("/{matchId}/{gameId}")
-    fun updateGameResult(@PathVariable matchId: Int, @PathVariable gameId: Int, @RequestBody gameSpec: GameSpec): ResultDTO {
-        return resultService.updateGameResult(matchId, gameId, gameSpec)
-    }
+class ResultApi(
+    val resultService: ResultService,
+    val addPartialResult: AddPartialResult,
+    val resultRepository: IResultRepository
+) {
 
     @PutMapping("/{matchId}/partial")
     fun addPartialResult(@PathVariable matchId: Int, @RequestBody resultSpec: ResultSpec): ResultDTO {
-        return resultService.addPartialResult(matchId, resultSpec)
+        return addPartialResult.execute(matchId, resultSpec)
     }
 
     // This is a put request since it's possible that partial results have been added previously
@@ -32,7 +32,7 @@ class ResultApi(val resultService: ResultService, val resultRepository: ResultRe
 
     @DeleteMapping("/{matchId}")
     fun removeMatchResult(@PathVariable matchId: Int) {
-        resultRepository.deleteMatchResult(matchId)
+        resultRepository.deleteResults(matchId)
     }
 }
 

@@ -1,24 +1,19 @@
 package com.graphite.competitionplanner.result.service
 
 import com.graphite.competitionplanner.Tables.POOL_RESULT
-import com.graphite.competitionplanner.common.exception.GameValidationException
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
-import com.graphite.competitionplanner.competitioncategory.interfaces.GameSettingsDTO
 import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.match.domain.Match
 import com.graphite.competitionplanner.match.domain.PlayoffMatch
 import com.graphite.competitionplanner.match.domain.PoolMatch
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
-import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
-import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.domain.AddResult
-import com.graphite.competitionplanner.result.repository.ResultRepository
-import com.graphite.competitionplanner.tables.records.GameRecord
+import com.graphite.competitionplanner.result.interfaces.IResultRepository
 import com.graphite.competitionplanner.tables.records.PoolRecord
 import com.graphite.competitionplanner.tables.records.PoolResultRecord
 import org.jooq.DSLContext
@@ -27,8 +22,7 @@ import kotlin.math.ceil
 
 @Service
 class ResultService(
-    val resultRepository: ResultRepository,
-    val matchService: MatchService,
+    val resultRepository: IResultRepository,
     val matchRepository: MatchRepository,
     val findCompetitionCategory: FindCompetitionCategory,
     val addResult: AddResult,
@@ -36,24 +30,6 @@ class ResultService(
     val registrationRepository: RegistrationRepository,
     val dslContext: DSLContext
 ) {
-
-    fun updateGameResult(matchId: Int, gameId: Int, gameSpec: GameSpec): ResultDTO {
-        val match = matchRepository.getMatch2(matchId)
-        val gameRules: GameSettingsDTO = findCompetitionCategory.byId(match.competitionCategoryId).gameSettings
-        validateGame(gameRules, gameSpec)
-        resultRepository.updateGameResult(gameId, matchId, gameSpec)
-        return getResult(matchId)
-    }
-
-    fun addPartialResult(matchId: Int, resultSpec: ResultSpec): ResultDTO {
-        resultRepository.deleteMatchResult(matchId)
-        val resultList = mutableListOf<GameRecord>()
-        for (gameResult in resultSpec.gameList) {
-            val addedGame = resultRepository.addGameResult(matchId, gameResult)
-            resultList.add(addedGame)
-        }
-        return ResultDTO(resultList.map { recordToDTO(it) })
-    }
 
     fun addFinalMatchResult(matchId: Int, resultSpec: ResultSpec): ResultDTO {
         // TODO: Think about what happens if something fails in this function. How do we recover?
@@ -74,7 +50,7 @@ class ResultService(
         }
     }
 
-    fun CompetitionCategoryDTO.handleAdvancementOf(match: PlayoffMatch) {
+    private fun CompetitionCategoryDTO.handleAdvancementOf(match: PlayoffMatch) {
         if (match.round == Round.FINAL) {
             // Nothing to advance
         } else {
@@ -94,7 +70,7 @@ class ResultService(
         }
     }
 
-    fun CompetitionCategoryDTO.handleAdvancementOf(match: PoolMatch) {
+    private fun CompetitionCategoryDTO.handleAdvancementOf(match: PoolMatch) {
         if (this.settings.drawType == DrawType.POOL_ONLY) {
             return // Nothing to advance
         } else {
@@ -130,28 +106,10 @@ class ResultService(
 
     fun getResult(matchId: Int): ResultDTO {
         val resultList = resultRepository.getResult(matchId)
-        return ResultDTO(resultList.map { recordToDTO(it) })
+        return ResultDTO(resultList)
     }
 
-    private fun validateGame(gameRules: GameSettingsDTO, game: GameSpec) {
-        if (game.firstRegistrationResult < gameRules.winScore
-            && game.secondRegistrationResult < gameRules.winScore
-        ) {
-            // Both players have lower score than registered win score
-            throw GameValidationException(GameValidationException.Reason.TOO_FEW_POINTS_IN_SET)
-        }
-    }
-
-    fun recordToDTO(gameRecord: GameRecord): GameDTO {
-        return GameDTO(
-            gameRecord.id,
-            gameRecord.gameNumber,
-            gameRecord.firstRegistrationResult,
-            gameRecord.secondRegistrationResult
-        )
-    }
-
-    fun storeFinalGroupResult(groupStanding: List<GroupStandingDTO>, pool: PoolRecord) {
+    private fun storeFinalGroupResult(groupStanding: List<GroupStandingDTO>, pool: PoolRecord) {
         for (standing in groupStanding) {
             val poolResultRecord: PoolResultRecord = dslContext.newRecord(POOL_RESULT)
             val registrationId = registrationRepository.getRegistrationIdForPlayerInCategory(pool.competitionCategoryId, standing.player.first().id)
