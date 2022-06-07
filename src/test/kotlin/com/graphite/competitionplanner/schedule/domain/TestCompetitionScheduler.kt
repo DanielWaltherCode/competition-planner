@@ -1,6 +1,9 @@
 package com.graphite.competitionplanner.schedule.domain
 
+import com.graphite.competitionplanner.competition.domain.FindCompetitions
+import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.draw.service.MatchType
+import com.graphite.competitionplanner.schedule.api.MatchSchedulerSpec
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
 import com.graphite.competitionplanner.schedule.interfaces.MapMatchToTimeTableSlotSpec
 import com.graphite.competitionplanner.util.DataGenerator
@@ -10,6 +13,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
+import org.mockito.kotlin.any
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDateTime
 
@@ -18,10 +22,11 @@ import java.time.LocalDateTime
 class TestCompetitionScheduler {
 
     private val mockedScheduleRepository: IScheduleRepository = Mockito.mock(IScheduleRepository::class.java)
+    private val mockedFindCompetitions = Mockito.mock(FindCompetitions::class.java)
     private val createSchedule = CreateSchedule()
     private val dataGenerator = DataGenerator()
 
-    private val competitionScheduler = CompetitionScheduler(mockedScheduleRepository, createSchedule)
+    private val competitionScheduler = CompetitionScheduler(mockedScheduleRepository, createSchedule, mockedFindCompetitions)
 
     @Test
     fun addingMatchToEmptySlot() {
@@ -87,9 +92,9 @@ class TestCompetitionScheduler {
         val matchType = MatchType.GROUP
         val tables = listOf(1, 2, 3)
         val startTime = LocalDateTime.now()
-        val location = "Lundaparken A"
+        Mockito.`when`(mockedFindCompetitions.byId(any())).thenReturn(dataGenerator.newCompetitionDTO())
 
-        competitionScheduler.scheduleCompetitionCategory(competitionId, competitionCategoryId, matchType, tables, startTime, location)
+        competitionScheduler.scheduleCompetitionCategory(competitionId, competitionCategoryId, MatchSchedulerSpec(matchType, tables, startTime.toLocalDate(), startTime.toLocalTime()))
     }
 
     @Test

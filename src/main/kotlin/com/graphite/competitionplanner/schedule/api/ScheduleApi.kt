@@ -6,6 +6,7 @@ import com.graphite.competitionplanner.schedule.domain.CompetitionScheduler
 import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleItemDTO
 import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleMatchDTO
+import com.graphite.competitionplanner.schedule.service.StartInterval
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -35,7 +36,7 @@ class ScheduleApi(
     ) {
         when(spec.mode) {
             ScheduleMode.ABSOLUTE -> competitionScheduler.scheduleCompetitionCategory(
-                competitionId, competitionCategoryId, spec.matchType, spec.tableNumbers, spec.startTime!!, spec.location)
+                competitionId, competitionCategoryId, MatchSchedulerSpec(spec.matchType, spec.tableNumbers, spec.startTime!!.toLocalDate(),spec.startTime.toLocalTime()))
             ScheduleMode.APPEND -> competitionScheduler.appendMatchesToTables(
                 competitionId, competitionCategoryId, spec.matchType, spec.tableNumbers, spec.location)
         }
