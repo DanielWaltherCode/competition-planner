@@ -5,7 +5,7 @@ import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.domain.GetDaysOfCompetition
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
-import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.schedule.api.CategoryStartTimeSpec
 import com.graphite.competitionplanner.schedule.repository.ScheduleRepository
 import com.graphite.competitionplanner.tables.records.ScheduleCategoryRecord
@@ -93,7 +93,7 @@ class CategoryStartTimeService(
             findCompetitionCategory.byId(scheduleCategoryRecord.competitonCategoryId)
         return CategoryStartTimeDTO(
             scheduleCategoryRecord.id,
-            CompetitionCategory(competitionCategory.id, competitionCategory.category.name, competitionCategory.status),
+            competitionCategory,
             scheduleCategoryRecord.playingDay,
             startInterval,
             scheduleCategoryRecord.exactStartTime
@@ -104,7 +104,7 @@ class CategoryStartTimeService(
 
 data class CategoryStartTimeDTO(
     val id: Int,
-    val categoryDTO: CompetitionCategory,
+    val categoryDTO: CompetitionCategoryDTO,
     @JsonFormat(pattern = "yyyy-MM-dd")
     val playingDay: LocalDate?,
     val startInterval: StartInterval,

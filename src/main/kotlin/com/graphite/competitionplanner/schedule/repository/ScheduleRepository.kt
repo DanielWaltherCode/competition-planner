@@ -285,7 +285,7 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
         }
     }
 
-    override fun getPreSchedule(competitionId: Int): List<CompetitionCategoryPreSchedule> {
+    override fun getPreSchedule(competitionId: Int): List<CompetitionCategoryPreScheduleDTO> {
         val records = dslContext.select(
             PRE_SCHEDULE.PLAY_DATE,
             PRE_SCHEDULE.TIME_INTERVAL,
@@ -302,16 +302,16 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
             .fetch()
 
         return records.map {
-            CompetitionCategoryPreSchedule(
-                it.get(PRE_SCHEDULE.SUCCESS),
-                it.get(PRE_SCHEDULE.ESTIMATED_END_TIME),
-                it.get(PRE_SCHEDULE.PLAY_DATE),
-                StartInterval.valueOf(it.get(PRE_SCHEDULE.TIME_INTERVAL)),
-                CompetitionCategory(
-                    it.get(PRE_SCHEDULE.COMPETITION_CATEGORY_ID),
-                    it.get(COMPETITION_CATEGORY.STATUS),
-                    it.get(CATEGORY.CATEGORY_NAME)
-                )
+            CompetitionCategoryPreScheduleDTO(
+                    it.get(PRE_SCHEDULE.SUCCESS),
+                    it.get(PRE_SCHEDULE.ESTIMATED_END_TIME),
+                    it.get(PRE_SCHEDULE.PLAY_DATE),
+                    StartInterval.valueOf(it.get(PRE_SCHEDULE.TIME_INTERVAL)),
+                    CompetitionCategory(
+                            it.get(PRE_SCHEDULE.COMPETITION_CATEGORY_ID),
+                            it.get(COMPETITION_CATEGORY.STATUS),
+                            it.get(CATEGORY.CATEGORY_NAME)
+                    )
             )
         }
     }

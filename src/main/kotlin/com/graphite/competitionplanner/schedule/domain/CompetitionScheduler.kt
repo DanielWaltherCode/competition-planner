@@ -1,8 +1,11 @@
 package com.graphite.competitionplanner.schedule.domain
 
+import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.draw.service.MatchType
+import com.graphite.competitionplanner.schedule.api.MatchSchedulerSpec
 import com.graphite.competitionplanner.schedule.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.schedule.interfaces.*
+import com.graphite.competitionplanner.schedule.service.StartInterval
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import kotlin.time.Duration
@@ -12,29 +15,30 @@ import kotlin.time.Duration
  */
 @Component
 class CompetitionScheduler(
-    val repository: IScheduleRepository,
-    val createSchedule: CreateSchedule
+        val repository: IScheduleRepository,
+        val createSchedule: CreateSchedule,
+        val findCompetitions: FindCompetitions
 ) {
 
     /**
      * Maps a match to a specific TimeTableSlot. This is more of a utility function were an administrator
      * can easily move one match to a new TimeTableSlot.
      */
-    fun mapMatchToTimeTableSlot(matchToTimeTableSlot: MapMatchToTimeTableSlotSpec): TimeTableSlotDto {
+    fun mapMatchToTimeTableSlot(matchToTimeTableSlot: MapMatchToTimeTableSlotSpec): TimeTableSlotDTO {
         val matchesInSameSlot = repository.addMatchToTimeTableSlot(matchToTimeTableSlot)
 
-        return TimeTableSlotDto(
-            matchesInSameSlot.first().timeTableSlotId,
-            matchesInSameSlot.first().startTime,
-            matchesInSameSlot.first().tableNumber,
-            matchesInSameSlot.first().location,
-            matchesInSameSlot.size > 1,
-            matchesInSameSlot.map {
-                TimeTableSlotMatchInfo(
-                    it.matchId,
-                    it.competitionCategoryId
-                )
-            }
+        return TimeTableSlotDTO(
+                matchesInSameSlot.first().timeTableSlotId,
+                matchesInSameSlot.first().startTime,
+                matchesInSameSlot.first().tableNumber,
+                matchesInSameSlot.first().location,
+                matchesInSameSlot.size > 1,
+                matchesInSameSlot.map {
+                    TimeTableSlotMatchInfo(
+                            it.matchId,
+                            it.competitionCategoryId
+                    )
+                }
         )
     }
 
@@ -64,13 +68,14 @@ class CompetitionScheduler(
      * @param competitionId ID of the competition
      * @return List of TimeTableSlots sorted by location, time and table in ascending order
      */
-    fun getSchedule(competitionId: Int): List<TimeTableSlotDto> {
+    fun getSchedule(competitionId: Int): List<TimeTableSlotDTO> {
         val matchesToSlots = repository.getTimeTable(competitionId)
         val schedule = mergeTimeTableSlots(matchesToSlots)
-        return schedule.sortedWith(compareBy(TimeTableSlotDto::location, TimeTableSlotDto::startTime, TimeTableSlotDto::tableNumber))
+        return schedule.sortedWith(
+                compareBy(TimeTableSlotDTO::location, TimeTableSlotDTO::startTime, TimeTableSlotDTO::tableNumber))
     }
 
-    private fun mergeTimeTableSlots(list: List<TimeTableSlotToMatch>): List<TimeTableSlotDto> {
+    private fun mergeTimeTableSlots(list: List<TimeTableSlotToMatch>): List<TimeTableSlotDTO> {
         if (list.isEmpty()) {
             return emptyList()
         } else {
@@ -78,13 +83,13 @@ class CompetitionScheduler(
             val (sameTimeSlots, otherTimeSlots) = list.partition { it.id == id }
 
             val matchInfos = sameTimeSlots.mapNotNull { it.matchInfo }
-            val timeTableSlot = TimeTableSlotDto(
-                sameTimeSlots.first().id,
-                sameTimeSlots.first().startTime,
-                sameTimeSlots.first().tableNumber,
-                sameTimeSlots.first().location,
-                sameTimeSlots.size > 1,
-                matchInfos
+            val timeTableSlot = TimeTableSlotDTO(
+                    sameTimeSlots.first().id,
+                    sameTimeSlots.first().startTime,
+                    sameTimeSlots.first().tableNumber,
+                    sameTimeSlots.first().location,
+                    sameTimeSlots.size > 1,
+                    matchInfos
             )
             return listOf(timeTableSlot) + mergeTimeTableSlots(otherTimeSlots)
         }
@@ -106,22 +111,22 @@ class CompetitionScheduler(
      * @param location The location the matches will be scheduled at
      */
     fun scheduleCompetitionCategory(
-        competitionId: Int,
-        competitionCategoryId: Int,
-        matchType: MatchType,
-        tables: List<Int>,
-        startTime: LocalDateTime,
-        location: String
+            competitionId: Int,
+            competitionCategoryId: Int,
+            matchSchedulerSpec: MatchSchedulerSpec
     ) {
-        val matches = repository.getScheduleMatches(competitionCategoryId, matchType)
+        val competition = findCompetitions.byId(competitionId)
+        val matches = repository.getScheduleMatches(competitionCategoryId, matchSchedulerSpec.matchType)
         val settings = ScheduleSettingsDTO(
-            Duration.minutes(15), // Not used
-            tables.size,
-            LocalDateTime.now(), // Not used
-            LocalDateTime.now().plusMinutes(60) // Not used
+                Duration.minutes(15), // Not used
+                matchSchedulerSpec.tableNumbers.size,
+                LocalDateTime.now(), // Not used
+                LocalDateTime.now().plusMinutes(60) // Not used
         )
         val schedule = createSchedule.execute(matches, settings)
-        val timeTableSlots = repository.getTimeTableSlotRecords(competitionId, startTime, tables, location)
+        val startTime = LocalDateTime.of(matchSchedulerSpec.day, matchSchedulerSpec.startTime)
+        val timeTableSlots = repository.getTimeTableSlotRecords(competitionId, startTime, matchSchedulerSpec.tableNumbers,
+                competition.location.name)
 
         try {
             val updateSpec = mutableListOf<MapMatchToTimeTableSlotSpec>()
@@ -134,7 +139,8 @@ class CompetitionScheduler(
             }
             repository.updateMatchesTimeTablesSlots(updateSpec)
         } catch (ex: IndexOutOfBoundsException) {
-            throw IndexOutOfBoundsException("Not all matches fit the schedule. Please consider adding more tables or start earlier.")
+            throw IndexOutOfBoundsException(
+                    "Not all matches fit the schedule. Please consider adding more tables or start earlier.")
         }
     }
 
@@ -157,18 +163,18 @@ class CompetitionScheduler(
      * @throws IndexOutOfBoundsException When not all matches can be scheduled on the given tables
      */
     fun appendMatchesToTables(
-        competitionId: Int,
-        competitionCategoryId: Int,
-        matchType: MatchType,
-        tables: List<Int>,
-        location: String
+            competitionId: Int,
+            competitionCategoryId: Int,
+            matchType: MatchType,
+            tables: List<Int>,
+            location: String
     ) {
         val matches = repository.getScheduleMatches(competitionCategoryId, matchType)
         val settings = ScheduleSettingsDTO(
-            Duration.minutes(15), // Not used
-            tables.size,
-            LocalDateTime.now(), // Not used
-            LocalDateTime.now().plusMinutes(60) // Not used
+                Duration.minutes(15), // Not used
+                tables.size,
+                LocalDateTime.now(), // Not used
+                LocalDateTime.now().plusMinutes(60) // Not used
         )
 
         val currentSchedule = getSchedule(competitionId)
@@ -178,10 +184,12 @@ class CompetitionScheduler(
         repository.updateMatchesTimeTablesSlots(updateSpecs)
     }
 
-    private fun createUpdateSpecs(settings: ScheduleSettingsDTO, blocks: List<ScheduleBlock>, matches: List<ScheduleMatchDto>): List<MapMatchToTimeTableSlotSpec> {
+    private fun createUpdateSpecs(settings: ScheduleSettingsDTO, blocks: List<ScheduleBlock>,
+                                  matches: List<ScheduleMatchDto>): List<MapMatchToTimeTableSlotSpec> {
         return if (blocks.isEmpty()) {
             if (matches.isNotEmpty()) {
-                throw IndexOutOfBoundsException("Not all matches fit the schedule. Please consider adding more tables or start earlier.")
+                throw IndexOutOfBoundsException(
+                        "Not all matches fit the schedule. Please consider adding more tables or start earlier.")
             }
             emptyList()
         } else {
@@ -201,13 +209,13 @@ class CompetitionScheduler(
         }
     }
 
-    private fun getScheduleBlocks(tableSlots: List<TimeTableSlotDto>): List<ScheduleBlock> {
+    private fun getScheduleBlocks(tableSlots: List<TimeTableSlotDTO>): List<ScheduleBlock> {
         val groupedByTime = tableSlots.groupBy { it.startTime }
-            .map { (startTime, slots) -> Pair(startTime, slots.filter { slot -> slot.matchInfo.isEmpty() }) }
+                .map { (startTime, slots) -> Pair(startTime, slots.filter { slot -> slot.matchInfo.isEmpty() }) }
         return mergeRowsToBlocks(groupedByTime)
     }
 
-    private fun mergeRowsToBlocks(groupedByTime: List<Pair<LocalDateTime, List<TimeTableSlotDto>>>): List<ScheduleBlock> {
+    private fun mergeRowsToBlocks(groupedByTime: List<Pair<LocalDateTime, List<TimeTableSlotDTO>>>): List<ScheduleBlock> {
         return if (groupedByTime.isEmpty()) {
             emptyList()
         } else {
@@ -219,9 +227,9 @@ class CompetitionScheduler(
     }
 
     private data class ScheduleBlock(
-        val limit: Int,
-        val numberOfTables: Int,
-        val timeTableSlots: List<TimeTableSlotDto>
+            val limit: Int,
+            val numberOfTables: Int,
+            val timeTableSlots: List<TimeTableSlotDTO>
     )
 
     fun clearSchedule(competitionId: Int) {

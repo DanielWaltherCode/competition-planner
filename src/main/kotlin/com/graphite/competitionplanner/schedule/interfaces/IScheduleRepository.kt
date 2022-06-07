@@ -34,7 +34,7 @@ interface IScheduleRepository {
      *
      * @param competitionId ID of the competition
      */
-    fun getPreSchedule(competitionId: Int): List<CompetitionCategoryPreSchedule>
+    fun getPreSchedule(competitionId: Int): List<CompetitionCategoryPreScheduleDTO>
 
     /**
      * Update the estimated end time and success status of the competition categories

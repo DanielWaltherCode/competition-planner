@@ -16,12 +16,12 @@ class GetPreSchedule(
     /**
      * Return the current pre-schedule for the competition
      */
-    fun execute(competitionId: Int): List<CompetitionCategoryPreSchedule> {
+    fun execute(competitionId: Int): List<CompetitionCategoryPreScheduleDTO> {
         return repository.getPreSchedule(competitionId)
     }
 }
 
-data class CompetitionCategoryPreSchedule(
+data class CompetitionCategoryPreScheduleDTO(
     /**
      * True if all matches for all pre-scheduled competition categories fit within the interval on the given date
      */

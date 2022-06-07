@@ -132,36 +132,81 @@
                 <thead>
                 <tr>
                   <th scope="col">{{ $t("schedule.main.category") }}</th>
+                  <th scope="col">{{ $t("schedule.main.stage") }}</th>
                   <th scope="col">{{ $t("schedule.main.day") }}</th>
                   <th scope="col">{{ $t("schedule.main.timeSpan") }}</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="category in categoryStartTimeDTO.categoryStartTimeList" :key="category.id">
-                  <td>{{ category.categoryDTO.categoryName }}</td>
-                  <!-- Select date -->
-                  <td>
-                    <select id="date-selection" class="form-control" v-model="category.playingDay">
-                      <option value="null"> {{ $t("schedule.main.notSelected") }}</option>
-                      <option v-for="(day, counter) in categoryStartTimeDTO.startTimeFormOptions.availableDays"
-                              v-bind:key="counter" :value="getPlayingDate(day)">
-                        {{ getPlayingDate(day) }}
-                      </option>
-                    </select>
-                  </td>
-                  <!-- Select interval during day -->
-                  <td>
-                    <select id="interval-selection" class="form-control"
-                            :disabled="category.playingDay === null || category.playingDay === 'null'"
-                            v-model="category.startInterval">
-                      <option v-for="(interval, counter) in categoryStartTimeDTO.startTimeFormOptions.startIntervals"
-                              v-bind:key="counter" :value="interval"
-                      >
-                        {{ getInterval(interval) }}
-                      </option>
-                    </select>
-                  </td>
-                </tr>
+                <template v-for="category in categoryStartTimeDTO.categoryStartTimeList">
+                  <tr :key="category.id" v-if="category.categoryDTO.settings.drawType === 'POOL_AND_CUP' ||
+                         category.categoryDTO.settings.drawType === 'POOL_ONLY'">
+                    <td>{{ category.categoryDTO.category.name }}</td>
+                    <!-- Select stage (group or playoff) -->
+                    <td>
+                      <input class="form-control" disabled :value="$t('schedule.main.GROUP')">
+                    </td>
+                    <!-- Select date -->
+                    <td>
+                      <select id="date-selection" class="form-control"
+                              v-model="categoryMatchSchedulerSpecifications[category.id]['GROUP']['day']">
+                        <option value="null"> {{ $t("schedule.main.notSelected") }}</option>
+                        <option v-for="(day, counter) in categoryStartTimeDTO.startTimeFormOptions.availableDays"
+                                v-bind:key="counter" :value="getPlayingDate(day)">
+                          {{ getPlayingDate(day) }}
+                        </option>
+                      </select>
+                    </td>
+                    <!-- Select interval during day -->
+                    <td>
+                      <select id="interval-selection" class="form-control"
+                              v-model="categoryMatchSchedulerSpecifications[category.id]['GROUP']['interval']">
+                        <option v-for="(interval, counter) in categoryStartTimeDTO.startTimeFormOptions.startIntervals"
+                                v-bind:key="counter" :value="interval"
+                        >
+                          {{ getInterval(interval) }}
+                        </option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr :key="category.id + 1000" v-if="category.categoryDTO.settings.drawType === 'POOL_AND_CUP' ||
+                   category.categoryDTO.settings.drawType === 'CUP_ONLY'">
+                    <td v-if="category.categoryDTO.settings.drawType !== 'CUP_ONLY'"></td>
+                    <td v-if="category.categoryDTO.settings.drawType === 'CUP_ONLY'">
+                      {{category.categoryDTO.category.name }}
+                    </td>
+                      <!-- Stage (group or playoff) -->
+                    <td>
+                      <input class="form-control" :value="$t('schedule.main.PLAYOFF')" disabled>
+                    </td>
+                    <!-- Select date -->
+                    <td>
+                      <select id="date-selection2" class="form-control"
+                              v-model="categoryMatchSchedulerSpecifications[category.id]['PLAYOFF']['day']">
+                        <option value="null"> {{ $t("schedule.main.notSelected") }}</option>
+                        <option v-for="(day, counter) in categoryStartTimeDTO.startTimeFormOptions.availableDays"
+                                v-bind:key="counter" :value="getPlayingDate(day)">
+                          {{ getPlayingDate(day) }}
+                        </option>
+                      </select>
+                    </td>
+                    <!-- Select interval during day -->
+                    <td>
+                      <select id="interval-selection2" class="form-control"
+                              v-model="categoryMatchSchedulerSpecifications[category.id]['PLAYOFF']['interval']">
+                        <option v-for="(interval, counter) in categoryStartTimeDTO.startTimeFormOptions.startIntervals"
+                                v-bind:key="counter" :value="interval"
+                        >
+                          {{ getInterval(interval) }}
+                        </option>
+                      </select>
+                    </td>
+                    <td>
+                      <label for="tableNumbers" class="form-label">Example range</label>
+                      <input type="range" class="form-range" min="0" max="5" id="tableNumbers">
+                    </td>
+                  </tr>
+                </template>
                 </tbody>
               </table>
             </div>
@@ -228,11 +273,13 @@ export default {
       minutesPerMatchOptions: [15, 20, 25, 30, 35, 40, 45, 50, 55, 60],
       generatedSchedule: null,
       distinctPlannedCategories: [],
+      categoryMatchSchedulerSpecifications: {},
       colors: ["#46b1c9", "#84c0c6", "#9fb7b9", "#bcc1ba", "#f2e2d2", "#dcd6f7", "#d8d2e1", "#c5d5e4",
         "#a6b1e1", "#cacfd6", "#d6e5e3", "#ce7da5", "#bee5bf", "#dff3e3", "#ffd1ba",
         "#b5ffe1", "#93e5ab", "#65b891", "#47682c", "#8c7051", "#ef3054",
         "#d3d57c", "#c7aa74", "#957964", "#0081a7", "#00afb9", "#fdfcdc", "#fed9b7", "#f07167"],
-      colorCategoryMap: {}
+      colorCategoryMap: {},
+      stages: ["GROUP", "PLAYOFF"]
     }
   },
   computed: {
@@ -300,6 +347,7 @@ export default {
       CategoryStartTimeService.getCategoryStartTimesInCompetition(this.competition.id,
           5).then(res => {
         this.categoryStartTimeDTO = res.data
+        this.setUpMatchScheduleSpecs()
       })
     },
     formattedDate: getFormattedDate,
@@ -388,6 +436,47 @@ export default {
     // Returns e.g. "Herrar 1 (Group A)"
     createCategoryMatchString(categoryMatch) {
       return categoryMatch.category.name // " (" + categoryMatch.groupOrRound + ")"
+    },
+    setUpMatchScheduleSpecs() {
+      // Create specification for the these categories are used to generate schedule
+      this.categoryStartTimeDTO.categoryStartTimeList.forEach(category => {
+        const id = category.id
+        if (category.categoryDTO.settings.drawType === "POOL_AND_CUP") {
+          this.categoryMatchSchedulerSpecifications[id] =
+              {
+                "GROUP": {
+                  "matchType": "GROUP",
+                  "tableNumbers": [],
+                  "day": "",
+                  "interval": ""
+                },
+                "PLAYOFF": {
+                  "matchType": "PLAYOFF",
+                  "tableNumbers": [],
+                  "day": "",
+                  "interval": ""
+                }
+              }
+        } else if (category.categoryDTO.settings.drawType === "POOL_ONLY") {
+          this.categoryMatchSchedulerSpecifications[id] = {
+            "GROUP": {
+              "matchType": "GROUP",
+              "tableNumbers": [],
+              "day": "",
+              "interval": ""
+            },
+          }
+        } else if (category.categoryDTO.settings.drawType === "CUP_ONLY") {
+          this.categoryMatchSchedulerSpecifications[id] = {
+            "PLAYOFF": {
+              "matchType": "PLAYOFF",
+              "tableNumbers": [],
+              "day": "",
+              "interval": ""
+            },
+          }
+        }
+      })
     }
   }
 }
