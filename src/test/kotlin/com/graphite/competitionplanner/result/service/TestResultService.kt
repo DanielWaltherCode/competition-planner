@@ -15,7 +15,7 @@ import com.graphite.competitionplanner.registration.repository.RegistrationRepos
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
-import com.graphite.competitionplanner.result.domain.AddResult
+import com.graphite.competitionplanner.result.domain.AddPartialResult
 import com.graphite.competitionplanner.result.repository.ResultRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestUtil
@@ -40,7 +40,7 @@ class TestResultService(
     @Autowired val createDraw: CreateDraw,
     @Autowired val clubRepository: ClubRepository,
     @Autowired val createPlayer: CreatePlayer,
-    @Autowired val addResult: AddResult,
+    @Autowired val addPartialResult: AddPartialResult,
     @Autowired val matchRepository: MatchRepository,
     @Autowired val competitionDrawRepository: CompetitionDrawRepository
 ) {
@@ -110,14 +110,7 @@ class TestResultService(
         competitionDrawRepository.deletePools(competitionCategoryId)
     }
 
-    @Test
-    fun testAddResult() {
-        addResult()
-        Assertions.assertTrue(result.gameList.isNotEmpty())
-        Assertions.assertNotNull(match.winner)
-    }
-
-    private fun addResult() {
+    private fun addPartialResult() {
         val matches = matchService.getMatchesInCategory(competitionCategoryId)
 
         // Add result for first match
@@ -127,19 +120,13 @@ class TestResultService(
         gameList.add(GameSpec(3, 11, 9))
 
         this.match = matchRepository.getMatch2(matches[0].id)
-
-        this.result = addResult.execute(
-            match,
-            ResultSpec(gameList),
-            findCompetitionCategory.byId(competitionCategoryId)
-        )
-
+        this.result = addPartialResult.execute(match.id, ResultSpec(gameList))
     }
 
     @Test
-    fun testUpdateFullResults() {
+    fun testAddFinalMatchResults() {
         // Setup
-        addResult()
+        addPartialResult()
         val originalSize = matchRepository.getMatch2(match.id).result.size
 
         // Act
