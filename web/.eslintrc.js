@@ -10,7 +10,8 @@ module.exports = {
         ecmaVersion: 2020,
     },
     rules: {
-        "no-mutating-props": "off"
+        "no-mutating-props": "off",
+        "vue/no-mutating-props": "off",
     },
     // These are added if you chose also to install Jest plugin for Vue CLI
     // With my own modifications here as an example
