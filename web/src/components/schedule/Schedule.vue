@@ -29,13 +29,9 @@
             <div>
               <div>
                 <h3 class="p-3">{{ $t("schedule.generalInfo.heading") }}</h3>
-                <div class="d-flex justify-content-end">
-                  <button type="button" class="btn btn-primary m-1" @click="saveChanges">{{ $t("general.saveChanges") }}
-                  </button>
-                </div>
               </div>
               <!-- Daily start end -->
-              <div class="col-sm-8 m-auto">
+              <div class="col-sm-10 m-auto custom-card p-5">
                 <div>
                   <h4>{{ $t("schedule.generalInfo.startEnd") }}</h4>
                   <p>{{ $t("schedule.generalInfo.startEndHelper") }}
@@ -67,11 +63,16 @@
                     </tr>
                     </tbody>
                   </table>
+                  <div>
+                    <button type="button" class="btn btn-primary" @click="saveDailyStartEndTimes">
+                      {{ $t("general.saveChanges") }}
+                    </button>
+                  </div>
                 </div>
               </div>
 
               <!-- Available tables -->
-              <div class="other-settings col-sm-8 m-auto">
+              <div class="other-settings p-5 col-md-9 col-lg-10  mx-auto custom-card">
                 <div>
                   <h5> {{ $t("schedule.generalInfo.availableTablesHeading") }}</h5>
                   <p>{{ $t("schedule.generalInfo.availableTablesHelper") }}
@@ -104,106 +105,120 @@
                     </tr>
                     </tbody>
                   </table>
+                  <div>
+                    <button type="button" class="btn btn-primary" @click="saveAvailableTables">
+                      {{ $t("general.saveChanges") }}
+                    </button>
+                  </div>
                 </div>
-                <!-- Average time per match -->
-                <div>
-                  <h5>{{ $t("schedule.generalInfo.averageMatchTimeHeading") }}</h5>
-                  <p>{{ $t("schedule.generalInfo.averageMatchTimeHelper") }}</p>
-                  <select id="match-length-selection" class="form-control" v-model="scheduleMetadata.minutesPerMatch">
-                    <option v-for="i in minutesPerMatchOptions" :key="i" :value="i">
-                      {{ i + " " + $t("schedule.generalInfo.minutes") }}
-                    </option>
-                  </select>
-                  <br>
-                  <br>
+              </div>
+              <!-- Average time per match -->
+              <div class="p-5 col-sm-10 m-auto custom-card">
+                <h5>{{ $t("schedule.generalInfo.averageMatchTimeHeading") }}</h5>
+                <p>{{ $t("schedule.generalInfo.averageMatchTimeHelper") }}</p>
+                <select id="match-length-selection" class="form-control" v-model="scheduleMetadata.minutesPerMatch">
+                  <option v-for="i in minutesPerMatchOptions" :key="i" :value="i">
+                    {{ i + " " + $t("schedule.generalInfo.minutes") }}
+                  </option>
+                </select>
+                <div class="p-3">
+                  <button type="button" class="btn btn-primary" @click="saveMinutesPerMatch">
+                    {{ $t("general.saveChanges") }}
+                  </button>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Choose date and time for individual categories -->
-          <div id="categories" class="row custom-card m-md-2">
+          <div v-if="scheduleCategoryContainerDTO !== null"
+               id="categories"
+               class="row p-5 col-md-9 col-lg-10 mx-auto custom-card">
             <div>
-              <h3 class="p-4">{{ $t("schedule.main.categoryStartTimes") }}</h3>
-              <p class="w-75 mx-auto p-2"> {{ $t("schedule.main.helperText") }}</p>
+              <h3 class="py-4">{{ $t("schedule.main.categoryStartTimes") }}</h3>
+              <p class="w-75 mx-auto py-2"> {{ $t("schedule.main.helperText") }}</p>
             </div>
             <div id="table-container" class="col-sm-12 mx-auto my-4">
               <table class="table table-bordered">
                 <thead>
                 <tr>
-                  <th scope="col">{{ $t("schedule.main.category") }}</th>
-                  <th scope="col">{{ $t("schedule.main.stage") }}</th>
-                  <th scope="col">{{ $t("schedule.main.day") }}</th>
-                  <th scope="col">{{ $t("schedule.main.timeSpan") }}</th>
+                  <th scope="col">
+                    {{ $t("schedule.main.category") }}
+                  </th>
+                  <th scope="col">
+                    {{ $t("schedule.main.stage") }}
+                  </th>
+                  <th scope="col">
+                    {{ $t("schedule.main.day") }}
+                  </th>
+                  <th scope="col">
+                    {{ $t("schedule.main.startTime") }}
+                  </th>
+                  <th>
+                    {{ $t("schedule.main.tables") }}
+                  </th>
                 </tr>
                 </thead>
                 <tbody>
-                <template v-for="category in categoryStartTimeDTO.categoryStartTimeList">
-                  <tr :key="category.id" v-if="category.categoryDTO.settings.drawType === 'POOL_AND_CUP' ||
-                         category.categoryDTO.settings.drawType === 'POOL_ONLY'">
-                    <td>{{ category.categoryDTO.category.name }}</td>
-                    <!-- Select stage (group or playoff) -->
+                <template v-for="categorySchedule in scheduleCategoryContainerDTO.scheduleCategoryList">
+                  <tr :key="categorySchedule.categoryDTO.id + categorySchedule.selectedMatchType">
+                    <td>{{ categorySchedule.categoryDTO.category.name }}</td>
+                    <!-- Stage (group or playoff) -->
                     <td>
-                      <input class="form-control" disabled :value="$t('schedule.main.GROUP')">
+                      <input
+                          class="form-control"
+                          disabled
+                          :value="$t('schedule.main.' + categorySchedule.selectedMatchType)"
+                      >
                     </td>
                     <!-- Select date -->
                     <td>
-                      <select id="date-selection" class="form-control"
-                              v-model="categoryMatchSchedulerSpecifications[category.id]['GROUP']['day']">
-                        <option value="null"> {{ $t("schedule.main.notSelected") }}</option>
-                        <option v-for="(day, counter) in categoryStartTimeDTO.startTimeFormOptions.availableDays"
-                                v-bind:key="counter" :value="getPlayingDate(day)">
-                          {{ getPlayingDate(day) }}
+                      <select id="date-selection"
+                              v-model="categorySchedule.selectedDay"
+                              @change="checkAndSubmitForScheduling(categorySchedule)"
+                              class="form-control">
+                        <option value="null">
+                          {{ $t("schedule.main.notSelected") }}
+                        </option>
+                        <option
+                            v-for="(tableDay, counter) in availableTables"
+                            :key="counter"
+                            :value="tableDay.day">
+                          {{ tableDay.day }}
                         </option>
                       </select>
                     </td>
-                    <!-- Select interval during day -->
+                    <!-- Select desired start time -->
                     <td>
-                      <select id="interval-selection" class="form-control"
-                              v-model="categoryMatchSchedulerSpecifications[category.id]['GROUP']['interval']">
-                        <option v-for="(interval, counter) in categoryStartTimeDTO.startTimeFormOptions.startIntervals"
-                                v-bind:key="counter" :value="interval"
-                        >
-                          {{ getInterval(interval) }}
-                        </option>
-                      </select>
+                      <vue-timepicker
+                          v-model="categorySchedule.selectedStartTime"
+                          @change="checkAndSubmitForScheduling(categorySchedule)"
+                      />
                     </td>
-                  </tr>
-                  <tr :key="category.id + 1000" v-if="category.categoryDTO.settings.drawType === 'POOL_AND_CUP' ||
-                   category.categoryDTO.settings.drawType === 'CUP_ONLY'">
-                    <td v-if="category.categoryDTO.settings.drawType !== 'CUP_ONLY'"></td>
-                    <td v-if="category.categoryDTO.settings.drawType === 'CUP_ONLY'">
-                      {{category.categoryDTO.category.name }}
-                    </td>
-                      <!-- Stage (group or playoff) -->
+                    <!-- Select tables -->
                     <td>
-                      <input class="form-control" :value="$t('schedule.main.PLAYOFF')" disabled>
-                    </td>
-                    <!-- Select date -->
-                    <td>
-                      <select id="date-selection2" class="form-control"
-                              v-model="categoryMatchSchedulerSpecifications[category.id]['PLAYOFF']['day']">
-                        <option value="null"> {{ $t("schedule.main.notSelected") }}</option>
-                        <option v-for="(day, counter) in categoryStartTimeDTO.startTimeFormOptions.availableDays"
-                                v-bind:key="counter" :value="getPlayingDate(day)">
-                          {{ getPlayingDate(day) }}
-                        </option>
-                      </select>
-                    </td>
-                    <!-- Select interval during day -->
-                    <td>
-                      <select id="interval-selection2" class="form-control"
-                              v-model="categoryMatchSchedulerSpecifications[category.id]['PLAYOFF']['interval']">
-                        <option v-for="(interval, counter) in categoryStartTimeDTO.startTimeFormOptions.startIntervals"
-                                v-bind:key="counter" :value="interval"
-                        >
-                          {{ getInterval(interval) }}
-                        </option>
-                      </select>
-                    </td>
-                    <td>
-                      <label for="tableNumbers" class="form-label">Example range</label>
-                      <input type="range" class="form-range" min="0" max="5" id="tableNumbers">
+                      <div v-if="getTablesForDay(categorySchedule.selectedDay)" class="dropdown">
+                        <button id="dropdownMenuButton1" class="btn btn-secondary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                          {{ $t("schedule.main.chooseTables") }}
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                          <div v-for="tableNr in getTablesForDay(categorySchedule.selectedDay)"
+                               :key="tableNr"
+                               class="form-check form-check-inline">
+                            <input :id="'inlineCheckbox' + tableNr"
+                                   v-model="categorySchedule.selectedTables"
+                                   @change="checkAndSubmitForScheduling(categorySchedule)"
+                                   :value="tableNr" class="form-check-input"
+                                   type="checkbox">
+                            <label class="form-check-label" :for="'inlineCheckbox' + tableNr">{{ tableNr }}</label>
+                          </div>
+                          <br/>
+                        </ul>
+                      </div>
+                      <div v-else>
+                        {{ $t("schedule.main.noTablesAdded") }}
+                      </div>
                     </td>
                   </tr>
                 </template>
@@ -213,33 +228,39 @@
           </div>
 
           <!-- See generated schedule -->
-          <div class="table-container col-sm-12 mx-auto my-4" v-if="generatedSchedule != null">
-            <table class="table table-bordered">
-              <thead>
-              <tr>
-                <th></th>
-                <th :colspan="generatedSchedule.scheduleItemList.length">{{ $t("schedule.main.table") }}</th>
-              </tr>
-              <tr>
-                <th>Tid</th>
-                <th v-for="item in generatedSchedule.scheduleItemList" :key="item.tableNumber"> {{ item.tableNumber }}
-                </th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr v-for="time in generatedSchedule.validStartTimes" :key="time">
-                <td>{{ getHoursMinutes(new Date(time)) }}</td>
-                <td v-for="item in generatedSchedule.scheduleItemList"
-                    :style="{backgroundColor: colorCategoryMap[getCategoryAtTableTime(item.tableNumber, time)]}"
-                    :key="item.tableNumber" style="font-size: 80%"> {{ getCategoryAtTableTime(item.tableNumber, time) }}
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="row">
-            <div class="col-1">
-
+          <div v-if="generatedScheduleContainer!== null && generatedScheduleContainer.excelScheduleList.length > 0"
+                class="col-sm-11 mx-auto my-4 custom-card">
+            <!-- Select date -->
+            <div>
+              <h4> {{ $t("schedule.main.generatedSchedule")}}</h4>
+              <button v-for="date in dailyStartEndDTO.availableDays" :key="date"
+              class="btn btn-primary m-2" @click="selectTimeTableDay(date)">
+                {{ date }}
+              </button>
+            </div>
+            <div v-if="selectedGeneratedSchedule != null" class="table-container ">
+              <table class="table table-bordered">
+                <thead>
+                <tr>
+                  <th></th>
+                  <th :colspan="selectedGeneratedSchedule.scheduleItemList.length">{{ $t("schedule.main.table") }}</th>
+                </tr>
+                <tr>
+                  <th>Tid</th>
+                  <th v-for="item in selectedGeneratedSchedule.scheduleItemList" :key="item.tableNumber"> {{ item.tableNumber }}
+                  </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="time in selectedGeneratedSchedule.validStartTimes" :key="time">
+                  <td>{{ getHoursMinutes(new Date(time)) }}</td>
+                  <td v-for="item in selectedGeneratedSchedule.scheduleItemList"
+                      :style="{backgroundColor: colorCategoryMap[getCategoryAtTableTime(item.tableNumber, time)]}"
+                      :key="item.tableNumber" style="font-size: 80%"> {{ getCategoryAtTableTime(item.tableNumber, time) }}
+                  </td>
+                </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -249,14 +270,14 @@
 </template>
 
 <script>
-import {getFormattedDate, getHoursMinutes} from "@/common/util";
+import {getFormattedDate, getHoursMinutes, undefinedOrNull} from "@/common/util";
 import VueTimepicker from 'vue2-timepicker/src/vue-timepicker.vue'
-import CategoryStartTimeService from "@/common/api-services/schedule/category-start-time.service";
 import DailyStartEndService from "@/common/api-services/schedule/daily-start-end.service";
 import AvailableTablesService from "@/common/api-services/schedule/available-tables.service";
 import ScheduleMetadataService from "@/common/api-services/schedule/schedule-metadata.service";
 import CategoryService from "@/common/api-services/category.service";
 import ScheduleGeneralService from "@/common/api-services/schedule/schedule-general.service";
+import scheduleGeneralService from "@/common/api-services/schedule/schedule-general.service";
 
 export default {
   name: "Schedule",
@@ -266,14 +287,14 @@ export default {
       sidebarChoice: "overview",
       selectedCategory: "",
       competitionCategories: [],
-      categoryStartTimeDTO: {},
+      scheduleCategoryContainerDTO: null,
       dailyStartEndDTO: {},
       availableTables: null,
       scheduleMetadata: {},
       minutesPerMatchOptions: [15, 20, 25, 30, 35, 40, 45, 50, 55, 60],
-      generatedSchedule: null,
+      selectedGeneratedSchedule: null,
+      generatedScheduleContainer: null,
       distinctPlannedCategories: [],
-      categoryMatchSchedulerSpecifications: {},
       colors: ["#46b1c9", "#84c0c6", "#9fb7b9", "#bcc1ba", "#f2e2d2", "#dcd6f7", "#d8d2e1", "#c5d5e4",
         "#a6b1e1", "#cacfd6", "#d6e5e3", "#ce7da5", "#bee5bf", "#dff3e3", "#ffd1ba",
         "#b5ffe1", "#93e5ab", "#65b891", "#47682c", "#8c7051", "#ef3054",
@@ -291,15 +312,71 @@ export default {
     CategoryService.getCompetitionCategories(this.competition.id).then(res => {
       this.competitionCategories = res.data.categories
     })
-    this.getCategoryStartTimes()
     this.getDailyStartEnd()
     this.getAvailableTablesForCompetition()
     this.getScheduleMetadata()
-    this.getGeneratedSchedule()
+    this.getCategorySchedulerSettings()
+    this.getTimeTableInfo()
   },
   methods: {
     reRoute() {
       this.$router.push("schedule-advanced")
+    },
+    getTablesForDay(day) {
+      if (this.availableTables != null) {
+        const tableDay = this.availableTables
+            .find(tableDay => tableDay.day === day)
+
+        if (tableDay === null || tableDay === undefined) {
+          return null
+        }
+        return tableDay.nrTables
+      }
+      return null
+    },
+    checkAndSubmitForScheduling(categorySchedule) {
+      if (undefinedOrNull(categorySchedule) ||
+          undefinedOrNull(categorySchedule.selectedDay) ||
+          undefinedOrNull(categorySchedule.selectedStartTime) ||
+          categorySchedule.selectedTables.length === 0) {
+        return
+      }
+      else {
+        const startTime = new Date(categorySchedule.selectedDay)
+        startTime.setHours(categorySchedule.selectedStartTime.HH)
+        startTime.setMinutes(categorySchedule.selectedStartTime.mm)
+        const categorySpec = {
+          "mode": "ABSOLUTE",
+          "matchType": categorySchedule.selectedMatchType,
+          "tableNumbers": categorySchedule.selectedTables,
+          "startTime": startTime,
+          "location": this.competition.location.name
+        }
+        console.log(categorySpec)
+
+        scheduleGeneralService
+            .tryScheduleMatches(this.competition.id, categorySchedule.categoryDTO.id, categorySpec)
+            .then(() => {
+              this.getTimeTableInfo()
+        })
+
+      }
+    },
+    getTimeTableInfo() {
+      scheduleGeneralService.getTimeTableInfo(this.competition.id).then(res => {
+        this.generatedScheduleContainer = res.data
+        if (this.generatedScheduleContainer.excelScheduleList.length > 0) {
+          console.log("length greater than 0")
+          this.selectedGeneratedSchedule = this.generatedScheduleContainer.excelScheduleList[0]
+          console.log(this.selectedGeneratedSchedule)
+          this.selectTimeTableDay(this.selectedGeneratedSchedule.dateOfPlay)
+        }
+      }).catch(err => {
+        console.log("Couldn't fetch generated schedule", err)
+      })
+    },
+    selectTimeTableDay(date) {
+      this.selectedGeneratedSchedule = this.generatedScheduleContainer.excelScheduleList.find(element => element.dateOfPlay === date)
     },
     getHoursMinutes: getHoursMinutes,
     getPlayingDate(date) {
@@ -318,18 +395,6 @@ export default {
         console.log("Couldn't fetch daily start end, ", err)
       })
     },
-    getGeneratedSchedule() {
-      ScheduleGeneralService.getExcelSchedule(this.competition.id).then(res => {
-        this.generatedSchedule = res.data
-        console.log("Fetch schedule")
-        for (let i = 0; i < this.generatedSchedule.distinctCategories.length; i++) {
-          const category = this.generatedSchedule.distinctCategories[i]
-          this.colorCategoryMap[category.name] = this.colors[i]
-        }
-      }).catch(err => {
-        console.log("Couldn't fetch generated schedule", err)
-      })
-    },
     getInterval(interval) {
       return this.$t("schedule.main.intervals." + interval)
     },
@@ -342,37 +407,22 @@ export default {
         return time
       }
     },
-    getCategoryStartTimes() {
+    getCategorySchedulerSettings() {
       // Category id is not used in backend for this call so can be set to anything
-      CategoryStartTimeService.getCategoryStartTimesInCompetition(this.competition.id,
-          5).then(res => {
-        this.categoryStartTimeDTO = res.data
-        this.setUpMatchScheduleSpecs()
+      ScheduleGeneralService.getCategorySchedulerSettings(this.competition.id).then(res => {
+        this.scheduleCategoryContainerDTO = res.data
       })
     },
     formattedDate: getFormattedDate,
     formatTime: getHoursMinutes,
+    undefinedOrNull: undefinedOrNull,
     saveChanges() {
-      this.saveStartTimes()
       this.saveDailyStartEndTimes()
       this.saveAvailableTables()
-      this.updateMinutesPerMatch()
+      this.saveMinutesPerMatch()
     },
-    saveStartTime(category) {
-      const exactStartTime = this.getTime(category.exactStartTime)
-      const objectToSave = {
-        playingDay: category.playingDay === "null" ? null : category.playingDay,
-        startInterval: category.startInterval,
-        exactStartTime: exactStartTime,
-      }
-      CategoryStartTimeService.updateCategoryStartTime(category.id,
-          this.competition.id, category.categoryDTO.categoryId, objectToSave).then(() => {
-      })
-    },
-    saveStartTimes() {
-      this.categoryStartTimeDTO.categoryStartTimeList.forEach(category => {
-        this.saveStartTime(category)
-      })
+    trySchedule(competitionCategoryId) {
+
     },
     saveDailyStartEndTimes() {
       this.dailyStartEndDTO.dailyStartEndList.forEach(object => this.setDailyStartEnd(object))
@@ -410,17 +460,17 @@ export default {
         this.scheduleMetadata = res.data
       })
     },
-    updateMinutesPerMatch() {
+    saveMinutesPerMatch() {
       ScheduleMetadataService.updateMinutesPerMatch(this.competition.id, {minutesPerMatch: this.scheduleMetadata.minutesPerMatch})
     },
     // Returns the category playing at a given table at a given time or empty string if no match is planned at that time
     getCategoryAtTableTime(table, time) {
-      if (this.generatedSchedule == null) {
+      if (this.selectedGeneratedSchedule == null) {
         return ""
       }
 
       let stringToReturn = ""
-      this.generatedSchedule.scheduleItemList.forEach(item => {
+      this.selectedGeneratedSchedule.scheduleItemList.forEach(item => {
         if (item.tableNumber === table) {
           item.matchesAtTable.forEach(match => {
             const matchTime = new Date(match.startTime)
@@ -437,47 +487,7 @@ export default {
     createCategoryMatchString(categoryMatch) {
       return categoryMatch.category.name // " (" + categoryMatch.groupOrRound + ")"
     },
-    setUpMatchScheduleSpecs() {
-      // Create specification for the these categories are used to generate schedule
-      this.categoryStartTimeDTO.categoryStartTimeList.forEach(category => {
-        const id = category.id
-        if (category.categoryDTO.settings.drawType === "POOL_AND_CUP") {
-          this.categoryMatchSchedulerSpecifications[id] =
-              {
-                "GROUP": {
-                  "matchType": "GROUP",
-                  "tableNumbers": [],
-                  "day": "",
-                  "interval": ""
-                },
-                "PLAYOFF": {
-                  "matchType": "PLAYOFF",
-                  "tableNumbers": [],
-                  "day": "",
-                  "interval": ""
-                }
-              }
-        } else if (category.categoryDTO.settings.drawType === "POOL_ONLY") {
-          this.categoryMatchSchedulerSpecifications[id] = {
-            "GROUP": {
-              "matchType": "GROUP",
-              "tableNumbers": [],
-              "day": "",
-              "interval": ""
-            },
-          }
-        } else if (category.categoryDTO.settings.drawType === "CUP_ONLY") {
-          this.categoryMatchSchedulerSpecifications[id] = {
-            "PLAYOFF": {
-              "matchType": "PLAYOFF",
-              "tableNumbers": [],
-              "day": "",
-              "interval": ""
-            },
-          }
-        }
-      })
-    }
+
   }
 }
 </script>

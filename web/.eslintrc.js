@@ -12,6 +12,9 @@ module.exports = {
     rules: {
         "no-mutating-props": "off",
         "vue/no-mutating-props": "off",
+        "vue/html-indent": "off",
+        "vue/html-closing-bracket-newline": "off",
+        "vue/max-attributes-per-line": "off"
     },
     // These are added if you chose also to install Jest plugin for Vue CLI
     // With my own modifications here as an example

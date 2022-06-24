@@ -120,4 +120,20 @@ interface IScheduleRepository {
      * @param competitionId ID of the competition to clear the schedule for.
      */
     fun clearSchedule(competitionId: Int)
+
+    /**
+     * Ensure timeslots are no longer occupied by a given competition category and matchtype
+     */
+    fun removeCategoryFromTimeslots(categoryId: Int, matchType: MatchType)
+
+    /**
+     * Assign timeslots to a given category
+     */
+    fun setCategoryForTimeSlots(timeSlotIds: List<Int>, categoryId: Int, matchType: MatchType)
+
+    fun getTimeSlotsForCategory(categoryId: Int): List<MatchTimeSlotRecord>
+
+    fun getTimeSlotsForCompetition(competitionId: Int): List<MatchTimeSlotRecord>
+
+    fun clearTimeSlotTable()
 }

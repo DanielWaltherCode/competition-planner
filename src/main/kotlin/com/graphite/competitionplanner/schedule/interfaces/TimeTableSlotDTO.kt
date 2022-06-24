@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.schedule.interfaces
 
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import java.time.LocalDateTime
 
 /**

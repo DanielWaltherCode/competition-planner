@@ -1,6 +1,8 @@
 package com.graphite.competitionplanner.schedule.domain
 
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
+import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
+import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
 import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotSpec
 import com.graphite.competitionplanner.schedule.service.AvailableTablesService
@@ -27,7 +29,9 @@ class TimeTableSlotHandler(
     val scheduleAvailableTablesService: AvailableTablesService,
     val scheduleMetadataService: ScheduleMetadataService,
     val dailyStartEndService: DailyStartEndService,
-    val findCompetitions: FindCompetitions
+    val findCompetitions: FindCompetitions,
+    val competitionCategoryRepository: ICompetitionCategoryRepository,
+    val matchRepository: MatchRepository
 ) {
 
     fun init(competitionId: Int) {
@@ -56,7 +60,9 @@ class TimeTableSlotHandler(
 
             })
         }
-        // If successful to this point, delete any previously stored time slots
+        // If successful to this point, delete any previously stored time slots. First remove keys in Match table
+        val categoriesInCompetition = competitionCategoryRepository.getCategoryIds(competitionId)
+        matchRepository.setTimeSlotsToNull(categoriesInCompetition)
         repository.deleteTimeTable(competitionId)
         repository.storeTimeTable(competitionId, timeSlots)
     }

@@ -1,11 +1,22 @@
 package com.graphite.competitionplanner.schedule.domain
 
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
+import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
+import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
+import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.schedule.api.MatchSchedulerSpec
+import com.graphite.competitionplanner.schedule.api.ScheduleCategoryContainerDTO
+import com.graphite.competitionplanner.schedule.api.ScheduleCategoryDTO
+import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleDTO
+import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleDTOContainer
+import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleItemDTO
+import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleMatchDTO
 import com.graphite.competitionplanner.schedule.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.schedule.interfaces.*
-import com.graphite.competitionplanner.schedule.service.StartInterval
+import com.graphite.competitionplanner.schedule.service.AvailableTablesService
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import kotlin.time.Duration
@@ -17,7 +28,10 @@ import kotlin.time.Duration
 class CompetitionScheduler(
         val repository: IScheduleRepository,
         val createSchedule: CreateSchedule,
-        val findCompetitions: FindCompetitions
+        val findCompetitions: FindCompetitions,
+        val availableTablesService: AvailableTablesService,
+        val drawService: DrawService,
+        val getCompetitionCategories: GetCompetitionCategories
 ) {
 
     /**
@@ -75,24 +89,58 @@ class CompetitionScheduler(
                 compareBy(TimeTableSlotDTO::location, TimeTableSlotDTO::startTime, TimeTableSlotDTO::tableNumber))
     }
 
-    private fun mergeTimeTableSlots(list: List<TimeTableSlotToMatch>): List<TimeTableSlotDTO> {
-        if (list.isEmpty()) {
-            return emptyList()
-        } else {
-            val id = list.first().id
-            val (sameTimeSlots, otherTimeSlots) = list.partition { it.id == id }
+    fun getScheduleForFrontend(competitionId: Int): ExcelScheduleDTOContainer {
+        val timeSlots = repository.getTimeSlotsForCompetition(competitionId)
+        val competitionCategories = getCompetitionCategories.execute(competitionId)
+        val playingDays = timeSlots.map { it.startTime.toLocalDate() }.distinct()
 
-            val matchInfos = sameTimeSlots.mapNotNull { it.matchInfo }
-            val timeTableSlot = TimeTableSlotDTO(
-                    sameTimeSlots.first().id,
-                    sameTimeSlots.first().startTime,
-                    sameTimeSlots.first().tableNumber,
-                    sameTimeSlots.first().location,
-                    sameTimeSlots.size > 1,
-                    matchInfos
+
+        val excelScheduleList = mutableListOf<ExcelScheduleDTO>()
+
+        for (day in playingDays) {
+            val excelScheduleItemList = mutableListOf<ExcelScheduleItemDTO>()
+            val filteredTimeSlots = timeSlots.filter { it.startTime.toLocalDate().equals(day) }
+            val distinctTables = filteredTimeSlots.map { it.tableNumber }.distinct().sorted()
+            val validStartTimes = filteredTimeSlots.map { it.startTime }.distinct().sorted().toSet()
+            if (filteredTimeSlots.map { it.competitionCategoryId }.isEmpty()) {
+                excelScheduleList.add(
+                        ExcelScheduleDTO(
+                                excelScheduleItemList,
+                                validStartTimes,
+                                emptySet(),
+                                day
+                        )
+                )
+                continue
+            }
+            val distinctCategories = filteredTimeSlots
+                    .map { it.competitionCategoryId }
+                    .distinct()
+                    .filterNotNull()
+                    .map { getCategoryDTO(competitionCategories, it) }
+                    .toSet()
+
+            for (table in distinctTables) {
+                val matchesOnTable = filteredTimeSlots.filter { it.tableNumber == table && it.competitionCategoryId != null }
+                val excelMatchDTOs = matchesOnTable.map {
+                    ExcelScheduleMatchDTO(
+                            it.startTime,
+                            getCategoryDTO(competitionCategories, it.competitionCategoryId),
+                            it.matchType)
+                }
+                excelScheduleItemList.add(ExcelScheduleItemDTO(table, excelMatchDTOs))
+            }
+            excelScheduleList.add(
+                    ExcelScheduleDTO(
+                            excelScheduleItemList,
+                            validStartTimes,
+                            distinctCategories,
+                            day
+                    )
             )
-            return listOf(timeTableSlot) + mergeTimeTableSlots(otherTimeSlots)
         }
+
+        return ExcelScheduleDTOContainer(excelScheduleList)
     }
 
     /**
@@ -138,10 +186,91 @@ class CompetitionScheduler(
                 }
             }
             repository.updateMatchesTimeTablesSlots(updateSpec)
+            updateTimeSlotCategory(updateSpec, competitionCategoryId, matchSchedulerSpec.matchType)
+
         } catch (ex: IndexOutOfBoundsException) {
             throw IndexOutOfBoundsException(
                     "Not all matches fit the schedule. Please consider adding more tables or start earlier.")
         }
+    }
+
+    fun getCategorySchedulerSettings(competitionId: Int): ScheduleCategoryContainerDTO {
+        val competitionCategories = getCompetitionCategories.execute(competitionId)
+        val drawnCategories = competitionCategories.filter { drawService.isDrawMade(it.id) }
+        val availableTableDays = availableTablesService.getTablesAvailableForMainTable(competitionId)
+
+        // Check if categories already are in timetable (i.e. scheduling is under way)
+        val scheduleCategoryList = mutableListOf<ScheduleCategoryDTO>()
+        for (category in drawnCategories) {
+            val timeSlots = repository.getTimeSlotsForCategory(category.id)
+            // Case 1 - No choices have been made for category
+            if (timeSlots.isEmpty()) {
+                val possibleMatchTypes = getPossibleMatchTypes(category)
+                for (type in possibleMatchTypes) {
+                    scheduleCategoryList.add(ScheduleCategoryDTO(
+                            categoryDTO = category,
+                            selectedMatchType = type,
+                            selectedDay = availableTableDays[0].day,
+                            selectedTables = emptyList(),
+                            selectedStartTime = null
+                    ))
+                }
+            } else {
+                val distinctMatchTypes = timeSlots.map { it.matchType }.distinct()
+                // Case 2 - One matchtype (group or playoff) has been scheduled
+                if (distinctMatchTypes.size == 1) {
+                    val matchType: MatchType = MatchType.valueOf(distinctMatchTypes[0])
+                    val filteredTimeSlots = timeSlots.filter { it.matchType == matchType.name }
+
+                    val selectedTables = filteredTimeSlots
+                            .map { it.tableNumber }
+                            .distinct()
+                    val startTime = filteredTimeSlots
+                            .map { it.startTime }
+                            .minOf { it }
+
+                    scheduleCategoryList.add(ScheduleCategoryDTO(
+                            categoryDTO = category,
+                            selectedMatchType = matchType,
+                            selectedDay = filteredTimeSlots[0].startTime.toLocalDate(),
+                            selectedTables = selectedTables,
+                            selectedStartTime = startTime.toLocalTime()
+                    ))
+                    scheduleCategoryList.add(ScheduleCategoryDTO(
+                            categoryDTO = category,
+                            selectedMatchType = if (matchType == MatchType.PLAYOFF) MatchType.GROUP else MatchType.PLAYOFF,
+                            selectedDay = filteredTimeSlots[0].startTime.toLocalDate(),
+                            selectedTables = emptyList(),
+                            selectedStartTime = startTime.toLocalTime()
+                    ))
+                }
+                // Case 3 - both matchtypes have already been scheduled
+                if (distinctMatchTypes.size == 2) {
+                    for (matchTypeString in distinctMatchTypes) {
+                        val matchType: MatchType = MatchType.valueOf(matchTypeString)
+                        val filteredTimeSlots = timeSlots.filter { it.matchType == matchType.name }
+                        val selectedTables = filteredTimeSlots
+                                .map { it.tableNumber }
+                                .distinct()
+                        val startTime = filteredTimeSlots
+                                .map { it.startTime }
+                                .minOf { it }
+
+                        scheduleCategoryList.add(ScheduleCategoryDTO(
+                                categoryDTO = category,
+                                selectedMatchType = matchType,
+                                selectedDay = filteredTimeSlots[0].startTime.toLocalDate(),
+                                selectedTables = selectedTables,
+                                selectedStartTime = startTime.toLocalTime()
+                        ))
+                    }
+                }
+            }
+        }
+        return ScheduleCategoryContainerDTO(
+                availableTablesService.getTablesAvailableForMainTable(competitionId),
+                scheduleCategoryList
+        )
     }
 
     /**
@@ -182,6 +311,34 @@ class CompetitionScheduler(
         val updateSpecs = createUpdateSpecs(settings, blocks, matches)
 
         repository.updateMatchesTimeTablesSlots(updateSpecs)
+        updateTimeSlotCategory(updateSpecs, competitionCategoryId, matchType)
+
+    }
+
+    private fun getCategoryDTO(competitionCategories: List<CompetitionCategoryDTO>, categoryId: Int): CategoryDTO? {
+        val selectedCategory = competitionCategories.find { it.id == categoryId } ?: return null
+
+        return CategoryDTO(selectedCategory.id, selectedCategory.category.name, selectedCategory.category.type)
+    }
+
+    private fun mergeTimeTableSlots(list: List<TimeTableSlotToMatch>): List<TimeTableSlotDTO> {
+        if (list.isEmpty()) {
+            return emptyList()
+        } else {
+            val id = list.first().id
+            val (sameTimeSlots, otherTimeSlots) = list.partition { it.id == id }
+
+            val matchInfos = sameTimeSlots.mapNotNull { it.matchInfo }
+            val timeTableSlot = TimeTableSlotDTO(
+                    sameTimeSlots.first().id,
+                    sameTimeSlots.first().startTime,
+                    sameTimeSlots.first().tableNumber,
+                    sameTimeSlots.first().location,
+                    sameTimeSlots.size > 1,
+                    matchInfos
+            )
+            return listOf(timeTableSlot) + mergeTimeTableSlots(otherTimeSlots)
+        }
     }
 
     private fun createUpdateSpecs(settings: ScheduleSettingsDTO, blocks: List<ScheduleBlock>,
@@ -207,6 +364,20 @@ class CompetitionScheduler(
 
             updateSpec + createUpdateSpecs(settings, blocks.drop(1), remaining)
         }
+    }
+
+    private fun getPossibleMatchTypes(categoryDTO: CompetitionCategoryDTO): List<MatchType> {
+        return when (categoryDTO.settings.drawType) {
+            DrawType.CUP_ONLY -> listOf(MatchType.PLAYOFF)
+            DrawType.POOL_ONLY -> listOf(MatchType.GROUP)
+            DrawType.POOL_AND_CUP -> listOf(MatchType.GROUP, MatchType.PLAYOFF)
+        }
+    }
+
+    private fun updateTimeSlotCategory(matchSlotSpecList: List<MapMatchToTimeTableSlotSpec>, categoryId: Int,
+                                       matchType: MatchType) {
+        repository.removeCategoryFromTimeslots(categoryId, matchType)
+        repository.setCategoryForTimeSlots(matchSlotSpecList.map { it.timeTableSlotId }, categoryId, matchType)
     }
 
     private fun getScheduleBlocks(tableSlots: List<TimeTableSlotDTO>): List<ScheduleBlock> {

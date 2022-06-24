@@ -142,3 +142,7 @@ export function didPlayerTwoGiveWO(match) {
 
     return winnerIds.includes(match.firstPlayer[0].id)
 }
+
+export function undefinedOrNull(object) {
+    return object === null || object === undefined
+}

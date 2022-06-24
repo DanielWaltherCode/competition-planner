@@ -41,20 +41,6 @@ class PreScheduleApi(
         return getPreSchedule.execute(competitionId)
     }
 
-    @PostMapping("{competitionCategoryId}/try")
-    fun tryScheduleMatches(@PathVariable competitionId: Int,
-                           @PathVariable competitionCategoryId: Int,
-                           @RequestBody matchSchedulerSpec: MatchSchedulerSpec): TimeTableContainerDTO {
-        competitionScheduler.scheduleCompetitionCategory(competitionId, competitionCategoryId, matchSchedulerSpec)
-
-        val timeSlotList = competitionScheduler.getSchedule(competitionId)
-        val distinctStartTimes = timeSlotList.map { it.startTime }.sorted().toSet()
-        val tables = timeSlotList.map { it.tableNumber }.sorted().toSet()
-        val categories = timeSlotList.map { findCompetitionCategory.byId(it.matchInfo[0].competitionCategoryId) }.toSet()
-
-        return TimeTableContainerDTO(timeSlotList, distinctStartTimes, tables, categories)
-    }
-
     @PostMapping("/{competitionCategoryId}")
     fun tryPreSchedule(
             @PathVariable competitionId: Int,
