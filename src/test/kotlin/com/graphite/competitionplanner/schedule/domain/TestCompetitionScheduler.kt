@@ -2,10 +2,13 @@ package com.graphite.competitionplanner.schedule.domain
 
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
+import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
+import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.schedule.api.MatchSchedulerSpec
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
 import com.graphite.competitionplanner.schedule.interfaces.MapMatchToTimeTableSlotSpec
+import com.graphite.competitionplanner.schedule.service.AvailableTablesService
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
@@ -23,10 +26,14 @@ class TestCompetitionScheduler {
 
     private val mockedScheduleRepository: IScheduleRepository = Mockito.mock(IScheduleRepository::class.java)
     private val mockedFindCompetitions = Mockito.mock(FindCompetitions::class.java)
+    private val mockedAvailableTables = Mockito.mock(AvailableTablesService::class.java)
+    private val mockedDrawService = Mockito.mock(DrawService::class.java)
+    private val mockedGetCompetitionCategories = Mockito.mock(GetCompetitionCategories::class.java)
     private val createSchedule = CreateSchedule()
     private val dataGenerator = DataGenerator()
 
-    private val competitionScheduler = CompetitionScheduler(mockedScheduleRepository, createSchedule, mockedFindCompetitions)
+    private val competitionScheduler = CompetitionScheduler(mockedScheduleRepository, createSchedule, mockedFindCompetitions,
+    mockedAvailableTables, mockedDrawService, mockedGetCompetitionCategories)
 
     @Test
     fun addingMatchToEmptySlot() {
