@@ -186,6 +186,13 @@ class MatchRepository(val dslContext: DSLContext): IMatchRepository {
             .fetchInto(MATCH)
     }
 
+    fun setTimeSlotsToNull(competitionCategoryIds: List<Int>) {
+        dslContext.update(MATCH)
+                .setNull(MATCH.MATCH_TIME_SLOT_ID)
+                .where(MATCH.MATCH_TIME_SLOT_ID.`in`(competitionCategoryIds))
+                .execute()
+    }
+
     fun getDistinctGroupsInCategory(competitionCategoryId: Int): List<String> {
         return dslContext
             .selectDistinct(MATCH.GROUP_OR_ROUND).from(MATCH)

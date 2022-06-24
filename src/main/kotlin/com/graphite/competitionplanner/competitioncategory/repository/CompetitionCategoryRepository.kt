@@ -247,6 +247,14 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             .fetchMap(COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID, COMPETITION_CATEGORY_METADATA.COST)
     }
 
+    override fun getCategoryIds(competitionId: Int): List<Int> {
+        return dslContext
+                .select(COMPETITION_CATEGORY.ID)
+                .from(COMPETITION_CATEGORY)
+                .where(COMPETITION_CATEGORY.COMPETITION_ID.eq(competitionId))
+                .fetchInto(Int::class.java)
+    }
+
     private fun toCompetitionCategoryDto(records: SelectConditionStep<Record>): List<CompetitionCategoryDTO> {
         return records.map {
             CompetitionCategoryDTO(

@@ -30,6 +30,7 @@ import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.domain.AddResult
 import com.graphite.competitionplanner.result.service.ResultService
+import com.graphite.competitionplanner.schedule.repository.ScheduleRepository
 import com.graphite.competitionplanner.user.api.UserSpec
 import com.graphite.competitionplanner.user.repository.UserRepository
 import com.graphite.competitionplanner.user.service.UserService
@@ -65,6 +66,7 @@ class SetupTestData(
     val createDraw: CreateDraw,
     val resultService: ResultService,
     val addResult: AddResult,
+    val scheduleRepository: ScheduleRepository
 ) {
 
     @EventListener
@@ -731,6 +733,7 @@ class SetupTestData(
     private fun clearTables() {
         competitionDrawRepository.clearTable()
         matchRepository.clearTable()
+        scheduleRepository.clearTimeSlotTable()
         userRepository.clearTable()
         registrationRepository.clearPlayingIn()
         registrationRepository.clearPlayerRegistration()
