@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.schedule.domain
 
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
+import com.graphite.competitionplanner.schedule.api.AvailableTablesAllDaysSpec
 import com.graphite.competitionplanner.schedule.api.AvailableTablesSpec
 import com.graphite.competitionplanner.schedule.service.AvailableTablesService
 import com.graphite.competitionplanner.util.TestUtil
@@ -23,11 +24,11 @@ class TestGenerateTimeTable(
         val competition = findCompetitions.thatBelongTo(clubId)[0]
         var tmpDate = competition.startDate
         while (tmpDate < competition.endDate) {
-            availableTablesService.updateTablesAvailable(competition.id, AvailableTablesSpec(10, tmpDate))
+            availableTablesService.updateTablesAvailable(competition.id, AvailableTablesAllDaysSpec(listOf(AvailableTablesSpec(10, tmpDate))))
             tmpDate =  tmpDate.plusDays(1)
         }
 
         // Act
-        timeTableSlotHandler.init(competition.id)
+        timeTableSlotHandler.execute(competition.id)
     }
 }

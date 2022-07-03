@@ -14,25 +14,25 @@ import java.time.LocalTime
 
 @SpringBootTest
 class TestScheduleDailyTimes(
-    @Autowired val util: Util,
-    @Autowired val dailyStartEndService: DailyStartEndService,
-    @Autowired val competitionRepository: CompetitionRepository,
-    @Autowired val createCompetition: CreateCompetition
+        @Autowired val util: Util,
+        @Autowired val dailyStartEndService: DailyStartEndService,
+        @Autowired val competitionRepository: CompetitionRepository,
+        @Autowired val createCompetition: CreateCompetition
 ) {
     var competitionId = 0
 
     @BeforeEach
     fun addCompetition() {
         competitionId = createCompetition.execute(
-            CompetitionSpec(
-                location = LocationSpec("Lund"),
-                name = "Ein Testturnament",
-                welcomeText = "Välkomna till Eurofinans",
-                organizingClubId = util.getClubIdOrDefault("Lugi"),
-                competitionLevel = "A",
-                startDate = LocalDate.now(),
-                endDate = LocalDate.now().plusDays(10)
-            )
+                CompetitionSpec(
+                        location = LocationSpec("Lund"),
+                        name = "Ein Testturnament",
+                        welcomeText = "Välkomna till Eurofinans",
+                        organizingClubId = util.getClubIdOrDefault("Lugi"),
+                        competitionLevel = "A",
+                        startDate = LocalDate.now(),
+                        endDate = LocalDate.now().plusDays(10)
+                )
         ).id
     }
 
@@ -52,7 +52,7 @@ class TestScheduleDailyTimes(
     @Test
     fun getDailyStartEndForDay() {
         val dailyStartEnd = dailyStartEndService.getDailyStartAndEnd(competitionId, LocalDate.now())
-            ?: fail("Expected to find daily start end")
+                ?: fail("Expected to find daily start end")
         Assertions.assertNotNull(dailyStartEnd)
         Assertions.assertNotNull(dailyStartEnd.id)
         Assertions.assertNotNull(dailyStartEnd.startTime)
@@ -64,18 +64,19 @@ class TestScheduleDailyTimes(
     fun updateDailyStartAndEnd() {
         // Update start and end times for first day of competition
         val dailyStartEnd = dailyStartEndService.getDailyStartAndEnd(competitionId, LocalDate.now())
-            ?: fail("Expected to find daily start end")
+                ?: fail("Expected to find daily start end")
         val newStartTime = LocalTime.of(10, 0)
         val newEndTime = LocalTime.of(19, 0)
 
         val updateSpec = DailyStartAndEndSpec(
-            LocalDate.now(),
-            newStartTime,
-            newEndTime
+                LocalDate.now(),
+                newStartTime,
+                newEndTime
         )
-        val updatedDailyStartAndEnd =
-            dailyStartEndService.updateDailyStartAndEnd(dailyStartEnd.id, competitionId, updateSpec)
+        dailyStartEndService.updateDailyStartAndEnd(competitionId, updateSpec)
                 ?: fail("Expected to find daily start end")
+
+        val updatedDailyStartAndEnd = dailyStartEndService.getDailyStartAndEnd(competitionId, LocalDate.now())
 
         Assertions.assertNotNull(updatedDailyStartAndEnd)
         Assertions.assertEquals(newStartTime, updatedDailyStartAndEnd.startTime)

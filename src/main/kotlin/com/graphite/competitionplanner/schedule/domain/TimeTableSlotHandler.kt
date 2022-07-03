@@ -34,7 +34,7 @@ class TimeTableSlotHandler(
     val matchRepository: MatchRepository
 ) {
 
-    fun init(competitionId: Int) {
+    fun execute(competitionId: Int) {
         val nrTables = scheduleAvailableTablesService.getTablesAvailable(competitionId)
         val matchDuration = scheduleMetadataService.getScheduleMetadata(competitionId).minutesPerMatch
         val dailyStartAndEndList = dailyStartEndService.getDailyStartAndEndForWholeCompetition(competitionId).dailyStartEndList

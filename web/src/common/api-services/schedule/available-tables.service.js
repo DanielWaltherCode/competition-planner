@@ -6,7 +6,7 @@ const AvailableTablesService = {
             availableTablesSpec,
             {withCredentials: true})
     },
-    updateTablesForDay(competitionId, availableTablesSpec) {
+    updateTables(competitionId, availableTablesSpec) {
         return Axios.put(`/schedule/${competitionId}/available-tables`,
             availableTablesSpec,
             {withCredentials: true})

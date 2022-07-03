@@ -13,6 +13,9 @@ const ScheduleGeneralService = {
     },
     getTimeTableInfo(competitionId) {
         return Axios.get(`/schedule/${competitionId}/timetable-info`, {withCredentials: true})
+    },
+    saveMainScheduleChanges(competitionId, mainScheduleSpec) {
+        return Axios.put(`/schedule/${competitionId}/`, mainScheduleSpec, {withCredentials: true})
     }
 }
 

@@ -189,7 +189,7 @@ class MatchRepository(val dslContext: DSLContext): IMatchRepository {
     fun setTimeSlotsToNull(competitionCategoryIds: List<Int>) {
         dslContext.update(MATCH)
                 .setNull(MATCH.MATCH_TIME_SLOT_ID)
-                .where(MATCH.MATCH_TIME_SLOT_ID.`in`(competitionCategoryIds))
+                .where(MATCH.COMPETITION_CATEGORY_ID.`in`(competitionCategoryIds))
                 .execute()
     }
 

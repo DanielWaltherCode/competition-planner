@@ -5,7 +5,7 @@
       <div class="row">
 
         <!-- Sidebar -->
-        <div class="sidebar col-md-3">
+        <div class="sidebar col-md-3 col-lg-2">
           <br>
           <ul class="list-group list-group-flush">
             <li class="list-group-item"

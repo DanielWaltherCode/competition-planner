@@ -9,6 +9,6 @@ import java.time.LocalDate
 class GetDaysOfCompetition {
 
     fun execute(competition: CompetitionDTO): List<LocalDate> {
-        return (competition.startDate .. competition.endDate).toList()
+        return (competition.startDate .. competition.endDate).toList().sorted()
     }
 }

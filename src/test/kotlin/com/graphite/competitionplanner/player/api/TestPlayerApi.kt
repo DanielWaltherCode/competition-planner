@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.player.api
 
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.player.domain.*
+import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Test
@@ -19,6 +20,7 @@ class TestPlayerApi {
     private val deletePlayer = mock(DeletePlayer::class.java)
     private val findPlayer = mock(FindPlayer::class.java)
     private val findCompetitions = mock(FindCompetitions::class.java)
+    private val registrationMock = mock(RegistrationService::class.java)
 
     val api = PlayerApi(
         listAllPlayersInClub,
@@ -26,7 +28,8 @@ class TestPlayerApi {
         updatePlayer,
         findPlayer,
         deletePlayer,
-        findCompetitions
+        findCompetitions,
+            registrationMock
     )
 
     @Test

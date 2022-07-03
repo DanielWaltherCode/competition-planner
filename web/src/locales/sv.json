@@ -234,6 +234,10 @@
       "addCategory": "Lägg till ny klass den här dagen",
       "dropdownPlaceholder": "Välj en klass",
       "generatedSchedule": "Schemat som det ser ut nu",
+      "abbreviated": {
+        "GROUP": "P",
+        "PLAYOFF": "S"
+      },
       "intervals": {
         "NOT_SELECTED": "Inte valt",
         "MORNING": "Tidig förmiddag (09.00-13.00)",
@@ -248,7 +252,7 @@
     "generalInfo": {
       "heading": "Schemahantering",
       "startEnd": "Hallens öppettider och antal bord",
-      "startEndHelper": "Här kan du ange när tävlingen börjar och slutar varje dag. Är det för få eller för många tävlingsdagar här kan du ändra det ",
+      "startEndHelper": "Är det för få eller för många tävlingsdagar här kan du ändra det ",
       "startEndHelperHere": "här",
       "nrTables": "Antal bord",
       "matchTime": "Speltid per match (i minuter)",

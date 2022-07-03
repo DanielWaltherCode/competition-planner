@@ -201,17 +201,14 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
     }
 
     fun updateDailyStartAndEnd(
-            dailyStartAndEndId: Int,
             competitionId: Int,
             dailyStartAndEndSpec: DailyStartAndEndSpec
-    ): ScheduleDailyTimesRecord {
-        val record = dslContext.newRecord(SCHEDULE_DAILY_TIMES)
-        record.id = dailyStartAndEndId
-        record.day = dailyStartAndEndSpec.day
-        record.startTime = dailyStartAndEndSpec.startTime
-        record.endTime = dailyStartAndEndSpec.endTime
-        record.update()
-        return record
+    ) {
+        dslContext.update(SCHEDULE_DAILY_TIMES)
+                .set(SCHEDULE_DAILY_TIMES.START_TIME, dailyStartAndEndSpec.startTime)
+                .set(SCHEDULE_DAILY_TIMES.END_TIME, dailyStartAndEndSpec.endTime)
+                .where(SCHEDULE_DAILY_TIMES.COMPETITION_ID.eq(competitionId).and(SCHEDULE_DAILY_TIMES.DAY.eq(dailyStartAndEndSpec.day)))
+                .execute()
     }
 
     fun getDailyStartAndEnd(competitionId: Int, day: LocalDate): ScheduleDailyTimesRecord {
@@ -329,8 +326,9 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
         try {
             dslContext.batchStore(records).execute()
         } catch (exception: DuplicateKeyException) {
-            logger.error("Exception message: ${exception.message}")
+            logger.warn("Exception message: ${exception.message}")
             throw RuntimeException("Failed to store time table for competition id $competitionId")
+
         }
     }
 

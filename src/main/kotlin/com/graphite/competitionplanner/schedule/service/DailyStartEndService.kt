@@ -48,12 +48,10 @@ val getDaysOfCompetition: GetDaysOfCompetition) {
     }
 
     fun updateDailyStartAndEnd(
-        dailyStartAndEndId: Int,
         competitionId: Int,
         dailyStartAndEndSpec: DailyStartAndEndSpec
-    ): DailyStartAndEndDTO? {
-        val record = scheduleRepository.updateDailyStartAndEnd(dailyStartAndEndId, competitionId, dailyStartAndEndSpec)
-        return dailyStartEndRecordToDTO(record)
+    ) {
+        scheduleRepository.updateDailyStartAndEnd(competitionId, dailyStartAndEndSpec)
     }
 
     fun getDailyStartAndEnd(competitionId: Int, day: LocalDate): DailyStartAndEndDTO {
@@ -65,7 +63,7 @@ val getDaysOfCompetition: GetDaysOfCompetition) {
         val records = scheduleRepository.getDailyStartAndEndForCompetition(competitionId)
         val startEndDTOList = records.map { dailyStartEndRecordToDTO(it) }
         val competition = findCompetitions.byId(competitionId)
-        return DailyStartAndEndWithOptionsDTO(startEndDTOList, getDaysOfCompetition.execute(competition))
+        return DailyStartAndEndWithOptionsDTO(startEndDTOList.sortedBy { it.day }, getDaysOfCompetition.execute(competition))
     }
 
 

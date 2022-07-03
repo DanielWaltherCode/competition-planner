@@ -17,7 +17,8 @@ class PlayerApi(
     val updatePlayer: UpdatePlayer,
     val findPlayer: FindPlayer,
     val deletePlayer: DeletePlayer,
-    val findCompetitions: FindCompetitions
+    val findCompetitions: FindCompetitions,
+    val registrationService: RegistrationService
 ) {
     @PostMapping
     fun addPlayer(@Valid @RequestBody playerSpec: PlayerSpec): PlayerWithClubDTO {
@@ -55,14 +56,9 @@ class PlayerApi(
         deletePlayer.execute(playerId)
         return true
     }
-}
 
-@RestController
-@RequestMapping("/player/{playerId}/registration")
-class PlayerRegistrationApi(val registrationService: RegistrationService) {
-
-    @GetMapping("/player/{playerId}")
-    fun getByPlayerId(@PathVariable playerId: Int): PlayerCompetitionDTO {
+    @GetMapping("/player/{playerId}/registration")
+    fun getRegistrationByPlayerId(@PathVariable playerId: Int): PlayerCompetitionDTO {
         return registrationService.getRegistrationByPlayerId(playerId)
     }
 }

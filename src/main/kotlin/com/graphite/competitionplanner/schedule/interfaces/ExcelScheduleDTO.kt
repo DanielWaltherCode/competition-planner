@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.schedule.domain.interfaces
+package com.graphite.competitionplanner.schedule.interfaces
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
@@ -10,11 +10,11 @@ data class ExcelScheduleDTOContainer(
 )
 
 data class ExcelScheduleDTO(
-    val scheduleItemList: List<ExcelScheduleItemDTO>,
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+        val scheduleItemList: List<ExcelScheduleItemDTO>,
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     val validStartTimes: Set<LocalDateTime>,
-    val distinctCategories: Set<CategoryDTO?>,
-    @JsonFormat(pattern = "yyyy-MM-dd")
+        val distinctCategories: Set<CategoryDTO?>,
+        @JsonFormat(pattern = "yyyy-MM-dd")
     val dateOfPlay: LocalDate
 )
 
