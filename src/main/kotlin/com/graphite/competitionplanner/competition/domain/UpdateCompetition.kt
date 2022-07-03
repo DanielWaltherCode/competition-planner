@@ -2,18 +2,15 @@ package com.graphite.competitionplanner.competition.domain
 
 import com.graphite.competitionplanner.common.toList
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
-import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
 import com.graphite.competitionplanner.competition.interfaces.CompetitionUpdateSpec
 import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
 import com.graphite.competitionplanner.schedule.api.AvailableTablesSpec
-import com.graphite.competitionplanner.schedule.api.AvailableTablesWholeCompetitionSpec
 import com.graphite.competitionplanner.schedule.api.DailyStartAndEndSpec
 import com.graphite.competitionplanner.schedule.domain.TimeTableSlotHandler
 import com.graphite.competitionplanner.schedule.repository.ScheduleRepository
 import com.graphite.competitionplanner.schedule.service.AvailableTablesService
 import com.graphite.competitionplanner.schedule.service.DailyStartEndService
 import org.springframework.stereotype.Component
-import java.time.LocalDate
 import java.time.LocalTime
 
 @Component
@@ -62,6 +59,6 @@ class UpdateCompetition(
             }
         }
         // Update time slots
-        timeTableSlotHandler.init(competitionId)
+        timeTableSlotHandler.execute(competitionId)
     }
 }

@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.schedule.service
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.domain.GetDaysOfCompetition
+import com.graphite.competitionplanner.schedule.api.AvailableTablesAllDaysSpec
 import com.graphite.competitionplanner.schedule.api.AvailableTablesSpec
 import com.graphite.competitionplanner.schedule.api.AvailableTablesWholeCompetitionSpec
 import com.graphite.competitionplanner.schedule.domain.TimeTableSlotHandler
@@ -28,11 +29,11 @@ class AvailableTablesService(
 
     fun updateTablesAvailable(
             competitionId: Int,
-            availableTablesSpec: AvailableTablesSpec
-    ): AvailableTablesDTO {
-        val updatedTable = scheduleRepository.updateTablesAvailable(competitionId, availableTablesSpec)
-        timeTableSlotHandler.init(competitionId)
-        return availableTablesRecordToDTO(updatedTable)
+           availableTablesAllDaysSpec: AvailableTablesAllDaysSpec
+    ) {
+        for (tableDay in availableTablesAllDaysSpec.tableDays) {
+            scheduleRepository.updateTablesAvailable(competitionId, tableDay)
+        }
     }
 
     fun getTablesAvailable(competitionId: Int): List<AvailableTablesDTO> {
@@ -70,7 +71,7 @@ class AvailableTablesService(
             registerTablesAvailable(competitionId, AvailableTablesSpec(availableTablesWholeCompetitionSpec.nrTables, day))
         }
         // Update time tables
-        timeTableSlotHandler.init(competitionId)
+        timeTableSlotHandler.execute(competitionId)
     }
 
     private fun availableTablesRecordToDTO(availableTablesRecord: ScheduleAvailableTablesRecord): AvailableTablesDTO {

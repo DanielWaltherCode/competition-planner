@@ -45,11 +45,11 @@ class AvailableTablesApi(
     }
 
     @PutMapping()
-    fun updateTablesAvailable(
-        @PathVariable competitionId: Int,
-        @RequestBody availableTablesSpec: AvailableTablesSpec
-    ): AvailableTablesDTO {
-        return availableTablesService.updateTablesAvailable(competitionId, availableTablesSpec)
+    fun updateTablesAvailableForAllDays(
+            @PathVariable competitionId: Int,
+            @RequestBody availableTablesAllDaysSpec: AvailableTablesAllDaysSpec
+    ) {
+        availableTablesService.updateTablesAvailable(competitionId, availableTablesAllDaysSpec)
     }
 
 }
@@ -59,7 +59,10 @@ data class AvailableTablesWholeCompetitionSpec(
     val nrTables: Int
 )
 
-// Here number of tables can be scheduled per hour
+data class AvailableTablesAllDaysSpec(
+        val tableDays: List<AvailableTablesSpec>
+)
+
 data class AvailableTablesSpec(
     val nrTables: Int,
     val day: LocalDate,

@@ -21,13 +21,12 @@ class DailyStartEndApi(val dailyStartEndService: DailyStartEndService, val sched
         return dailyStartEndService.addDailyStartAndEnd(competitionId, dailyStartAndEndSpec)
     }
 
-    @PutMapping("/{dailyStartEndId}")
-    fun addDailyStartEnd(
+    @PutMapping()
+    fun updateDailyStartEnd(
         @PathVariable competitionId: Int,
-        @PathVariable dailyStartEndId: Int,
         @RequestBody dailyStartAndEndSpec: DailyStartAndEndSpec
-    ): DailyStartAndEndDTO? {
-        return dailyStartEndService.updateDailyStartAndEnd(dailyStartEndId, competitionId, dailyStartAndEndSpec)
+    ) {
+        dailyStartEndService.updateDailyStartAndEnd(competitionId, dailyStartAndEndSpec)
     }
 
     @GetMapping("/{day}")
@@ -45,6 +44,10 @@ class DailyStartEndApi(val dailyStartEndService: DailyStartEndService, val sched
         return dailyStartEndService.getDailyStartAndEndForWholeCompetition(competitionId)
     }
 }
+
+data class AllDailyStartEndsSpec(
+        val dailyStartEndList: List<DailyStartAndEndSpec>
+)
 
 data class DailyStartAndEndSpec(
     @JsonFormat(pattern = "yyyy-MM-dd")

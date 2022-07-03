@@ -5,11 +5,12 @@ import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.schedule.domain.CompetitionScheduler
-import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleDTO
-import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleDTOContainer
-import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleItemDTO
-import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleMatchDTO
+import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleDTO
+import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleDTOContainer
+import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleItemDTO
+import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleMatchDTO
 import com.graphite.competitionplanner.schedule.service.AvailableTablesDayDTO
+import com.graphite.competitionplanner.schedule.service.ScheduleMetadataService
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -18,7 +19,8 @@ import java.time.LocalTime
 @RestController
 @RequestMapping("/schedule/{competitionId}/")
 class ScheduleApi(
-    val competitionScheduler: CompetitionScheduler
+    val competitionScheduler: CompetitionScheduler,
+    val scheduleMetadataService: ScheduleMetadataService
 ) {
 
     @GetMapping("excel-table")
@@ -41,6 +43,13 @@ class ScheduleApi(
     @GetMapping("/category-settings")
     fun getCategorySchedulerSettings(@PathVariable competitionId: Int): ScheduleCategoryContainerDTO {
         return competitionScheduler.getCategorySchedulerSettings(competitionId)
+    }
+    //Updates daily start end, minutes per match and available tables at once
+    // This is done to make it easier to update match time slots correctly
+    @PutMapping
+    fun saveScheduleSettings(@PathVariable competitionId: Int,
+                             @RequestBody scheduleSaveMainChangesSpec: ScheduleSaveMainChangesSpec) {
+        scheduleMetadataService.saveGeneralScheduleChanges(competitionId, scheduleSaveMainChangesSpec)
     }
 
     @PutMapping("category/{competitionCategoryId}")
@@ -215,6 +224,12 @@ class ScheduleApi(
 data class ScheduleCategoryContainerDTO(
         val availableTablesDayList: List<AvailableTablesDayDTO>,
         val scheduleCategoryList: List<ScheduleCategoryDTO>
+)
+
+data class ScheduleSaveMainChangesSpec(
+        val availableTables: AvailableTablesAllDaysSpec,
+        val dailyStartEnd: AllDailyStartEndsSpec,
+        val minutesPerMatchSpec: MinutesPerMatchSpec
 )
 
 data class ScheduleCategoryDTO(

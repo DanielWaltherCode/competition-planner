@@ -4,6 +4,7 @@ import com.graphite.competitionplanner.competition.domain.CreateCompetition
 import com.graphite.competitionplanner.competition.interfaces.CompetitionSpec
 import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
+import com.graphite.competitionplanner.schedule.api.AvailableTablesAllDaysSpec
 import com.graphite.competitionplanner.schedule.api.AvailableTablesSpec
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.AfterEach
@@ -22,7 +23,6 @@ class TestScheduleAvailableTables(
     @Autowired val createCompetition: CreateCompetition
 ) {
     var competitionId = 0
-    lateinit var registeredTables: AvailableTablesDTO
 
     @BeforeEach
     fun addCompetition() {
@@ -41,7 +41,7 @@ class TestScheduleAvailableTables(
             15,
             LocalDate.now()
         )
-        registeredTables = availableTablesService.updateTablesAvailable(competitionId, spec)
+        availableTablesService.updateTablesAvailable(competitionId, AvailableTablesAllDaysSpec(listOf(spec)))
     }
 
     @AfterEach
@@ -65,9 +65,6 @@ class TestScheduleAvailableTables(
             newNrTables,
             LocalDate.now(),
         )
-        val updatedAvailableTable = availableTablesService.updateTablesAvailable(competitionId, spec)
-        Assertions.assertEquals(newNrTables, updatedAvailableTable.nrTables)
-        Assertions.assertEquals(tableToUpdate.id, updatedAvailableTable.id)
-        Assertions.assertEquals(tableToUpdate.day, updatedAvailableTable.day)
+        availableTablesService.updateTablesAvailable(competitionId, AvailableTablesAllDaysSpec(listOf(spec)))
     }
 }

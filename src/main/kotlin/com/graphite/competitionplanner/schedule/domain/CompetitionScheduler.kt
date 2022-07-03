@@ -10,10 +10,10 @@ import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.schedule.api.MatchSchedulerSpec
 import com.graphite.competitionplanner.schedule.api.ScheduleCategoryContainerDTO
 import com.graphite.competitionplanner.schedule.api.ScheduleCategoryDTO
-import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleDTO
-import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleDTOContainer
-import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleItemDTO
-import com.graphite.competitionplanner.schedule.domain.interfaces.ExcelScheduleMatchDTO
+import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleDTO
+import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleDTOContainer
+import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleItemDTO
+import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleMatchDTO
 import com.graphite.competitionplanner.schedule.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.schedule.interfaces.*
 import com.graphite.competitionplanner.schedule.service.AvailableTablesService
