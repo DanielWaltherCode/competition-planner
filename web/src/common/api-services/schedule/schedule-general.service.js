@@ -1,10 +1,7 @@
 import Axios from "axios";
 
 const ScheduleGeneralService = {
-    getExcelSchedule(competitionId) {
-        return Axios.get(`/schedule/${competitionId}/excel-table`, {withCredentials: true})
-    },
-    tryScheduleMatches(competitionId, competitionCategoryId, scheduleCategorySpec) {
+    scheduleCategory(competitionId, competitionCategoryId, scheduleCategorySpec) {
         return Axios.put(`/schedule/${competitionId}/category/${competitionCategoryId}/`,
             scheduleCategorySpec,{withCredentials: true})
     },

@@ -136,4 +136,6 @@ interface IScheduleRepository {
     fun getTimeSlotsForCompetition(competitionId: Int): List<MatchTimeSlotRecord>
 
     fun clearTimeSlotTable()
+
+    fun removeCategoryTimeSlotFromMatchTable(categoryId: Int, matchType: MatchType)
 }

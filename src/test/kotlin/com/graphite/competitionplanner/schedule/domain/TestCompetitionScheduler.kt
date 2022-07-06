@@ -1,7 +1,6 @@
 package com.graphite.competitionplanner.schedule.domain
 
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
-import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.draw.service.MatchType
@@ -52,7 +51,7 @@ class TestCompetitionScheduler {
 
         // Assert
         Assertions.assertFalse(
-            timeTableSlot.isDoubleBocked,
+            timeTableSlot.isDoubleBooked,
             "Only one match scheduled. Should not be marked as double booked"
         )
     }
@@ -77,7 +76,7 @@ class TestCompetitionScheduler {
 
         // Assert
         Assertions.assertTrue(
-            timeTableSlot.isDoubleBocked,
+            timeTableSlot.isDoubleBooked,
             "Two matches in same slot. Should be marked as double booked"
         )
         Assertions.assertEquals(
@@ -124,16 +123,16 @@ class TestCompetitionScheduler {
         // Assert
         Assertions.assertEquals(4, schedule.size, "Not the correct number of TimeTableSlots")
 
-        Assertions.assertFalse(schedule.first { it.id == 1 }.isDoubleBocked, "Not expecting a double booking in first TimeTableSlot")
+        Assertions.assertFalse(schedule.first { it.id == 1 }.isDoubleBooked, "Not expecting a double booking in first TimeTableSlot")
         Assertions.assertEquals(1, schedule.first { it.id == 1 }.matchInfo.size, "Not the expected number of match infos in TimeTableSlot")
 
-        Assertions.assertTrue(schedule.first { it.id == 2 }.isDoubleBocked, "Expected a double booking in second TimeTableSlot")
+        Assertions.assertTrue(schedule.first { it.id == 2 }.isDoubleBooked, "Expected a double booking in second TimeTableSlot")
         Assertions.assertEquals(2, schedule.first { it.id == 2 }.matchInfo.size, "Not the expected number of match infos in TimeTableSlot")
 
-        Assertions.assertFalse(schedule.first { it.id == 3 }.isDoubleBocked, "Not expecting a double booking")
+        Assertions.assertFalse(schedule.first { it.id == 3 }.isDoubleBooked, "Not expecting a double booking")
         Assertions.assertEquals(0, schedule.first { it.id == 3 }.matchInfo.size, "Not the expected number of match infos in TimeTableSlot")
 
-        Assertions.assertFalse(schedule.first { it.id == 4 }.isDoubleBocked, "Not expecting a double booking")
+        Assertions.assertFalse(schedule.first { it.id == 4 }.isDoubleBooked, "Not expecting a double booking")
         Assertions.assertEquals(1, schedule.first { it.id == 4 }.matchInfo.size, "Not the expected number of match infos in TimeTableSlot")
     }
 

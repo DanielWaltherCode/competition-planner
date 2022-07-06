@@ -1,6 +1,5 @@
 package com.graphite.competitionplanner.schedule.interfaces
 
-import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import java.time.LocalDateTime
 
 /**
@@ -31,7 +30,7 @@ data class TimeTableSlotDTO(
         /**
          * Indicates if the timeslot has been double booked i.e. two matches are scheduled at the same table at the same time
          */
-        val isDoubleBocked: Boolean,
+        val isDoubleBooked: Boolean,
 
         /**
          * Basic information about the match scheduled for this time slot. If the list is empty, then no match has been

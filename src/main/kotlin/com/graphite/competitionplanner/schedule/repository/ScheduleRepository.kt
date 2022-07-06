@@ -417,6 +417,14 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
         dslContext.batchUpdate(records).execute()
     }
 
+    override fun removeCategoryTimeSlotFromMatchTable(categoryId: Int, matchType: MatchType) {
+        dslContext
+                .update(MATCH)
+                .setNull(MATCH.MATCH_TIME_SLOT_ID)
+                .where(MATCH.COMPETITION_CATEGORY_ID.eq(categoryId).and(MATCH.MATCH_TYPE.eq(matchType.name)))
+                .execute()
+    }
+
     override fun getScheduleMatches(competitionCategoryId: Int, matchType: MatchType): List<ScheduleMatchDto> {
         val matches = dslContext.select(
                 MATCH.ID,

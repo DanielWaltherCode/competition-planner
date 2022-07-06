@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+.DS_Store
+open-web/open-web.zip
+open-web/package-lock.json
+package-lock.json
+web/dist.zip
+web/package-lock.json
