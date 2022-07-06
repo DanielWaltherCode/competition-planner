@@ -9,12 +9,12 @@
       <div class="row bg-grey">
 
         <!-- Main content -->
-        <div id="main" class="col-md-11 mx-auto ps-0 bg-grey">
+        <div id="main" class="col-lg-11 mx-auto ps-0 bg-grey">
           <!-- General information about competition -->
           <div class="row p-3 m-md-2 custom-card bg-white">
             <div>
               <!-- Daily start end -->
-              <div class="row col-sm-10 m-auto custom-card p-5">
+              <div class="row col-lg-11 mx-auto custom-card p-5">
                 <div>
                   <h4>{{ $t("schedule.generalInfo.startEnd") }}</h4>
                   <p>{{ $t("schedule.generalInfo.startEndHelper") }}
@@ -23,7 +23,7 @@
                       }}</router-link> </span>
                   </p>
                 </div>
-                <div class="table-container col-md-7">
+                <div class="table-container col-md-8">
                   <table class="table table-bordered">
                     <thead>
                     <tr>
@@ -83,7 +83,7 @@
             <!-- Choose date and time for individual categories -->
             <div v-if="scheduleCategoryContainerDTO !== null"
                  id="categories"
-                 class="row p-5 col-md-9 col-lg-10 mx-auto custom-card">
+                 class="row p-5 col-lg-11 mx-auto custom-card">
               <div>
                 <h3 class="py-4">{{ $t("schedule.main.categoryStartTimes") }}</h3>
                 <p class="mx-auto py-2"> {{ $t("schedule.main.helperText") }}</p>
@@ -309,16 +309,18 @@ export default {
           categorySchedule.selectedTables.length === 0) {
         return
       } else {
-        const startTime = new Date(categorySchedule.selectedDay + 'T' + this.getTime(categorySchedule.selectedStartTime))
+        console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
+        const startTime = categorySchedule.selectedDay + 'T' + this.getTime(categorySchedule.selectedStartTime) + 'Z'
+        console.log(startTime)
         const categorySpec = {
-          "mode": "ABSOLUTE",
+          "mode": "APPEND",
           "matchType": categorySchedule.selectedMatchType,
           "tableNumbers": categorySchedule.selectedTables,
           "startTime": startTime,
           "location": this.competition.location.name
         }
         scheduleGeneralService
-            .tryScheduleMatches(this.competition.id, categorySchedule.categoryDTO.id, categorySpec)
+            .scheduleCategory(this.competition.id, categorySchedule.categoryDTO.id, categorySpec)
             .then(() => {
               this.getTimeTableInfo()
             })

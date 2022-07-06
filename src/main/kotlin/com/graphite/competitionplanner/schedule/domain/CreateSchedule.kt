@@ -33,9 +33,9 @@ class CreateSchedule {
      * @return A schedule as well as any remaining matches that where not scheduled.
      */
     fun execute(matches: List<ScheduleMatchDto>, settings: ScheduleSettingsDTO, limit: Int): Pair<ScheduleDTO, List<ScheduleMatchDto>> {
-        val schedule = createSchedule(matches, ScheduleDTO(0, emptyList(), settings))
+        val schedule: ScheduleDTO = createSchedule(matches.take(limit), ScheduleDTO(0, emptyList(), settings))
         val scheduledMatches = schedule.timeslots.take(limit).flatMap { it.matches }
-        val remaining = matches.filterNot { scheduledMatches.contains(it) }
+        val remaining: List<ScheduleMatchDto> = matches.filterNot { scheduledMatches.contains(it) }
         return Pair(ScheduleDTO(schedule.id, schedule.timeslots.take(limit), settings), remaining)
     }
 
@@ -123,7 +123,7 @@ class CreateSchedule {
 
     /**
      * Take a list of current timeslots, a match, and maximum number of tables, and place the match in the first
-     * available timeslot where it fit. It fit in a timeslot if:
+     * available timeslot where it fit. It fits in a timeslot if:
      * - there is a table available
      * - and any of the players in the match is not scheduled in that timeslot already.
      */

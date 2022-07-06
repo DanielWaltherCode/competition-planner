@@ -263,7 +263,7 @@
       "availableTablesHelper": "Här sätts antalet tillgängliga bord för varje speldag som helhet. Om det varierar per timme kan detta ställas in ",
       "availableTablesHelperHere": "här",
       "availableTablesNotSet": "Ej valt, behöver väljas",
-      "averageMatchTimeHeading": "Genomsnittlig matchtid",
+      "averageMatchTimeHeading": "Matchtid",
       "averageMatchTimeHelper": "Ställ in tiden varje enskild match ska tilldelas i schemat",
       "minutes": " minuter"
     },
