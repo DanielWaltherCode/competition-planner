@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.schedule.domain
 import com.graphite.competitionplanner.schedule.interfaces.ScheduleMatchDto
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestFactory
@@ -272,6 +273,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
     )
 
     @TestFactory
+    @Disabled("Might not be applicable anymore when there is one match per time slot")
     fun testCreateScheduleWithLimit3() = inputTestData
         .map { testData ->
             DynamicTest.dynamicTest("When limit is ${testData.limit} and number of tables is ${testData.numberOfTables}") {
@@ -288,10 +290,6 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
                     schedule.timeslots.size,
                     "Limit set to ${testData.limit} timeslot"
                 )
-                Assertions.assertTrue(
-                    schedule.timeslots.all { it.matches.size == testData.numberOfTables },
-                    "At least one timeslot did not have ${testData.numberOfTables} matches"
-                )
                 Assertions.assertEquals(
                     testData.matches.size - testData.limit * testData.numberOfTables,
                     remainingMatches.size
@@ -304,23 +302,4 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
 
     }
 
-    @Test
-    fun shouldHandleLimitHigherThanNumberOfNeededTimeslots() {
-        // Setup
-        val matches = pool1
-        val limit = 4
-        val expectedTimeslotsNeeded = 3
-
-        // Act
-        val (schedule, remainingMatches) = createSchedule.execute(
-            matches,
-            dataGenerator.newScheduleSettingsDTO(numberOfTables = 2),
-            limit
-        )
-
-        // Assert
-        Assertions.assertEquals(expectedTimeslotsNeeded, schedule.timeslots.size,
-            "Expected that $expectedTimeslotsNeeded timeslots was sufficient to schedule all matches, even though limit was set to $limit")
-        Assertions.assertTrue(remainingMatches.isEmpty(), "There should not be any remaining matches")
-    }
 }

@@ -198,7 +198,7 @@ class TestCompetitionScheduler {
         Mockito.`when`(mockedScheduleRepository.getScheduleMatches(competitionCategoryId, MatchType.GROUP)).thenReturn(matches)
 
         // Act
-        competitionScheduler.appendMatchesToTables(competitionId, 13, MatchType.GROUP, listOf(1,2,3,4), "Hall A")
+        competitionScheduler.appendMatchesToTables(competitionId, 13, MatchType.GROUP, listOf(1,2,3,4), LocalDateTime.now().minusMinutes(1),"Hall A")
 
         // Record the spec sent to the repository for validation
         Mockito.verify(mockedScheduleRepository).updateMatchesTimeTablesSlots(TestHelper.MockitoHelper.capture(classCaptor))
@@ -212,8 +212,8 @@ class TestCompetitionScheduler {
         assertTimeSlotGotBooked(result, 4)
         assertTimeSlotGotBooked(result, 5)
         assertTimeSlotGotBooked(result, 6)
-        assertTimeSlotGotBooked(result, 9)
-        assertTimeSlotGotBooked(result, 10)
+        assertTimeSlotGotBooked(result, 7)
+        assertTimeSlotGotBooked(result, 8)
     }
 
     private fun assertTimeSlotGotBooked(timeslots: List<MapMatchToTimeTableSlotSpec>, timeslotId: Int) {
@@ -240,7 +240,7 @@ class TestCompetitionScheduler {
 
         // Act
         Assertions.assertThrows(IndexOutOfBoundsException::class.java) {
-            competitionScheduler.appendMatchesToTables(competitionId, 13, MatchType.GROUP, listOf(1,2,3,4), "Hall A")
+            competitionScheduler.appendMatchesToTables(competitionId, 13, MatchType.GROUP, listOf(1,2,3,4), LocalDateTime.now(),"Hall A")
         }
     }
 }
