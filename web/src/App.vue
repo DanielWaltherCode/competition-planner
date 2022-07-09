@@ -59,7 +59,7 @@ h1, h2, h3 {
   color: var(--main-color)
 }
 
-/*
+
 .btn-primary {
   background-color: var(--main-color) !important;
   border: 1px solid var(--main-color) !important;
@@ -68,7 +68,9 @@ h1, h2, h3 {
 .btn-check:active+.btn-outline-primary, .btn-check:checked+.btn-outline-primary, .btn-outline-primary.active, .btn-outline-primary.dropdown-toggle.show, .btn-outline-primary:active{
   background-color: var(--main-color) !important;
   color: white !important;
+  font-weight: bold;
 }
+
 
 .btn-outline-primary:hover {
   color: white !important;
@@ -78,7 +80,7 @@ h1, h2, h3 {
 .btn-outline-primary {
   color: var(--main-color) !important;
   border: 1px solid var(--main-color) !important;
-}*/
+}
 
 
 /* Sidebar styling */
