@@ -23,7 +23,7 @@
                       }}</router-link> </span>
                   </p>
                 </div>
-                <div class="table-container col-md-8">
+                <div class="table-responsive col-xl-8">
                   <table class="table table-bordered">
                     <thead>
                     <tr>
@@ -39,10 +39,10 @@
                         {{ day.day }}
                       </td>
                       <td>
-                        <vue-timepicker v-model="day.startTime"></vue-timepicker>
+                        <vue-timepicker v-model="day.startTime" input-width="8em"></vue-timepicker>
                       </td>
                       <td>
-                        <vue-timepicker v-model="day.endTime"></vue-timepicker>
+                        <vue-timepicker v-model="day.endTime" input-width="8em"></vue-timepicker>
                       </td>
                       <td>
                         <p v-if="getTablesForDay(day.day) === -1">{{
@@ -61,22 +61,21 @@
                   </table>
                 </div>
                 <!-- Average time per match -->
-                <div class="col-md-4 mx-auto bg-grey shadow">
+                <div class="col-xl-4 mx-auto bg-grey shadow mb-2 pb-2">
                   <h5 class="p-3 text-center">{{ $t("schedule.generalInfo.averageMatchTimeHeading") }}</h5>
                   <p>{{ $t("schedule.generalInfo.averageMatchTimeHelper") }}</p>
-                  <select id="match-length-selection" class="form-control" v-model="scheduleMetadata.minutesPerMatch">
+                  <select id="match-length-selection" class="form-control mb-2" @change="setMinutesPerMatch($event)">
                     <option v-for="i in minutesPerMatchOptions" :key="i" :value="i">
                       {{ i + " " + $t("schedule.generalInfo.minutes") }}
                     </option>
                   </select>
                 </div>
                 <div>
-                  <button type="button" class="btn btn-primary" @click="saveChanges">
+                  <button v-if="metaOptionsChanged === true" type="button" class="btn btn-warning" @click="saveChanges">
                     {{ $t("general.saveChanges") }}
                   </button>
                 </div>
               </div>
-
             </div>
 
 
@@ -88,7 +87,7 @@
                 <h3 class="py-4">{{ $t("schedule.main.categoryStartTimes") }}</h3>
                 <p class="mx-auto py-2"> {{ $t("schedule.main.helperText") }}</p>
               </div>
-              <div id="table-container" class="my-4">
+              <div id="table-responsive" class="my-4">
                 <table class="table table-bordered">
                   <thead>
                   <tr>
@@ -106,6 +105,9 @@
                     </th>
                     <th>
                       {{ $t("schedule.main.tables") }}
+                    </th>
+                    <th>
+
                     </th>
                   </tr>
                   </thead>
@@ -125,7 +127,7 @@
                       <td>
                         <select id="date-selection"
                                 v-model="categorySchedule.selectedDay"
-                                @change="checkAndSubmitForScheduling(categorySchedule)"
+                                @change="noteCategorySchedulingAsChanged(categorySchedule)"
                                 class="form-control">
                           <option value="null">
                             {{ $t("schedule.main.notSelected") }}
@@ -143,7 +145,8 @@
                         <vue-timepicker
                             v-model="categorySchedule.selectedStartTime"
                             :minute-interval="5"
-                            @change="checkAndSubmitForScheduling(categorySchedule)"
+                            input-width="8em"
+                            @change="noteCategorySchedulingAsChanged(categorySchedule)"
                         />
                       </td>
                       <!-- Select tables -->
@@ -159,7 +162,7 @@
                                  class="form-check form-check-inline">
                               <input :id="'inlineCheckbox' + tableNr"
                                      v-model="categorySchedule.selectedTables"
-                                     @change="checkAndSubmitForScheduling(categorySchedule)"
+                                     @change="noteCategorySchedulingAsChanged(categorySchedule)"
                                      :value="tableNr" class="form-check-input"
                                      type="checkbox">
                               <label class="form-check-label" :for="'inlineCheckbox' + tableNr">{{ tableNr }}</label>
@@ -170,6 +173,14 @@
                         <div v-else>
                           {{ $t("schedule.main.noTablesAdded") }}
                         </div>
+                      </td>
+                      <td>
+                        <button v-if="categorySchedule.categoryDTO.id + categorySchedule.selectedMatchType in changedCategories"
+                                type="button"
+                                class="btn btn-warning"
+                                @click="checkAndSubmitForScheduling(categorySchedule)">
+                                Schemalägg
+                        </button>
                       </td>
                     </tr>
                   </template>
@@ -185,12 +196,12 @@
             <!-- Select date -->
             <div>
               <h4> {{ $t("schedule.main.generatedSchedule") }}</h4>
-              <button v-for="date in dailyStartEndDTO.availableDays" :key="date"
+              <button v-for="date in dailyStartEndDTO.availableDays" :key="date" :class="selectedTimeTableDay === date ? 'active': ''"
                       class="btn btn-primary m-2" @click="selectTimeTableDay(date)">
                 {{ date }}
               </button>
             </div>
-            <div v-if="selectedGeneratedSchedule != null" class="table-container ">
+            <div v-if="selectedGeneratedSchedule != null" class="table-responsive">
               <div class="p-4">
                 <p> {{ $t("schedule.main.abbreviated.GROUP") }} -> {{ $t("schedule.main.GROUP") }}</p>
                 <p> {{ $t("schedule.main.abbreviated.PLAYOFF") }} -> {{ $t("schedule.main.PLAYOFF") }}</p>
@@ -249,10 +260,13 @@ export default {
       dailyStartEndDTO: {},
       availableTables: null,
       scheduleMetadata: {},
+      metaOptionsChanged: false,
       minutesPerMatchOptions: [15, 20, 25, 30, 35, 40, 45, 50, 55, 60],
       selectedGeneratedSchedule: null,
       generatedScheduleContainer: null,
       distinctPlannedCategories: [],
+      selectedTimeTableDay: "",
+      changedCategories: {},
       colors: ["#46b1c9", "#84c0c6", "#9fb7b9", "#bcc1ba", "#f2e2d2", "#dcd6f7", "#d8d2e1", "#c5d5e4",
         "#a6b1e1", "#cacfd6", "#d6e5e3", "#ce7da5", "#bee5bf", "#dff3e3", "#ffd1ba",
         "#b5ffe1", "#93e5ab", "#65b891", "#47682c", "#8c7051", "#ef3054",
@@ -273,12 +287,16 @@ export default {
     this.setUp()
   },
   methods: {
-    setUp() {
+    async setUp() {
+      this.metaOptionsChanged = false
       this.getDailyStartEnd()
       this.getAvailableTablesForCompetition()
       this.getScheduleMetadata()
       this.getCategorySchedulerSettings()
       this.getTimeTableInfo()
+      await this.sleep(1000)
+      const changedCategoriesKeys = Object.keys(this.changedCategories)
+      changedCategoriesKeys.forEach(key => this.$delete(this.changedCategories, key))
     },
     reRoute() {
       this.$router.push("schedule-advanced")
@@ -299,19 +317,21 @@ export default {
       for (let i = 0; i < this.availableTables.length; i++) {
         if (this.availableTables[i].day === day) {
           this.availableTables[i].nrTables = event.target.value
+          this.metaOptionsChanged = true;
         }
       }
+    },
+    setMinutesPerMatch(event) {
+      this.scheduleMetadata.minutesPerMatch = event.target.value
+      this.metaOptionsChanged = true;
     },
     checkAndSubmitForScheduling(categorySchedule) {
       if (undefinedOrNull(categorySchedule) ||
           undefinedOrNull(categorySchedule.selectedDay) ||
-          undefinedOrNull(categorySchedule.selectedStartTime) ||
-          categorySchedule.selectedTables.length === 0) {
+          undefinedOrNull(categorySchedule.selectedStartTime)) {
         return
       } else {
-        console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
         const startTime = categorySchedule.selectedDay + 'T' + this.getTime(categorySchedule.selectedStartTime) + 'Z'
-        console.log(startTime)
         const categorySpec = {
           "mode": "APPEND",
           "matchType": categorySchedule.selectedMatchType,
@@ -322,10 +342,14 @@ export default {
         scheduleGeneralService
             .scheduleCategory(this.competition.id, categorySchedule.categoryDTO.id, categorySpec)
             .then(() => {
+              this.$delete(this.changedCategories, categorySchedule.categoryDTO.id + categorySchedule.selectedMatchType)
               this.getTimeTableInfo()
             })
 
       }
+    },
+    noteCategorySchedulingAsChanged(categorySchedule) {
+      this.$set(this.changedCategories, categorySchedule.categoryDTO.id + categorySchedule.selectedMatchType, "")
     },
     getTimeTableInfo() {
       scheduleGeneralService.getTimeTableInfo(this.competition.id).then(res => {
@@ -344,6 +368,7 @@ export default {
     },
     selectTimeTableDay(date) {
       this.selectedGeneratedSchedule = this.generatedScheduleContainer.excelScheduleList.find(element => element.dateOfPlay === date)
+      this.selectedTimeTableDay = date
     },
     getHoursMinutes: getHoursMinutes,
     getPlayingDate(date) {
@@ -385,12 +410,12 @@ export default {
         dailyStartEnd: {
           dailyStartEndList: this.dailyStartEndDTO.dailyStartEndList.map(object => this.convertToDailyStartEndSpec(object))
         },
-        minutesPerMatchSpec: {minutesPerMatch: this.scheduleMetadata.minutesPerMatch },
-        availableTables: {tableDays: this.availableTables }
+        minutesPerMatchSpec: {minutesPerMatch: this.scheduleMetadata.minutesPerMatch},
+        availableTables: {tableDays: this.availableTables}
       }
 
       ScheduleGeneralService.saveMainScheduleChanges(this.competition.id, saveGeneralChanges).then(() => {
-        this.setUp()
+        window.location.reload()
       })
     },
     trySchedule(competitionCategoryId) {
@@ -455,7 +480,9 @@ export default {
     createCategoryMatchStringNoGroup(categoryMatch) {
       return categoryMatch.category.name;
     },
-
+    async sleep(msec) {
+      return new Promise(resolve => setTimeout(resolve, msec));
+    }
   }
 }
 </script>

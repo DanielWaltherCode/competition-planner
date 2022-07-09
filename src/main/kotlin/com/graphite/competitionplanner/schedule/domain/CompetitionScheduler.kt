@@ -187,7 +187,8 @@ class CompetitionScheduler(
                 }
             }
             repository.updateMatchesTimeTablesSlots(updateSpec)
-            repository.setCategoryForTimeSlots(updateSpec.map { it.timeTableSlotId }, competitionCategoryId, matchSchedulerSpec.matchType)
+            repository.setCategoryForTimeSlots(updateSpec.map { it.timeTableSlotId }, competitionCategoryId,
+                    matchSchedulerSpec.matchType)
 
         } catch (ex: IndexOutOfBoundsException) {
             throw IndexOutOfBoundsException(
@@ -301,7 +302,12 @@ class CompetitionScheduler(
             location: String
     ) {
         removeTimeSlotCategory(competitionCategoryId, matchType)
-        repository.removeCategoryFromTimeslots(competitionCategoryId, matchType) // Current category should no longer occupy table
+        repository.removeCategoryFromTimeslots(competitionCategoryId,
+                matchType) // Current category should no longer occupy table
+        // If no tables have been added, simply remove category and return here
+        if (tables.isEmpty()) {
+            return
+        }
         val matches: List<ScheduleMatchDto> = repository.getScheduleMatches(competitionCategoryId, matchType)
         val settings = ScheduleSettingsDTO(
                 Duration.minutes(15), // Not used
@@ -310,7 +316,8 @@ class CompetitionScheduler(
                 LocalDateTime.now().plusMinutes(60) // Not used
         )
         val currentSchedule: List<TimeTableSlotDTO> = getSchedule(competitionId)
-        val blocks = getScheduleBlocks(currentSchedule.filter { tables.contains(it.tableNumber) && it.location == location }, startTime)
+        val blocks = getScheduleBlocks(currentSchedule.filter { tables.contains(it.tableNumber) && it.location == location },
+                startTime)
         val updateSpecs: List<MapMatchToTimeTableSlotSpec> = createUpdateSpecs(settings, blocks, matches)
 
         repository.updateMatchesTimeTablesSlots(updateSpecs)
@@ -382,24 +389,15 @@ class CompetitionScheduler(
     }
 
 
-
+    // Should instead return every starttime as a block
     private fun getScheduleBlocks(tableSlots: List<TimeTableSlotDTO>, desiredStarTime: LocalDateTime): List<ScheduleBlock> {
-        val groupedByTime = tableSlots
-                .filter { it.startTime >= desiredStarTime }
+        return tableSlots
+                .filter { it.startTime >= desiredStarTime && it.matchInfo.isEmpty() }
+                .sortedBy { it.startTime }
                 .groupBy { it.startTime }
-                .map { (startTime, slots) -> Pair(startTime, slots.filter { slot -> slot.matchInfo.isEmpty()}) }
-        return mergeRowsToBlocks(groupedByTime)
-    }
-
-    private fun mergeRowsToBlocks(groupedByTime: List<Pair<LocalDateTime, List<TimeTableSlotDTO>>>): List<ScheduleBlock> {
-        return if (groupedByTime.isEmpty()) {
-            emptyList()
-        } else {
-            val numberOfTables = groupedByTime.first().second.size
-            val (sameSize, other) = groupedByTime.partition { it.second.size == numberOfTables }
-
-            listOf(ScheduleBlock(if (numberOfTables == 0) 0 else sameSize.flatMap { it.second }.size, numberOfTables, sameSize.flatMap { it.second })) + mergeRowsToBlocks(other)
-        }
+                .map { (startTime, slots) ->
+                    ScheduleBlock(slots.size, slots.size, slots)
+                }
     }
 
     private data class ScheduleBlock(
