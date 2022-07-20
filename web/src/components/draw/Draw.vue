@@ -14,7 +14,7 @@
             <h4> {{ $t("draw.sidebar.title") }}</h4>
           </div>
           <ul class="list-group list-group-flush">
-            <li v-for="category in competitionCategories" class="list-group-item" :key="category.id"
+            <li v-for="category in competitionCategories" class="list-group-item clickable" :key="category.id"
                 @click="makeChoice(category)"
                 :class="category.category.name === chosenCategory.category.name ? 'active' : ''">
               {{ category.category.name }}
@@ -56,12 +56,7 @@
           <div v-if="isChosenCategoryDrawn && draw !== null">
             <div id="group-section">
               <div id="main-header">
-                <div class="d-flex justify-content-between p-3">
-                  <div v-if="draw.playOff != null" @click="scrollToPlayoff"
-                       class="clickable px-5 py-3 text-uppercase fs-6 d-flex align-items-center">
-                    <p class="mb-0 me-1">{{$t("draw.main.goToPlayoff")}}</p>
-                    <i class="fas fa-arrow-right"></i>
-                  </div>
+                <div class="d-flex justify-content-center p-3">
                   <div class="p-2 custom-card">
                     <button type="button" class="btn btn-warning me-3" @click="reDraw">{{
                         $t("draw.main.redraw")
@@ -72,6 +67,11 @@
                       }}
                     </button>
                   </div>
+                </div>
+                <div v-if="draw.playOff != null" @click="scrollToPlayoff"
+                     class="clickable px-5 py-3 text-uppercase fs-6 d-flex align-items-center">
+                  <p class="mb-0 me-1">{{$t("draw.main.goToPlayoff")}}</p>
+                  <i class="fas fa-arrow-right"></i>
                 </div>
               </div>
               <!-- If there are groups -->

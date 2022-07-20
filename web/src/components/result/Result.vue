@@ -216,4 +216,19 @@ tr td {
   background: #fff;
 }
 
+@media only screen and (max-width: 768px) {
+  ::v-deep .modal-content {
+    max-height: 90%;
+    max-width: 95%;
+    margin: 0 1rem;
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+    background: #fff;
+  }
+  ::v-deep .modal-footer {
+    justify-content: center;
+  }
+}
+
 </style>
