@@ -52,7 +52,7 @@
               <h2 class="p-3">{{activeCategory.category.name}}</h2>
               <div class="d-flex col-12 p-2 justify-content-end">
                 <div class="p-2 custom-card">
-                  <button class="btn btn-primary m-1" type="button" @click="save" :disabled="isDrawMade && displayChoice==='SETTINGS'">{{ $t("general.saveChanges") }}</button>
+                  <button class="btn btn-primary me-3" type="button" @click="save" :disabled="isDrawMade && displayChoice==='SETTINGS'">{{ $t("general.saveChanges") }}</button>
                   <button class="btn btn-danger" type="button" @click="deleteCategory" :disabled="isDrawMade && displayChoice==='SETTINGS'">{{ $t("categories.delete") }}</button>
                 </div>
               </div>

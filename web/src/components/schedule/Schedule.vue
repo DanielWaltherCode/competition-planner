@@ -14,9 +14,9 @@
           <div class="row p-3 m-md-2 custom-card bg-white">
             <div>
               <!-- Daily start end -->
-              <div class="row col-lg-11 mx-auto custom-card p-5">
+              <div class="row col-lg-11 mx-auto custom-card p-3 p-md-5">
                 <div>
-                  <h4>{{ $t("schedule.generalInfo.startEnd") }}</h4>
+                  <h3>{{ $t("schedule.generalInfo.startEnd") }}</h3>
                   <p>{{ $t("schedule.generalInfo.startEndHelper") }}
                     <span> <router-link to="/overview">{{
                         $t("schedule.generalInfo.startEndHelperHere")
@@ -87,7 +87,7 @@
                 <h3 class="py-4">{{ $t("schedule.main.categoryStartTimes") }}</h3>
                 <p class="mx-auto py-2"> {{ $t("schedule.main.helperText") }}</p>
               </div>
-              <div id="table-responsive" class="my-4">
+              <div class="table-responsive-md my-4">
                 <table class="table table-bordered">
                   <thead>
                   <tr>
@@ -192,7 +192,7 @@
 
           <!-- See generated schedule -->
           <div v-if="generatedScheduleContainer!== null && generatedScheduleContainer.excelScheduleList.length > 0"
-               class="col-sm-11 mx-auto my-4 custom-card">
+               class="col-sm-11 mx-auto my-4 custom-card p-1">
             <!-- Select date -->
             <div>
               <h4> {{ $t("schedule.main.generatedSchedule") }}</h4>

@@ -1,8 +1,8 @@
 <template>
   <div class="modal__content">
     <i class="modal__close fas fa-times clickable" @click="$emit('close')"></i>
-    <div class="row p-md-5 p-sm-3 p-1">
-      <table class="table table-borderless table-responsive table-responsive-sm">
+    <div class="row p-md-5 p-sm-3 p-1 table-responsive-sm">
+      <table class="table table-borderless">
         <thead>
         <tr>
           <th class="col-3 col-sm-4"></th>
@@ -47,6 +47,8 @@
         </tr>
         </tbody>
       </table>
+    </div>
+    <div class="row mx-auto">
       <div class="modal-footer p-2">
         <button type="button" class="btn btn-secondary" @click="$emit('close')">
           {{ $t("general.close") }}
