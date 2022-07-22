@@ -219,6 +219,10 @@
       "overview": "Översikt",
       "advanced": "Avancerat"
     },
+    "toasts": {
+      "schedulePublishedSuccess": "Tidssättningen publicerad",
+      "schedulePublishedError": "Kunde inte spara schemat"
+    },
     "main": {
       "heading": "Schema och tidssättning",
       "helperText": "Om en klass har lottats kan du här ange när den ska spelas. Fyll först i fälten ovan för antal tillgängliga bord och matchtid. När alla fält är ifyllda uppdateras det genererade schemat nedan så att man kan se när matcherna i klassen spelas.",
@@ -238,6 +242,7 @@
         "GROUP": "P",
         "PLAYOFF": "S"
       },
+      "publish": "Publicera schemat",
       "intervals": {
         "NOT_SELECTED": "Inte valt",
         "MORNING": "Tidig förmiddag (09.00-13.00)",

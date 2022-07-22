@@ -13,6 +13,9 @@ const ScheduleGeneralService = {
     },
     saveMainScheduleChanges(competitionId, mainScheduleSpec) {
         return Axios.put(`/schedule/${competitionId}/`, mainScheduleSpec, {withCredentials: true})
+    },
+    publishSchedule(competitionId) {
+        return Axios.put(`/schedule/${competitionId}/publish`, {}, {withCredentials: true})
     }
 }
 

@@ -16,13 +16,13 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 @Repository
-class MatchRepository(val dslContext: DSLContext): IMatchRepository {
+class MatchRepository(val dslContext: DSLContext) : IMatchRepository {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
     fun getMatch(matchId: Int): MatchRecord {
         return dslContext.select().from(MATCH).where(MATCH.ID.eq(matchId)).fetchOneInto(MATCH)
-            ?: throw NotFoundException("Competition category with $matchId not found.")
+                ?: throw NotFoundException("Competition category with $matchId not found.")
     }
 
     override fun getMatch2(matchId: Int): Match {
@@ -31,7 +31,7 @@ class MatchRepository(val dslContext: DSLContext): IMatchRepository {
 
         if (record == null) {
             throw NotFoundException("Competition category with $matchId not found.")
-        }else {
+        } else {
             val match = record.toMatch()
             match.result = gameRecords.map { it.toGameResult() }
             return match
@@ -70,7 +70,7 @@ class MatchRepository(val dslContext: DSLContext): IMatchRepository {
         record.startTime = this.startTime
         record.endTime = this.endTime
 
-        when(this) {
+        when (this) {
             is PoolMatch -> {
                 record.groupOrRound = name
                 record.matchType = MatchType.GROUP.name
@@ -96,94 +96,96 @@ class MatchRepository(val dslContext: DSLContext): IMatchRepository {
     fun MatchRecord.toMatch(): Match {
         return if (this.matchType == MatchType.GROUP.name) {
             PoolMatch(
-                this.groupOrRound,
-                this.id,
-                this.competitionCategoryId,
-                this.firstRegistrationId,
-                this.secondRegistrationId,
-                this.wasWalkover,
-                this.winner
+                    this.groupOrRound,
+                    this.id,
+                    this.competitionCategoryId,
+                    this.firstRegistrationId,
+                    this.secondRegistrationId,
+                    this.wasWalkover,
+                    this.winner
             )
         } else {
             PlayoffMatch(
-                Round.valueOf(this.groupOrRound),
-                this.matchOrderNumber,
-                this.id,
-                this.competitionCategoryId,
-                this.firstRegistrationId,
-                this.secondRegistrationId,
-                this.wasWalkover,
-                this.winner
+                    Round.valueOf(this.groupOrRound),
+                    this.matchOrderNumber,
+                    this.id,
+                    this.competitionCategoryId,
+                    this.firstRegistrationId,
+                    this.secondRegistrationId,
+                    this.wasWalkover,
+                    this.winner
             )
         }
     }
 
     fun GameRecord.toGameResult(): GameResult {
         return GameResult(
-            this.id,
-            this.gameNumber,
-            this.firstRegistrationResult,
-            this.secondRegistrationResult
+                this.id,
+                this.gameNumber,
+                this.firstRegistrationResult,
+                this.secondRegistrationResult
         )
     }
 
     fun getMatchesInCategory(competitionCategoryId: Int): List<MatchRecord> {
         return dslContext
-            .select().from(MATCH)
-            .where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
-            .fetchInto(MATCH)
+                .select().from(MATCH)
+                .where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+                .orderBy(MATCH.START_TIME.asc().nullsLast())
+                .fetchInto(MATCH)
     }
 
     fun getMatchesInCompetitionByDay(competitionId: Int, day: LocalDate): List<MatchRecord> {
         val startTime = LocalDateTime.of(day, LocalTime.of(0, 0))
         val endTime = LocalDateTime.of(day, LocalTime.of(23, 59))
         return dslContext
-            .select().from(COMPETITION)
-            .join(COMPETITION_CATEGORY)
-            .on(COMPETITION.ID.eq(COMPETITION_CATEGORY.COMPETITION_ID))
-            .join(MATCH)
-            .on(COMPETITION_CATEGORY.ID.eq(MATCH.COMPETITION_CATEGORY_ID))
-            .where(COMPETITION.ID.eq(competitionId)).and(MATCH.START_TIME.between(startTime, endTime))
-            .orderBy(MATCH.ID.asc())
-            .fetchInto(MATCH)
+                .select().from(COMPETITION)
+                .join(COMPETITION_CATEGORY)
+                .on(COMPETITION.ID.eq(COMPETITION_CATEGORY.COMPETITION_ID))
+                .join(MATCH)
+                .on(COMPETITION_CATEGORY.ID.eq(MATCH.COMPETITION_CATEGORY_ID))
+                .where(COMPETITION.ID.eq(competitionId)).and(MATCH.START_TIME.between(startTime, endTime))
+                .orderBy(MATCH.START_TIME.asc().nullsLast())
+                .fetchInto(MATCH)
     }
 
     fun getMatchesInCompetition(competitionId: Int): List<MatchRecord> {
         return dslContext
-            .select().from(COMPETITION)
-            .join(COMPETITION_CATEGORY)
-            .on(COMPETITION.ID.eq(COMPETITION_CATEGORY.COMPETITION_ID))
-            .join(MATCH)
-            .on(COMPETITION_CATEGORY.ID.eq(MATCH.COMPETITION_CATEGORY_ID))
-            .where(COMPETITION.ID.eq(competitionId))
-            .orderBy(MATCH.ID.asc())
-            .fetchInto(MATCH)
+                .select().from(COMPETITION)
+                .join(COMPETITION_CATEGORY)
+                .on(COMPETITION.ID.eq(COMPETITION_CATEGORY.COMPETITION_ID))
+                .join(MATCH)
+                .on(COMPETITION_CATEGORY.ID.eq(MATCH.COMPETITION_CATEGORY_ID))
+                .where(COMPETITION.ID.eq(competitionId))
+                .orderBy(MATCH.START_TIME.asc().nullsLast())
+                .fetchInto(MATCH)
     }
 
     fun getMatchesInCompetitionForRegistration(competitionId: Int, registrationId: Int): List<MatchRecord> {
         return dslContext
-            .select().from(COMPETITION)
-            .join(COMPETITION_CATEGORY)
-            .on(COMPETITION.ID.eq(COMPETITION_CATEGORY.COMPETITION_ID))
-            .join(MATCH)
-            .on(COMPETITION_CATEGORY.ID.eq(MATCH.COMPETITION_CATEGORY_ID))
-            .where(COMPETITION.ID.eq(competitionId))
-            .and(
-                MATCH.FIRST_REGISTRATION_ID.eq(registrationId)
-                    .or(MATCH.SECOND_REGISTRATION_ID.eq(registrationId))
-            )
-            .orderBy(MATCH.ID.asc())
-            .fetchInto(MATCH)
+                .select().from(COMPETITION)
+                .join(COMPETITION_CATEGORY)
+                .on(COMPETITION.ID.eq(COMPETITION_CATEGORY.COMPETITION_ID))
+                .join(MATCH)
+                .on(COMPETITION_CATEGORY.ID.eq(MATCH.COMPETITION_CATEGORY_ID))
+                .where(COMPETITION.ID.eq(competitionId))
+                .and(
+                        MATCH.FIRST_REGISTRATION_ID.eq(registrationId)
+                                .or(MATCH.SECOND_REGISTRATION_ID.eq(registrationId))
+                )
+                .orderBy(MATCH.START_TIME.asc().nullsLast())
+                .fetchInto(MATCH)
     }
 
     fun getMatchesInCategoryForMatchType(competitionCategoryId: Int, matchType: MatchType): List<MatchRecord> {
         return dslContext
-            .select().from(MATCH)
-            .where(
-                MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
-                    .and(MATCH.MATCH_TYPE.equalIgnoreCase(matchType.name))
-            )
-            .fetchInto(MATCH)
+                .select().from(MATCH)
+                .where(
+                        MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
+                                .and(MATCH.MATCH_TYPE.equalIgnoreCase(matchType.name))
+                )
+                .orderBy(MATCH.START_TIME.asc().nullsLast())
+                .fetchInto(MATCH)
     }
 
     fun setTimeSlotsToNull(competitionCategoryIds: List<Int>) {
@@ -195,19 +197,19 @@ class MatchRepository(val dslContext: DSLContext): IMatchRepository {
 
     fun getDistinctGroupsInCategory(competitionCategoryId: Int): List<String> {
         return dslContext
-            .selectDistinct(MATCH.GROUP_OR_ROUND).from(MATCH)
-            .where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
-            .fetchInto(String::class.java)
+                .selectDistinct(MATCH.GROUP_OR_ROUND).from(MATCH)
+                .where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+                .fetchInto(String::class.java)
     }
 
     fun getDistinctRegistrationIdsInGroup(competitionCategoryId: Int, groupName: String): MutableSet<Int> {
         val records: List<MatchRecord> = dslContext
-            .select().from(MATCH)
-            .where(
-                MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
-                    .and(MATCH.GROUP_OR_ROUND.equalIgnoreCase(groupName))
-            )
-            .fetchInto(MATCH)
+                .select().from(MATCH)
+                .where(
+                        MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
+                                .and(MATCH.GROUP_OR_ROUND.equalIgnoreCase(groupName))
+                )
+                .fetchInto(MATCH)
 
         val registrationIdSet = mutableSetOf<Int>()
         for (record in records) {
@@ -249,14 +251,14 @@ class MatchRepository(val dslContext: DSLContext): IMatchRepository {
 
     fun setWinner(matchId: Int, winnerRegistrationId: Int) {
         dslContext.update(MATCH)
-            .set(MATCH.WINNER, winnerRegistrationId)
-            .where(MATCH.ID.eq(matchId))
-            .execute()
+                .set(MATCH.WINNER, winnerRegistrationId)
+                .where(MATCH.ID.eq(matchId))
+                .execute()
     }
 
     fun isCategoryDrawn(competitionCategoryId: Int): Boolean {
         return dslContext.fetchExists(
-            dslContext.selectFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+                dslContext.selectFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
         )
     }
 

@@ -202,9 +202,16 @@
               </button>
             </div>
             <div v-if="selectedGeneratedSchedule != null" class="table-responsive">
-              <div class="p-4">
-                <p> {{ $t("schedule.main.abbreviated.GROUP") }} -> {{ $t("schedule.main.GROUP") }}</p>
-                <p> {{ $t("schedule.main.abbreviated.PLAYOFF") }} -> {{ $t("schedule.main.PLAYOFF") }}</p>
+              <div class="p-4 d-flex justify-content-between">
+                <div>
+                  <p> {{ $t("schedule.main.abbreviated.GROUP") }} -> {{ $t("schedule.main.GROUP") }}</p>
+                  <p> {{ $t("schedule.main.abbreviated.PLAYOFF") }} -> {{ $t("schedule.main.PLAYOFF") }}</p>
+                </div>
+                <div>
+                  <button type="button" class="btn btn-warning" @click="publishSchedule">
+                    {{ $t("schedule.main.publish") }}
+                  </button>
+                </div>
               </div>
               <table class="table table-bordered">
                 <thead>
@@ -418,8 +425,12 @@ export default {
         window.location.reload()
       })
     },
-    trySchedule(competitionCategoryId) {
-
+    publishSchedule() {
+      ScheduleGeneralService.publishSchedule(this.competition.id).then(() => {
+        this.$toasted.success(this.$tc("schedule.toasts.schedulePublishedSuccess")).goAway(3000)
+      }).catch(() => {
+        this.$toasted.error(this.$tc("schedule.toasts.schedulePublishedError")).goAway(5000)
+      })
     },
     convertToDailyStartEndSpec(dailyStartEndObject) {
       const startTime = this.getTime(dailyStartEndObject.startTime)
