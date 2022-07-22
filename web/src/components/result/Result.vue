@@ -142,6 +142,7 @@ export default {
       if (match != null && match.startTime === null) {
         return this.$t("draw.pool.noTime")
       }
+      return match.startTime
     },
     isPlayerOneWinner: isPlayerOneWinner,
     isPlayerTwoWinner: isPlayerTwoWinner,

@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.match.service
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.match.repository.MatchRepository
@@ -54,9 +55,8 @@ class MatchService(
     }
 
     fun transformToMatchAndResultDTO(matches: List<MatchRecord>): List<MatchAndResultDTO> {
-        val sortedMatches = matches.sortedBy { it.id }
         val results = resultsRepository.getResults(matches.map { it.id })
-        return results.zip(sortedMatches).map { (result, match) ->
+        return results.zip(matches).map { (result, match) ->
             MatchAndResultDTO(
                 match.id,
                 match.startTime,
@@ -106,7 +106,9 @@ class MatchService(
 
 data class MatchAndResultDTO(
     val id: Int,
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     val startTime: LocalDateTime?,
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     val endTime: LocalDateTime?,
     val competitionCategory: SimpleCompetitionCategoryDTO,
     val matchType: String,

@@ -190,9 +190,7 @@ export default {
         this.$toasted.success(this.$tc("toasts.resultRegistered")).goAway(3000)
       }).catch(err => {
         const response = err.response.data
-        console.log(response)
         this.error = this.$t("results.modal.errors." + response.message)
-        console.log(this.error)
       })
     },
     addGame() {
