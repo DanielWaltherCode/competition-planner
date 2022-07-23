@@ -62,8 +62,7 @@ val getDaysOfCompetition: GetDaysOfCompetition) {
     fun getDailyStartAndEndForWholeCompetition(competitionId: Int): DailyStartAndEndWithOptionsDTO {
         val records = scheduleRepository.getDailyStartAndEndForCompetition(competitionId)
         val startEndDTOList = records.map { dailyStartEndRecordToDTO(it) }
-        val competition = findCompetitions.byId(competitionId)
-        return DailyStartAndEndWithOptionsDTO(startEndDTOList.sortedBy { it.day }, getDaysOfCompetition.execute(competition))
+        return DailyStartAndEndWithOptionsDTO(startEndDTOList.sortedBy { it.day }, startEndDTOList.map { it.day })
     }
 
 

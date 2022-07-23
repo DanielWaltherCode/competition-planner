@@ -62,7 +62,7 @@ class TimeTableSlotHandler(
         }
         // If successful to this point, delete any previously stored time slots. First remove keys in Match table
         val categoriesInCompetition = competitionCategoryRepository.getCategoryIds(competitionId)
-        matchRepository.setTimeSlotsToNull(categoriesInCompetition)
+        matchRepository.setTimeSlotsAndStartTimeToNull(categoriesInCompetition)
         repository.deleteTimeTable(competitionId)
         repository.storeTimeTable(competitionId, timeSlots)
     }

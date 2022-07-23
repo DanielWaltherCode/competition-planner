@@ -196,8 +196,8 @@
             <!-- Select date -->
             <div>
               <h4> {{ $t("schedule.main.generatedSchedule") }}</h4>
-              <button v-for="date in dailyStartEndDTO.availableDays" :key="date" :class="selectedTimeTableDay === date ? 'active': ''"
-                      class="btn btn-primary m-2" @click="selectTimeTableDay(date)">
+              <button v-for="date in dailyStartEndDTO.availableDays" :key="date" :class="selectedTimeTableDay === date ? 'btn-outline-primary': 'btn-primary'"
+                      class="btn m-2" @click="selectTimeTableDay(date)">
                 {{ date }}
               </button>
             </div>
