@@ -16,6 +16,9 @@ const ScheduleGeneralService = {
     },
     publishSchedule(competitionId) {
         return Axios.put(`/schedule/${competitionId}/publish`, {}, {withCredentials: true})
+    },
+    deleteSchedule(competitionId) {
+        return Axios.delete(`/schedule/${competitionId}/`, {withCredentials: true})
     }
 }
 

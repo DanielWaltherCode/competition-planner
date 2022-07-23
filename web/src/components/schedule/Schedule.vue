@@ -175,17 +175,23 @@
                         </div>
                       </td>
                       <td>
-                        <button v-if="categorySchedule.categoryDTO.id + categorySchedule.selectedMatchType in changedCategories"
-                                type="button"
-                                class="btn btn-warning"
-                                @click="checkAndSubmitForScheduling(categorySchedule)">
-                                Schemalägg
+                        <button
+                            v-if="categorySchedule.categoryDTO.id + categorySchedule.selectedMatchType in changedCategories"
+                            type="button"
+                            class="btn btn-warning"
+                            @click="checkAndSubmitForScheduling(categorySchedule)">
+                          {{ $t("schedule.main.makeSchedule") }}
                         </button>
                       </td>
                     </tr>
                   </template>
                   </tbody>
                 </table>
+                <div class="d-flex justify-content-end p-4">
+                  <button type="button" class="btn btn-danger" @click="deleteSchedule">
+                    {{ $t("schedule.main.delete") }}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -196,7 +202,8 @@
             <!-- Select date -->
             <div>
               <h4> {{ $t("schedule.main.generatedSchedule") }}</h4>
-              <button v-for="date in dailyStartEndDTO.availableDays" :key="date" :class="selectedTimeTableDay === date ? 'btn-outline-primary': 'btn-primary'"
+              <button v-for="date in dailyStartEndDTO.availableDays" :key="date"
+                      :class="selectedTimeTableDay === date ? 'btn-outline-primary': 'btn-primary'"
                       class="btn m-2" @click="selectTimeTableDay(date)">
                 {{ date }}
               </button>
@@ -431,6 +438,16 @@ export default {
       }).catch(() => {
         this.$toasted.error(this.$tc("schedule.toasts.schedulePublishedError")).goAway(5000)
       })
+    },
+    deleteSchedule() {
+      if (confirm(this.$tc("schedule.main.deleteConfirm"))) {
+        ScheduleGeneralService.deleteSchedule(this.competition.id).then(() => {
+          this.$toasted.success(this.$tc("schedule.toasts.scheduleDeletedSuccess")).goAway(3000)
+          window.location.reload()
+        }).catch(() => {
+          this.$toasted.error(this.$tc("schedule.toasts.scheduleDeletedError")).goAway(5000)
+        })
+      }
     },
     convertToDailyStartEndSpec(dailyStartEndObject) {
       const startTime = this.getTime(dailyStartEndObject.startTime)

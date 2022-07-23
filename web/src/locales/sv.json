@@ -221,7 +221,9 @@
     },
     "toasts": {
       "schedulePublishedSuccess": "Tidssättningen publicerad",
-      "schedulePublishedError": "Kunde inte spara schemat"
+      "schedulePublishedError": "Kunde inte spara schemat",
+      "scheduleDeletedSuccess": "Tidssättningen borttagen",
+      "scheduleDeletedError": "Tidssättningen kunde inte tas bort. Prova att nollställa klasserna manuellt"
     },
     "main": {
       "heading": "Schema och tidssättning",
@@ -242,7 +244,10 @@
         "GROUP": "P",
         "PLAYOFF": "S"
       },
+      "makeSchedule": "Schemalägg",
       "publish": "Publicera schemat",
+      "delete": "Ta bort schema",
+      "deleteConfirm": "Är du säker på att du vill ta bort tidssättningen?",
       "intervals": {
         "NOT_SELECTED": "Inte valt",
         "MORNING": "Tidig förmiddag (09.00-13.00)",

@@ -1,14 +1,10 @@
 package com.graphite.competitionplanner.schedule.api
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.schedule.domain.CompetitionScheduler
-import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleDTO
-import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleDTOContainer
-import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleItemDTO
-import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleMatchDTO
+import com.graphite.competitionplanner.schedule.interfaces.*
 import com.graphite.competitionplanner.schedule.service.AvailableTablesDayDTO
 import com.graphite.competitionplanner.schedule.service.ScheduleMetadataService
 import org.springframework.web.bind.annotation.*
@@ -19,8 +15,8 @@ import java.time.LocalTime
 @RestController
 @RequestMapping("/schedule/{competitionId}/")
 class ScheduleApi(
-    val competitionScheduler: CompetitionScheduler,
-    val scheduleMetadataService: ScheduleMetadataService
+        val competitionScheduler: CompetitionScheduler,
+        val scheduleMetadataService: ScheduleMetadataService,
 ) {
 
     @PutMapping("publish")
@@ -61,6 +57,14 @@ class ScheduleApi(
         }
     }
 
+    /**
+     * Removes scheduling data in match and timeslot table for a given competition
+     */
+    @DeleteMapping
+    fun clearSchedule(@PathVariable competitionId: Int) {
+        competitionScheduler.clearSchedule(competitionId)
+    }
+
     data class ScheduleCategorySpec(
         /**
          * Scheduling mode
@@ -95,12 +99,6 @@ class ScheduleApi(
          */
         ABSOLUTE
     }
-
-    @DeleteMapping
-    fun clearSchedule(@PathVariable competitionId: Int) {
-        competitionScheduler.clearSchedule(competitionId)
-    }
-
 }
 
 data class ScheduleCategoryContainerDTO(

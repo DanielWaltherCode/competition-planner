@@ -11,7 +11,6 @@ import com.graphite.competitionplanner.schedule.service.StartInterval
 import com.graphite.competitionplanner.tables.records.*
 import org.jooq.DSLContext
 import org.jooq.Record6
-import org.jooq.impl.DSL
 import org.slf4j.LoggerFactory
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Repository
@@ -341,12 +340,21 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
                 .execute()
     }
 
-    override fun removeCategoryFromTimeslots(categoryId: Int, matchType: MatchType) {
+    override fun removeCategoryAndMatchTypeFromTimeslots(categoryId: Int, matchType: MatchType) {
         dslContext
                 .update(MATCH_TIME_SLOT)
                 .setNull(MATCH_TIME_SLOT.COMPETITION_CATEGORY_ID)
                 .setNull(MATCH_TIME_SLOT.MATCH_TYPE)
                 .where(MATCH_TIME_SLOT.COMPETITION_CATEGORY_ID.eq(categoryId).and(MATCH_TIME_SLOT.MATCH_TYPE.eq(matchType.name)))
+                .execute()
+    }
+
+    override fun resetTimeSlotsForCompetition(competitionId: Int) {
+        dslContext
+                .update(MATCH_TIME_SLOT)
+                .setNull(MATCH_TIME_SLOT.COMPETITION_CATEGORY_ID)
+                .setNull(MATCH_TIME_SLOT.MATCH_TYPE)
+                .where(MATCH_TIME_SLOT.COMPETITION_ID.eq(competitionId))
                 .execute()
     }
 
@@ -478,7 +486,8 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
 
     override fun clearSchedule(competitionId: Int) {
         dslContext.update(MATCH)
-                .set(MATCH.MATCH_TIME_SLOT_ID, DSL.inline(null, MATCH.MATCH_TIME_SLOT_ID))
+                .setNull(MATCH.MATCH_TIME_SLOT_ID)
+                .setNull(MATCH.START_TIME)
                 .from(MATCH_TIME_SLOT)
                 .where(MATCH.MATCH_TIME_SLOT_ID.eq(MATCH_TIME_SLOT.ID)
                         .and(MATCH_TIME_SLOT.COMPETITION_ID.eq(competitionId)))

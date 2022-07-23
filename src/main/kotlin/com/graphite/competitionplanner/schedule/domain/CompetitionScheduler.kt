@@ -26,7 +26,7 @@ import kotlin.time.Duration
  */
 @Component
 class CompetitionScheduler(
-        val repository: IScheduleRepository,
+        val scheduleRepository: IScheduleRepository,
         val createSchedule: CreateSchedule,
         val findCompetitions: FindCompetitions,
         val availableTablesService: AvailableTablesService,
@@ -39,7 +39,7 @@ class CompetitionScheduler(
      * can easily move one match to a new TimeTableSlot.
      */
     fun mapMatchToTimeTableSlot(matchToTimeTableSlot: MapMatchToTimeTableSlotSpec): TimeTableSlotDTO {
-        val matchesInSameSlot = repository.addMatchToTimeTableSlot(matchToTimeTableSlot)
+        val matchesInSameSlot = scheduleRepository.addMatchToTimeTableSlot(matchToTimeTableSlot)
 
         return TimeTableSlotDTO(
                 matchesInSameSlot.first().timeTableSlotId,
@@ -62,7 +62,7 @@ class CompetitionScheduler(
      * @param matchToTimeTableSlots Mapping from matches to TimeTableSlots
      */
     fun addMultipleMatchToTimeTableSlot(matchToTimeTableSlots: List<MapMatchToTimeTableSlotSpec>) {
-        repository.updateMatchesTimeTablesSlots(matchToTimeTableSlots)
+        scheduleRepository.updateMatchesTimeTablesSlots(matchToTimeTableSlots)
     }
 
     /**
@@ -73,7 +73,7 @@ class CompetitionScheduler(
      * schedule. Almost like you save a draft.
      */
     fun publishSchedule(competitionId: Int) {
-        repository.publishSchedule(competitionId)
+        scheduleRepository.publishSchedule(competitionId)
     }
 
     /**
@@ -83,14 +83,14 @@ class CompetitionScheduler(
      * @return List of TimeTableSlots sorted by location, time and table in ascending order
      */
     fun getSchedule(competitionId: Int): List<TimeTableSlotDTO> {
-        val matchesToSlots = repository.getTimeTable(competitionId)
+        val matchesToSlots = scheduleRepository.getTimeTable(competitionId)
         val schedule = mergeTimeTableSlots(matchesToSlots)
         return schedule.sortedWith(
                 compareBy(TimeTableSlotDTO::location, TimeTableSlotDTO::startTime, TimeTableSlotDTO::tableNumber))
     }
 
     fun getScheduleForFrontend(competitionId: Int): ExcelScheduleDTOContainer {
-        val timeSlots = repository.getTimeSlotsForCompetition(competitionId)
+        val timeSlots = scheduleRepository.getTimeSlotsForCompetition(competitionId)
         val competitionCategories = getCompetitionCategories.execute(competitionId)
         val playingDays = timeSlots.map { it.startTime.toLocalDate() }.distinct()
 
@@ -165,7 +165,7 @@ class CompetitionScheduler(
     ) {
         val competition = findCompetitions.byId(competitionId)
         removeTimeSlotCategory(competitionCategoryId, matchSchedulerSpec.matchType)
-        val matches = repository.getScheduleMatches(competitionCategoryId, matchSchedulerSpec.matchType)
+        val matches = scheduleRepository.getScheduleMatches(competitionCategoryId, matchSchedulerSpec.matchType)
         val settings = ScheduleSettingsDTO(
                 Duration.minutes(15), // Not used
                 matchSchedulerSpec.tableNumbers.size,
@@ -174,7 +174,7 @@ class CompetitionScheduler(
         )
         val schedule = createSchedule.execute(matches, settings)
         val startTime = LocalDateTime.of(matchSchedulerSpec.day, matchSchedulerSpec.startTime)
-        val timeTableSlots = repository.getTimeTableSlotRecords(competitionId, startTime, matchSchedulerSpec.tableNumbers,
+        val timeTableSlots = scheduleRepository.getTimeTableSlotRecords(competitionId, startTime, matchSchedulerSpec.tableNumbers,
                 competition.location.name)
 
         try {
@@ -186,8 +186,8 @@ class CompetitionScheduler(
                     index++
                 }
             }
-            repository.updateMatchesTimeTablesSlots(updateSpec)
-            repository.setCategoryForTimeSlots(updateSpec.map { it.timeTableSlotId }, competitionCategoryId,
+            scheduleRepository.updateMatchesTimeTablesSlots(updateSpec)
+            scheduleRepository.setCategoryForTimeSlots(updateSpec.map { it.timeTableSlotId }, competitionCategoryId,
                     matchSchedulerSpec.matchType)
 
         } catch (ex: IndexOutOfBoundsException) {
@@ -204,7 +204,7 @@ class CompetitionScheduler(
         // Check if categories already are in timetable (i.e. scheduling is under way)
         val scheduleCategoryList = mutableListOf<ScheduleCategoryDTO>()
         for (category in drawnCategories) {
-            val timeSlots = repository.getTimeSlotsForCategory(category.id)
+            val timeSlots = scheduleRepository.getTimeSlotsForCategory(category.id)
             // Case 1 - No choices have been made for category
             if (timeSlots.isEmpty()) {
                 val possibleMatchTypes = getPossibleMatchTypes(category)
@@ -302,13 +302,13 @@ class CompetitionScheduler(
             location: String
     ) {
         removeTimeSlotCategory(competitionCategoryId, matchType)
-        repository.removeCategoryFromTimeslots(competitionCategoryId,
+        scheduleRepository.removeCategoryAndMatchTypeFromTimeslots(competitionCategoryId,
                 matchType) // Current category should no longer occupy table
         // If no tables have been added, simply remove category and return here
         if (tables.isEmpty()) {
             return
         }
-        val matches: List<ScheduleMatchDto> = repository.getScheduleMatches(competitionCategoryId, matchType)
+        val matches: List<ScheduleMatchDto> = scheduleRepository.getScheduleMatches(competitionCategoryId, matchType)
         val settings = ScheduleSettingsDTO(
                 Duration.minutes(15), // Not used
                 tables.size,
@@ -320,8 +320,8 @@ class CompetitionScheduler(
                 startTime)
         val updateSpecs: List<MapMatchToTimeTableSlotSpec> = createUpdateSpecs(settings, blocks, matches)
 
-        repository.updateMatchesTimeTablesSlots(updateSpecs)
-        repository.setCategoryForTimeSlots(updateSpecs.map { it.timeTableSlotId }, competitionCategoryId, matchType)
+        scheduleRepository.updateMatchesTimeTablesSlots(updateSpecs)
+        scheduleRepository.setCategoryForTimeSlots(updateSpecs.map { it.timeTableSlotId }, competitionCategoryId, matchType)
 
     }
 
@@ -384,8 +384,8 @@ class CompetitionScheduler(
     }
 
     private fun removeTimeSlotCategory(categoryId: Int, matchType: MatchType) {
-        repository.removeCategoryFromTimeslots(categoryId, matchType)
-        repository.removeCategoryTimeSlotFromMatchTable(categoryId, matchType)
+        scheduleRepository.removeCategoryAndMatchTypeFromTimeslots(categoryId, matchType)
+        scheduleRepository.removeCategoryTimeSlotFromMatchTable(categoryId, matchType)
     }
 
 
@@ -407,6 +407,7 @@ class CompetitionScheduler(
     )
 
     fun clearSchedule(competitionId: Int) {
-        repository.clearSchedule(competitionId)
+        scheduleRepository.clearSchedule(competitionId)
+        scheduleRepository.resetTimeSlotsForCompetition(competitionId)
     }
 }

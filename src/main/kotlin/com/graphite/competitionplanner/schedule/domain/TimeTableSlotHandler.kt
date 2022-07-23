@@ -25,13 +25,13 @@ import kotlin.time.Duration
  */
 @Component
 class TimeTableSlotHandler(
-    val repository: IScheduleRepository,
-    val scheduleAvailableTablesService: AvailableTablesService,
-    val scheduleMetadataService: ScheduleMetadataService,
-    val dailyStartEndService: DailyStartEndService,
-    val findCompetitions: FindCompetitions,
-    val competitionCategoryRepository: ICompetitionCategoryRepository,
-    val matchRepository: MatchRepository
+        val scheduleRepository: IScheduleRepository,
+        val scheduleAvailableTablesService: AvailableTablesService,
+        val scheduleMetadataService: ScheduleMetadataService,
+        val dailyStartEndService: DailyStartEndService,
+        val findCompetitions: FindCompetitions,
+        val competitionCategoryRepository: ICompetitionCategoryRepository,
+        val matchRepository: MatchRepository,
 ) {
 
     fun execute(competitionId: Int) {
@@ -60,11 +60,10 @@ class TimeTableSlotHandler(
 
             })
         }
-        // If successful to this point, delete any previously stored time slots. First remove keys in Match table
-        val categoriesInCompetition = competitionCategoryRepository.getCategoryIds(competitionId)
-        matchRepository.setTimeSlotsAndStartTimeToNull(categoriesInCompetition)
-        repository.deleteTimeTable(competitionId)
-        repository.storeTimeTable(competitionId, timeSlots)
+        // If successful to this point, delete any previously stored time slots and reset
+        scheduleRepository.clearSchedule(competitionId)
+        scheduleRepository.deleteTimeTable(competitionId)
+        scheduleRepository.storeTimeTable(competitionId, timeSlots)
     }
 
     private fun generateStartTimes(

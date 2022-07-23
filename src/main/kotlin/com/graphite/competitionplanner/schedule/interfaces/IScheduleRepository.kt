@@ -122,9 +122,14 @@ interface IScheduleRepository {
     fun clearSchedule(competitionId: Int)
 
     /**
+     * Removes category and match type in time slot table for a competition
+     */
+    fun resetTimeSlotsForCompetition(competitionId: Int)
+
+    /**
      * Ensure timeslots are no longer occupied by a given competition category and matchtype
      */
-    fun removeCategoryFromTimeslots(categoryId: Int, matchType: MatchType)
+    fun removeCategoryAndMatchTypeFromTimeslots(categoryId: Int, matchType: MatchType)
 
     /**
      * Assign timeslots to a given category
