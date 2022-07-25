@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.draw.repository
 
+import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
@@ -51,10 +52,10 @@ class TestCompetitionDrawRepository(
     }
 
     fun CompetitionDTO.createCategory(): CompetitionCategoryDTO {
-        val category = categoryRepository.getAvailableCategories().first()
+        val category = categoryRepository.getAvailableCategories(0).first()
         return competitionCategoryRepository.store(
             this.id, dataGenerator.newCompetitionCategorySpec(
-                category = dataGenerator.newCategorySpec(category.id, category.name, category.type),
+                category = dataGenerator.newCategorySpec(category.id, category.name, CategoryType.valueOf(category.type)),
                 settings = dataGenerator.newGeneralSettingsDTO(drawType = DrawType.CUP_ONLY)
             )
         )

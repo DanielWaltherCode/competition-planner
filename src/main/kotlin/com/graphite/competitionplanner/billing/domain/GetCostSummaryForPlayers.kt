@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.billing.domain
 
 import com.graphite.competitionplanner.billing.interfaces.PlayerCostSummaryDTO
 import com.graphite.competitionplanner.billing.interfaces.PlayerCostSummaryListDTO
+import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
@@ -32,7 +33,7 @@ class GetCostSummaryForPlayers(
                 val playerCostSummaryDTO = PlayerCostSummaryDTO(
                     player,
                     category,
-                    if (category.category.type.equals("singles", ignoreCase = true)) category.settings.cost else category.settings.cost * 0.5f
+                    if (category.category.type == CategoryType.SINGLES) category.settings.cost else category.settings.cost * 0.5f
                 )
                 playerCostSummaryList.add(playerCostSummaryDTO)
             }

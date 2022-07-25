@@ -39,7 +39,7 @@ open class BaseTestRegistration(
     }
 
     open fun setupCompetitionCategory() {
-        category = categoryRepository.getAvailableCategories().first()
+        category = categoryRepository.getAvailableCategories(0).first()
         competitionCategory = competitionCategoryRepository.store(
             competitionId = competition.id,
             spec = dataGenerator.newCompetitionCategorySpec(category = dataGenerator.newCategorySpec(id = category.id)))

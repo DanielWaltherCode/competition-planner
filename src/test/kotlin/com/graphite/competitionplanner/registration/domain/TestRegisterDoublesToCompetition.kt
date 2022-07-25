@@ -30,7 +30,7 @@ class TestRegisterDoublesToCompetition {
         val spec = dataGenerator.newRegistrationDoublesSpec(playerOneId = 88, playerTwoId = 99)
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES.name)))
+                category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES)))
 
         // Act
         registerDoubles.execute(spec)
@@ -47,7 +47,7 @@ class TestRegisterDoublesToCompetition {
         val spec = dataGenerator.newRegistrationDoublesSpec(playerOneId = 88, playerTwoId = 99)
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)))
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES)))
 
         // Act & Assert
         Assertions.assertThrows(IllegalArgumentException::class.java) {
@@ -61,7 +61,7 @@ class TestRegisterDoublesToCompetition {
         val spec = dataGenerator.newRegistrationDoublesSpec(playerOneId = 88, playerTwoId = 99)
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES.name)))
+                category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES)))
 
         // Act & Assert
         Assertions.assertDoesNotThrow {
@@ -75,7 +75,7 @@ class TestRegisterDoublesToCompetition {
         val spec = dataGenerator.newRegistrationDoublesSpec(competitionCategoryId = 333)
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES.name)))
+                category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES)))
 
         // Act
         registerDoubles.execute(spec)
@@ -135,7 +135,7 @@ class TestRegisterDoublesToCompetition {
         val spec = dataGenerator.newRegistrationDoublesSpec()
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES.name)))
+                category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES)))
 
         // Act
         registerDoubles.execute(spec)
@@ -156,7 +156,7 @@ class TestRegisterDoublesToCompetition {
         `when`(repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)).thenReturn(listOf(playerOne.id))
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES.name)))
+                category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES)))
 
         // Act
         Assertions.assertThrows(PlayerAlreadyRegisteredException::class.java) {
@@ -179,7 +179,7 @@ class TestRegisterDoublesToCompetition {
         `when`(repository.getAllPlayerIdsRegisteredTo(spec.competitionCategoryId)).thenReturn(listOf(playerTwo.id))
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES.name)))
+                category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES)))
 
         // Act
         Assertions.assertThrows(PlayerAlreadyRegisteredException::class.java) {

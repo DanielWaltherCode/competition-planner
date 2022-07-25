@@ -22,13 +22,13 @@ class TestGetCategories {
             dataGenerator.newCategoryDTO(id = 1, name = "HERRAR 1"),
             dataGenerator.newCategoryDTO(id = 2, name = "HERRAR 13")
         )
-        `when`(repository.getAvailableCategories()).thenReturn(expected)
+        `when`(repository.getAvailableCategories(anyInt())).thenReturn(expected)
 
         // Act
-        val categories = getCategories.execute()
+        val categories = getCategories.execute(anyInt())
 
         // Assert
-        verify(repository, times(1)).getAvailableCategories()
+        verify(repository, times(1)).getAvailableCategories(0)
         Assertions.assertEquals(expected, categories)
     }
 

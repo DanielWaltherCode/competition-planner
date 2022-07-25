@@ -31,11 +31,14 @@ class TestGetRegistrationRankForSingles(
 
     override fun setupCompetitionCategory() {
         // Override this so we set up competition category as a singles
-        category = categoryRepository.getAvailableCategories().first { it.type == CategoryType.SINGLES.name }
+        category = categoryRepository.getAvailableCategories(0).first { it.type == CategoryType.SINGLES.name }
         competitionCategory = competitionCategoryRepository.store(
             competitionId = competition.id,
             spec = dataGenerator.newCompetitionCategorySpec(
-                category = dataGenerator.newCategorySpec(id = category.id, name = category.name, type = category.type)))
+                category = dataGenerator.newCategorySpec(
+                        id = category.id,
+                        name = category.name,
+                        type = CategoryType.valueOf(category.type))))
     }
 
     @Test

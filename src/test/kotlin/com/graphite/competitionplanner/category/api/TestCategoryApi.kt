@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.category.api
 
+import com.graphite.competitionplanner.category.domain.AddCustomCategory
 import com.graphite.competitionplanner.category.domain.GetCategories
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
@@ -11,7 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest
 class TestCategoryApi {
 
     private val mockedGetCategories = mock(GetCategories::class.java)
-    private val api = CategoryApi(mockedGetCategories)
+    private val mockedAddCustomCategory = mock(AddCustomCategory::class.java)
+    private val api = CategoryApi(mockedGetCategories, mockedAddCustomCategory)
     val dataGenerator = DataGenerator()
 
     @Test
@@ -19,13 +21,13 @@ class TestCategoryApi {
         // Setup
         val expectedCategories =
             listOf(dataGenerator.newCategoryDTO(name = "Class1"), dataGenerator.newCategoryDTO(name = "class2"))
-        `when`(mockedGetCategories.execute()).thenReturn(expectedCategories)
+        `when`(mockedGetCategories.execute(anyInt())).thenReturn(expectedCategories)
 
         // Act
-        val actual = api.getCategories()
+        val actual = api.getCategories(anyInt())
 
         // Assert
         Assertions.assertEquals(expectedCategories, actual)
-        verify(mockedGetCategories, times(1)).execute()
+        verify(mockedGetCategories, times(1)).execute(anyInt())
     }
 }

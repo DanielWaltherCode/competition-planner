@@ -22,7 +22,7 @@ class RegisterDoubleToCompetition(
         val playerTwo: PlayerWithClubDTO = findPlayer.byId(spec.playerTwoId)
 
         val competitionCategory: CompetitionCategoryDTO = findCompetitionCategory.byId(spec.competitionCategoryId)
-        if (competitionCategory.category.type != CategoryType.DOUBLES.name) {
+        if (competitionCategory.category.type != CategoryType.DOUBLES) {
             throw IllegalArgumentException("The given competition category id ${spec.competitionCategoryId} does not " +
                     "correspond to a category of type ${CategoryType.DOUBLES}. ${competitionCategory} ")
         }

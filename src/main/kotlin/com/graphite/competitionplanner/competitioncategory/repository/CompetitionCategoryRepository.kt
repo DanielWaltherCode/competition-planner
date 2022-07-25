@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.competitioncategory.repository
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
+import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.common.exception.IllegalActionException
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
@@ -263,7 +264,7 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
                 CategorySpec(
                     it.getValue(CATEGORY.ID),
                     it.getValue(CATEGORY.CATEGORY_NAME),
-                    it.getValue(CATEGORY.CATEGORY_TYPE)
+                    CategoryType.valueOf(it.getValue(CATEGORY.CATEGORY_TYPE))
                 ),
                 GeneralSettingsDTO(
                     it.getValue(COMPETITION_CATEGORY_METADATA.COST),

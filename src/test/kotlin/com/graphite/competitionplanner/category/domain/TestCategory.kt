@@ -12,14 +12,14 @@ class TestCategory {
     @Test
     fun shouldThrowIllegalArgumentExceptionIfCategoryNameIsEmpty() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            CategorySpec(0, "", CategoryType.SINGLES.name)
+            CategorySpec(0, "", CategoryType.SINGLES)
         }
     }
 
     @Test
     fun shouldThrowIllegalArgumentExceptionIfCategoryIsBlank() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
-            CategorySpec(0, "   ", CategoryType.SINGLES.name)
+            CategorySpec(0, "   ", CategoryType.SINGLES)
         }
     }
 }

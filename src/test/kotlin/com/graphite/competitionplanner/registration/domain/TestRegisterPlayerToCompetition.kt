@@ -31,7 +31,7 @@ class TestRegisterPlayerToCompetition {
         val spec = dataGenerator.newRegistrationSinglesSpec(playerId = 10)
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES)
             )
         )
 
@@ -49,7 +49,7 @@ class TestRegisterPlayerToCompetition {
         val spec = dataGenerator.newRegistrationSinglesSpec(competitionCategoryId = 333)
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES.name)
+                category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES)
             )
         )
 
@@ -65,7 +65,7 @@ class TestRegisterPlayerToCompetition {
         val spec = dataGenerator.newRegistrationSinglesSpec(competitionCategoryId = 333)
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES)
             )
         )
 
@@ -81,7 +81,7 @@ class TestRegisterPlayerToCompetition {
         val spec = dataGenerator.newRegistrationSinglesSpec(competitionCategoryId = 333)
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES)
             )
         )
 
@@ -127,7 +127,7 @@ class TestRegisterPlayerToCompetition {
         val spec = dataGenerator.newRegistrationSinglesSpec()
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES)
             )
         )
 
@@ -153,7 +153,7 @@ class TestRegisterPlayerToCompetition {
         `when`(repository.getAllSingleRegistrations(spec.competitionCategoryId)).thenReturn(listOf(existingRegistration))
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES)
             )
         )
 
@@ -181,7 +181,7 @@ class TestRegisterPlayerToCompetition {
         `when`(repository.getAllSingleRegistrations(spec.competitionCategoryId)).thenReturn(listOf(existingRegistration))
         `when`(findCompetitionCategory.byId(spec.competitionCategoryId)).thenReturn(
             dataGenerator.newCompetitionCategoryDTO(
-                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES.name)
+                category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES)
             )
         )
         val expectedRegistrationAfterUpdate = RegistrationSinglesDTO(
