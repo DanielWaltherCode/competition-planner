@@ -50,7 +50,7 @@ class BaseRepositoryTest(
                 category = dataGenerator.newCategorySpec(
                     id = category.id,
                     name = category.name,
-                    type = category.type
+                    type = CategoryType.valueOf(category.type)
                 )
             )
         )
@@ -64,7 +64,7 @@ class BaseRepositoryTest(
                 category = dataGenerator.newCategorySpec(
                     id = category.id,
                     name = category.name,
-                    type = category.type
+                    type = CategoryType.valueOf(category.type)
                 )
             )
         )

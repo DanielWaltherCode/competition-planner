@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.registration.repository
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
+import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
@@ -355,7 +356,7 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
     }
 
     private fun getRankField(category: CategorySpec): TableField<PlayerRankingRecord, Int>? {
-        return if (category.type == "DOUBLES") {
+        return if (category.type == CategoryType.DOUBLES) {
             PLAYER_RANKING.RANK_DOUBLE
         } else {
             PLAYER_RANKING.RANK_SINGLE

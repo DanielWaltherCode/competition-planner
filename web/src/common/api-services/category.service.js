@@ -1,8 +1,8 @@
 import Axios from "axios";
 
 const CategoryService = {
-    getCategories() {
-        return Axios.get("/category", {withCredentials: true})
+    getCategories(competitionId) {
+        return Axios.get(`/category/${competitionId}/`, {withCredentials: true})
     },
     addCompetitionCategory(competitionId, category) {
         return Axios.post(`competition/${competitionId}/category`, category, {withCredentials: true})
@@ -15,6 +15,9 @@ const CategoryService = {
     },
     deleteCompetitionCategory(competitionId, competitionCategoryId) {
         return Axios.delete(`/competition/${competitionId}/category/${competitionCategoryId}`, {withCredentials: true})
+    },
+    addCustomCategory(competitionId, category) {
+        return Axios.post(`category/${competitionId}`, category, {withCredentials: true})
     },
 
     // Category general settings

@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.util
 
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
+import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.domain.CreateClub
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
@@ -120,36 +121,36 @@ class SetupTestData(
     }
 
     fun categorySetup() {
-        categoryRepository.addCategory("Herrar 1", "SINGLES")
-        categoryRepository.addCategory("Herrar 2", "SINGLES")
-        categoryRepository.addCategory("Herrar 3", "SINGLES")
-        categoryRepository.addCategory("Herrar 4", "SINGLES")
-        categoryRepository.addCategory("Herrar 5", "SINGLES")
-        categoryRepository.addCategory("Herrar 6", "SINGLES")
-        categoryRepository.addCategory("Damer 1", "SINGLES")
-        categoryRepository.addCategory("Damer 2", "SINGLES")
-        categoryRepository.addCategory("Damer 3", "SINGLES")
-        categoryRepository.addCategory("Damer 4", "SINGLES")
-        categoryRepository.addCategory("Damjuniorer 17", "SINGLES")
-        categoryRepository.addCategory("Flickor 15", "SINGLES")
-        categoryRepository.addCategory("Flickor 14", "SINGLES")
-        categoryRepository.addCategory("Flickor 13", "SINGLES")
-        categoryRepository.addCategory("Flickor 12", "SINGLES")
-        categoryRepository.addCategory("Flickor 11", "SINGLES")
-        categoryRepository.addCategory("Flickor 10", "SINGLES")
-        categoryRepository.addCategory("Flickor 9", "SINGLES")
-        categoryRepository.addCategory("Flickor 8", "SINGLES")
-        categoryRepository.addCategory("Herrjuniorer 17", "SINGLES")
-        categoryRepository.addCategory("Pojkar 15", "SINGLES")
-        categoryRepository.addCategory("Pojkar 14", "SINGLES")
-        categoryRepository.addCategory("Pojkar 13", "SINGLES")
-        categoryRepository.addCategory("Pojkar 12", "SINGLES")
-        categoryRepository.addCategory("Pojkar 11", "SINGLES")
-        categoryRepository.addCategory("Pojkar 10", "SINGLES")
-        categoryRepository.addCategory("Pojkar 9", "SINGLES")
-        categoryRepository.addCategory("Pojkar 8", "SINGLES")
-        categoryRepository.addCategory("Herrdubbel", "DOUBLES")
-        categoryRepository.addCategory("Damdubbel", "DOUBLES")
+        categoryRepository.addCategory("Herrar 1", CategoryType.SINGLES)
+        categoryRepository.addCategory("Herrar 2", CategoryType.SINGLES)
+        categoryRepository.addCategory("Herrar 3", CategoryType.SINGLES)
+        categoryRepository.addCategory("Herrar 4", CategoryType.SINGLES)
+        categoryRepository.addCategory("Herrar 5", CategoryType.SINGLES)
+        categoryRepository.addCategory("Herrar 6", CategoryType.SINGLES)
+        categoryRepository.addCategory("Damer 1", CategoryType.SINGLES)
+        categoryRepository.addCategory("Damer 2", CategoryType.SINGLES)
+        categoryRepository.addCategory("Damer 3", CategoryType.SINGLES)
+        categoryRepository.addCategory("Damer 4", CategoryType.SINGLES)
+        categoryRepository.addCategory("Damjuniorer 17", CategoryType.SINGLES)
+        categoryRepository.addCategory("Flickor 15", CategoryType.SINGLES)
+        categoryRepository.addCategory("Flickor 14", CategoryType.SINGLES)
+        categoryRepository.addCategory("Flickor 13", CategoryType.SINGLES)
+        categoryRepository.addCategory("Flickor 12", CategoryType.SINGLES)
+        categoryRepository.addCategory("Flickor 11", CategoryType.SINGLES)
+        categoryRepository.addCategory("Flickor 10", CategoryType.SINGLES)
+        categoryRepository.addCategory("Flickor 9", CategoryType.SINGLES)
+        categoryRepository.addCategory("Flickor 8", CategoryType.SINGLES)
+        categoryRepository.addCategory("Herrjuniorer 17", CategoryType.SINGLES)
+        categoryRepository.addCategory("Pojkar 15", CategoryType.SINGLES)
+        categoryRepository.addCategory("Pojkar 14", CategoryType.SINGLES)
+        categoryRepository.addCategory("Pojkar 13", CategoryType.SINGLES)
+        categoryRepository.addCategory("Pojkar 12", CategoryType.SINGLES)
+        categoryRepository.addCategory("Pojkar 11", CategoryType.SINGLES)
+        categoryRepository.addCategory("Pojkar 10", CategoryType.SINGLES)
+        categoryRepository.addCategory("Pojkar 9", CategoryType.SINGLES)
+        categoryRepository.addCategory("Pojkar 8", CategoryType.SINGLES)
+        categoryRepository.addCategory("Herrdubbel", CategoryType.DOUBLES)
+        categoryRepository.addCategory("Damdubbel", CategoryType.DOUBLES)
     }
 
     fun setUpPlaceHolderRegistration() {
@@ -365,7 +366,7 @@ class SetupTestData(
         val allPlayers = playerRepository.getAll()
 
         for (player in allPlayers) {
-            playerRepository.addPlayerRanking(player.id, Random.nextInt(0, 100), "SINGLES")
+            playerRepository.addPlayerRanking(player.id, Random.nextInt(0, 100), CategoryType.SINGLES.name)
         }
     }
 
@@ -409,7 +410,7 @@ class SetupTestData(
         val lugiId = util.getClubIdOrDefault("Lugi")
         val lugiCompetitions = findCompetitions.thatBelongTo(lugiId)
         val lugiCompetitionId = lugiCompetitions[0].id
-        val categories = categoryRepository.getAvailableCategories()
+        val categories = categoryRepository.getAvailableCategories(lugiCompetitionId)
 
         addCompetitionCategory.execute(
             lugiCompetitionId,
@@ -466,7 +467,7 @@ class SetupTestData(
     }
 
     private fun CategoryDTO.toSpec(): CategorySpec {
-        return CategorySpec(this.id, this.name, this.type)
+        return CategorySpec(this.id, this.name, CategoryType.valueOf(this.type))
     }
 
     fun registerPlayersDoubles() {

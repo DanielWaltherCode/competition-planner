@@ -17,8 +17,8 @@ class AddCompetitionCategory(
 ) {
 
     fun execute(competitionId: Int, category: CategorySpec): CompetitionCategoryDTO {
-        val availableCategories: List<CategoryDTO> = categoryRepository.getAvailableCategories()
-        val categoryDto = CategoryDTO(category.id, category.name, category.type)
+        val availableCategories: List<CategoryDTO> = categoryRepository.getAvailableCategories(competitionId)
+        val categoryDto = CategoryDTO(category.id, category.name, category.type.name)
         if (availableCategories.none { it == categoryDto }) {
             throw IllegalArgumentException("Not a valid category: $category")
         }

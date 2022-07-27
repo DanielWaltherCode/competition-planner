@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.category.interfaces
 data class CategorySpec(
     val id: Int,
     val name: String,
-    val type: String
+    val type: CategoryType
 ) {
     init {
         require(name.isNotEmpty())
@@ -13,10 +13,10 @@ data class CategorySpec(
     constructor(dto: CategoryDTO) : this(
         dto.id,
         dto.name,
-        dto.type
+        CategoryType.valueOf(dto.type)
     )
 }
 
 enum class CategoryType {
-    SINGLES, DOUBLES, BYE
+    SINGLES, DOUBLES
 }

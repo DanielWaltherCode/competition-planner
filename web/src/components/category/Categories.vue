@@ -10,20 +10,46 @@
       <!-- Sidebar -->
       <div class="sidebar col-md-3">
         <div>
-          <h5> {{ $t("categories.createNew") }}</h5>
-          <select class="form-select w-75 my-3 mx-auto" v-model="newCategory">
-            <option :value="null" disabled hidden>{{ $t("categories.chooseClass")}}</option>
-            <option v-for="category in possibleCategories" :value="category" :key="category.id">
-              {{ category.name }}
-            </option>
-          </select>
-          <button class="btn btn-primary" @click="addCategory">{{ $t("categories.addClass") }}</button>
-
+          <div>
+            <h5> {{ $t("categories.createNew") }}</h5>
+            <select class="form-select w-75 my-3 mx-auto" v-model="newCategory">
+              <option :value="null" disabled hidden>{{ $t("categories.chooseClass") }}</option>
+              <option v-for="category in possibleCategories" :value="category" :key="category.id">
+                {{ category.name }}
+              </option>
+            </select>
+            <button class="btn btn-primary" type="button" @click="addCategory">{{ $t("categories.addClass") }}</button>
+            <hr class="border-2" />
+          </div>
+          <!-- Create custom class -->
+          <div class="mt-2 p-4">
+            <button class="btn btn-warning" type="button"
+                    @click="createCustomCategoryToggle = !createCustomCategoryToggle">
+              {{ $t("categories.customCategory.buttonText") }}
+            </button>
+            <div v-if="createCustomCategoryToggle" class="bg-grey p-3 my-2">
+              <p>
+                {{ $t("categories.customCategory.helper") }}
+              </p>
+              <input v-model="customCategory.name"
+                     type="text"
+                     class="form-control"
+                     :placeholder="$t('categories.customCategory.name')">
+              <label class="text-start" for="category-type-select">{{ $t('categories.customCategory.type') }}</label>
+              <select id="category-type-select" v-model="customCategory.type" class="form-select my-2">
+                <option value="SINGLES"> {{ $t("categories.SINGLES") }}</option>
+                <option value="DOUBLES"> {{ $t("categories.DOUBLES") }}</option>
+              </select>
+              <button class="btn btn-primary" type="button" @click="addCustomCategory">Lägg till</button>
+            </div>
+          </div>
+          <hr class="border-2 w-100" />
         </div>
         <div class="py-5">
           <h5> {{ $t("categories.alreadyAddedCategories") }}</h5>
           <ul class="list-group list-group-flush">
-            <li v-for="category in competitionCategories" :key="category.id" class="list-group-item" :class="activeCategory.id === category.id ? 'active' : 'none'"
+            <li v-for="category in competitionCategories" :key="category.id" class="list-group-item"
+                :class="activeCategory.id === category.id ? 'active' : 'none'"
                 @click="chooseCategory(category)">
               {{ category.category.name }}
             </li>
@@ -32,41 +58,45 @@
       </div>
 
       <!-- Main -->
-        <div v-if="activeCategory !== null" class="col-md-9 pt-5 px-md-4">
-          <h2> {{activeCategory.name}}</h2>
-          <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" :class="displayChoice === 'SETTINGS' ? 'active' : ''"
-                      @click="displayChoice = 'SETTINGS'">{{ $t("categories.overview") }}
-              </button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" :class="displayChoice === 'GAME_RULES' ? 'active' : ''"
-                      @click="displayChoice = 'GAME_RULES'">{{ $t("categories.gameRules") }}
-              </button>
-            </li>
-          </ul>
-          <div class="text-start row">
-            <div class="tab-content custom-card" id="myTabContent">
+      <div v-if="activeCategory !== null" class="col-md-9 pt-5 px-md-4">
+        <h2> {{ activeCategory.name }}</h2>
+        <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" :class="displayChoice === 'SETTINGS' ? 'active' : ''"
+                    @click="displayChoice = 'SETTINGS'">{{ $t("categories.overview") }}
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" :class="displayChoice === 'GAME_RULES' ? 'active' : ''"
+                    @click="displayChoice = 'GAME_RULES'">{{ $t("categories.gameRules") }}
+            </button>
+          </li>
+        </ul>
+        <div class="text-start row">
+          <div class="tab-content custom-card" id="myTabContent">
 
-              <h2 class="p-3">{{activeCategory.category.name}}</h2>
-              <div class="d-flex col-12 p-2 justify-content-end">
-                <div class="p-2 custom-card">
-                  <button class="btn btn-primary me-3" type="button" @click="save" :disabled="isDrawMade && displayChoice==='SETTINGS'">{{ $t("general.saveChanges") }}</button>
-                  <button class="btn btn-danger" type="button" @click="deleteCategory" :disabled="isDrawMade && displayChoice==='SETTINGS'">{{ $t("categories.delete") }}</button>
-                </div>
+            <h2 class="p-3">{{ activeCategory.category.name }}</h2>
+            <div class="d-flex col-12 p-2 justify-content-end">
+              <div class="p-2 custom-card">
+                <button class="btn btn-primary me-3" type="button" @click="save"
+                        :disabled="isDrawMade && displayChoice==='SETTINGS'">{{ $t("general.saveChanges") }}
+                </button>
+                <button class="btn btn-danger" type="button" @click="deleteCategory"
+                        :disabled="isDrawMade && displayChoice==='SETTINGS'">{{ $t("categories.delete") }}
+                </button>
               </div>
-              <CategoryGeneralSettings v-if="displayChoice === 'SETTINGS'" :is-draw-made="isDrawMade"
-                                       :category="activeCategory"></CategoryGeneralSettings>
-              <CategoryGameSettings v-if="displayChoice === 'GAME_RULES'"
-                                    :category="activeCategory"></CategoryGameSettings>
             </div>
+            <CategoryGeneralSettings v-if="displayChoice === 'SETTINGS'" :is-draw-made="isDrawMade"
+                                     :category="activeCategory"></CategoryGeneralSettings>
+            <CategoryGameSettings v-if="displayChoice === 'GAME_RULES'"
+                                  :category="activeCategory"></CategoryGameSettings>
           </div>
         </div>
-        <div v-else class="col justify-content-center">
-          <h3 class="text-dark p-4">{{ $t("categories.noCategories") }}</h3>
-        </div>
       </div>
+      <div v-else class="col justify-content-center">
+        <h3 class="text-dark p-4">{{ $t("categories.noCategories") }}</h3>
+      </div>
+    </div>
   </main>
 </template>
 
@@ -90,7 +120,9 @@ export default {
       possibleMetaDataValues: Object,
       allCompetitionCategories: [],
       newCategory: null,
-      isDrawMade: false
+      isDrawMade: false,
+      createCustomCategoryToggle: false,
+      customCategory: {}
     }
   },
   computed: {
@@ -112,7 +144,7 @@ export default {
     })
 
     // Fetch possible categories
-    CategoryService.getCategories().then(res => {
+    CategoryService.getCategories(this.competition.id).then(res => {
       this.allCompetitionCategories = res.data.filter(category => category.name !== "BYE")
     })
     CategoryService.getPossibleMetaDataValues(this.competition.id).then(res => {
@@ -125,18 +157,32 @@ export default {
       DrawService.isDrawMade(this.competition.id, category.id).then(res => {
         this.isDrawMade = res.data
       })
-      .catch(() => {
-        console.log("Couldn't determine if draw was already made")
-      })
+          .catch(() => {
+            console.log("Couldn't determine if draw was already made")
+          })
 
     },
     addCategory() {
       CategoryService.addCompetitionCategory(this.competition.id, this.newCategory).then(res => {
+        this.$toasted.success(this.$tc("toasts.categoryAdded"))
         const addedCategory = res.data
         this.competitionCategories.push(addedCategory)
         this.activeCategory = addedCategory
         this.isDrawMade = false
         this.newCategory = null
+      }).catch(() => {
+        this.$toasted.error(this.$tc("toasts.categoryNotAdded")).goAway(5000)
+      })
+    },
+    addCustomCategory() {
+      CategoryService.addCustomCategory(this.competition.id, this.customCategory).then(res => {
+        this.$toasted.success(this.$tc("toasts.categoryAdded")).goAway(3000)
+        const addedCategory = res.data
+        this.competitionCategories.push(addedCategory)
+        this.activeCategory = addedCategory
+        this.isDrawMade = false
+        this.customCategory = {}
+        this.createCustomCategoryToggle = false
       }).catch(() => {
         this.$toasted.error(this.$tc("toasts.categoryNotAdded")).goAway(5000)
       })
@@ -150,7 +196,7 @@ export default {
       })
     },
     deleteCategory() {
-      if(confirm(this.$tc("confirm.deleteCategory"))) {
+      if (confirm(this.$tc("confirm.deleteCategory"))) {
         CategoryService.deleteCompetitionCategory(this.competition.id, this.activeCategory.id).then(() => {
           this.$toasted.success(this.$tc("toasts.categoryDeleted")).goAway(3000)
           CategoryService.getCompetitionCategories(this.competition.id).then(res => {

@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.util
 
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
+import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.competition.interfaces.*
@@ -350,7 +351,7 @@ class DataGenerator {
     fun newCategorySpec(
         id: Int = 1,
         name: String = "Herrar 1",
-        type: String = "SINGLES"
+        type: CategoryType = CategoryType.SINGLES
     ) = CategorySpec(
         id,
         name,

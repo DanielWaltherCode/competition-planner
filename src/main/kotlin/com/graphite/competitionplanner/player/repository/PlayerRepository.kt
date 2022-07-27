@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.player.repository
 
 import com.graphite.competitionplanner.Tables.*
+import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
@@ -23,25 +24,24 @@ class PlayerRepository(val dslContext: DSLContext) : IPlayerRepository {
             .fetchOneInto(PLAYER_RANKING)
     }
 
-    //TODO: Take CategoryType instead of string
     override fun addPlayerRanking(playerId: Int, rankToAdd: Int, categoryType: String) {
         val currentRecord = getPlayerRanking(playerId)
 
         if (currentRecord != null) {
-            if (categoryType.uppercase() == "SINGLES") {
+            if (categoryType.uppercase() == CategoryType.SINGLES.name) {
                 currentRecord.rankSingle += rankToAdd
                 currentRecord.update()
-            } else if (categoryType.uppercase() == "DOUBLES") {
+            } else if (categoryType.uppercase() == CategoryType.DOUBLES.name) {
                 currentRecord.rankDouble += rankToAdd
                 currentRecord.update()
             }
         } else {
             val record = dslContext.newRecord(PLAYER_RANKING)
             record.playerId = playerId
-            if (categoryType.uppercase() == "SINGLES") {
+            if (categoryType.uppercase() == CategoryType.SINGLES.name) {
                 record.rankSingle = rankToAdd
                 record.store()
-            } else if (categoryType.uppercase() == "DOUBLES") {
+            } else if (categoryType.uppercase() == CategoryType.DOUBLES.name) {
                 record.rankDouble = rankToAdd
                 record.store()
             }

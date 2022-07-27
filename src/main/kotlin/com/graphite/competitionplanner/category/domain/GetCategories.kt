@@ -12,7 +12,7 @@ class GetCategories(
     /**
      * Return a list of available categories
      */
-    fun execute(): List<CategoryDTO> {
-        return repository.getAvailableCategories()
+    fun execute(competitionId: Int): List<CategoryDTO> {
+        return repository.getAvailableCategories(competitionId)
     }
 }

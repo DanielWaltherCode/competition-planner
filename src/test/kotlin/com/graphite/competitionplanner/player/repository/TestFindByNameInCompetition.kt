@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.player.repository
 
+import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
@@ -96,7 +97,7 @@ class TestFindByNameInCompetition(
                 category = dataGenerator.newCategorySpec(
                     id = category.id,
                     name = category.name,
-                    type = category.type
+                    type = CategoryType.valueOf(category.type)
                 )
             )
         )

@@ -3,6 +3,8 @@ package com.graphite.competitionplanner.category.repository
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.mockito.ArgumentMatchers.anyInt
+import org.mockito.kotlin.any
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 

@@ -21,7 +21,7 @@ class RegisterPlayerToCompetition(
         val player: PlayerWithClubDTO = findPlayer.byId(spec.playerId)
 
         val competitionCategory: CompetitionCategoryDTO = findCompetitionCategory.byId(spec.competitionCategoryId)
-        if (competitionCategory.category.type != CategoryType.SINGLES.name) {
+        if (competitionCategory.category.type != CategoryType.SINGLES) {
             throw IllegalArgumentException("The given competition category id ${spec.competitionCategoryId} does not " +
                     "correspond to a category of type ${CategoryType.SINGLES} ")
         }

@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.competitioncategory.domain
 
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
+import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategorySpec
@@ -35,9 +36,9 @@ class TestAddCompetitionCategory {
     @Test
     fun shouldThrowExceptionIfCategoryDoesNotExist() {
         // Setup
-        val spec = dataGenerator.newCategorySpec(1, "HERRAR-13", "SINGLES") // Does not exist
+        val spec = dataGenerator.newCategorySpec(1, "HERRAR-13", CategoryType.SINGLES) // Does not exist
         val competitionId = 0
-        `when`(mockedCategoryRepository.getAvailableCategories())
+        `when`(mockedCategoryRepository.getAvailableCategories(anyInt()))
             .thenReturn(
                 listOf(
                     dataGenerator.newCategoryDTO(id = 0, name = "DAMER 1"),
@@ -60,12 +61,12 @@ class TestAddCompetitionCategory {
         // Setup
         val spec = dataGenerator.newCategorySpec(id = 0, name = "HERRDUBBEL")
         val competitionId = 1
-        `when`(mockedCategoryRepository.getAvailableCategories()).thenReturn(
+        `when`(mockedCategoryRepository.getAvailableCategories(anyInt())).thenReturn(
             listOf(
                 CategoryDTO(
                     spec.id,
                     spec.name,
-                    spec.type
+                    spec.type.name
                 )
             )
         )
@@ -106,12 +107,12 @@ class TestAddCompetitionCategory {
         )
 
         val competitionId = 1
-        `when`(mockedCategoryRepository.getAvailableCategories()).thenReturn(
+        `when`(mockedCategoryRepository.getAvailableCategories(anyInt())).thenReturn(
             listOf(
                 CategoryDTO(
                     spec.id,
                     spec.name,
-                    spec.type
+                    spec.type.name
                 )
             )
         )
@@ -145,12 +146,12 @@ class TestAddCompetitionCategory {
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO()
 
         val competitionId = 1
-        `when`(mockedCategoryRepository.getAvailableCategories()).thenReturn(
+        `when`(mockedCategoryRepository.getAvailableCategories(anyInt())).thenReturn(
             listOf(
                 CategoryDTO(
                     spec.id,
                     spec.name,
-                    spec.type
+                    spec.type.name
                 )
             )
         )

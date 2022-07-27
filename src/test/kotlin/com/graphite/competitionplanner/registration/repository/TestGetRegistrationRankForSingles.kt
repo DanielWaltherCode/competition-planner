@@ -35,7 +35,10 @@ class TestGetRegistrationRankForSingles(
         competitionCategory = competitionCategoryRepository.store(
             competitionId = competition.id,
             spec = dataGenerator.newCompetitionCategorySpec(
-                category = dataGenerator.newCategorySpec(id = category.id, name = category.name, type = category.type)))
+                category = dataGenerator.newCategorySpec(
+                        id = category.id,
+                        name = category.name,
+                        type = CategoryType.valueOf(category.type))))
     }
 
     @Test

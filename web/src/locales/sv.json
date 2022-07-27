@@ -73,7 +73,15 @@
     "delete": "Ta bort klassen",
     "alreadyAddedCategories": "Tillagda klasser",
     "chooseClass": "Välj klass",
-    "cannotUpdate": "Dessa inställningar kan inte ändras efter att en lottning har gjorts"
+    "cannotUpdate": "Dessa inställningar kan inte ändras efter att en lottning har gjorts",
+    "customCategory": {
+      "buttonText": "Skapa egen klass",
+      "helper": "Lägg till en egenskapad klass",
+      "name": "Namn",
+      "type": "Typ"
+    },
+    "SINGLES": "Singel",
+    "DOUBLES": "Dubbel"
   },
   "categoryGameRules": {
     "nrSets": "Antal set",
@@ -391,6 +399,7 @@
     "categoryUpdated": "Klassen är uppdaterad",
     "categoryDrawn": "Klassen är nu lottad",
     "categoryDeleted": "Klassen är borttagen",
+    "categoryAdded": "Klassen är tillagd",
     "categoryNotAdded": "Kunde inte lägga till klassen",
     "categoryDrawDeleted": "Lottningen är borttagen",
     "startTimesSet": "Starttider satta",
