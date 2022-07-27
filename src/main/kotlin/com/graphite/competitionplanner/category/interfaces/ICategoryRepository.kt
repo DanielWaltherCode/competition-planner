@@ -4,11 +4,13 @@ import com.graphite.competitionplanner.category.api.CustomCategorySpec
 
 interface ICategoryRepository {
     /**
-     * Return a list of available categories
+     * Return a list of available categories for the given competition.
+     *
+     * If ID equals 0, the default value, the default classes (no custom classes) are returned.
      *
      * @return A list of categories that can be added to a competition
      */
-    fun getAvailableCategories(competitionId: Int): List<CategoryDTO>
+    fun getAvailableCategories(competitionId: Int = 0): List<CategoryDTO>
     fun addCategory(category: String, type: CategoryType)
     fun addCustomCategory(competitionId: Int, customCategorySpec: CustomCategorySpec): CategoryDTO
     fun deleteCategory(categoryId: Int)

@@ -15,7 +15,7 @@ class TestCategoryRepository(
 
     @Test
     fun shouldGetAllAvailableCategories() {
-        val availableCategories = repository.getAvailableCategories(0)
+        val availableCategories = repository.getAvailableCategories()
 
         Assertions.assertNotNull(availableCategories.find { it.name == "Herrar 1" })
         Assertions.assertNotNull(availableCategories.find { it.name == "Herrar 2" })

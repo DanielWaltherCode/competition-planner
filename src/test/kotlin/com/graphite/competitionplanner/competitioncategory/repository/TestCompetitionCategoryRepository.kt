@@ -49,7 +49,7 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldBeAbleToStoreCompetitionCategory() {
         // Setup
-        val category = categoryRepository.getAvailableCategories(0).find { it.name == "Herrar 1" }!!
+        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
         val dto =
             dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, CategoryType.valueOf(category.type)))
         val addedCompetitionCategory = repository.store(competition.id, dto)
@@ -65,7 +65,7 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldReturnNewlyStoredCompetitionCategory() {
         // Setup
-        val category = categoryRepository.getAvailableCategories(0).find { it.name == "Herrar 1" }!!
+        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
         val spec =
             dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, CategoryType.valueOf(category.type)))
 
@@ -82,7 +82,7 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldNotBeAbleToFindDeletedCompetitionCategory() {
         // Setup
-        val category = categoryRepository.getAvailableCategories(0).find { it.name == "Herrar 1" }!!
+        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
         val spec =
             dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, CategoryType.valueOf(category.type)))
         val competitionCategory = repository.store(competition.id, spec)
@@ -106,7 +106,7 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldBeAbleToUpdateCompetitionCategory() {
         // Setup
-        val category = categoryRepository.getAvailableCategories(0).find { it.name == "Herrar 1" }!!
+        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
         val spec =
             dataGenerator.newCompetitionCategorySpec(
                 category = CategorySpec(category.id, category.name, CategoryType.valueOf(category.type)),

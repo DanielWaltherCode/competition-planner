@@ -31,7 +31,7 @@ class TestGetRegistrationRankForDoubles(
 
     override fun setupCompetitionCategory() {
         // Override this so we set up competition category as a doubles
-        category = categoryRepository.getAvailableCategories(0).first { it.type == CategoryType.DOUBLES.name }
+        category = categoryRepository.getAvailableCategories().first { it.type == CategoryType.DOUBLES.name }
         competitionCategory = competitionCategoryRepository.store(
             competitionId = competition.id,
             spec = dataGenerator.newCompetitionCategorySpec(

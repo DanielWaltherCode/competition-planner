@@ -90,7 +90,7 @@ class TestFindByNameInCompetition(
     }
 
     private fun CompetitionDTO.addCategory(name: String): CompetitionCategoryDTO {
-        val category = categoryRepository.getAvailableCategories(0).find { it.name == name }!!
+        val category = categoryRepository.getAvailableCategories().find { it.name == name }!!
         return competitionCategoryRepository.store(
             this.id,
             dataGenerator.newCompetitionCategorySpec(
@@ -114,7 +114,7 @@ class TestFindByNameInCompetition(
 
     private fun ClubDTO.createCompetitionAndRegister(players: List<PlayerDTO>): CompetitionDTO {
         val competition = this.addCompetition()
-        val competitionCategory = competition.addCategory(categoryRepository.getAvailableCategories(0).first().name)
+        val competitionCategory = competition.addCategory(categoryRepository.getAvailableCategories().first().name)
         for (p in players) {
             competitionCategory.register(p)
         }

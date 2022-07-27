@@ -43,7 +43,7 @@ class BaseRepositoryTest(
     }
 
     fun CompetitionDTO.addCompetitionCategory(): CompetitionCategoryDTO {
-        val category = categoryRepository.getAvailableCategories(0).first()
+        val category = categoryRepository.getAvailableCategories().first()
         return competitionCategoryRepository.store(
             this.id,
             dataGenerator.newCompetitionCategorySpec(
@@ -57,7 +57,7 @@ class BaseRepositoryTest(
     }
 
     fun CompetitionDTO.addCompetitionCategory(categoryName: String): CompetitionCategoryDTO {
-        val category = categoryRepository.getAvailableCategories(0).first { c -> c.name == categoryName }
+        val category = categoryRepository.getAvailableCategories().first { c -> c.name == categoryName }
         return competitionCategoryRepository.store(
             this.id,
             dataGenerator.newCompetitionCategorySpec(

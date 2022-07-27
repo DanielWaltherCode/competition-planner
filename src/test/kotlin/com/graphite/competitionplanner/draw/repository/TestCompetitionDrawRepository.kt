@@ -52,7 +52,7 @@ class TestCompetitionDrawRepository(
     }
 
     fun CompetitionDTO.createCategory(): CompetitionCategoryDTO {
-        val category = categoryRepository.getAvailableCategories(0).first()
+        val category = categoryRepository.getAvailableCategories().first()
         return competitionCategoryRepository.store(
             this.id, dataGenerator.newCompetitionCategorySpec(
                 category = dataGenerator.newCategorySpec(category.id, category.name, CategoryType.valueOf(category.type)),

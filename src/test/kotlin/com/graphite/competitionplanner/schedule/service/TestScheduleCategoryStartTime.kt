@@ -53,7 +53,7 @@ class TestScheduleCategoryStartTime(
             )
         ).id
 
-        val categories = categoryRepository.getAvailableCategories(0)
+        val categories = categoryRepository.getAvailableCategories()
         val herrar1 = categories.find { it.name == "Herrar 1" }!!
         val herrar2 = categories.find { it.name == "Herrar 2" }!!
 

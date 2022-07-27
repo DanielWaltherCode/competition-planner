@@ -21,7 +21,7 @@ class TestUtil(
         val umeaId = getClubIdOrDefault("Umeå IK")
         val umeaCompetitions = findCompetitions.thatBelongTo(umeaId)
         val umeaCompetitionId = umeaCompetitions[0].id
-        val category = categoryRepository.getAvailableCategories(0).first { it.name == name }
+        val category = categoryRepository.getAvailableCategories().first { it.name == name }
         return addCompetitionCategory.execute(
             umeaCompetitionId,
             CategorySpec(category.id, category.name, CategoryType.valueOf(category.type))
