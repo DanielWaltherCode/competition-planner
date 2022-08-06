@@ -235,12 +235,33 @@ class CupDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(co
         } else {
             val best: List<Registration> = registrations.take(2)
             val remaining: List<Registration> = registrations.drop(2)
-            val first: List<PlayOffMatch> = generatePlayOffMatchesForFirstRound(listOf(best.first()) +
-                    remaining.filterIndexed { index, _ -> index % 2 == 1 }, swapPlayerOrder
-            )
-            val second: List<PlayOffMatch> = generatePlayOffMatchesForFirstRound(listOf(best.last()) +
-                    remaining.filterIndexed { index, _ -> index % 2 == 0 }, !swapPlayerOrder
-            )
+            val (byes, rest) = remaining.partition { it is Registration.Bye }
+            val first: List<PlayOffMatch>
+            val second: List<PlayOffMatch>
+
+            if (byes.size == 3 &&
+                registrations.size == 8 &&
+                registrations.count { it.toString().last() == '1' && it is Registration.Placeholder} == byes.size)
+            {
+                // There seems to be a special case when we have 8 registrations and out of those are:
+                // 3 pool winners, 3 Byes, and 2 pool second placers. The general algorithm (see else-case below)
+                // does not seem to distribute BYEs good enough. I mean, the half that gets two winners should
+                // also get two BYEs because winners should be matched against BYEs before any second place winner.
+
+                // Partition the rest in pool winners and pool seconds
+                val (p1, p2) = rest.partition { it.toString().last() == '1' }
+
+                first = generatePlayOffMatchesForFirstRound(listOf(best.first()) + p1 + byes.take(2), swapPlayerOrder)
+                second = generatePlayOffMatchesForFirstRound(listOf(best.last()) + p2 + byes.takeLast(1), !swapPlayerOrder)
+
+            } else {
+                first = generatePlayOffMatchesForFirstRound(listOf(best.first()) +
+                        remaining.filterIndexed { index, _ -> index % 2 == 1 }, swapPlayerOrder
+                )
+                second = generatePlayOffMatchesForFirstRound(listOf(best.last()) +
+                        remaining.filterIndexed { index, _ -> index % 2 == 0 }, !swapPlayerOrder
+                )
+            }
             (first + second.shiftOrderBy(first.size).reverseOrder()).sortedBy { it.order }
         }
     }

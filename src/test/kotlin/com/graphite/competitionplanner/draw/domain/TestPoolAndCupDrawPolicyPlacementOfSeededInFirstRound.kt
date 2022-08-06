@@ -155,20 +155,36 @@ class TestPoolAndCupDrawPolicyPlacementOfSeededInFirstRound {
 
                 assertWinnersFromSamePoolAreNotOnSameHalves(matchesInFirstRound.take(matchesInFirstRound.size / 2))
                 assertWinnersFromSamePoolAreNotOnSameHalves(matchesInFirstRound.takeLast(matchesInFirstRound.size / 2))
-//                assertThatSecondPlaceWinnersAreNotMatchedAgainstByes(matchesInFirstRound)
+                assertThatPoolWinnersAreMatchedAgainstByesInFirstHand(matchesInFirstRound)
             }
         }
 
-    private fun assertThatSecondPlaceWinnersAreNotMatchedAgainstByes(playOffMatches: List<PlayOffMatch>) {
+    /**
+     * There are two scenarios:
+     * 1. All winners are matched against BYEs then some second placers might be matched against BYEs as well
+     * 2. Not all winners are matched against BYEs, then no second placers should be matched against BYEs
+     */
+    private fun assertThatPoolWinnersAreMatchedAgainstByesInFirstHand(playOffMatches: List<PlayOffMatch>) {
         val matchesWithSecondPlaceWinners = playOffMatches.filter {
             it.registrationOneId.toString().endsWith("2") || it.registrationTwoId.toString().endsWith("2")
         }
 
-        Assertions.assertTrue(
-            matchesWithSecondPlaceWinners.none { it.registrationOneId.toString() == "BYE" || it.registrationTwoId.toString() == "BYE" },
-            "There seems to be a second place winner that was matched against a BYE in first round. " +
-                    "BYEs should be matched against pool winners in first round. Matches: $matchesWithSecondPlaceWinners"
-        )
+        val matchesWithFirstPlaceWinners = playOffMatches.filter {
+            it.registrationOneId.toString().endsWith("1") || it.registrationTwoId.toString().endsWith("1")
+        }
+
+        val allPoolWinnersMatchedAgainstByes = matchesWithFirstPlaceWinners.all {
+            it.registrationOneId.toString() == "BYE" || it.registrationTwoId.toString() == "BYE" }
+
+        if (allPoolWinnersMatchedAgainstByes) {
+            // No assertions needed. All winners where matched against BYEs
+        } else {
+            Assertions.assertTrue(
+                matchesWithSecondPlaceWinners.none { it.registrationOneId.toString() == "BYE" || it.registrationTwoId.toString() == "BYE" },
+                "There seems to be a second place winner that was matched against a BYE in first round. " +
+                        "BYEs should be matched against pool winners in first round. Matches: $matchesWithSecondPlaceWinners"
+            )
+        }
     }
 
     private fun assertWinnersFromSamePoolAreNotOnSameHalves(playOffMatches: List<PlayOffMatch>) {
