@@ -116,7 +116,7 @@ class TestCompetitionCategoryRepository(
         val updateSpec = dataGenerator.newCompetitionCategoryUpdateSpec(
             settings = dataGenerator.newGeneralSettingsDTO(cost = 110f, playersToPlayOff = 1),
             gameSettings = dataGenerator.newGameSettingsDTO(
-                numberOfSets = 4, winScore = 8, numberOfSetsFinal = 11, useDifferentRulesInEndGame = true
+                numberOfSets = 7, winScore = 8, numberOfSetsFinal = 11, useDifferentRulesInEndGame = true
             )
         )
 
