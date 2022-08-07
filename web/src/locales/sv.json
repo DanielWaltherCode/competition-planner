@@ -93,7 +93,10 @@
     "nrSetsEndgame": "Antal set i slutspel",
     "useTiebreak": "Tiebreak används i sista set",
     "winScoreTiebreak": "I tiebreak spelar man till",
-    "winMarginTiebreak": "Vinstmarginal i tiebreak"
+    "winMarginTiebreak": "Vinstmarginal i tiebreak",
+    "errors": {
+      "numberOfSetsHasToBeAnOddNumber": "Antalet set måste vara udda."
+    }
   },
   "categorySettings": {
     "cost": "Avgift för klassen",

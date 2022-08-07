@@ -5,7 +5,9 @@
         <label class="h5 form-label" for="inputNumberOfSets">{{ $t("categoryGameRules.nrSets") }}</label>
         <input id="inputNumberOfSets" v-model.number="category.gameSettings.numberOfSets" required
                class="form-control" type="number" min="1" step="2">
-        <small v-if="isNumberOfSetsValid" id="numberOfSetsHelp" class="form-text text-muted">Number of sets has to be odd.</small>
+        <small v-if="isNumberOfSetsValid" id="numberOfSetsHelp" class="form-text text-muted">
+          {{ $t("categoryGameRules.errors.numberOfSetsHasToBeAnOddNumber") }}
+        </small>
       </div>
       <div class="col-md-6 mb-3">
         <label class="h5 form-label" for="inputPlayingUntil">{{ $t("categoryGameRules.winScore") }}</label>
@@ -40,7 +42,9 @@
         <label class="h5 form-label" for="inputEndGameNumberOfSets">{{ $t("categoryGameRules.nrSetsEndgame") }}</label>
         <input id="inputEndGameNumberOfSets" v-model.number="category.gameSettings.numberOfSetsFinal"
                class="form-control" type="number" min="1" step="2">
-        <small v-if="isNumberOfSetsInFinalValid" id="numberOfSetsInFinalHelp" class="form-text text-muted">Number of sets has to be odd.</small>
+        <small v-if="isNumberOfSetsInFinalValid" id="numberOfSetsInFinalHelp" class="form-text text-muted">
+          {{ $t("categoryGameRules.errors.numberOfSetsHasToBeAnOddNumber") }}
+        </small>
       </div>
       <div class="col-sm-12 mb-5">
         <label class="h5 form-label" for="inputEndGameWinMargin">{{ $t("categoryGameRules.winMarginFinals") }}</label>
