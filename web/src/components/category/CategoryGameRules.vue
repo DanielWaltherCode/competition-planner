@@ -3,7 +3,8 @@
     <div class="row">
       <div class="col-md-6 mb-3">
         <label class="h5 form-label" for="inputNumberOfSets">{{ $t("categoryGameRules.nrSets") }}</label>
-        <input v-model="category.gameSettings.numberOfSets" type="text" class="form-control" id="inputNumberOfSets">
+        <input id="inputNumberOfSets" v-model.number="category.gameSettings.numberOfSets" required
+               class="form-control" type="number" min="1" step="2">
       </div>
       <div class="col-md-6 mb-3">
         <label class="h5 form-label" for="inputPlayingUntil">{{ $t("categoryGameRules.winScore") }}</label>
@@ -36,8 +37,8 @@
       </div>
       <div class="col-sm-12 col-md-6 mb-3 d-flex flex-column justify-content-end">
         <label class="h5 form-label" for="inputEndGameNumberOfSets">{{ $t("categoryGameRules.nrSetsEndgame") }}</label>
-        <input v-model="category.gameSettings.numberOfSetsFinal" type="text" class="form-control"
-               id="inputEndGameNumberOfSets">
+        <input id="inputEndGameNumberOfSets" v-model.number="category.gameSettings.numberOfSetsFinal" required
+               class="form-control" type="number" min="1" step="2">
       </div>
       <div class="col-sm-12 mb-5">
         <label class="h5 form-label" for="inputEndGameWinMargin">{{ $t("categoryGameRules.winMarginFinals") }}</label>
