@@ -323,7 +323,7 @@ class DataGenerator {
     )
 
     fun newGameSettingsDTO(
-        numberOfSets: Int = 2,
+        numberOfSets: Int = 5,
         winScore: Int = 11,
         winMargin: Int = 2,
         differentNumberOfGamesFromRound: Round = Round.UNKNOWN,
