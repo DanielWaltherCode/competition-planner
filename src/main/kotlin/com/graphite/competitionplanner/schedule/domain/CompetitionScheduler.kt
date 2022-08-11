@@ -301,9 +301,9 @@ class CompetitionScheduler(
             startTime: LocalDateTime,
             location: String
     ) {
+        // Clear any prior schedule of this competition category and match type. Preventing category being scheduled twice
         removeTimeSlotCategory(competitionCategoryId, matchType)
-        scheduleRepository.removeCategoryAndMatchTypeFromTimeslots(competitionCategoryId,
-                matchType) // Current category should no longer occupy table
+
         // If no tables have been added, simply remove category and return here
         if (tables.isEmpty()) {
             return
