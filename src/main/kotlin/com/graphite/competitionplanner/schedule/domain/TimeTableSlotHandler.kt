@@ -60,6 +60,8 @@ class TimeTableSlotHandler(
 
             })
         }
+
+        // TODO: This has to be a transaction
         // If successful to this point, delete any previously stored time slots and reset
         scheduleRepository.clearSchedule(competitionId)
         scheduleRepository.deleteTimeTable(competitionId)
