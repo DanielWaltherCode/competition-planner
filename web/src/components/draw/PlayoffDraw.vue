@@ -13,7 +13,7 @@
                   <tr>
                     <td>
                       <div v-if="match.firstPlayer[0].firstName === 'BYE'">
-                        <p class="mb-0 text-black-50 fs-3 text-uppercase">
+                        <p class="mb-0 text-black-50 fs-6 text-uppercase">
                           BYE
                         </p>
                       </div>
