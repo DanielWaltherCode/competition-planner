@@ -238,7 +238,8 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
                 MATCH.ID,
                 MATCH.COMPETITION_CATEGORY_ID,
                 MATCH.FIRST_REGISTRATION_ID,
-                MATCH.SECOND_REGISTRATION_ID
+                MATCH.SECOND_REGISTRATION_ID,
+                MATCH.GROUP_OR_ROUND
         )
                 .from(MATCH)
                 .join(PRE_SCHEDULE).on(MATCH.COMPETITION_CATEGORY_ID.eq(PRE_SCHEDULE.COMPETITION_CATEGORY_ID))
@@ -253,7 +254,8 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
                     it.get(MATCH.ID),
                     it.get(MATCH.COMPETITION_CATEGORY_ID),
                     getPlayerIdsForRegistrationId(it.get(MATCH.FIRST_REGISTRATION_ID)),
-                    getPlayerIdsForRegistrationId(it.get(MATCH.SECOND_REGISTRATION_ID))
+                    getPlayerIdsForRegistrationId(it.get(MATCH.SECOND_REGISTRATION_ID)),
+                    it.get(MATCH.GROUP_OR_ROUND)
             )
         }
 
@@ -438,7 +440,8 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
                 MATCH.ID,
                 MATCH.COMPETITION_CATEGORY_ID,
                 MATCH.FIRST_REGISTRATION_ID,
-                MATCH.SECOND_REGISTRATION_ID
+                MATCH.SECOND_REGISTRATION_ID,
+                MATCH.GROUP_OR_ROUND
         )
                 .from(MATCH)
                 .where(
@@ -451,7 +454,8 @@ class ScheduleRepository(private val dslContext: DSLContext) : IScheduleReposito
                     it.get(MATCH.ID),
                     it.get(MATCH.COMPETITION_CATEGORY_ID),
                     getPlayerIdsForRegistrationId(it.get(MATCH.FIRST_REGISTRATION_ID)),
-                    getPlayerIdsForRegistrationId(it.get(MATCH.SECOND_REGISTRATION_ID))
+                    getPlayerIdsForRegistrationId(it.get(MATCH.SECOND_REGISTRATION_ID)),
+                    it.get(MATCH.GROUP_OR_ROUND)
             )
         }
     }

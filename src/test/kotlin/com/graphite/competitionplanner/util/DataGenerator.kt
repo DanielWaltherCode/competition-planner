@@ -493,12 +493,14 @@ class DataGenerator {
         id: Int = this.matchId++,
         competitionCategoryId: Int = this.competitionCategoryId++,
         firstPlayer: List<Int> = listOf(1),
-        secondPlayer: List<Int> = listOf(2)
+        secondPlayer: List<Int> = listOf(2),
+        groupOrRound: String = "A"
     ) = ScheduleMatchDto(
         id,
         competitionCategoryId,
         firstPlayer,
-        secondPlayer
+        secondPlayer,
+        groupOrRound
     )
 
     fun newPreScheduleSpec(
@@ -579,6 +581,7 @@ class DataGenerator {
                         categoryId,
                         listOf(players[i].id),
                         listOf(players[j].id),
+                        "A"
                     )
                 )
             }
@@ -597,6 +600,7 @@ class DataGenerator {
                 categoryId,
                 it.firstTeamPlayerIds,
                 it.secondTeamPlayerIds,
+                "A"
             )
         }
     }
@@ -611,6 +615,7 @@ class DataGenerator {
                 categoryId,
                 it.firstTeamPlayerIds,
                 it.secondTeamPlayerIds,
+                "B"
             )
         }
     }
@@ -625,6 +630,7 @@ class DataGenerator {
                 categoryId,
                 it.firstTeamPlayerIds,
                 it.secondTeamPlayerIds,
+                "C"
             )
         }
     }
@@ -638,12 +644,12 @@ class DataGenerator {
     private val p4 = PlayerDTO(4, "Sture", "Sundberg", club.id, birthDate)
 
     private val pool1 = listOf(
-        ScheduleMatchDto(1, 0, listOf(p1.id), listOf(p2.id)),
-        ScheduleMatchDto(2, 0, listOf(p1.id), listOf(p3.id)),
-        ScheduleMatchDto(3, 0, listOf(p1.id), listOf(p4.id)),
-        ScheduleMatchDto(4, 0, listOf(p2.id), listOf(p3.id)),
-        ScheduleMatchDto(5, 0, listOf(p2.id), listOf(p4.id)),
-        ScheduleMatchDto(6, 0, listOf(p3.id), listOf(p4.id))
+        ScheduleMatchDto(1, 0, listOf(p1.id), listOf(p2.id), "A"),
+        ScheduleMatchDto(2, 0, listOf(p1.id), listOf(p3.id), "A"),
+        ScheduleMatchDto(3, 0, listOf(p1.id), listOf(p4.id), "A"),
+        ScheduleMatchDto(4, 0, listOf(p2.id), listOf(p3.id), "A"),
+        ScheduleMatchDto(5, 0, listOf(p2.id), listOf(p4.id), "A"),
+        ScheduleMatchDto(6, 0, listOf(p3.id), listOf(p4.id), "A")
     )
 
     private val p5 = PlayerDTO(5, "Elin", "Malsson", club.id, birthDate)
@@ -652,12 +658,12 @@ class DataGenerator {
     private val p8 = PlayerDTO(8, "Lena", "Sinè", club.id, birthDate)
 
     private val pool2 = listOf(
-        ScheduleMatchDto(7, 0, listOf(p5.id), listOf(p6.id)),
-        ScheduleMatchDto(8, 0, listOf(p5.id), listOf(p7.id)),
-        ScheduleMatchDto(9, 0, listOf(p5.id), listOf(p8.id)),
-        ScheduleMatchDto(10, 0, listOf(p6.id), listOf(p7.id)),
-        ScheduleMatchDto(11, 0, listOf(p6.id), listOf(p8.id)),
-        ScheduleMatchDto(12, 0, listOf(p7.id), listOf(p8.id))
+        ScheduleMatchDto(7, 0, listOf(p5.id), listOf(p6.id), "B"),
+        ScheduleMatchDto(8, 0, listOf(p5.id), listOf(p7.id), "B"),
+        ScheduleMatchDto(9, 0, listOf(p5.id), listOf(p8.id), "B"),
+        ScheduleMatchDto(10, 0, listOf(p6.id), listOf(p7.id), "B"),
+        ScheduleMatchDto(11, 0, listOf(p6.id), listOf(p8.id), "B"),
+        ScheduleMatchDto(12, 0, listOf(p7.id), listOf(p8.id), "B")
     )
 
     private val p9 = PlayerDTO(9, "Patrik", "Larsson", club.id, birthDate)
@@ -665,9 +671,9 @@ class DataGenerator {
     private val p11 = PlayerDTO(11, "Tintin", "Snäll", club.id, birthDate)
 
     private val pool3 = listOf(
-        ScheduleMatchDto(13, 0, listOf(p9.id), listOf(p10.id)),
-        ScheduleMatchDto(14, 0, listOf(p9.id), listOf(p11.id)),
-        ScheduleMatchDto(15, 0, listOf(p10.id), listOf(p11.id))
+        ScheduleMatchDto(13, 0, listOf(p9.id), listOf(p10.id), "C"),
+        ScheduleMatchDto(14, 0, listOf(p9.id), listOf(p11.id), "C"),
+        ScheduleMatchDto(15, 0, listOf(p10.id), listOf(p11.id), "C")
     )
 
 }
