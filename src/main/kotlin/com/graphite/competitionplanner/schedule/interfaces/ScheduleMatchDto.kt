@@ -22,5 +22,10 @@ data class ScheduleMatchDto(
     /**
      * IDs of players in second team
      */
-    val secondTeamPlayerIds: List<Int>
+    val secondTeamPlayerIds: List<Int>,
+
+    /**
+     * Group or Round of the match.
+     */
+    val groupOrRound: String
 )

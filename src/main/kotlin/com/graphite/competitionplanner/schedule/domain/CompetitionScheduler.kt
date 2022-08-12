@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
+import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.schedule.api.MatchSchedulerSpec
@@ -308,6 +309,7 @@ class CompetitionScheduler(
         if (tables.isEmpty()) {
             return
         }
+        // Get matches to schedule
         val matches: List<ScheduleMatchDto> = scheduleRepository.getScheduleMatches(competitionCategoryId, matchType)
         val settings = ScheduleSettingsDTO(
                 Duration.minutes(15), // Not used
@@ -315,10 +317,27 @@ class CompetitionScheduler(
                 LocalDateTime.now(), // Not used
                 LocalDateTime.now().plusMinutes(60) // Not used
         )
+
         val currentSchedule: List<TimeTableSlotDTO> = getSchedule(competitionId)
         val blocks = getScheduleBlocks(currentSchedule.filter { tables.contains(it.tableNumber) && it.location == location },
                 startTime)
-        val updateSpecs: List<MapMatchToTimeTableSlotSpec> = createUpdateSpecs(settings, blocks, matches)
+        val updateSpecs: List<MapMatchToTimeTableSlotSpec>
+
+        if (matchType == MatchType.PLAYOFF) {
+            val sortedRounds = matches.map { it.groupOrRound }.distinct().map { Round.valueOf(it) }.sorted().reversed()
+            val temp = mutableListOf<MapMatchToTimeTableSlotSpec>()
+            var remainingBlocks: List<ScheduleBlock> = blocks
+            for (round in sortedRounds) {
+                val matchesInRound = matches.filter { it.groupOrRound == round.name }
+                val (specs, rest) = createUpdateSpecs(settings, remainingBlocks, matchesInRound)
+                temp.addAll(specs)
+                remainingBlocks = rest
+            }
+            updateSpecs = temp
+        } else {
+            val (specs, _) = createUpdateSpecs(settings, blocks, matches)
+            updateSpecs = specs
+        }
 
         scheduleRepository.updateMatchesTimeTablesSlots(updateSpecs)
         scheduleRepository.setCategoryForTimeSlots(updateSpecs.map { it.timeTableSlotId }, competitionCategoryId, matchType)
@@ -352,13 +371,13 @@ class CompetitionScheduler(
     }
 
     private fun createUpdateSpecs(settings: ScheduleSettingsDTO, blocks: List<ScheduleBlock>,
-                                  matches: List<ScheduleMatchDto>): List<MapMatchToTimeTableSlotSpec> {
-        return if (blocks.isEmpty()) {
+                                  matches: List<ScheduleMatchDto>): Pair<List<MapMatchToTimeTableSlotSpec>, List<ScheduleBlock>> {
+        return if (blocks.isEmpty() || matches.isEmpty()) {
             if (matches.isNotEmpty()) {
                 throw IndexOutOfBoundsException(
                         "Not all matches fit the schedule. Please consider adding more tables or start earlier.")
             }
-            emptyList()
+            Pair(emptyList(), blocks)
         } else {
             val block = blocks.first()
             val timeTableSlots = block.timeTableSlots.toMutableList()
@@ -370,8 +389,8 @@ class CompetitionScheduler(
                     timeTableSlots.removeAt(0)
                 }
             }
-
-            updateSpec + createUpdateSpecs(settings, blocks.drop(1), remaining)
+            val (specs, remainingBlocks) = createUpdateSpecs(settings, blocks.drop(1), remaining)
+            Pair(updateSpec + specs, remainingBlocks) // createUpdateSpecs(settings, blocks.drop(1), remaining)
         }
     }
 
