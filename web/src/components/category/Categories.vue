@@ -8,26 +8,41 @@
       </h1>
 
       <!-- Sidebar -->
-      <div class="sidebar col-md-3">
+      <div class="sidebar col-md-4">
         <div>
-          <div>
-            <h5> {{ $t("categories.createNew") }}</h5>
-            <select class="form-select w-75 my-3 mx-auto" v-model="newCategory">
+          <div class="text-start">
+            <h5 class="text-lg-start"> {{ $t("categories.createNew") }}</h5>
+            <hr>
+            <ul class="nav nav-tabs" id="addCategoryTab">
+              <li class="nav-item">
+                <button class="nav-link"
+                        :class="createCustomCategoryToggle === false ? 'active' : ''"
+                        @click="createCustomCategoryToggle = false">
+                  {{ $t("categories.standardCategory.buttonText") }}
+                </button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link"
+                        :class="createCustomCategoryToggle === true ? 'active' : ''"
+                        @click="createCustomCategoryToggle = true">
+                  {{ $t("categories.customCategory.buttonText") }}
+                </button>
+              </li>
+            </ul>
+          </div>
+          <div v-if="!createCustomCategoryToggle" class="text-start">
+            <select class="form-select my-3 mx-auto" v-model="newCategory">
               <option :value="null" disabled hidden>{{ $t("categories.chooseClass") }}</option>
               <option v-for="category in possibleCategories" :value="category" :key="category.id">
                 {{ category.name }}
               </option>
             </select>
             <button class="btn btn-primary" type="button" @click="addCategory">{{ $t("categories.addClass") }}</button>
-            <hr class="border-2" />
           </div>
+
           <!-- Create custom class -->
-          <div class="mt-2 p-4">
-            <button class="btn btn-warning" type="button"
-                    @click="createCustomCategoryToggle = !createCustomCategoryToggle">
-              {{ $t("categories.customCategory.buttonText") }}
-            </button>
-            <div v-if="createCustomCategoryToggle" class="bg-grey p-3 my-2">
+          <div v-if="createCustomCategoryToggle" class="text-start">
+            <div v-if="createCustomCategoryToggle" class="p-3 my-2">
               <p>
                 {{ $t("categories.customCategory.helper") }}
               </p>
@@ -43,12 +58,15 @@
               <button class="btn btn-primary" type="button" @click="addCustomCategory">Lägg till</button>
             </div>
           </div>
-          <hr class="border-2 w-100" />
         </div>
+
+        <!-- Added categories list-->
         <div class="py-5">
-          <h5> {{ $t("categories.alreadyAddedCategories") }}</h5>
+          <h5 class="text-start"> {{ $t("categories.alreadyAddedCategories") }}</h5>
+          <hr>
           <ul class="list-group list-group-flush">
-            <li v-for="category in competitionCategories" :key="category.id" class="list-group-item"
+            <li v-for="category in competitionCategories" :key="category.id"
+                class="list-group-item text-start"
                 :class="activeCategory.id === category.id ? 'active' : 'none'"
                 @click="chooseCategory(category)">
               {{ category.category.name }}
@@ -58,7 +76,7 @@
       </div>
 
       <!-- Main -->
-      <div v-if="activeCategory !== null" class="col-md-9 pt-5 px-md-4">
+      <div v-if="activeCategory !== null" class="col-md-8 pt-5 px-md-4">
         <h2> {{ activeCategory.name }}</h2>
         <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
           <li class="nav-item" role="presentation">

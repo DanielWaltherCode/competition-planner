@@ -74,6 +74,9 @@
     "alreadyAddedCategories": "Tillagda klasser",
     "chooseClass": "Välj klass",
     "cannotUpdate": "Dessa inställningar kan inte ändras efter att en lottning har gjorts",
+    "standardCategory": {
+      "buttonText": "Standard klass"
+    },
     "customCategory": {
       "buttonText": "Skapa egen klass",
       "helper": "Lägg till en egenskapad klass",
