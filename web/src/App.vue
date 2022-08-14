@@ -118,10 +118,6 @@ h1, h2, h3 {
   color: black;
 }
 
-.sidebar-header:hover {
-  cursor: pointer;
-}
-
 .sidebar li:hover {
   opacity: 0.7;
 }

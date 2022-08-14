@@ -10,39 +10,44 @@
       <!-- Sidebar -->
       <div class="sidebar col-md-4">
         <div>
-          <div class="text-start">
-            <h5 class="text-lg-start"> {{ $t("categories.createNew") }}</h5>
+          <div>
+            <h4> {{ $t("categories.createNew") }}</h4>
             <hr>
             <ul class="nav nav-tabs" id="addCategoryTab">
               <li class="nav-item">
                 <button class="nav-link"
-                        :class="createCustomCategoryToggle === false ? 'active' : ''"
-                        @click="createCustomCategoryToggle = false">
+                        :class="customCategoryToggleSelected === false ? 'fw-bold' : ''"
+                        @click="customCategoryToggleSelected = false">
                   {{ $t("categories.standardCategory.buttonText") }}
                 </button>
               </li>
               <li class="nav-item">
                 <button class="nav-link"
-                        :class="createCustomCategoryToggle === true ? 'active' : ''"
-                        @click="createCustomCategoryToggle = true">
+                        :class="customCategoryToggleSelected === true ? 'fw-bold' : ''"
+                        @click="customCategoryToggleSelected = true">
                   {{ $t("categories.customCategory.buttonText") }}
                 </button>
               </li>
             </ul>
           </div>
-          <div v-if="!createCustomCategoryToggle" class="text-start">
+          <div v-if="!customCategoryToggleSelected" class="text-start py-3">
             <select class="form-select my-3 mx-auto" v-model="newCategory">
               <option :value="null" disabled hidden>{{ $t("categories.chooseClass") }}</option>
               <option v-for="category in possibleCategories" :value="category" :key="category.id">
                 {{ category.name }}
               </option>
             </select>
-            <button class="btn btn-primary" type="button" @click="addCategory">{{ $t("categories.addClass") }}</button>
+            <div class="d-flex justify-content-end">
+              <button class="btn btn-primary" type="button" @click="addCategory">{{
+                  $t("categories.addClass")
+                }}
+              </button>
+            </div>
           </div>
 
           <!-- Create custom class -->
-          <div v-if="createCustomCategoryToggle" class="text-start">
-            <div v-if="createCustomCategoryToggle" class="p-3 my-2">
+          <div v-if="customCategoryToggleSelected" class="text-start py-3">
+            <div class="p-3 my-2">
               <p>
                 {{ $t("categories.customCategory.helper") }}
               </p>
@@ -50,12 +55,18 @@
                      type="text"
                      class="form-control"
                      :placeholder="$t('categories.customCategory.name')">
-              <label class="text-start" for="category-type-select">{{ $t('categories.customCategory.type') }}</label>
+              <label class="text-start pt-2" for="category-type-select">{{
+                  $t('categories.customCategory.type')
+                }}</label>
               <select id="category-type-select" v-model="customCategory.type" class="form-select my-2">
                 <option value="SINGLES"> {{ $t("categories.SINGLES") }}</option>
                 <option value="DOUBLES"> {{ $t("categories.DOUBLES") }}</option>
               </select>
-              <button class="btn btn-primary" type="button" @click="addCustomCategory">Lägg till</button>
+              <div class="d-flex justify-content-end">
+                <button class="btn btn-primary" type="button" @click="addCustomCategory">
+                  {{ $t("categories.addClass") }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -139,7 +150,7 @@ export default {
       allCompetitionCategories: [],
       newCategory: null,
       isDrawMade: false,
-      createCustomCategoryToggle: false,
+      customCategoryToggleSelected: false,
       customCategory: {}
     }
   },
@@ -200,7 +211,7 @@ export default {
         this.activeCategory = addedCategory
         this.isDrawMade = false
         this.customCategory = {}
-        this.createCustomCategoryToggle = false
+        this.customCategoryToggleSelected = false
       }).catch(() => {
         this.$toasted.error(this.$tc("toasts.categoryNotAdded")).goAway(5000)
       })

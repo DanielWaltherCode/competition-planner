@@ -75,7 +75,7 @@
     "chooseClass": "Välj klass",
     "cannotUpdate": "Dessa inställningar kan inte ändras efter att en lottning har gjorts",
     "standardCategory": {
-      "buttonText": "Standard klass"
+      "buttonText": "Standardklass"
     },
     "customCategory": {
       "buttonText": "Skapa egen klass",
