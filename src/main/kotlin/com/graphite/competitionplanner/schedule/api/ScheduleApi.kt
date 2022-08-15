@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.schedule.domain.CompetitionScheduler
+import com.graphite.competitionplanner.schedule.domain.MatchSchedulerSpec
 import com.graphite.competitionplanner.schedule.interfaces.*
 import com.graphite.competitionplanner.schedule.service.AvailableTablesDayDTO
 import com.graphite.competitionplanner.schedule.service.ScheduleMetadataService
@@ -51,7 +52,8 @@ class ScheduleApi(
     ) {
         when(spec.mode) {
             ScheduleMode.ABSOLUTE -> competitionScheduler.scheduleCompetitionCategory(
-                    competitionId, competitionCategoryId, MatchSchedulerSpec(spec.matchType, spec.tableNumbers, spec.startTime!!.toLocalDate(),spec.startTime.toLocalTime()))
+                    competitionId, competitionCategoryId, MatchSchedulerSpec(spec.matchType, spec.tableNumbers, spec.startTime.toLocalDate(),spec.startTime.toLocalTime())
+            )
             ScheduleMode.APPEND -> competitionScheduler.appendMatchesToTables(
                     competitionId, competitionCategoryId, spec.matchType, spec.tableNumbers, spec.startTime, spec.location)
         }

@@ -8,7 +8,6 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.draw.service.MatchType
-import com.graphite.competitionplanner.schedule.api.MatchSchedulerSpec
 import com.graphite.competitionplanner.schedule.api.ScheduleCategoryContainerDTO
 import com.graphite.competitionplanner.schedule.api.ScheduleCategoryDTO
 import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleDTO
@@ -19,7 +18,9 @@ import com.graphite.competitionplanner.schedule.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.schedule.interfaces.*
 import com.graphite.competitionplanner.schedule.service.AvailableTablesService
 import org.springframework.stereotype.Component
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import kotlin.time.Duration
 
 /**
@@ -154,10 +155,7 @@ class CompetitionScheduler(
      *
      * @param competitionId ID of the competition
      * @param competitionCategoryId ID of the competition category whose matches will be scheduled
-     * @param matchType The type of matches in the given category to be scheduled
-     * @param tables Table numbers that the matches will be scheduled at
-     * @param startTime The first matches will be scheduled here
-     * @param location The location the matches will be scheduled at
+     * @param matchSchedulerSpec Specification of how the scheduling should be done
      */
     fun scheduleCompetitionCategory(
             competitionId: Int,
@@ -414,7 +412,7 @@ class CompetitionScheduler(
                 .filter { it.startTime >= desiredStarTime && it.matchInfo.isEmpty() }
                 .sortedBy { it.startTime }
                 .groupBy { it.startTime }
-                .map { (startTime, slots) ->
+                .map { (_, slots) ->
                     ScheduleBlock(slots.size, slots.size, slots)
                 }
     }
@@ -430,3 +428,25 @@ class CompetitionScheduler(
         scheduleRepository.resetTimeSlotsForCompetition(competitionId)
     }
 }
+
+data class MatchSchedulerSpec(
+    /**
+     * Match type to schedule in the given category
+     */
+    val matchType: MatchType,
+
+    /**
+     * Number of tables to use
+     */
+    val tableNumbers: List<Int>,
+
+    /**
+     * Date to schedule the matches
+     */
+    val day: LocalDate,
+
+    /**
+     * Time of day to start schedule matches
+     */
+    val startTime: LocalTime
+)

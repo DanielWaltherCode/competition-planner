@@ -21,13 +21,11 @@ import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.service.ResultDTO
 import com.graphite.competitionplanner.schedule.interfaces.MatchToTimeTableSlot
-import com.graphite.competitionplanner.schedule.domain.PreScheduleSpec
 import com.graphite.competitionplanner.schedule.interfaces.ScheduleMatchDto
 import com.graphite.competitionplanner.schedule.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotMatchInfo
 import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotToMatch
 import com.graphite.competitionplanner.schedule.interfaces.MapMatchToTimeTableSlotSpec
-import com.graphite.competitionplanner.schedule.service.StartInterval
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.random.Random
@@ -501,14 +499,6 @@ class DataGenerator {
         firstPlayer,
         secondPlayer,
         groupOrRound
-    )
-
-    fun newPreScheduleSpec(
-        playDate: LocalDate = LocalDate.now(),
-        timeInterval: StartInterval = StartInterval.MORNING,
-    ) = PreScheduleSpec(
-        playDate,
-        timeInterval,
     )
 
     fun newMatchToTimeTableSlot(
