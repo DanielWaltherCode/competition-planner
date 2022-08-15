@@ -4,7 +4,6 @@ import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.draw.service.MatchType
-import com.graphite.competitionplanner.schedule.api.MatchSchedulerSpec
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
 import com.graphite.competitionplanner.schedule.interfaces.MapMatchToTimeTableSlotSpec
 import com.graphite.competitionplanner.schedule.service.AvailableTablesService
