@@ -77,7 +77,7 @@ export default new Router({
             },
             {
                 path: "/schedule",
-                component:Schedule,
+                component: Schedule,
             },
             {
                 path: "/schedule-advanced",
@@ -96,8 +96,9 @@ export default new Router({
                 component: RegisterPaymentDetails
             }
         ],
-        scrollBehavior() {
-            return {x: 0, y: 0}
-        }
+        scrollBehavior(to, from, savedPosition) {
+            // always scroll to top
+            return {top: 0}
+        },
     }
 )

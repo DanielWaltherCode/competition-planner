@@ -67,6 +67,7 @@
     "title": "Klasser",
     "overview": "Översikt",
     "gameRules": "Matchregler",
+    "register": "Registrera spelare",
     "noCategories": "Inga klasser är skapade än så länge",
     "createNew": "Lägg till ny klass i tävlingen",
     "addClass": "Lägg till",
@@ -161,7 +162,7 @@
     "doublesPlayer1": "Dubbelspelare 1",
     "doublesPlayer2": "Dubbelspelare 2",
     "add": {
-      "heading": "Registrera en spelare manuellt i tävlingen",
+      "heading": "Registrera en spelare i tävlingen",
       "helperText": "Här kan du lägga till en spelare manuellt om denne inte har anmälts av sin klubb online sedan tidigare. Om spelaren inte finns i databasen behöver den först läggas till under ",
       "search": "Sök på en spelare att lägga till",
       "firstName": "Förnamn",
@@ -397,7 +398,7 @@
   "toasts": {
     "player": {
       "added": "Spelare tillagd",
-      "couldNotBeAddedToCompetition": "Spelaren du försökte lägga till hittades inte. Prova att söka igen. Finns inte spelaren i databasen behöver den läggas till först",
+      "couldNotBeAddedToCompetition": "Spelaren du försökte lägga till hittades inte. Finns inte spelaren i databasen behöver den läggas till först",
       "doubleRegistrationError": "Antingen spelare 1 eller spelare 2 verkar inte korrekt ifylld. Kolla uppgifterna eller prova igen senare."
     },
     "competitionAdded": "Tävlingen är skapad. Du kan nu gå vidare till nästa steg.",

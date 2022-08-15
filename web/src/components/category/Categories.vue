@@ -13,17 +13,17 @@
           <div>
             <h4> {{ $t("categories.createNew") }}</h4>
             <hr>
-            <ul class="nav nav-tabs" id="addCategoryTab">
-              <li class="nav-item">
+            <ul class="nav nav-tabs" id="addCategoryTab" role="tablist">
+              <li class="nav-item" role="presentation">
                 <button class="nav-link"
-                        :class="customCategoryToggleSelected === false ? 'fw-bold' : ''"
+                        :class="customCategoryToggleSelected === false ? 'active' : ''"
                         @click="customCategoryToggleSelected = false">
                   {{ $t("categories.standardCategory.buttonText") }}
                 </button>
               </li>
-              <li class="nav-item">
+              <li class="nav-item" role="presentation">
                 <button class="nav-link"
-                        :class="customCategoryToggleSelected === true ? 'fw-bold' : ''"
+                        :class="customCategoryToggleSelected === true ? 'active' : ''"
                         @click="customCategoryToggleSelected = true">
                   {{ $t("categories.customCategory.buttonText") }}
                 </button>
@@ -90,14 +90,19 @@
       <div v-if="activeCategory !== null" class="col-md-8 pt-5 px-md-4">
         <h2> {{ activeCategory.name }}</h2>
         <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" :class="displayChoice === 'SETTINGS' ? 'active' : ''"
+          <li class="nav-item text-black" role="presentation">
+            <button class="nav-link text-black" :class="displayChoice === 'SETTINGS' ? 'active' : ''"
                     @click="displayChoice = 'SETTINGS'">{{ $t("categories.overview") }}
             </button>
           </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" :class="displayChoice === 'GAME_RULES' ? 'active' : ''"
+          <li class="nav-item text-black" role="presentation">
+            <button class="nav-link text-black" :class="displayChoice === 'GAME_RULES' ? 'active' : ''"
                     @click="displayChoice = 'GAME_RULES'">{{ $t("categories.gameRules") }}
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link text-black" :class="displayChoice === 'REGISTER' ? 'active' : ''"
+                    @click="displayChoice = 'REGISTER'">{{ $t("categories.register") }}
             </button>
           </li>
         </ul>
@@ -119,6 +124,7 @@
                                      :category="activeCategory"></CategoryGeneralSettings>
             <CategoryGameSettings v-if="displayChoice === 'GAME_RULES'"
                                   :category="activeCategory"></CategoryGameSettings>
+            <AddPlayerToCategory v-if="displayChoice === 'REGISTER'" :category="activeCategory"></AddPlayerToCategory>
           </div>
         </div>
       </div>
@@ -134,10 +140,12 @@ import CategoryGeneralSettings from "@/components/category/CategoryGeneralSettin
 import CategoryGameSettings from "@/components/category/CategoryGameRules";
 import CategoryService from "@/common/api-services/category.service";
 import DrawService from "@/common/api-services/draw.service";
+import AddPlayerToCategory from "@/components/category/AddPlayerToCategory";
 
 export default {
   name: "Categories",
   components: {
+    AddPlayerToCategory,
     CategoryGameSettings,
     CategoryGeneralSettings
   },

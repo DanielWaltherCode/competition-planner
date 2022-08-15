@@ -35,6 +35,14 @@ h1, h2, h3 {
   display: flex !important;
 }
 
+.nav-link {
+  color: #383838 !important;
+}
+
+.active {
+  font-weight: bold;
+}
+
 /* Global variables */
 :root {
   --main-color: #012970;
@@ -101,7 +109,7 @@ h1, h2, h3 {
   box-shadow: 3px 3px 2px 1px #efefef;
 }
 
-.sidebar .active {
+.sidebar .selected {
   background-color: var(--main-color) !important;
   border-color: 1px var(--main-color) !important;
 }
