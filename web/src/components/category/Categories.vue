@@ -8,26 +8,46 @@
       </h1>
 
       <!-- Sidebar -->
-      <div class="sidebar col-md-3">
+      <div class="sidebar col-md-4">
         <div>
           <div>
-            <h5> {{ $t("categories.createNew") }}</h5>
-            <select class="form-select w-75 my-3 mx-auto" v-model="newCategory">
+            <h4> {{ $t("categories.createNew") }}</h4>
+            <hr>
+            <ul class="nav nav-tabs" id="addCategoryTab" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link"
+                        :class="customCategoryToggleSelected === false ? 'active' : ''"
+                        @click="customCategoryToggleSelected = false">
+                  {{ $t("categories.standardCategory.buttonText") }}
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link"
+                        :class="customCategoryToggleSelected === true ? 'active' : ''"
+                        @click="customCategoryToggleSelected = true">
+                  {{ $t("categories.customCategory.buttonText") }}
+                </button>
+              </li>
+            </ul>
+          </div>
+          <div v-if="!customCategoryToggleSelected" class="text-start py-3">
+            <select class="form-select my-3 mx-auto" v-model="newCategory">
               <option :value="null" disabled hidden>{{ $t("categories.chooseClass") }}</option>
               <option v-for="category in possibleCategories" :value="category" :key="category.id">
                 {{ category.name }}
               </option>
             </select>
-            <button class="btn btn-primary" type="button" @click="addCategory">{{ $t("categories.addClass") }}</button>
-            <hr class="border-2" />
+            <div class="d-flex justify-content-end">
+              <button class="btn btn-primary" type="button" @click="addCategory">{{
+                  $t("categories.addClass")
+                }}
+              </button>
+            </div>
           </div>
+
           <!-- Create custom class -->
-          <div class="mt-2 p-4">
-            <button class="btn btn-warning" type="button"
-                    @click="createCustomCategoryToggle = !createCustomCategoryToggle">
-              {{ $t("categories.customCategory.buttonText") }}
-            </button>
-            <div v-if="createCustomCategoryToggle" class="bg-grey p-3 my-2">
+          <div v-if="customCategoryToggleSelected" class="text-start py-3">
+            <div class="p-3 my-2">
               <p>
                 {{ $t("categories.customCategory.helper") }}
               </p>
@@ -35,20 +55,29 @@
                      type="text"
                      class="form-control"
                      :placeholder="$t('categories.customCategory.name')">
-              <label class="text-start" for="category-type-select">{{ $t('categories.customCategory.type') }}</label>
+              <label class="text-start pt-2" for="category-type-select">{{
+                  $t('categories.customCategory.type')
+                }}</label>
               <select id="category-type-select" v-model="customCategory.type" class="form-select my-2">
                 <option value="SINGLES"> {{ $t("categories.SINGLES") }}</option>
                 <option value="DOUBLES"> {{ $t("categories.DOUBLES") }}</option>
               </select>
-              <button class="btn btn-primary" type="button" @click="addCustomCategory">Lägg till</button>
+              <div class="d-flex justify-content-end">
+                <button class="btn btn-primary" type="button" @click="addCustomCategory">
+                  {{ $t("categories.addClass") }}
+                </button>
+              </div>
             </div>
           </div>
-          <hr class="border-2 w-100" />
         </div>
+
+        <!-- Added categories list-->
         <div class="py-5">
-          <h5> {{ $t("categories.alreadyAddedCategories") }}</h5>
+          <h5 class="text-start"> {{ $t("categories.alreadyAddedCategories") }}</h5>
+          <hr>
           <ul class="list-group list-group-flush">
-            <li v-for="category in competitionCategories" :key="category.id" class="list-group-item"
+            <li v-for="category in competitionCategories" :key="category.id"
+                class="list-group-item text-start"
                 :class="activeCategory.id === category.id ? 'active' : 'none'"
                 @click="chooseCategory(category)">
               {{ category.category.name }}
@@ -58,17 +87,22 @@
       </div>
 
       <!-- Main -->
-      <div v-if="activeCategory !== null" class="col-md-9 pt-5 px-md-4">
+      <div v-if="activeCategory !== null" class="col-md-8 pt-5 px-md-4">
         <h2> {{ activeCategory.name }}</h2>
         <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" :class="displayChoice === 'SETTINGS' ? 'active' : ''"
+          <li class="nav-item text-black" role="presentation">
+            <button class="nav-link text-black" :class="displayChoice === 'SETTINGS' ? 'active' : ''"
                     @click="displayChoice = 'SETTINGS'">{{ $t("categories.overview") }}
             </button>
           </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" :class="displayChoice === 'GAME_RULES' ? 'active' : ''"
+          <li class="nav-item text-black" role="presentation">
+            <button class="nav-link text-black" :class="displayChoice === 'GAME_RULES' ? 'active' : ''"
                     @click="displayChoice = 'GAME_RULES'">{{ $t("categories.gameRules") }}
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link text-black" :class="displayChoice === 'REGISTER' ? 'active' : ''"
+                    @click="displayChoice = 'REGISTER'">{{ $t("categories.register") }}
             </button>
           </li>
         </ul>
@@ -90,6 +124,7 @@
                                      :category="activeCategory"></CategoryGeneralSettings>
             <CategoryGameSettings v-if="displayChoice === 'GAME_RULES'"
                                   :category="activeCategory"></CategoryGameSettings>
+            <AddPlayerToCategory v-if="displayChoice === 'REGISTER'" :category="activeCategory"></AddPlayerToCategory>
           </div>
         </div>
       </div>
@@ -105,10 +140,12 @@ import CategoryGeneralSettings from "@/components/category/CategoryGeneralSettin
 import CategoryGameSettings from "@/components/category/CategoryGameRules";
 import CategoryService from "@/common/api-services/category.service";
 import DrawService from "@/common/api-services/draw.service";
+import AddPlayerToCategory from "@/components/category/AddPlayerToCategory";
 
 export default {
   name: "Categories",
   components: {
+    AddPlayerToCategory,
     CategoryGameSettings,
     CategoryGeneralSettings
   },
@@ -121,7 +158,7 @@ export default {
       allCompetitionCategories: [],
       newCategory: null,
       isDrawMade: false,
-      createCustomCategoryToggle: false,
+      customCategoryToggleSelected: false,
       customCategory: {}
     }
   },
@@ -182,7 +219,7 @@ export default {
         this.activeCategory = addedCategory
         this.isDrawMade = false
         this.customCategory = {}
-        this.createCustomCategoryToggle = false
+        this.customCategoryToggleSelected = false
       }).catch(() => {
         this.$toasted.error(this.$tc("toasts.categoryNotAdded")).goAway(5000)
       })

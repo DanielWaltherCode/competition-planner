@@ -18,43 +18,43 @@
               <ul id="main-ul" class="navbar-nav ms-4 me-1 mb-2 mb-lg-0">
                 <li class="nav-item">
                   <router-link class="nav-link" to="/overview" v-if="isLoggedIn && !!competition"
-                               :class="$route.path === '/overview' ? 'active' : ''">
+                               :class="$route.path === '/overview' ? 'active ' : ''">
                     {{ $t("header.overview") }}
                   </router-link>
                 </li>
                 <li class="nav-item">
                   <router-link class="nav-link" to="/classes" v-if="isLoggedIn && !!competition"
-                               :class="$route.path === '/classes' ? 'active' : ''">
+                               :class="$route.path === '/classes' ? 'active ' : ''">
                     {{ $t("header.classes") }}
                   </router-link>
                 </li>
                 <li class="nav-item">
                   <router-link class="nav-link" to="/players/overview" v-if="isLoggedIn && !!competition"
-                               :class="$route.path.includes('/players') ? 'active' : ''">
+                               :class="$route.path.includes('/players') ? 'active ' : ''">
                     {{ $t("header.players") }}
                   </router-link>
                 </li>
                 <li class="nav-item">
                   <router-link class="nav-link" to="/draw" v-if="isLoggedIn && !!competition"
-                               :class="$route.path === '/draw' ? 'active' : ''">
+                               :class="$route.path === '/draw' ? 'active ' : ''">
                     {{ $t("header.draws") }}
                   </router-link>
                 </li>
                 <li class="nav-item">
                   <router-link class="nav-link" to="/schedule" v-if="isLoggedIn && !!competition"
-                               :class="$route.path === '/schedule' ? 'active' : ''">
+                               :class="$route.path === '/schedule' ? 'active ' : ''">
                     {{ $t("header.schedule") }}
                   </router-link>
                 </li>
                 <li class="nav-item">
                   <router-link class="nav-link" to="/results" v-if="isLoggedIn && !!competition"
-                               :class="$route.path === '/results' ? 'active' : ''">
+                               :class="$route.path === '/results' ? 'active ' : ''">
                     {{ $t("header.results") }}
                   </router-link>
                 </li>
                 <li class="nav-item">
                   <router-link class="nav-link" to="/billing" v-if="isLoggedIn && !!competition"
-                               :class="$route.path === '/billing' ? 'active' : ''">
+                               :class="$route.path === '/billing' ? 'active ' : ''">
                     {{ $t("header.billing") }}
                   </router-link>
                 </li>

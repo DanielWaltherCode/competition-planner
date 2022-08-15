@@ -50,7 +50,9 @@ export default {
     }
   },
   mounted() {
-    this.$router.push('/players/overview')
+    if (this.$route.path.endsWith("/players")) {
+      this.$router.push('/players/overview')
+    }
   }
 }
 </script>

@@ -4,7 +4,7 @@
     <div class="row p-4 blue-section">
       <h4 class="text-start">{{ $t("player.add.heading") }}</h4>
       <p class="text-start col-sm-8">{{ $t("player.add.helperText") }}
-        <span class="clickable"
+        <span class="clickable text-decoration-underline"
               @click="$router.push('/players/create')">{{ $t("player.sidebar.create") }}
         </span>
       </p>
@@ -78,6 +78,7 @@ import SearchPlayerComponent from "@/components/player/SearchPlayerComponent";
 
 export default {
   name: "AddPlayerToCompetition",
+  components: {SearchPlayerComponent},
   data() {
     return {
       noCategories: false,
@@ -100,7 +101,6 @@ export default {
       return this.competitionCategories.filter(competitionCategory => competitionCategory.category.type === "DOUBLES")
     }
   },
-  components: {SearchPlayerComponent},
   mounted() {
     CategoryService.getCompetitionCategories(this.competition.id).then(res => {
       this.competitionCategories = res.data
@@ -110,7 +110,7 @@ export default {
   methods: {
     addSinglesPlayerToCompetition() {
       if (this.singlesPlayer === null) {
-        this.$toasted.success(this.$tc("toasts.player.couldNotBeAddedToCompetition")).goAway(5000)
+        this.$toasted.error(this.$tc("toasts.player.couldNotBeAddedToCompetition")).goAway(5000)
         return;
       }
       this.registerSinglesPlayer()
