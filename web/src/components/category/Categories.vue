@@ -38,7 +38,7 @@
               </option>
             </select>
             <div class="d-flex justify-content-end">
-              <button class="btn btn-primary" type="button" @click="addCategory">{{
+              <button class="btn btn-primary" type="button" :disabled="newCategory === null" @click="addCategory">{{
                   $t("categories.addClass")
                 }}
               </button>
@@ -63,7 +63,7 @@
                 <option value="DOUBLES"> {{ $t("categories.DOUBLES") }}</option>
               </select>
               <div class="d-flex justify-content-end">
-                <button class="btn btn-primary" type="button" @click="addCustomCategory">
+                <button class="btn btn-primary" type="button" :disabled="!customCategoryFilledOut()" @click="addCustomCategory">
                   {{ $t("categories.addClass") }}
                 </button>
               </div>
@@ -200,8 +200,9 @@ export default {
 
     },
     addCategory() {
+      console.log("addCategory called for some reason")
       CategoryService.addCompetitionCategory(this.competition.id, this.newCategory).then(res => {
-        this.$toasted.success(this.$tc("toasts.categoryAdded"))
+        this.$toasted.success(this.$tc("toasts.categoryAdded")).goAway(3000)
         const addedCategory = res.data
         this.competitionCategories.push(addedCategory)
         this.activeCategory = addedCategory
@@ -212,7 +213,12 @@ export default {
       })
     },
     addCustomCategory() {
+      if (!this.customCategoryFilledOut()) {
+        this.$toasted.error(this.$tc("toasts.customCategoryIncomplete")).goAway(3000)
+        return
+      }
       CategoryService.addCustomCategory(this.competition.id, this.customCategory).then(res => {
+        console.log("This code should not run")
         this.$toasted.success(this.$tc("toasts.categoryAdded")).goAway(3000)
         const addedCategory = res.data
         this.competitionCategories.push(addedCategory)
@@ -223,6 +229,10 @@ export default {
       }).catch(() => {
         this.$toasted.error(this.$tc("toasts.categoryNotAdded")).goAway(5000)
       })
+    },
+    customCategoryFilledOut() {
+     return (this.customCategory.name !== null && this.customCategory.name !== undefined
+         && this.customCategory.type !== null && this.customCategory.type !== undefined)
     },
     save() {
       this.activeCategory.gameSettings.winScoreFinal = this.activeCategory.gameSettings.winScore // Use same win score setting in endgame matches.

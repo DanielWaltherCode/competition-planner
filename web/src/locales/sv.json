@@ -409,6 +409,7 @@
     "categoryAdded": "Klassen är tillagd",
     "categoryNotAdded": "Kunde inte lägga till klassen",
     "categoryDrawDeleted": "Lottningen är borttagen",
+    "customCategoryIncomplete": "Både namn och typ behöver väljas",
     "startTimesSet": "Starttider satta",
     "resultRegistered": "Resultatet är sparat",
     "temporaryResultRegistered": "Tillfälligt resultatet är sparat",
