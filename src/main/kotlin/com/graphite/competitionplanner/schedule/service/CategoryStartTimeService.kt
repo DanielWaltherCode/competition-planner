@@ -22,31 +22,6 @@ class CategoryStartTimeService(
     val getDaysOfCompetition: GetDaysOfCompetition,
     val findCompetitionCategory: FindCompetitionCategory
 ) {
-    fun addCategoryStartTime(
-        competitionCategoryId: Int,
-        categoryStartTimeSpec: CategoryStartTimeSpec
-    ): CategoryStartTimeDTO {
-        val scheduleCategoryRecord =
-            scheduleRepository.addCategoryStartTime(competitionCategoryId, categoryStartTimeSpec)
-        return scheduleCategoryRecordToDTO(scheduleCategoryRecord)
-    }
-
-    private fun scheduleCategoryRecordToDTO(scheduleCategoryRecord: ScheduleCategoryRecord): CategoryStartTimeDTO {
-        val startInterval: StartInterval = if (scheduleCategoryRecord.startInterval == null) {
-            StartInterval.NOT_SELECTED
-        } else {
-            StartInterval.valueOf(scheduleCategoryRecord.startInterval)
-        }
-        val competitionCategory =
-            findCompetitionCategory.byId(scheduleCategoryRecord.competitonCategoryId)
-        return CategoryStartTimeDTO(
-            scheduleCategoryRecord.id,
-            competitionCategory,
-            scheduleCategoryRecord.playingDay,
-            startInterval,
-            scheduleCategoryRecord.exactStartTime
-        )
-    }
 
 }
 

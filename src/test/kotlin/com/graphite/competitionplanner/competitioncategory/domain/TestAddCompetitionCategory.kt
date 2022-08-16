@@ -138,35 +138,4 @@ class TestAddCompetitionCategory {
             TestHelper.MockitoHelper.anyObject()
         )
     }
-
-    @Test
-    fun shouldDelegateToScheduleServiceToAddCategoryStartTime() {
-        // Setup
-        val spec = dataGenerator.newCategorySpec(id = 0, name = "HERRDUBBEL")
-        val competitionCategory = dataGenerator.newCompetitionCategoryDTO()
-
-        val competitionId = 1
-        `when`(mockedCategoryRepository.getAvailableCategories(anyInt())).thenReturn(
-            listOf(
-                CategoryDTO(
-                    spec.id,
-                    spec.name,
-                    spec.type.name
-                )
-            )
-        )
-        `when`(mockedRepository.getAll(competitionId)).thenReturn(emptyList())
-        `when`(mockedRepository.store(eq(competitionId), TestHelper.MockitoHelper.anyObject())).thenReturn(
-            competitionCategory
-        )
-
-        // Act
-        addCompetitionCategory.execute(competitionId, spec)
-
-        // Assert
-        verify(mockedCategoryStartTimeService, times(1)).addCategoryStartTime(
-            competitionCategory.id,
-            CategoryStartTimeSpec(null, null, null)
-        )
-    }
 }
