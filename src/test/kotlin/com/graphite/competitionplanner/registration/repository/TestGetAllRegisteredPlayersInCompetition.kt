@@ -49,7 +49,7 @@ class TestGetAllRegisteredPlayersInCompetition(
         )
 
         for (p in players) {
-            Assertions.assertEquals(p.club, club, "Player $p not beloning to the expected club $club")
+            Assertions.assertEquals(p.club, club, "Player $p not belonging to the expected club $club")
         }
     }
 }
