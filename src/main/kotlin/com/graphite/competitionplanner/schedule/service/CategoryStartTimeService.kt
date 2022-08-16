@@ -31,20 +31,6 @@ class CategoryStartTimeService(
         return scheduleCategoryRecordToDTO(scheduleCategoryRecord)
     }
 
-    fun updateCategoryStartTime(
-        categoryStartTimeId: Int,
-        competitionCategoryId: Int,
-        categoryStartTimeSpec: CategoryStartTimeSpec
-    ): CategoryStartTimeDTO {
-        val scheduleCategoryRecord =
-            scheduleRepository.updateCategoryStartTime(
-                categoryStartTimeId,
-                competitionCategoryId,
-                categoryStartTimeSpec
-            )
-        return scheduleCategoryRecordToDTO(scheduleCategoryRecord)
-    }
-
     fun getCategoryStartTimesForCompetition(competitionId: Int): CategoryStartTimesWithOptionsDTO {
         val records = scheduleRepository.getAllCategoryStartTimesInCompetition(competitionId)
         val startTimeDTOList = records.map { scheduleCategoryRecordToDTO(it) }
