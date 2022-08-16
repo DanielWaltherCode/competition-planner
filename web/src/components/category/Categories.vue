@@ -200,7 +200,6 @@ export default {
 
     },
     addCategory() {
-      console.log("addCategory called for some reason")
       CategoryService.addCompetitionCategory(this.competition.id, this.newCategory).then(res => {
         this.$toasted.success(this.$tc("toasts.categoryAdded")).goAway(3000)
         const addedCategory = res.data
@@ -218,7 +217,6 @@ export default {
         return
       }
       CategoryService.addCustomCategory(this.competition.id, this.customCategory).then(res => {
-        console.log("This code should not run")
         this.$toasted.success(this.$tc("toasts.categoryAdded")).goAway(3000)
         const addedCategory = res.data
         this.competitionCategories.push(addedCategory)
