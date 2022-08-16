@@ -38,27 +38,6 @@ class CategoryStartTimeService(
         return CategoryStartTimesWithOptionsDTO(startTimeDTOList, options)
     }
 
-    fun getCategoryStartTimesByDay(competitionId: Int, day: LocalDate): List<CategoryStartTimeDTO> {
-        val categoriesInCompetition = getCompetitionCategories.execute(competitionId)
-        val startTimeRecords = mutableListOf<ScheduleCategoryRecord>()
-        for (category in categoriesInCompetition) {
-            try {
-                val startTimeRecord = scheduleRepository.getCategoryStartTimeForCategory(category.id)
-                if (startTimeRecord.playingDay == null) {
-                    continue
-                }
-                if (startTimeRecord.playingDay.equals(day)) {
-                    startTimeRecords.add(startTimeRecord)
-                }
-            }
-            // If the category has not been scheduled, continue
-            catch (noDataException: NoDataFoundException) {
-                continue
-            }
-        }
-        return startTimeRecords.map { scheduleCategoryRecordToDTO(it) }
-    }
-
     private fun getStartTimeFormOptions(competitionId: Int): StartTimeFormOptions {
         val competition = findCompetitions.byId(competitionId)
         return StartTimeFormOptions(
