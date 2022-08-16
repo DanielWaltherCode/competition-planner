@@ -125,6 +125,44 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         return records.map { it.id }
     }
 
+    override fun getAllRegisteredPlayersInCompetitionCategory(competitionCategoryId: Int): List<PlayerWithClubDTO> {
+        val records = dslContext.select(
+            PLAYER.ID,
+            PLAYER.FIRST_NAME,
+            PLAYER.LAST_NAME,
+            PLAYER.DATE_OF_BIRTH,
+            CLUB.ID,
+            CLUB.NAME,
+            CLUB.ADDRESS
+        )
+            .from(COMPETITION_CATEGORY)
+            .join(COMPETITION_CATEGORY_REGISTRATION).on(
+                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(
+                    COMPETITION_CATEGORY.ID
+                )
+            )
+            .join(PLAYER_REGISTRATION)
+            .on(PLAYER_REGISTRATION.REGISTRATION_ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+            .join(PLAYER).on(PLAYER.ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
+            .join(CLUB).on(CLUB.ID.eq(PLAYER.CLUB_ID))
+            .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
+            .fetch()
+
+        return records.map {
+            PlayerWithClubDTO(
+                it.getValue(PLAYER.ID),
+                it.getValue(PLAYER.FIRST_NAME),
+                it.getValue(PLAYER.LAST_NAME),
+                ClubDTO(
+                    it.getValue(CLUB.ID),
+                    it.getValue(CLUB.NAME),
+                    it.getValue(CLUB.ADDRESS)
+                ),
+                it.getValue(PLAYER.DATE_OF_BIRTH)
+            )
+        }
+    }
+
     override fun getAllRegisteredPlayersInCompetition(competitionId: Int): List<PlayerWithClubDTO> {
         val records = dslContext.select(
             PLAYER.ID,
