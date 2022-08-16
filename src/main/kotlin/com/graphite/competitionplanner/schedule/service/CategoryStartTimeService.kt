@@ -31,14 +31,6 @@ class CategoryStartTimeService(
         return scheduleCategoryRecordToDTO(scheduleCategoryRecord)
     }
 
-    private fun getStartTimeFormOptions(competitionId: Int): StartTimeFormOptions {
-        val competition = findCompetitions.byId(competitionId)
-        return StartTimeFormOptions(
-            getDaysOfCompetition.execute(competition),
-            StartInterval.values().asList()
-        )
-    }
-
     private fun scheduleCategoryRecordToDTO(scheduleCategoryRecord: ScheduleCategoryRecord): CategoryStartTimeDTO {
         val startInterval: StartInterval = if (scheduleCategoryRecord.startInterval == null) {
             StartInterval.NOT_SELECTED
