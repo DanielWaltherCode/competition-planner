@@ -32,9 +32,10 @@ interface IRegistrationRepository {
     fun getAllPlayerIdsRegisteredTo(competitionCategoryId: Int): List<Int>
 
     /**
-     * Get all players that are currently registered in the given competition category
+     * Get all players that are currently registered in the given competition category paired together with
+     * its registration id for that category.
      */
-    fun getAllRegisteredPlayersInCompetitionCategory(competitionCategoryId: Int): List<PlayerWithClubDTO>
+    fun getAllRegisteredPlayersInCompetitionCategory(competitionCategoryId: Int): List<Pair<Int, PlayerWithClubDTO>>
 
     /**
      * Get all players that are currently registered in the given competition

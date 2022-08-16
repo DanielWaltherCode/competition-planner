@@ -36,9 +36,10 @@ class TestGetAllRegisteredPlayersInCompetitionCategory(
         val reg3 = setupDoubleRegistration()
 
         // Act
-        val players = registrationRepository.getAllRegisteredPlayersInCompetitionCategory(competitionCategory.id)
+        val result = registrationRepository.getAllRegisteredPlayersInCompetitionCategory(competitionCategory.id)
 
         // Assert
+        val players = result.map { it.second }
         val actualPlayerIds = players.map { it.id }.sorted()
         val expectedPlayerIds = listOf(reg1.playerId, reg2.playerId, reg3.playerOneId, reg3.playerTwoId).sorted()
         Assertions.assertEquals(
