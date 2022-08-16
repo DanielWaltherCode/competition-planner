@@ -31,13 +31,6 @@ class CategoryStartTimeService(
         return scheduleCategoryRecordToDTO(scheduleCategoryRecord)
     }
 
-    fun getCategoryStartTimesForCompetition(competitionId: Int): CategoryStartTimesWithOptionsDTO {
-        val records = scheduleRepository.getAllCategoryStartTimesInCompetition(competitionId)
-        val startTimeDTOList = records.map { scheduleCategoryRecordToDTO(it) }
-        val options = getStartTimeFormOptions(competitionId)
-        return CategoryStartTimesWithOptionsDTO(startTimeDTOList, options)
-    }
-
     private fun getStartTimeFormOptions(competitionId: Int): StartTimeFormOptions {
         val competition = findCompetitions.byId(competitionId)
         return StartTimeFormOptions(
@@ -45,8 +38,6 @@ class CategoryStartTimeService(
             StartInterval.values().asList()
         )
     }
-
-
 
     private fun scheduleCategoryRecordToDTO(scheduleCategoryRecord: ScheduleCategoryRecord): CategoryStartTimeDTO {
         val startInterval: StartInterval = if (scheduleCategoryRecord.startInterval == null) {
