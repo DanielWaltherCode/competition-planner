@@ -69,4 +69,34 @@ class TestRegistrationService {
         Assertions.assertEquals(expected.id, registration.id)
     }
 
+    @Test
+    fun getPlayersInCompetitionCategoryShouldGroupByRegistrationId() {
+        // Setup
+        val competitionCategory = dataGenerator.newCompetitionCategoryDTO()
+        val fakeResult = listOf(
+            Pair(1022, dataGenerator.newPlayerWithClubDTO()),
+            Pair(1022, dataGenerator.newPlayerWithClubDTO()),
+            Pair(1033, dataGenerator.newPlayerWithClubDTO())
+        )
+        `when`(mockedRegistrationRepository.getAllRegisteredPlayersInCompetitionCategory(competitionCategory.id)).thenReturn(
+            fakeResult
+        )
+
+        // Act
+        val players = service.getPlayersInCompetitionCategory(competitionCategory.id)
+
+        // Assert
+        Assertions.assertEquals(2, players.size, "Wrong size. Expected two registrations.")
+        Assertions.assertEquals(
+            1,
+            players.filter { it.size == 2 }.size,
+            "Expected to find exactly one double registration."
+        )
+        Assertions.assertEquals(
+            1,
+            players.filter { it.size == 1 }.size,
+            "Expected to find exactly one single registration"
+        )
+    }
+
 }
