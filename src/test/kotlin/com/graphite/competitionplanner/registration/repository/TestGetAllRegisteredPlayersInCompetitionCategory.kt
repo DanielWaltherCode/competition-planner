@@ -1,10 +1,8 @@
 package com.graphite.competitionplanner.registration.repository
 
-import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.repository.ClubRepository
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
-import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
@@ -29,9 +27,6 @@ class TestGetAllRegisteredPlayersInCompetitionCategory(
     competitionCategoryRepository,
     registrationRepository
 ) {
-
-    protected lateinit var secondCompetitionCategory: CompetitionCategoryDTO
-    protected lateinit var secondCategory: CategoryDTO
 
     @Test
     fun getAllPlayersWithTheirCorrectClubs(){

@@ -1,6 +1,5 @@
 package com.graphite.competitionplanner.registration.repository
 
-import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.repository.ClubRepository
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
