@@ -5,15 +5,12 @@ import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.draw.interfaces.Round
-import com.graphite.competitionplanner.schedule.api.CategoryStartTimeSpec
-import com.graphite.competitionplanner.schedule.service.CategoryStartTimeService
 import org.springframework.stereotype.Component
 
 @Component
 class AddCompetitionCategory(
     val repository: ICompetitionCategoryRepository,
     val categoryRepository: ICategoryRepository,
-    val categoryStartTimeService: CategoryStartTimeService
 ) {
 
     fun execute(competitionId: Int, category: CategorySpec): CompetitionCategoryDTO {
@@ -35,9 +32,7 @@ class AddCompetitionCategory(
             gameSettings = getDefaultGameSettings()
         )
 
-        val competitionCategory = repository.store(competitionId, spec)
-        categoryStartTimeService.addCategoryStartTime(competitionCategory.id, CategoryStartTimeSpec(null, null, null))
-        return competitionCategory
+        return repository.store(competitionId, spec)
     }
 
     private fun getDefaultGeneralSettings(): GeneralSettingsDTO {
