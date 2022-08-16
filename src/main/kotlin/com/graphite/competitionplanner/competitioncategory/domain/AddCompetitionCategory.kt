@@ -5,14 +5,12 @@ import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.draw.interfaces.Round
-import com.graphite.competitionplanner.schedule.service.CategoryStartTimeService
 import org.springframework.stereotype.Component
 
 @Component
 class AddCompetitionCategory(
     val repository: ICompetitionCategoryRepository,
     val categoryRepository: ICategoryRepository,
-    val categoryStartTimeService: CategoryStartTimeService
 ) {
 
     fun execute(competitionId: Int, category: CategorySpec): CompetitionCategoryDTO {
