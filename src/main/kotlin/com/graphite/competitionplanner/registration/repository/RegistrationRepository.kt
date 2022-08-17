@@ -7,8 +7,10 @@ import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
+import com.graphite.competitionplanner.draw.domain.Registration
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.registration.domain.asRegistration
 import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.PlayerRegistration.PLAYER_REGISTRATION
@@ -123,6 +125,48 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             .fetchInto(PLAYER)
 
         return records.map { it.id }
+    }
+
+    override fun getAllRegisteredPlayersInCompetitionCategory(competitionCategoryId: Int): List<Pair<Registration, PlayerWithClubDTO>> {
+        val records = dslContext.select(
+            PLAYER.ID,
+            PLAYER.FIRST_NAME,
+            PLAYER.LAST_NAME,
+            PLAYER.DATE_OF_BIRTH,
+            CLUB.ID,
+            CLUB.NAME,
+            CLUB.ADDRESS,
+            PLAYER_REGISTRATION.REGISTRATION_ID
+        )
+            .from(COMPETITION_CATEGORY)
+            .join(COMPETITION_CATEGORY_REGISTRATION).on(
+                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(
+                    COMPETITION_CATEGORY.ID
+                )
+            )
+            .join(PLAYER_REGISTRATION)
+            .on(PLAYER_REGISTRATION.REGISTRATION_ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
+            .join(PLAYER).on(PLAYER.ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
+            .join(CLUB).on(CLUB.ID.eq(PLAYER.CLUB_ID))
+            .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
+            .fetch()
+
+        return records.map {
+            Pair(
+                it.getValue(PLAYER_REGISTRATION.REGISTRATION_ID).asRegistration(),
+                PlayerWithClubDTO(
+                    it.getValue(PLAYER.ID),
+                    it.getValue(PLAYER.FIRST_NAME),
+                    it.getValue(PLAYER.LAST_NAME),
+                    ClubDTO(
+                        it.getValue(CLUB.ID),
+                        it.getValue(CLUB.NAME),
+                        it.getValue(CLUB.ADDRESS)
+                    ),
+                    it.getValue(PLAYER.DATE_OF_BIRTH)
+                )
+            )
+        }
     }
 
     override fun getAllRegisteredPlayersInCompetition(competitionId: Int): List<PlayerWithClubDTO> {

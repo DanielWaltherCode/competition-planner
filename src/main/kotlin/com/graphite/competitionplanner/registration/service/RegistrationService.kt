@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.registration.service
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
+import com.graphite.competitionplanner.draw.domain.Registration
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.domain.FindPlayer
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
@@ -84,14 +85,12 @@ class RegistrationService(
         )
     }
 
-    // TODO: This is a N+1 query and will grow slower and slower the more player are in the competition. Should refactor
     fun getPlayersInCompetitionCategory(competitionCategoryId: Int): List<List<PlayerWithClubDTO>> {
-        val allRegistrationIds = competitionCategoryRepository.getRegistrationsInCategory(competitionCategoryId)
-        // Remove players that are withdrawn so that only playing or walkover players are still listed
-        val filteredRegistrations = allRegistrationIds
-            .map { id -> registrationRepository.getPlayerRegistration(id) }
-            .filter { playerRegistrationRecord -> playerRegistrationRecord.status != PlayerRegistrationStatus.WITHDRAWN.name }
-        return filteredRegistrations.map { getPlayersWithClubFromRegistrationId(it.registrationId) }
+        val players = registrationRepository.getAllRegisteredPlayersInCompetitionCategory(competitionCategoryId)
+            .filter { it.first is Registration.Real } // Sort out BYEs and Placeholders if any.
+        return players
+            .groupBy {(registration, _) -> (registration as Registration.Real).id }
+            .map { (_, listOfPairs) -> listOfPairs.map { (_, player) -> player } }
     }
 
     fun getRegistrationsForPlayerInCompetition(competitionId: Int, playerId: Int): PlayerRegistrationDTO {

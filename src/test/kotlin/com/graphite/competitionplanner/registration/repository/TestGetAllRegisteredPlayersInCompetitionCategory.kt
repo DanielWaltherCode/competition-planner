@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class TestGetAllRegisteredPlayersInCompetition(
+class TestGetAllRegisteredPlayersInCompetitionCategory(
     @Autowired clubRepository: ClubRepository,
     @Autowired playerRepository: PlayerRepository,
     @Autowired competitionRepository: CompetitionRepository,
@@ -29,16 +29,17 @@ class TestGetAllRegisteredPlayersInCompetition(
 ) {
 
     @Test
-    fun getsAllPlayersWithTheirCorrectClubs() {
+    fun getAllPlayersWithTheirCorrectClubs(){
         // Setup
         val reg1 = setupSingleRegistration()
         val reg2 = setupSingleRegistration()
         val reg3 = setupDoubleRegistration()
 
         // Act
-        val players = registrationRepository.getAllRegisteredPlayersInCompetition(competition.id)
+        val result = registrationRepository.getAllRegisteredPlayersInCompetitionCategory(competitionCategory.id)
 
         // Assert
+        val players = result.map { it.second }
         val actualPlayerIds = players.map { it.id }.sorted()
         val expectedPlayerIds = listOf(reg1.playerId, reg2.playerId, reg3.playerOneId, reg3.playerTwoId).sorted()
         Assertions.assertEquals(

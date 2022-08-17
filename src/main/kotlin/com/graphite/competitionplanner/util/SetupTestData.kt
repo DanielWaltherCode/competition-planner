@@ -17,12 +17,13 @@ import com.graphite.competitionplanner.competitioncategory.domain.AddCompetition
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.CreateDraw
+import com.graphite.competitionplanner.draw.domain.Registration
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
-import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.player.domain.ListAllPlayersInClub
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.repository.PlayerRepository
+import com.graphite.competitionplanner.registration.domain.asInt
 import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesSpec
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
@@ -156,7 +157,7 @@ class SetupTestData(
     fun setUpPlaceHolderRegistration() {
         // We need a Placeholder player and registration to return matches with placeholder players.
         playerRepository.addPlayerWithId(
-            -1,
+            Registration.Placeholder().asInt(),
             PlayerSpec(
                 firstName = "Placeholder",
                 lastName = "Placeholder",
@@ -164,13 +165,13 @@ class SetupTestData(
                 dateOfBirth = LocalDate.now().minus(18, ChronoUnit.YEARS)
             )
         )
-        registrationRepository.addRegistrationWithId(-1, LocalDate.now())
-        registrationRepository.registerPlayer(-1, -1)
+        registrationRepository.addRegistrationWithId(Registration.Placeholder().asInt(), LocalDate.now())
+        registrationRepository.registerPlayer(Registration.Placeholder().asInt(), Registration.Placeholder().asInt())
     }
 
     fun setUpBYEPlayer() {
         playerRepository.addPlayerWithId(
-            0,
+            Registration.Bye.asInt(),
             PlayerSpec(
                 firstName = "BYE",
                 lastName = "BYE",
@@ -178,8 +179,8 @@ class SetupTestData(
                 dateOfBirth = LocalDate.now().minus(18, ChronoUnit.YEARS)
             )
         )
-        registrationRepository.addRegistrationWithId(0, LocalDate.now())
-        registrationRepository.registerPlayer(0, 0)
+        registrationRepository.addRegistrationWithId(Registration.Bye.asInt(), LocalDate.now())
+        registrationRepository.registerPlayer(Registration.Bye.asInt(), Registration.Bye.asInt())
     }
 
     fun playerSetup() {
@@ -212,6 +213,14 @@ class SetupTestData(
             PlayerSpec(
                 firstName = "Kajsa",
                 lastName = "Säfsten",
+                clubId = util.getClubIdOrDefault("Övriga"),
+                dateOfBirth = LocalDate.now().minus(65, ChronoUnit.YEARS)
+            )
+        )
+        playerRepository.store(
+            PlayerSpec(
+                firstName = "Stefan",
+                lastName = "Samuelsson",
                 clubId = util.getClubIdOrDefault("Övriga"),
                 dateOfBirth = LocalDate.now().minus(65, ChronoUnit.YEARS)
             )
@@ -657,7 +666,7 @@ class SetupTestData(
         )
         registrationService.registerPlayerSingles(
             RegistrationSinglesSpec(
-                otherPlayers[2].id,
+                otherPlayers[0].id,
                 competitionCategories[1].id
             )
         )
