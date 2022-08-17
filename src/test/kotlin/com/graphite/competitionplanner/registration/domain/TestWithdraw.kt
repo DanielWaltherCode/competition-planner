@@ -104,6 +104,13 @@ class TestWithdraw(
 
     @Test
     fun testGiveWalkover() {
+        // TODO: The issue is that the list of allPlayer contains players without rankings which causes problem when we make a draw.
+        // TODO: The function for calculating rankings on registrations require player rankings which causes wrong number of registrations
+        // TODO: to get into the draw.
+        // TODO: And root cause is that there are some test cases that setup players without a ranking, together
+        // TODO: with this playerRepository.getAll() method that fetches all players.
+
+        // TODO: Refactor this test to not depend on players already added in database. Set up new players instead for this test.
         // Setup
         val allPlayers = playerRepository.getAll()
         val registrations = mutableListOf<RegistrationSinglesDTO>()
@@ -112,7 +119,7 @@ class TestWithdraw(
                 registrationService.registerPlayerSingles(RegistrationSinglesSpec(player.id, competitionCategoryId))
             )
         }
-        createDraw.execute(competitionCategoryId)
+        var drawDto = createDraw.execute(competitionCategoryId)
 
         // Act
         val playerToWithdraw = registrations[2].id
@@ -153,7 +160,7 @@ class TestWithdraw(
             if (updatedMatch.wasWalkover) {
                 nrWalkoverMatches++
             }
-            if( updatedMatch.winner == playerToWithdraw) {
+            if (updatedMatch.winner == playerToWithdraw) {
                 nrWonMatches++
             }
             val result = resultService.getResult(updatedMatch.id)
@@ -167,11 +174,15 @@ class TestWithdraw(
                 }
             }
         }
-        Assertions.assertEquals(2, nrWalkoverMatches)
+        Assertions.assertEquals(
+            matches.size - 1,
+            nrWalkoverMatches,
+            "We played one match and then went walkover. Expected ${matches.size - 1} be marked as walkover"
+        )
         Assertions.assertTrue(nrWonMatches <= 1)
         Assertions.assertEquals(9, retiredPlayersResults.size)
         // Two full matches should be 11-0 in each game,
-        Assertions.assertEquals(6, retiredPlayersResults.filter { r -> r == 0 }.size )
+        Assertions.assertEquals(6, retiredPlayersResults.filter { r -> r == 0 }.size)
 
     }
 }
