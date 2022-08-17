@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.registration.service
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
+import com.graphite.competitionplanner.draw.domain.Registration
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.domain.FindPlayer
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
@@ -86,8 +87,9 @@ class RegistrationService(
 
     fun getPlayersInCompetitionCategory(competitionCategoryId: Int): List<List<PlayerWithClubDTO>> {
         val players = registrationRepository.getAllRegisteredPlayersInCompetitionCategory(competitionCategoryId)
+            .filter { it.first is Registration.Real } // Sort out BYEs and Placeholders if any.
         return players
-            .groupBy {(registrationId, _) -> registrationId }
+            .groupBy {(registration, _) -> (registration as Registration.Real).id }
             .map { (_, listOfPairs) -> listOfPairs.map { (_, player) -> player } }
     }
 

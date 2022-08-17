@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.registration.service
 
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
+import com.graphite.competitionplanner.draw.domain.Registration
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.domain.FindPlayer
 import com.graphite.competitionplanner.registration.domain.*
@@ -74,9 +75,11 @@ class TestRegistrationService {
         // Setup
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO()
         val fakeResult = listOf(
-            Pair(1022, dataGenerator.newPlayerWithClubDTO()),
-            Pair(1022, dataGenerator.newPlayerWithClubDTO()),
-            Pair(1033, dataGenerator.newPlayerWithClubDTO())
+            Pair(Registration.Real(1022), dataGenerator.newPlayerWithClubDTO(id = 334)),
+            Pair(Registration.Real(1022), dataGenerator.newPlayerWithClubDTO(id = 335)),
+            Pair(Registration.Real(1033), dataGenerator.newPlayerWithClubDTO(id = 444)),
+            Pair(Registration.Bye, dataGenerator.newPlayerWithClubDTO(id = Registration.Bye.asInt())),
+            Pair(Registration.Placeholder(), dataGenerator.newPlayerWithClubDTO(id = Registration.Placeholder().asInt()))
         )
         `when`(mockedRegistrationRepository.getAllRegisteredPlayersInCompetitionCategory(competitionCategory.id)).thenReturn(
             fakeResult

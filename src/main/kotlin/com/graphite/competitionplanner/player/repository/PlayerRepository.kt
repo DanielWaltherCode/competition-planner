@@ -4,10 +4,12 @@ import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.draw.domain.Registration
 import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.registration.domain.asInt
 import com.graphite.competitionplanner.tables.Club
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.Player.PLAYER
@@ -85,7 +87,12 @@ class PlayerRepository(val dslContext: DSLContext) : IPlayerRepository {
 
     override fun playersInClub(clubId: Int): List<PlayerWithClubDTO> {
         val records =
-            dslContext.select().from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(CLUB.ID.eq(clubId))
+            dslContext.select()
+                .from(PLAYER)
+                .join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID))
+                .where(CLUB.ID.eq(clubId)
+                    .and(PLAYER.ID.ne(Registration.Bye.asInt()))
+                    .and(PLAYER.ID.ne(Registration.Placeholder().asInt())))
                 .fetch()
 
         return records.map { record ->

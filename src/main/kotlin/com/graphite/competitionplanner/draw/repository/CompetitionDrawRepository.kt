@@ -7,6 +7,7 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetiti
 import com.graphite.competitionplanner.draw.domain.*
 import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.draw.service.*
+import com.graphite.competitionplanner.registration.domain.asInt
 import com.graphite.competitionplanner.tables.records.*
 import org.jetbrains.annotations.NotNull
 import org.jooq.DSLContext
@@ -223,19 +224,10 @@ class CompetitionDrawRepository(
         record.endTime = null
         record.competitionCategoryId = competitionCategoryId
         record.matchType = MatchType.PLAYOFF.name
-        record.firstRegistrationId = this.registrationOneId.asInt()// matchSpec.firstRegistrationId
+        record.firstRegistrationId = this.registrationOneId.asInt()
         record.secondRegistrationId = this.registrationTwoId.asInt()
         record.matchOrderNumber = this.order
         record.groupOrRound = this.round.name
         return record
     }
-
-    private fun Registration.asInt(): Int {
-        return when (this) {
-            is Registration.Real -> this.id
-            is Registration.Bye -> 0 // TODO: This feels a bit fragile. These IDs are set in SetupTestData
-            is Registration.Placeholder -> -1 // TODO: Fetch PlaceHolder ID once
-        }
-    }
-
 }

@@ -7,8 +7,10 @@ import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
+import com.graphite.competitionplanner.draw.domain.Registration
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.registration.domain.asRegistration
 import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.tables.Competition
 import com.graphite.competitionplanner.tables.PlayerRegistration.PLAYER_REGISTRATION
@@ -125,7 +127,7 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
         return records.map { it.id }
     }
 
-    override fun getAllRegisteredPlayersInCompetitionCategory(competitionCategoryId: Int): List<Pair<Int, PlayerWithClubDTO>> {
+    override fun getAllRegisteredPlayersInCompetitionCategory(competitionCategoryId: Int): List<Pair<Registration, PlayerWithClubDTO>> {
         val records = dslContext.select(
             PLAYER.ID,
             PLAYER.FIRST_NAME,
@@ -151,7 +153,7 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
 
         return records.map {
             Pair(
-                it.getValue(PLAYER_REGISTRATION.REGISTRATION_ID),
+                it.getValue(PLAYER_REGISTRATION.REGISTRATION_ID).asRegistration(),
                 PlayerWithClubDTO(
                     it.getValue(PLAYER.ID),
                     it.getValue(PLAYER.FIRST_NAME),
