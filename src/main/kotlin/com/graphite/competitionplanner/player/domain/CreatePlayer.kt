@@ -14,6 +14,7 @@ class CreatePlayer(
 ) {
     fun execute(playerSpec: PlayerSpec): PlayerWithClubDTO {
         val clubDto = findClub.byId(playerSpec.clubId)
+        // TODO: This has to be a transaction. Ranking has to be stored together with player.
         val player = playerRepository.store(playerSpec)
         playerRepository.addPlayerRanking(playerId = player.id,
             rankToAdd = 0,

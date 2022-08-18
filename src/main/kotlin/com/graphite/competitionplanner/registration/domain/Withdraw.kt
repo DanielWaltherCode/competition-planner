@@ -41,8 +41,8 @@ class Withdraw(
         )
     }
 
-    fun walkOver(competitionId: Int, categoryId: Int, registrationId: Int) {
-        loseRemainingMatches(competitionId, categoryId, registrationId)
+    fun walkOver(competitionId: Int, competitionCategoryId: Int, registrationId: Int) {
+        loseRemainingMatches(competitionId, competitionCategoryId, registrationId)
 
         // Set registration status to walkover
         registrationRepository.updatePlayerRegistrationStatus(
