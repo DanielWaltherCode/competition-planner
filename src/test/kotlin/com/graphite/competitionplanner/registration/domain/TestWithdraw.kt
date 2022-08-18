@@ -1,188 +1,169 @@
 package com.graphite.competitionplanner.registration.domain
 
+import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
+import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
-import com.graphite.competitionplanner.competitioncategory.domain.DeleteCompetitionCategory
-import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
+import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
+import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.CreateDraw
-import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
-import com.graphite.competitionplanner.match.service.MatchService
-import com.graphite.competitionplanner.player.repository.PlayerRepository
+import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
+import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.registration.interfaces.PlayerRegistrationStatus
-import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesDTO
-import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
-import com.graphite.competitionplanner.registration.repository.RegistrationRepository
-import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.domain.AddResult
+import com.graphite.competitionplanner.result.interfaces.IResultRepository
 import com.graphite.competitionplanner.result.service.ResultService
-import com.graphite.competitionplanner.util.TestUtil
-import org.junit.jupiter.api.AfterEach
+import com.graphite.competitionplanner.util.BaseRepositoryTest
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 class TestWithdraw(
-    @Autowired val testUtil: TestUtil,
-    @Autowired val playerRepository: PlayerRepository,
-    @Autowired val registrationService: RegistrationService,
-    @Autowired val registrationRepository: RegistrationRepository,
-    @Autowired val matchService: MatchService,
-    @Autowired val matchRepository: MatchRepository,
-    @Autowired val findCompetitionCategory: FindCompetitionCategory,
-    @Autowired val deleteCompetitionCategory: DeleteCompetitionCategory,
-    @Autowired val competitionDrawRepository: CompetitionDrawRepository,
+    @Autowired val matchRepository2: MatchRepository,
     @Autowired val createDraw: CreateDraw,
     @Autowired val withdraw: Withdraw,
     @Autowired val findCompetitions: FindCompetitions,
     @Autowired val resultService: ResultService,
-    @Autowired val addResult: AddResult
+    @Autowired val addResult: AddResult,
+    @Autowired clubRepository: IClubRepository,
+    @Autowired competitionRepository: ICompetitionRepository,
+    @Autowired competitionCategoryRepository: ICompetitionCategoryRepository,
+    @Autowired categoryRepository: ICategoryRepository,
+    @Autowired playerRepository: IPlayerRepository,
+    @Autowired registrationRepository: IRegistrationRepository,
+    @Autowired matchRepository: MatchRepository,
+    @Autowired resultRepository: IResultRepository
+): BaseRepositoryTest(
+    clubRepository,
+    competitionRepository,
+    competitionCategoryRepository,
+    categoryRepository,
+    playerRepository,
+    registrationRepository,
+    matchRepository,
+    resultRepository
 ) {
-    var competitionCategoryId = 0
-    var competitionId = 0
-
-    @BeforeEach
-    fun setupCompetition() {
-        competitionCategoryId = testUtil.addCompetitionCategory("Flickor 14")
-        val umeaId = testUtil.getClubIdOrDefault("Umeå IK")
-        val umeaCompetitions = findCompetitions.thatBelongTo(umeaId)
-        competitionId = umeaCompetitions[0].id
-    }
-
-    @AfterEach
-    fun removeMatchesAndRegistrations() {
-        // Remove matches
-        matchService.deleteMatchesInCategory(competitionCategoryId)
-
-        // Remove pool draw
-        competitionDrawRepository.deleteGroupsInCategory(competitionCategoryId)
-
-        // Remove registrations and delete category
-        val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
-        for (id in registrationIds) {
-            registrationService.unregister(id)
-        }
-        deleteCompetitionCategory.execute(competitionCategoryId)
-    }
 
     @Test
     fun testWithdrawBeforeCompetition() {
         // Setup
-        val allPlayers = playerRepository.getAll()
-        val registrations = mutableListOf<RegistrationSinglesDTO>()
-        for (player in allPlayers) {
-            registrations.add(
-                registrationService.registerPlayerSingles(RegistrationSinglesSpec(player.id, competitionCategoryId))
-            )
-        }
-        createDraw.execute(competitionCategoryId)
+        val club = newClub()
+        val competition = club.addCompetition()
+        val competitionCategory = competition.addCompetitionCategory()
+
+        val suffix = listOf("A", "B", "C", "D")
+        val players = suffix.map { club.addPlayer("Player$it") }
+        val registrations = players.map { competitionCategory.registerPlayer(it) }
+
+        val walkoverRegistrations = registrations.first()
+
+        matchRepository2.store(dataGenerator.newMatchSpec(
+            competitionCategoryId = competitionCategory.id,
+            firstRegistrationId = walkoverRegistrations.id,
+            secondRegistrationId = registrations.take(2).last().id
+        ))
+
+        matchRepository2.store(dataGenerator.newMatchSpec(
+            competitionCategoryId = competitionCategory.id,
+            firstRegistrationId = walkoverRegistrations.id,
+            secondRegistrationId = registrations.take(3).last().id
+        ))
+
+        matchRepository2.store(dataGenerator.newMatchSpec(
+            competitionCategoryId = competitionCategory.id,
+            firstRegistrationId = walkoverRegistrations.id,
+            secondRegistrationId = registrations.take(4).last().id
+        ))
 
         // Act
-        val playerToWithdraw = registrations[0].id
-        withdraw.beforeCompetition(competitionId, competitionCategoryId, playerToWithdraw)
-
+        withdraw.walkOver(competition.id, competitionCategory.id, walkoverRegistrations.id)
 
         // Assert
+        val playerRegistration = registrationRepository.getPlayerRegistration(walkoverRegistrations.id)
+        Assertions.assertEquals(playerRegistration.status, PlayerRegistrationStatus.WALK_OVER.name)
 
-        // Player status should be withdrawn
-        val playerRegistration = registrationRepository.getPlayerRegistration(playerToWithdraw)
-        Assertions.assertEquals(playerRegistration.status, PlayerRegistrationStatus.WITHDRAWN.name)
+        val updatedMatches = matchRepository2.getMatchesInCompetitionForRegistration(competition.id, walkoverRegistrations.id)
 
-        // All matches should be lost
-        val matches = matchRepository.getMatchesInCompetitionForRegistration(competitionId, playerToWithdraw)
-        for (match in matches) {
-            Assertions.assertTrue(match.winner != null)
-            Assertions.assertTrue(match.winner != playerToWithdraw)
-            Assertions.assertTrue(match.wasWalkover)
-        }
-
+        Assertions.assertTrue(updatedMatches.all { it.winner != null && it.winner != walkoverRegistrations.id },
+            "All matches should have a winner and none should be the registration that went walkover")
     }
 
     @Test
-    fun testGiveWalkover() {
-        // TODO: The issue is that the list of allPlayer contains players without rankings which causes problem when we make a draw.
-        // TODO: The function for calculating rankings on registrations require player rankings which causes wrong number of registrations
-        // TODO: to get into the draw.
-        // TODO: And root cause is that there are some test cases that setup players without a ranking, together
-        // TODO: with this playerRepository.getAll() method that fetches all players.
-
-        // TODO: Refactor this test to not depend on players already added in database. Set up new players instead for this test.
+    fun testGiveWalkoverAfterMatchHasBeenPlayed() {
         // Setup
-        val allPlayers = playerRepository.getAll()
-        val registrations = mutableListOf<RegistrationSinglesDTO>()
-        for (player in allPlayers) {
-            registrations.add(
-                registrationService.registerPlayerSingles(RegistrationSinglesSpec(player.id, competitionCategoryId))
-            )
-        }
-        var drawDto = createDraw.execute(competitionCategoryId)
+        val club = newClub()
+        val competition = club.addCompetition()
+        val competitionCategory = competition.addCompetitionCategory()
+
+        val suffix = listOf("A", "B", "C", "D")
+        val players = suffix.map { club.addPlayer("Player$it") }
+        val registrations = players.map { competitionCategory.registerPlayer(it) }
+
+        val walkoverRegistrations = registrations.first()
+
+        val match1 = matchRepository2.store(dataGenerator.newMatchSpec(
+            competitionCategoryId = competitionCategory.id,
+            firstRegistrationId = walkoverRegistrations.id,
+            secondRegistrationId = registrations.take(2).last().id
+        ))
+
+        matchRepository2.store(dataGenerator.newMatchSpec(
+            competitionCategoryId = competitionCategory.id,
+            firstRegistrationId = walkoverRegistrations.id,
+            secondRegistrationId = registrations.take(3).last().id
+        ))
+
+        matchRepository2.store(dataGenerator.newMatchSpec(
+            competitionCategoryId = competitionCategory.id,
+            firstRegistrationId = walkoverRegistrations.id,
+            secondRegistrationId = registrations.take(4).last().id
+        ))
+
+        // Register result for first match
+        val gameResults = (1..3).map { GameSpec(it, 11, 5) }
+        addResult.execute(
+            match1,
+            ResultSpec(gameResults),
+            competitionCategory
+        )
 
         // Act
-        val playerToWithdraw = registrations[2].id
-
-        // Register result for one match
-        val matches = matchRepository.getMatchesInCompetitionForRegistration(competitionId, playerToWithdraw)
-        val match = matches[0]
-        val gameResults = mutableListOf<GameSpec>()
-        for (i in 1..3) {
-            gameResults.add(
-                GameSpec(
-                    gameNumber = i,
-                    firstRegistrationResult = 5,
-                    secondRegistrationResult = 11
-                )
-            )
-        }
-        addResult.execute(
-            matchRepository.getMatch2(match.id),
-            ResultSpec(gameResults),
-            findCompetitionCategory.byId(competitionCategoryId)
-        )
-        withdraw.walkOver(competitionId, competitionCategoryId, playerToWithdraw)
+        withdraw.walkOver(competition.id, competitionCategory.id, walkoverRegistrations.id)
 
         // Assert
-
-        // Player status should be withdrawn
-        val playerRegistration = registrationRepository.getPlayerRegistration(playerToWithdraw)
+        val playerRegistration = registrationRepository.getPlayerRegistration(walkoverRegistrations.id)
         Assertions.assertEquals(playerRegistration.status, PlayerRegistrationStatus.WALK_OVER.name)
 
-        val updatedMatches = matchRepository.getMatchesInCompetitionForRegistration(competitionId, playerToWithdraw)
+        val updatedMatches = matchRepository2.getMatchesInCompetitionForRegistration(competition.id, walkoverRegistrations.id)
 
         val retiredPlayersResults = mutableListOf<Int>()
         var nrWalkoverMatches = 0
         var nrWonMatches = 0
         for (updatedMatch in updatedMatches) {
-            Assertions.assertTrue(updatedMatch.winner != null)
             if (updatedMatch.wasWalkover) {
                 nrWalkoverMatches++
             }
-            if (updatedMatch.winner == playerToWithdraw) {
+            if (updatedMatch.winner == walkoverRegistrations.id) {
                 nrWonMatches++
             }
             val result = resultService.getResult(updatedMatch.id)
             for (gameResult in result.gameList) {
-                if (updatedMatch.firstRegistrationId == playerToWithdraw) {
-                    retiredPlayersResults.add(gameResult.firstRegistrationResult)
-                } else {
-                    if (updatedMatch.secondRegistrationId == playerToWithdraw) {
-                        retiredPlayersResults.add(gameResult.secondRegistrationResult)
-                    }
-                }
+                retiredPlayersResults.add(gameResult.firstRegistrationResult)
             }
         }
-        Assertions.assertEquals(
-            matches.size - 1,
-            nrWalkoverMatches,
-            "We played one match and then went walkover. Expected ${matches.size - 1} be marked as walkover"
-        )
-        Assertions.assertTrue(nrWonMatches <= 1)
-        Assertions.assertEquals(9, retiredPlayersResults.size)
-        // Two full matches should be 11-0 in each game,
-        Assertions.assertEquals(6, retiredPlayersResults.filter { r -> r == 0 }.size)
+        Assertions.assertTrue(updatedMatches.all { it.winner != null }, "All matches should have a winner")
 
+        Assertions.assertEquals(2, nrWalkoverMatches,
+            "We played one match and then went walkover. Expected the remaining 2 matches to be marked as walkover")
+        Assertions.assertEquals(1, nrWonMatches,
+            "We won that first game. It should have been registered.")
+        Assertions.assertEquals(9, retiredPlayersResults.size,
+            "There's not correct number of registered sets.")
+        Assertions.assertEquals(6, retiredPlayersResults.filter { r -> r == 0 }.size,
+            "Two full matches i.e. 6 sets should been marked 11-0")
     }
 }
