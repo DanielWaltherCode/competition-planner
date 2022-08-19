@@ -5,12 +5,13 @@ import com.graphite.competitionplanner.common.exception.NotFoundException
 interface IPlayerRepository {
 
     /**
-     * Saves the Player
+     * Store a new player together with a ranking. By default, the ranking is set to zero.
      *
      * @param spec Player to be stored
+     * @param rankingSpec Ranking information
      * @return Newly stored player
      */
-    fun store(spec: PlayerSpec): PlayerDTO
+    fun store(spec: PlayerSpec, rankingSpec: PlayerRankingSpec = PlayerRankingSpec(0, 0)): PlayerDTO
 
     /**
      * Return all players for the given club

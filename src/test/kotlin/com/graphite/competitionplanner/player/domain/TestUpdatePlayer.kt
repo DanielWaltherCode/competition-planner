@@ -29,7 +29,7 @@ class TestUpdatePlayer {
         Assertions.assertThrows(NotFoundException::class.java) { updatePlayer.execute(1, spec) }
 
         // Assert
-        verify(mockedPlayerRepository, never()).store(TestHelper.MockitoHelper.anyObject())
+        verify(mockedPlayerRepository, never()).store(TestHelper.MockitoHelper.anyObject(), TestHelper.MockitoHelper.anyObject())
     }
 
     @Test

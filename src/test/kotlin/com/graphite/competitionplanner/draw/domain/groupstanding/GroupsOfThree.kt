@@ -1,120 +1,88 @@
 package com.graphite.competitionplanner.draw.domain.groupstanding
 
+import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
+import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
-import com.graphite.competitionplanner.competition.repository.CompetitionRepository
-import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
+import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
 import com.graphite.competitionplanner.competitioncategory.domain.UpdateCompetitionCategory
-import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryUpdateSpec
 import com.graphite.competitionplanner.competitioncategory.interfaces.GeneralSettingsDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.CalculateGroupStanding
 import com.graphite.competitionplanner.draw.domain.CreateDraw
 import com.graphite.competitionplanner.draw.interfaces.SortedBy
-import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
+import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
-import com.graphite.competitionplanner.player.repository.PlayerRepository
-import com.graphite.competitionplanner.registration.domain.Withdraw
-import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
-import com.graphite.competitionplanner.registration.repository.RegistrationRepository
-import com.graphite.competitionplanner.registration.service.RegistrationService
-import com.graphite.competitionplanner.util.TestUtil
+import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
+import com.graphite.competitionplanner.result.interfaces.IResultRepository
+import com.graphite.competitionplanner.util.BaseRepositoryTest
 import com.graphite.competitionplanner.util.Util
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 class GroupsOfThree(
-
-    @Autowired val competitionRepository: CompetitionRepository,
     @Autowired val util: Util,
-    @Autowired val testUtil: TestUtil,
-    @Autowired val playerRepository: PlayerRepository,
-    @Autowired val registrationService: RegistrationService,
-    @Autowired val matchRepository: MatchRepository,
-    @Autowired val competitionDrawRepository: CompetitionDrawRepository,
-    @Autowired val registrationRepository: RegistrationRepository,
     @Autowired val calculateGroupStanding: CalculateGroupStanding,
     @Autowired val createDraw: CreateDraw,
-    @Autowired val withdraw: Withdraw,
     @Autowired val findCompetitions: FindCompetitions,
-    @Autowired val findCompetitionCategory: FindCompetitionCategory,
     @Autowired val updateCompetitionCategory: UpdateCompetitionCategory,
     @Autowired val groupStandingUtil: GroupStandingUtil,
-    @Autowired val competitionCategoryRepository: ICompetitionCategoryRepository
+    @Autowired competitionCategoryRepository: ICompetitionCategoryRepository,
+    @Autowired clubRepository: IClubRepository,
+    @Autowired competitionRepository: ICompetitionRepository,
+    @Autowired categoryRepository: ICategoryRepository,
+    @Autowired playerRepository: IPlayerRepository,
+    @Autowired registrationRepository: IRegistrationRepository,
+    @Autowired matchRepository: MatchRepository,
+    @Autowired resultRepository: IResultRepository
+) : BaseRepositoryTest(
+    clubRepository,
+    competitionRepository,
+    competitionCategoryRepository,
+    categoryRepository,
+    playerRepository,
+    registrationRepository,
+    matchRepository,
+    resultRepository
 ) {
     var competitionCategoryId = 0
     var uniquePlayerRegistrations: MutableSet<Int> = mutableSetOf()
 
-    @BeforeAll
-    fun setUpClassData() {
-        try {
-            competitionCategoryId = testUtil.addCompetitionCategory("Herrar 6")
-        }
-        catch (exception: IllegalArgumentException) {
-            println("Category already added")
-        }
+    @BeforeEach
+    fun setUpTestData() {
+        val club = newClub()
+        val competition = club.addCompetition()
+        val competitionCategory = competition.addCompetitionCategory()
+        competitionCategoryId = competitionCategory.id
 
         // Update to groups of three
-        val originalCategory = findCompetitionCategory.byId(competitionCategoryId)
         updateCompetitionCategory.execute(
             competitionCategoryId,
             CompetitionCategoryUpdateSpec(
                 settings = GeneralSettingsDTO(
-                    originalCategory.settings.cost,
-                    originalCategory.settings.drawType,
+                    competitionCategory.settings.cost,
+                    competitionCategory.settings.drawType,
                     3,
                     1,
-                    originalCategory.settings.poolDrawStrategy,
+                    competitionCategory.settings.poolDrawStrategy,
                 ),
-                gameSettings = originalCategory.gameSettings
+                gameSettings = competitionCategory.gameSettings
             )
         )
-    }
 
-    @BeforeEach
-    fun setUpTestData() {
-        // Add players
-        val players = playerRepository.getAll()
+        val suffixes = listOf("A", "B", "C")
+        val players = suffixes.map { club.addPlayer("Player$it") }
+        val registrations = players.map { competitionCategory.registerPlayer(it) }
 
-        for (player in players) {
-            registrationService.registerPlayerSingles(RegistrationSinglesSpec(player.id, competitionCategoryId))
-        }
         createDraw.execute(competitionCategoryId)
 
-        val matches = matchRepository.getMatchesInCategory(competitionCategoryId)
-        val matchesInGroupA = matches.filter { it.groupOrRound == "A" }
-        uniquePlayerRegistrations = mutableSetOf()
-        for (match in matchesInGroupA) {
-            uniquePlayerRegistrations.add(match.firstRegistrationId)
-            uniquePlayerRegistrations.add(match.secondRegistrationId)
-        }
-        uniquePlayerRegistrations.sorted()
+        uniquePlayerRegistrations = registrations.map { it.id }.toMutableSet()
         Assertions.assertEquals(3, uniquePlayerRegistrations.size)
-    }
-
-    @AfterEach
-    fun deleteDataForEachTest() {
-        // Remove matches
-        matchRepository.deleteMatchesForCategory(competitionCategoryId)
-
-        // Remove pool draw
-        competitionDrawRepository.deleteGroupsInCategory(competitionCategoryId)
-
-        // Remove registrations
-        val registrationIds = registrationRepository.getRegistrationIdsInCategory(competitionCategoryId)
-        for (id in registrationIds) {
-            registrationService.unregister(id)
-        }
-
-        // Delete pools
-        competitionDrawRepository.deletePools(competitionCategoryId)
-
-        // Set status to Active
-        competitionCategoryRepository.setStatus(competitionCategoryId, CompetitionCategoryStatus.ACTIVE)
     }
 
     @Test

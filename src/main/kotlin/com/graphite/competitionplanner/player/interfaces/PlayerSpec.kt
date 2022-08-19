@@ -16,3 +16,8 @@ data class PlayerSpec(
         require(dateOfBirth.isBefore(LocalDate.now())) { "Player's date of birth <$dateOfBirth> cannot be in the future" }
     }
 }
+
+data class PlayerRankingSpec(
+    val singles: Int,
+    val doubles: Int
+)

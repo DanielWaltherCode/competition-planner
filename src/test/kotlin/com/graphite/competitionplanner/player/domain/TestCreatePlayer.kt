@@ -26,7 +26,7 @@ class TestCreatePlayer {
         // Setup
         val spec = dataGenerator.newPlayerSpec()
         `when`(mockedFindClub.byId(spec.clubId)).thenReturn(ClubDTO(spec.clubId, "Liljan IF", "Stovägen"))
-        `when`(mockedPlayerRepository.store(TestHelper.MockitoHelper.anyObject())).thenReturn(
+        `when`(mockedPlayerRepository.store(TestHelper.MockitoHelper.anyObject(), TestHelper.MockitoHelper.anyObject())).thenReturn(
             PlayerDTO(
                 1,
                 spec.firstName,
@@ -41,7 +41,7 @@ class TestCreatePlayer {
 
         // Assert
         verify(mockedPlayerRepository, times(1)).store(spec)
-        verify(mockedPlayerRepository, times(1)).store(TestHelper.MockitoHelper.anyObject())
+        verify(mockedPlayerRepository, times(1)).store(TestHelper.MockitoHelper.anyObject(), TestHelper.MockitoHelper.anyObject())
     }
 
     @Test
@@ -49,7 +49,7 @@ class TestCreatePlayer {
         // Setup
         val spec = dataGenerator.newPlayerSpec()
         `when`(mockedFindClub.byId(spec.clubId)).thenReturn(ClubDTO(spec.clubId, "Liljan IF", "Stovägen"))
-        `when`(mockedPlayerRepository.store(TestHelper.MockitoHelper.anyObject())).thenReturn(
+        `when`(mockedPlayerRepository.store(TestHelper.MockitoHelper.anyObject(), TestHelper.MockitoHelper.anyObject())).thenReturn(
             PlayerDTO(
                 1,
                 spec.firstName,
@@ -76,6 +76,6 @@ class TestCreatePlayer {
         Assertions.assertThrows(NotFoundException::class.java) { createPlayer.execute(spec) }
 
         // Assert
-        verify(mockedPlayerRepository, never()).store(TestHelper.MockitoHelper.anyObject())
+        verify(mockedPlayerRepository, never()).store(TestHelper.MockitoHelper.anyObject(), TestHelper.MockitoHelper.anyObject())
     }
 }
