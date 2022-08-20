@@ -58,9 +58,9 @@ class TestGetRegistrationRankForDoubles(
 
         // Assert
         Assertions.assertTrue(registrationRanks.size == 2, "We only registered two doubles")
-        val actualReg1 = registrationRanks.first { it.registrationId == reg1.id }
+        val actualReg1 = registrationRanks.first { it.registration.id == reg1.id }
         Assertions.assertEquals(31 + 22, actualReg1.rank)
-        val actualReg2 = registrationRanks.first { it.registrationId == reg2.id }
+        val actualReg2 = registrationRanks.first { it.registration.id == reg2.id }
         Assertions.assertEquals(15 + 12, actualReg2.rank)
     }
 }

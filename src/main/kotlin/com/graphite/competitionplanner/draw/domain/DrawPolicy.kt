@@ -48,7 +48,7 @@ sealed class DrawPolicy(
 
         return sortedHighestRankFirst.mapIndexed { index, it ->
             RegistrationSeedDTO(
-                it.registrationId,
+                it.registration.id,
                 it.competitionCategoryId,
                 seed = if (index < numberOfSeeds) index + 1 else null
             )

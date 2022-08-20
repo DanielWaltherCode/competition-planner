@@ -77,6 +77,10 @@ data class PlayOffMatch(
 
 sealed class Registration {
     class Real(val id: Int) : Registration() {
+        init {
+            require(id > 0) { "A real registration must have an id higher than 0" }
+        }
+
         override fun toString(): String {
             return id.toString()
         }

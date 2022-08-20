@@ -368,7 +368,7 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
 
         return records.map {
             RegistrationRankingDTO(
-                it.getValue(REGISTRATION.ID),
+                Registration.Real(it.getValue(REGISTRATION.ID)),
                 it.getValue(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID),
                 it.getValue(rankFieldName).toString().toInt()
             )
