@@ -162,8 +162,8 @@ class CupDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(co
     override fun createDraw(registrations: List<RegistrationSeedDTO>): CompetitionCategoryDrawSpec {
         // If we are not an even power of 2, then we need to add so-called BYE players to the list of registrations
         // until we reach a number that is a power of 2
-        val seededRegistrations = registrations.filter { it.seed != null }.map { it.registrationId }.shuffleSeeded()
-        val unseededRegistrations = registrations.filter { it.seed == null }.map { it.registrationId }.shuffled()
+        val seededRegistrations = registrations.filter { it.seed != null }.map { it.registration }.shuffleSeeded()
+        val unseededRegistrations = registrations.filter { it.seed == null }.map { it.registration }.shuffled()
         val registrationsWithBye = (seededRegistrations + unseededRegistrations).tryAddByes()
         val numberOfRounds = ceil(log2(registrationsWithBye.size.toDouble())).toInt()
 
@@ -486,9 +486,9 @@ class PoolOnlyDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPoli
         val pools: List<Pool> = createEmptyPools(numberOfPools)
 
         val seededRegistrations: List<Registration.Real> =
-            registrations.filter { it.seed != null }.sortedBy { it.seed!! }.map { it.registrationId }
+            registrations.filter { it.seed != null }.sortedBy { it.seed!! }.map { it.registration }
         val nonSeededRegistrations: List<Registration.Real> =
-            registrations.filter { it.seed == null }.map { it.registrationId }
+            registrations.filter { it.seed == null }.map { it.registration }
 
         return addRoundRobin(pools, seededRegistrations + nonSeededRegistrations.shuffled())
             .map {

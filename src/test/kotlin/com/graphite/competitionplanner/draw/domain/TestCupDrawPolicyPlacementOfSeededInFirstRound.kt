@@ -67,12 +67,12 @@ class TestCupDrawPolicyPlacementOfSeededInFirstRound {
 
                 Assertions.assertEquals(
                     (firstMatch.registrationOneId as Registration.Real),
-                    firstSeed.registrationId,
+                    firstSeed.registration,
                     "The best seeded player should be placed on the top of the top half."
                 )
                 Assertions.assertEquals(
                     (lastMatch.registrationTwoId as Registration.Real),
-                    secondSeed.registrationId,
+                    secondSeed.registration,
                     "The second best seeded player should be placed on the bottom of the bottom half."
                 )
             }
@@ -132,22 +132,22 @@ class TestCupDrawPolicyPlacementOfSeededInFirstRound {
 
                 Assertions.assertEquals(
                     (topHalfTopPlaceMatch.registrationOneId as Registration.Real),
-                    firstSeed.registrationId,
+                    firstSeed.registration,
                     "The best seeded player should be placed on the top of the top half."
                 )
                 Assertions.assertTrue(
-                    (topHalfBottomPlaceMatch.registrationTwoId as Registration.Real) == thirdSeed.registrationId ||
-                            topHalfBottomPlaceMatch.registrationTwoId == fourthSeed.registrationId,
+                    (topHalfBottomPlaceMatch.registrationTwoId as Registration.Real) == thirdSeed.registration ||
+                            topHalfBottomPlaceMatch.registrationTwoId == fourthSeed.registration,
                     "The third or fourth best seeded player should be placed randomly on the bottom of the top half."
                 )
                 Assertions.assertTrue(
-                    (bottomHalfTopPlaceMatch.registrationOneId as Registration.Real) == thirdSeed.registrationId ||
-                            bottomHalfTopPlaceMatch.registrationOneId == fourthSeed.registrationId,
+                    (bottomHalfTopPlaceMatch.registrationOneId as Registration.Real) == thirdSeed.registration ||
+                            bottomHalfTopPlaceMatch.registrationOneId == fourthSeed.registration,
                     "The third or fourth best seeded player should be placed randomly on the top of the bottom half."
                 )
                 Assertions.assertEquals(
                     (bottomHalfBottomPlaceMatch.registrationTwoId as Registration.Real),
-                    secondSeed.registrationId,
+                    secondSeed.registration,
                     "The second best seeded player should be placed on the bottom of the bottom half."
                 )
             }
@@ -188,8 +188,8 @@ class TestCupDrawPolicyPlacementOfSeededInFirstRound {
                 // Assert
                 val firstSeed = seed[0]
                 val secondSeed = seed[1]
-                val seeded3And4 = listOf(seed[2].registrationId, seed[3].registrationId)
-                val seeded5to8 = listOf(seed[4].registrationId, seed[5].registrationId, seed[6].registrationId, seed[7].registrationId)
+                val seeded3And4 = listOf(seed[2].registration, seed[3].registration)
+                val seeded5to8 = listOf(seed[4].registration, seed[5].registration, seed[6].registration, seed[7].registration)
 
                 val firstQuarterTopPlace =
                     draw.matches.filter { it.round == testData.startRound }.first { it.order == 1 }
@@ -210,7 +210,7 @@ class TestCupDrawPolicyPlacementOfSeededInFirstRound {
 
                 Assertions.assertEquals(
                     (firstQuarterTopPlace.registrationOneId as Registration.Real),
-                    firstSeed.registrationId,
+                    firstSeed.registration,
                     "The best seeded player should be placed on the top of the top half."
                 )
                 Assertions.assertTrue(
@@ -239,7 +239,7 @@ class TestCupDrawPolicyPlacementOfSeededInFirstRound {
                 )
                 Assertions.assertEquals(
                     (fourthQuarterBottomPlace.registrationTwoId as Registration.Real),
-                    secondSeed.registrationId,
+                    secondSeed.registration,
                     "The second best seeded player should be placed on the bottom of the bottom half."
                 )
             }
@@ -281,10 +281,10 @@ class TestCupDrawPolicyPlacementOfSeededInFirstRound {
                 // Assert
                 val firstSeed = seed[0]
                 val secondSeed = seed[1]
-                val seeded3And4 = listOf(seed[2].registrationId, seed[3].registrationId)
-                val seeded5to8 = listOf(seed[4].registrationId, seed[5].registrationId, seed[6].registrationId, seed[7].registrationId)
-                val seeded9to16 = listOf(seed[8].registrationId, seed[9].registrationId, seed[10].registrationId, seed[11].registrationId,
-                    seed[12].registrationId, seed[13].registrationId, seed[14].registrationId, seed[15].registrationId)
+                val seeded3And4 = listOf(seed[2].registration, seed[3].registration)
+                val seeded5to8 = listOf(seed[4].registration, seed[5].registration, seed[6].registration, seed[7].registration)
+                val seeded9to16 = listOf(seed[8].registration, seed[9].registration, seed[10].registration, seed[11].registration,
+                    seed[12].registration, seed[13].registration, seed[14].registration, seed[15].registration)
 
                 val firstEighthsTopPlace =
                     draw.matches.filter { it.round == testData.startRound }.first { it.order == 1 }
@@ -321,7 +321,7 @@ class TestCupDrawPolicyPlacementOfSeededInFirstRound {
 
                 Assertions.assertEquals(
                     (firstEighthsTopPlace.registrationOneId as Registration.Real),
-                    firstSeed.registrationId,
+                    firstSeed.registration,
                     "The best seeded player should be placed on the top of the top half."
                 )
                 Assertions.assertTrue(
@@ -389,7 +389,7 @@ class TestCupDrawPolicyPlacementOfSeededInFirstRound {
                 )
                 Assertions.assertEquals(
                     (lastEightsBottomPlace.registrationTwoId as Registration.Real),
-                    secondSeed.registrationId,
+                    secondSeed.registration,
                     "The second best seeded player should be placed on the bottom of the bottom half."
                 )
             }

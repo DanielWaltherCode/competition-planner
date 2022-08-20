@@ -9,7 +9,6 @@ import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.registration.domain.asInt
-import com.graphite.competitionplanner.registration.domain.asRegistration
 import com.graphite.competitionplanner.tables.records.*
 import org.jetbrains.annotations.NotNull
 import org.jooq.DSLContext
@@ -88,7 +87,7 @@ class CompetitionDrawRepository(
                     .set(COMPETITION_CATEGORY_REGISTRATION.SEED, dto.seed)
                     .where(
                         COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(dto.competitionCategoryId)
-                            .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(dto.registrationId.id))
+                            .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(dto.registration.id))
                     ).execute()
             }
         }
