@@ -2,22 +2,24 @@ package com.graphite.competitionplanner.schedule.repository
 
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.common.repository.BaseRepository
 import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.schedule.api.*
 import com.graphite.competitionplanner.schedule.interfaces.*
 import com.graphite.competitionplanner.tables.records.*
 import org.jooq.DSLContext
 import org.jooq.Record6
-import org.slf4j.LoggerFactory
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Repository
-class ScheduleRepository(private val dslContext: DSLContext) : IScheduleRepository {
-
-    private val logger = LoggerFactory.getLogger(javaClass)
+class ScheduleRepository(
+    dslContext: DSLContext
+) : BaseRepository(dslContext),
+    IScheduleRepository
+{
 
     // Schedule metadata methods
     fun addScheduleMetadata(
