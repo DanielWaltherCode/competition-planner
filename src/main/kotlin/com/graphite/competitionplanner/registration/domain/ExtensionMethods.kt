@@ -19,6 +19,6 @@ fun Int.asRegistration(): Registration {
     } else if (this == -1) {
         Registration.Placeholder()
     } else {
-        throw IllegalArgumentException("There value $this provided does not correspond to a Registration")
+        throw IllegalArgumentException("The value $this provided does not correspond to a Registration")
     }
 }
