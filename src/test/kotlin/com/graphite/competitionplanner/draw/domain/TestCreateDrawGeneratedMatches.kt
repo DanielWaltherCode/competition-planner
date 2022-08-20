@@ -37,9 +37,9 @@ class TestCreateDrawGeneratedMatches: TestBaseCreateDraw() {
         val matches = result.pools.first().matches
         Assertions.assertEquals(3, matches.size)
 
-        for (registration in registrationRanks) {
-            val res = matches.filter { it.contains(registration.registrationId) }
-            Assertions.assertEquals(2, res.size, "Registration with id ${registration.registrationId.id} did get the correct " +
+        for (registrationRank in registrationRanks) {
+            val res = matches.filter { it.contains(registrationRank.registration) }
+            Assertions.assertEquals(2, res.size, "Registration with id ${registrationRank.registration.id} did get the correct " +
                     "number of matches.")
         }
     }
@@ -71,9 +71,9 @@ class TestCreateDrawGeneratedMatches: TestBaseCreateDraw() {
         val matches = result.pools.first().matches
         Assertions.assertEquals(6, matches.size)
 
-        for (registration in registrationRanks) {
-            val res = matches.filter { it.contains(registration.registrationId) }
-            Assertions.assertEquals(3, res.size, "Registration with id ${registration.registrationId.id} did get the correct " +
+        for (registrationRank in registrationRanks) {
+            val res = matches.filter { it.contains(registrationRank.registration) }
+            Assertions.assertEquals(3, res.size, "Registration with id ${registrationRank.registration.id} did get the correct " +
                     "number of matches.")
         }
     }
@@ -105,9 +105,9 @@ class TestCreateDrawGeneratedMatches: TestBaseCreateDraw() {
         val matches = result.pools.first().matches
         Assertions.assertEquals(10, matches.size)
 
-        for (registration in registrationRanks) {
-            val res = matches.filter { it.contains(registration.registrationId) }
-            Assertions.assertEquals(4, res.size, "Registration with id ${registration.registrationId.id} did get the correct " +
+        for (registrationRank in registrationRanks) {
+            val res = matches.filter { it.contains(registrationRank.registration) }
+            Assertions.assertEquals(4, res.size, "Registration with id ${registrationRank.registration.id} did get the correct " +
                     "number of matches.")
         }
     }

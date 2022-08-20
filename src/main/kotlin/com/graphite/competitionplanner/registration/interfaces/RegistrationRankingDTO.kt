@@ -5,9 +5,9 @@ import com.graphite.competitionplanner.draw.domain.Registration
 data class RegistrationRankingDTO(
 
     /**
-     * The registration id
+     * The registration
      */
-    val registrationId: Registration.Real,
+    val registration: Registration.Real,
 
     /**
      * The competition category id
