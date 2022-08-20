@@ -80,13 +80,6 @@ class RegistrationRepository(
             .fetchInto(PLAYER)
     }
 
-    fun getRegistrationIdsInCategory(competitionCategoryId: Int): List<Int> {
-        return dslContext.select(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID)
-            .from(COMPETITION_CATEGORY_REGISTRATION)
-            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
-            .fetchInto(Int::class.java)
-    }
-
     fun clearPlayingIn() = dslContext.deleteFrom(COMPETITION_CATEGORY_REGISTRATION).execute()
 
     override fun storeSingles(spec: RegistrationSinglesSpecWithDate): RegistrationSinglesDTO {
