@@ -10,6 +10,7 @@ import com.graphite.competitionplanner.draw.domain.*
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.PlayoffRoundDTO
 import com.graphite.competitionplanner.player.repository.PlayerRepository
+import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
+import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

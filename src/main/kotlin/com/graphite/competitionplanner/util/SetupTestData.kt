@@ -17,7 +17,7 @@ import com.graphite.competitionplanner.competitioncategory.domain.AddCompetition
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.CreateDraw
-import com.graphite.competitionplanner.draw.domain.Registration
+import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.player.domain.ListAllPlayersInClub

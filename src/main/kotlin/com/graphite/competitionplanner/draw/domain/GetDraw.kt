@@ -8,6 +8,7 @@ import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.registration.domain.Registration
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.springframework.stereotype.Repository

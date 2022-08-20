@@ -8,7 +8,7 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetiti
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.domain.CupDrawSpec
 import com.graphite.competitionplanner.draw.domain.PlayOffMatch
-import com.graphite.competitionplanner.draw.domain.Registration
+import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.draw.interfaces.CompetitionCategoryDrawDTO
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO

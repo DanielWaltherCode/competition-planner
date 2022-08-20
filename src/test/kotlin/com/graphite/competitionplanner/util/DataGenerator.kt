@@ -8,7 +8,7 @@ import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.competition.interfaces.*
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
-import com.graphite.competitionplanner.draw.domain.Registration
+import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.draw.service.MatchSpec
 import com.graphite.competitionplanner.match.domain.GameResult
 import com.graphite.competitionplanner.match.domain.MatchType

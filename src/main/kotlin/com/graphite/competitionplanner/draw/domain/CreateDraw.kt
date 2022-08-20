@@ -4,6 +4,7 @@ import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitio
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.interfaces.*
+import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.registration.interfaces.RegistrationRankingDTO
 import org.springframework.stereotype.Component
@@ -74,30 +75,6 @@ data class PlayOffMatch(
     var order: Int,
     var round: Round
 )
-
-sealed class Registration {
-    class Real(val id: Int) : Registration() {
-        init {
-            require(id > 0) { "A real registration must have an id higher than 0" }
-        }
-
-        override fun toString(): String {
-            return id.toString()
-        }
-    }
-
-    class Placeholder(var name: String = "Placeholder") : Registration() {
-        override fun toString(): String {
-            return name
-        }
-    }
-
-    object Bye : Registration() {
-        override fun toString(): String {
-            return "BYE"
-        }
-    }
-}
 
 data class PoolMatch(
     val registrationOneId: Registration.Real,

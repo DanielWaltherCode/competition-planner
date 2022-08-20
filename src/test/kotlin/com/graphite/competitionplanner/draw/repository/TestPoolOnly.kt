@@ -8,7 +8,7 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetiti
 import com.graphite.competitionplanner.draw.domain.Pool
 import com.graphite.competitionplanner.draw.domain.PoolDrawSpec
 import com.graphite.competitionplanner.draw.domain.PoolMatch
-import com.graphite.competitionplanner.draw.domain.Registration
+import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
