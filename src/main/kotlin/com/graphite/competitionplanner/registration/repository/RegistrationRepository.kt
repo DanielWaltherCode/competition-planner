@@ -90,26 +90,33 @@ class RegistrationRepository(
     fun clearPlayingIn() = dslContext.deleteFrom(COMPETITION_CATEGORY_REGISTRATION).execute()
 
     override fun storeSingles(spec: RegistrationSinglesSpecWithDate): RegistrationSinglesDTO {
-        // TODO: This needs to be a transaction to ensure integrity of the registration
-        val registrationRecord = addRegistration(spec.date)
-        val playerRegistrationRecord = registerPlayer(registrationRecord.id, spec.playerId)
-        registerInCategory(registrationRecord.id, spec.competitionCategoryId)
+        lateinit var registrationRecord: RegistrationRecord
+        lateinit var playerRegistrationRecord: PlayerRegistrationRecord
+
+        asTransaction {
+            registrationRecord = addRegistration(spec.date)
+            playerRegistrationRecord = registerPlayer(registrationRecord.id, spec.playerId)
+            registerInCategory(registrationRecord.id, spec.competitionCategoryId)
+        }
 
         return RegistrationSinglesDTO(
-            registrationRecord.id,
-            spec.playerId,
-            spec.competitionCategoryId,
-            spec.date,
-            PlayerRegistrationStatus.valueOf(playerRegistrationRecord.status)
+            id = registrationRecord.id,
+            playerId = spec.playerId,
+            competitionCategoryId = spec.competitionCategoryId,
+            registrationDate = spec.date,
+            status = PlayerRegistrationStatus.valueOf(playerRegistrationRecord.status)
         )
     }
 
     override fun storeDoubles(spec: RegistrationDoublesSpecWithDate): RegistrationDoublesDTO {
-        // TODO: This needs to be a transaction to ensure integrity of the registration
-        val registrationRecord = addRegistration(spec.date)
-        registerPlayer(registrationRecord.id, spec.playerOneId)
-        registerPlayer(registrationRecord.id, spec.playerTwoId)
-        registerInCategory(registrationRecord.id, spec.competitionCategoryId)
+        lateinit var registrationRecord: RegistrationRecord
+
+        asTransaction {
+            registrationRecord = addRegistration(spec.date)
+            registerPlayer(registrationRecord.id, spec.playerOneId)
+            registerPlayer(registrationRecord.id, spec.playerTwoId)
+            registerInCategory(registrationRecord.id, spec.competitionCategoryId)
+        }
 
         return RegistrationDoublesDTO(
             registrationRecord.id,
