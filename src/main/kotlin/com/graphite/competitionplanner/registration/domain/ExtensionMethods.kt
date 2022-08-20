@@ -1,8 +1,5 @@
 package com.graphite.competitionplanner.registration.domain
 
-import com.graphite.competitionplanner.draw.domain.Registration
-
-
 fun Registration.asInt(): Int {
     return when (this) {
         is Registration.Real -> this.id

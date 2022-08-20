@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.registration.interfaces
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
-import com.graphite.competitionplanner.draw.domain.Registration
+import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.tables.records.PlayerRegistrationRecord

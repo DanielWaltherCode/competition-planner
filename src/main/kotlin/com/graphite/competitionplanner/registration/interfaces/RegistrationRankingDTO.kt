@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.registration.interfaces
 
-import com.graphite.competitionplanner.draw.domain.Registration
+import com.graphite.competitionplanner.registration.domain.Registration
 
 data class RegistrationRankingDTO(
 

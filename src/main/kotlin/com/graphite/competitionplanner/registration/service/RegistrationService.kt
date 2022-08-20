@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.registration.service
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
-import com.graphite.competitionplanner.draw.domain.Registration
+import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.domain.FindPlayer
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO

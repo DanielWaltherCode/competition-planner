@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.draw.domain
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.draw.interfaces.Round
+import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.registration.interfaces.RegistrationRankingDTO
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions

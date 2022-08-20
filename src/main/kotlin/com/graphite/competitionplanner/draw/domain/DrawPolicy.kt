@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.draw.interfaces.NotEnoughRegistrationsException
 import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
 import com.graphite.competitionplanner.draw.interfaces.Round
+import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.registration.interfaces.RegistrationRankingDTO
 import kotlin.math.ceil
 import kotlin.math.log2
