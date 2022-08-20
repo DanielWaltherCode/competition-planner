@@ -1,6 +1,5 @@
 package com.graphite.competitionplanner.competitioncategory.interfaces
 
-import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.common.exception.IllegalActionException
 import com.graphite.competitionplanner.common.exception.NotFoundException
 
@@ -46,14 +45,6 @@ interface ICompetitionCategoryRepository {
      */
     @Throws(NotFoundException::class, IllegalActionException::class)
     fun update(id: Int, spec: CompetitionCategoryUpdateSpec)
-
-    /**
-     * Add a competition category to the list of available categories. If one tries to add a category with a name that
-     * is identical to one that already exist, then this function does nothing.
-     *
-     * @param dto A new category to be added as part of available categories that can be used in a competition
-     */
-    fun addAvailableCategory(dto: CategoryDTO)
 
     /**
      * Set the state of the competition category
