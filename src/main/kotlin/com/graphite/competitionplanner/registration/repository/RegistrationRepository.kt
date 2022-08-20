@@ -6,6 +6,7 @@ import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.common.repository.BaseRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
@@ -25,7 +26,11 @@ import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 @Repository
-class RegistrationRepository(val dslContext: DSLContext) : IRegistrationRepository {
+class RegistrationRepository(
+    dslContext: DSLContext
+) : BaseRepository(dslContext),
+    IRegistrationRepository
+{
 
     fun addRegistrationWithId(id: Int, date: LocalDate): RegistrationRecord {
         val registration: RegistrationRecord = dslContext.newRecord(REGISTRATION)
