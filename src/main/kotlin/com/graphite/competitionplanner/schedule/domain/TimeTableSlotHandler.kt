@@ -61,11 +61,13 @@ class TimeTableSlotHandler(
             })
         }
 
-        // TODO: This has to be a transaction
-        // If successful to this point, delete any previously stored time slots and reset
-        scheduleRepository.clearSchedule(competitionId)
-        scheduleRepository.deleteTimeTable(competitionId)
-        scheduleRepository.storeTimeTable(competitionId, timeSlots)
+        with(scheduleRepository) {
+            asTransaction {
+                clearSchedule(competitionId)
+                deleteTimeTable(competitionId)
+                storeTimeTable(competitionId, timeSlots)
+            }
+        }
     }
 
     private fun generateStartTimes(

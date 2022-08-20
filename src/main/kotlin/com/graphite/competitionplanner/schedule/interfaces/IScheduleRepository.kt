@@ -1,10 +1,11 @@
 package com.graphite.competitionplanner.schedule.interfaces
 
+import com.graphite.competitionplanner.common.repository.IRepository
 import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.tables.records.MatchTimeSlotRecord
 import java.time.LocalDateTime
 
-interface IScheduleRepository {
+interface IScheduleRepository: IRepository {
 
     /**
      * Store the timetable for the given competition
