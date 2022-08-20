@@ -6,6 +6,7 @@ import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.common.repository.BaseRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
@@ -25,7 +26,11 @@ import org.springframework.stereotype.Repository
 import java.time.LocalDate
 
 @Repository
-class RegistrationRepository(val dslContext: DSLContext) : IRegistrationRepository {
+class RegistrationRepository(
+    dslContext: DSLContext
+) : BaseRepository(dslContext),
+    IRegistrationRepository
+{
 
     fun addRegistrationWithId(id: Int, date: LocalDate): RegistrationRecord {
         val registration: RegistrationRecord = dslContext.newRecord(REGISTRATION)
@@ -75,36 +80,36 @@ class RegistrationRepository(val dslContext: DSLContext) : IRegistrationReposito
             .fetchInto(PLAYER)
     }
 
-    fun getRegistrationIdsInCategory(competitionCategoryId: Int): List<Int> {
-        return dslContext.select(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID)
-            .from(COMPETITION_CATEGORY_REGISTRATION)
-            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
-            .fetchInto(Int::class.java)
-    }
-
     fun clearPlayingIn() = dslContext.deleteFrom(COMPETITION_CATEGORY_REGISTRATION).execute()
 
     override fun storeSingles(spec: RegistrationSinglesSpecWithDate): RegistrationSinglesDTO {
-        // TODO: This needs to be a transaction to ensure integrity of the registration
-        val registrationRecord = addRegistration(spec.date)
-        val playerRegistrationRecord = registerPlayer(registrationRecord.id, spec.playerId)
-        registerInCategory(registrationRecord.id, spec.competitionCategoryId)
+        lateinit var registrationRecord: RegistrationRecord
+        lateinit var playerRegistrationRecord: PlayerRegistrationRecord
+
+        asTransaction {
+            registrationRecord = addRegistration(spec.date)
+            playerRegistrationRecord = registerPlayer(registrationRecord.id, spec.playerId)
+            registerInCategory(registrationRecord.id, spec.competitionCategoryId)
+        }
 
         return RegistrationSinglesDTO(
-            registrationRecord.id,
-            spec.playerId,
-            spec.competitionCategoryId,
-            spec.date,
-            PlayerRegistrationStatus.valueOf(playerRegistrationRecord.status)
+            id = registrationRecord.id,
+            playerId = spec.playerId,
+            competitionCategoryId = spec.competitionCategoryId,
+            registrationDate = spec.date,
+            status = PlayerRegistrationStatus.valueOf(playerRegistrationRecord.status)
         )
     }
 
     override fun storeDoubles(spec: RegistrationDoublesSpecWithDate): RegistrationDoublesDTO {
-        // TODO: This needs to be a transaction to ensure integrity of the registration
-        val registrationRecord = addRegistration(spec.date)
-        registerPlayer(registrationRecord.id, spec.playerOneId)
-        registerPlayer(registrationRecord.id, spec.playerTwoId)
-        registerInCategory(registrationRecord.id, spec.competitionCategoryId)
+        lateinit var registrationRecord: RegistrationRecord
+
+        asTransaction {
+            registrationRecord = addRegistration(spec.date)
+            registerPlayer(registrationRecord.id, spec.playerOneId)
+            registerPlayer(registrationRecord.id, spec.playerTwoId)
+            registerInCategory(registrationRecord.id, spec.competitionCategoryId)
+        }
 
         return RegistrationDoublesDTO(
             registrationRecord.id,
