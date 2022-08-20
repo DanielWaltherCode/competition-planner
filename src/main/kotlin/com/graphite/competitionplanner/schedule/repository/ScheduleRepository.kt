@@ -166,7 +166,6 @@ class ScheduleRepository(
         } catch (exception: DuplicateKeyException) {
             logger.warn("Exception message: ${exception.message}")
             throw RuntimeException("Failed to store time table for competition id $competitionId")
-
         }
     }
 
