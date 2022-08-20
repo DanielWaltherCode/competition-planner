@@ -46,7 +46,7 @@ class TestSeeding: TestBaseCreateDraw() {
             // Assert
             val seeding = result.seeding
             Assertions.assertEquals(registrationRanks.size, seeding.size)
-            Assertions.assertEquals(registrationRanks.map { it.registrationId }.sorted(), seeding.map { it.registrationId }.sorted())
+            Assertions.assertEquals(registrationRanks.map { it.registrationId.id }.sorted(), seeding.map { it.registrationId }.sorted())
         }
     }
 }

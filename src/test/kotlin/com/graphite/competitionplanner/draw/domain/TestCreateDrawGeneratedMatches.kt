@@ -38,8 +38,8 @@ class TestCreateDrawGeneratedMatches: TestBaseCreateDraw() {
         Assertions.assertEquals(3, matches.size)
 
         for (registration in registrationRanks) {
-            val res = matches.filter { it.contains(Registration.Real(registration.registrationId)) }
-            Assertions.assertEquals(2, res.size, "Registration with id ${registration.registrationId} did get the correct " +
+            val res = matches.filter { it.contains(registration.registrationId) }
+            Assertions.assertEquals(2, res.size, "Registration with id ${registration.registrationId.id} did get the correct " +
                     "number of matches.")
         }
     }
@@ -72,8 +72,8 @@ class TestCreateDrawGeneratedMatches: TestBaseCreateDraw() {
         Assertions.assertEquals(6, matches.size)
 
         for (registration in registrationRanks) {
-            val res = matches.filter { it.contains(Registration.Real(registration.registrationId)) }
-            Assertions.assertEquals(3, res.size, "Registration with id ${registration.registrationId} did get the correct " +
+            val res = matches.filter { it.contains(registration.registrationId) }
+            Assertions.assertEquals(3, res.size, "Registration with id ${registration.registrationId.id} did get the correct " +
                     "number of matches.")
         }
     }
@@ -106,8 +106,8 @@ class TestCreateDrawGeneratedMatches: TestBaseCreateDraw() {
         Assertions.assertEquals(10, matches.size)
 
         for (registration in registrationRanks) {
-            val res = matches.filter { it.contains(Registration.Real(registration.registrationId)) }
-            Assertions.assertEquals(4, res.size, "Registration with id ${registration.registrationId} did get the correct " +
+            val res = matches.filter { it.contains(registration.registrationId) }
+            Assertions.assertEquals(4, res.size, "Registration with id ${registration.registrationId.id} did get the correct " +
                     "number of matches.")
         }
     }
