@@ -1,7 +1,6 @@
 package com.graphite.competitionplanner.competitioncategory.repository
 
 import com.graphite.competitionplanner.Tables.*
-import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.common.exception.IllegalActionException
@@ -34,16 +33,6 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             .fetchOneInto(CATEGORY)
             ?: throw NotFoundException("No competition category type found for categoryId $competitionCategoryId")
 
-    }
-
-    // TODO: Move to Registration Service instead ?
-    // Returns registrations ids for the players registered in a given competition category
-    fun getRegistrationsInCategory(categoryId: Int): List<Int> {
-        return dslContext
-            .select(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID)
-            .from(COMPETITION_CATEGORY_REGISTRATION)
-            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(categoryId))
-            .fetchInto(Int::class.java)
     }
 
     // Should return competition information, disciplines
@@ -142,7 +131,6 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         }
     }
 
-
     override fun getAll(competitionId: Int): List<CompetitionCategoryDTO> {
         val records = dslContext.select()
             .from(COMPETITION_CATEGORY)
@@ -228,10 +216,6 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             logger.error("Failed to update settings of competition category with $id.")
             logger.error("Exception message: ${exception.message}")
         }
-    }
-
-    override fun addAvailableCategory(dto: CategoryDTO) {
-        TODO("Not yet implemented")
     }
 
     override fun setStatus(competitionCategoryId: Int, status: CompetitionCategoryStatus) {
