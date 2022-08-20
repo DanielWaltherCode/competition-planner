@@ -9,6 +9,7 @@ import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.registration.domain.asInt
+import com.graphite.competitionplanner.registration.domain.asRegistration
 import com.graphite.competitionplanner.tables.records.*
 import org.jetbrains.annotations.NotNull
 import org.jooq.DSLContext
@@ -87,7 +88,7 @@ class CompetitionDrawRepository(
                     .set(COMPETITION_CATEGORY_REGISTRATION.SEED, dto.seed)
                     .where(
                         COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(dto.competitionCategoryId)
-                            .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(dto.registrationId))
+                            .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(dto.registrationId.id))
                     ).execute()
             }
         }
@@ -196,7 +197,7 @@ class CompetitionDrawRepository(
                 )
             )
             .fetchInto(COMPETITION_CATEGORY_REGISTRATION)
-        return records.map { RegistrationSeedDTO(it.registrationId, it.competitionCategoryId, it.seed) }
+        return records.map { RegistrationSeedDTO(Registration.Real(it.registrationId), it.competitionCategoryId, it.seed) }
     }
 
     private fun Pool.toRecord(competitionCategoryId: Int): PoolRecord {

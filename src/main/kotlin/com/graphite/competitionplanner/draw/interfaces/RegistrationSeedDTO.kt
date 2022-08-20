@@ -1,10 +1,12 @@
 package com.graphite.competitionplanner.draw.interfaces
 
+import com.graphite.competitionplanner.registration.domain.Registration
+
 data class RegistrationSeedDTO(
     /**
      * ID of the registration
      */
-    val registrationId: Int,
+    val registrationId: Registration.Real,
 
     /**
      * ID of the competition category

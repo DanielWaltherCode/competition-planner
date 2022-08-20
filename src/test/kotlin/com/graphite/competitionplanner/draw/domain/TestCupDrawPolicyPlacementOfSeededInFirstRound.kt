@@ -66,12 +66,12 @@ class TestCupDrawPolicyPlacementOfSeededInFirstRound {
                     .first { it.order == testData.matchesFirstRound }
 
                 Assertions.assertEquals(
-                    (firstMatch.registrationOneId as Registration.Real).id,
+                    (firstMatch.registrationOneId as Registration.Real),
                     firstSeed.registrationId,
                     "The best seeded player should be placed on the top of the top half."
                 )
                 Assertions.assertEquals(
-                    (lastMatch.registrationTwoId as Registration.Real).id,
+                    (lastMatch.registrationTwoId as Registration.Real),
                     secondSeed.registrationId,
                     "The second best seeded player should be placed on the bottom of the bottom half."
                 )
@@ -131,22 +131,22 @@ class TestCupDrawPolicyPlacementOfSeededInFirstRound {
                     .first { it.order == testData.matchesFirstRound }
 
                 Assertions.assertEquals(
-                    (topHalfTopPlaceMatch.registrationOneId as Registration.Real).id,
+                    (topHalfTopPlaceMatch.registrationOneId as Registration.Real),
                     firstSeed.registrationId,
                     "The best seeded player should be placed on the top of the top half."
                 )
                 Assertions.assertTrue(
-                    (topHalfBottomPlaceMatch.registrationTwoId as Registration.Real).id == thirdSeed.registrationId ||
-                            (topHalfBottomPlaceMatch.registrationTwoId as Registration.Real).id == fourthSeed.registrationId,
+                    (topHalfBottomPlaceMatch.registrationTwoId as Registration.Real) == thirdSeed.registrationId ||
+                            topHalfBottomPlaceMatch.registrationTwoId == fourthSeed.registrationId,
                     "The third or fourth best seeded player should be placed randomly on the bottom of the top half."
                 )
                 Assertions.assertTrue(
-                    (bottomHalfTopPlaceMatch.registrationOneId as Registration.Real).id == thirdSeed.registrationId ||
-                            (bottomHalfTopPlaceMatch.registrationOneId as Registration.Real).id == fourthSeed.registrationId,
+                    (bottomHalfTopPlaceMatch.registrationOneId as Registration.Real) == thirdSeed.registrationId ||
+                            bottomHalfTopPlaceMatch.registrationOneId == fourthSeed.registrationId,
                     "The third or fourth best seeded player should be placed randomly on the top of the bottom half."
                 )
                 Assertions.assertEquals(
-                    (bottomHalfBottomPlaceMatch.registrationTwoId as Registration.Real).id,
+                    (bottomHalfBottomPlaceMatch.registrationTwoId as Registration.Real),
                     secondSeed.registrationId,
                     "The second best seeded player should be placed on the bottom of the bottom half."
                 )
@@ -209,36 +209,36 @@ class TestCupDrawPolicyPlacementOfSeededInFirstRound {
                     .first { it.order == testData.matchesFirstRound }
 
                 Assertions.assertEquals(
-                    (firstQuarterTopPlace.registrationOneId as Registration.Real).id,
+                    (firstQuarterTopPlace.registrationOneId as Registration.Real),
                     firstSeed.registrationId,
                     "The best seeded player should be placed on the top of the top half."
                 )
                 Assertions.assertTrue(
-                    seeded5to8.contains((firstQuarterBottomPlace.registrationTwoId as Registration.Real).id),
+                    seeded5to8.contains((firstQuarterBottomPlace.registrationTwoId as Registration.Real)),
                     "Expected to find one of the fifth to eighth seeded registrations in the first quarter's bottom place"
                 )
                 Assertions.assertTrue(
-                    seeded5to8.contains((secondQuarterTopPlace.registrationOneId as Registration.Real).id),
+                    seeded5to8.contains((secondQuarterTopPlace.registrationOneId as Registration.Real)),
                     "Expected to find one of the fifth to eighth seeded registrations in the second quarter's top place"
                 )
                 Assertions.assertTrue(
-                    seeded3And4.contains((secondQuarterBottomPlace.registrationTwoId as Registration.Real).id),
+                    seeded3And4.contains((secondQuarterBottomPlace.registrationTwoId as Registration.Real)),
                     "The third or fourth best seeded player should be placed randomly on the bottom of the top half."
                 )
                 Assertions.assertTrue(
-                    seeded3And4.contains((thirdQuarterTopPlace.registrationOneId as Registration.Real).id),
+                    seeded3And4.contains((thirdQuarterTopPlace.registrationOneId as Registration.Real)),
                     "The third or fourth best seeded player should be placed randomly on the top of the bottom half."
                 )
                 Assertions.assertTrue(
-                    seeded5to8.contains((thirdQuarterBottomPlace.registrationTwoId as Registration.Real).id),
+                    seeded5to8.contains((thirdQuarterBottomPlace.registrationTwoId as Registration.Real)),
                     "Expected to find one of the fifth to eighth seeded registrations in the third quarter's bottom place"
                 )
                 Assertions.assertTrue(
-                    seeded5to8.contains((fourthQuarterTopPlace.registrationOneId as Registration.Real).id),
+                    seeded5to8.contains((fourthQuarterTopPlace.registrationOneId as Registration.Real)),
                     "Expected to find one of the fifth to eighth seeded registrations in the fourth quarter's top place"
                 )
                 Assertions.assertEquals(
-                    (fourthQuarterBottomPlace.registrationTwoId as Registration.Real).id,
+                    (fourthQuarterBottomPlace.registrationTwoId as Registration.Real),
                     secondSeed.registrationId,
                     "The second best seeded player should be placed on the bottom of the bottom half."
                 )
@@ -320,75 +320,75 @@ class TestCupDrawPolicyPlacementOfSeededInFirstRound {
                     .first { it.order == testData.matchesFirstRound }
 
                 Assertions.assertEquals(
-                    (firstEighthsTopPlace.registrationOneId as Registration.Real).id,
+                    (firstEighthsTopPlace.registrationOneId as Registration.Real),
                     firstSeed.registrationId,
                     "The best seeded player should be placed on the top of the top half."
                 )
                 Assertions.assertTrue(
-                    seeded9to16.contains((firstEightsBottomPlace.registrationTwoId as Registration.Real).id),
+                    seeded9to16.contains((firstEightsBottomPlace.registrationTwoId as Registration.Real)),
                     "Expected to find one of the 9 to 16 seeded registrations in the eights bottom place"
                 )
 
                 Assertions.assertTrue(
-                    seeded9to16.contains((secondEightsTopPlace.registrationOneId as Registration.Real).id),
+                    seeded9to16.contains((secondEightsTopPlace.registrationOneId as Registration.Real)),
                     "Expected to find one of the 9 to 16 seeded registrations in the second eights top place"
                 )
                 Assertions.assertTrue(
-                    seeded5to8.contains((secondEightsBottomPlace.registrationTwoId as Registration.Real).id),
+                    seeded5to8.contains((secondEightsBottomPlace.registrationTwoId as Registration.Real)),
                     "Expected to find one of the fifth to eighth seeded registrations in the first quarter's bottom place"
                 )
 
                 Assertions.assertTrue(
-                    seeded5to8.contains((thirdEightsTopPlace.registrationOneId as Registration.Real).id),
+                    seeded5to8.contains((thirdEightsTopPlace.registrationOneId as Registration.Real)),
                     "Expected to find one of the fifth to eighth seeded registrations in the second quarter's top place"
                 )
                 Assertions.assertTrue(
-                    seeded9to16.contains((thirdEightsBottomPlace.registrationTwoId as Registration.Real).id),
+                    seeded9to16.contains((thirdEightsBottomPlace.registrationTwoId as Registration.Real)),
                     "Expected to find one of the fifth to eighth seeded registrations in the second quarter's top place"
                 )
 
                 Assertions.assertTrue(
-                    seeded9to16.contains((fourthEightsTopPlace.registrationOneId as Registration.Real).id),
+                    seeded9to16.contains((fourthEightsTopPlace.registrationOneId as Registration.Real)),
                     "Expected to find one of the 9 to 16 seeded registrations in the second eights top place"
                 )
                 Assertions.assertTrue(
-                    seeded3And4.contains((fourthEightsBottomPlace.registrationTwoId as Registration.Real).id),
+                    seeded3And4.contains((fourthEightsBottomPlace.registrationTwoId as Registration.Real)),
                     "The third or fourth best seeded player should be placed randomly on the bottom of the top half."
                 )
 
                 Assertions.assertTrue(
-                    seeded3And4.contains((fifthEightsTopPlace.registrationOneId as Registration.Real).id),
+                    seeded3And4.contains((fifthEightsTopPlace.registrationOneId as Registration.Real)),
                     "The third or fourth best seeded player should be placed randomly on the top of the bottom half."
                 )
                 Assertions.assertTrue(
-                    seeded9to16.contains((fifthEightsBottomPlace.registrationTwoId as Registration.Real).id),
+                    seeded9to16.contains((fifthEightsBottomPlace.registrationTwoId as Registration.Real)),
                     "Expected to find one of the 9 to 16 seeded registrations in the fifth eights bottom place"
                 )
 
                 Assertions.assertTrue(
-                    seeded9to16.contains((sixthEightsTopPlace.registrationOneId as Registration.Real).id),
+                    seeded9to16.contains((sixthEightsTopPlace.registrationOneId as Registration.Real)),
                     "Expected to find one of the 9 to 16 seeded registrations in the sixth eights top place"
                 )
                 Assertions.assertTrue(
-                    seeded5to8.contains((sixthEightsBottomPlace.registrationTwoId as Registration.Real).id),
+                    seeded5to8.contains((sixthEightsBottomPlace.registrationTwoId as Registration.Real)),
                     "Expected to find one of the fifth to eighth seeded registrations in the third quarter's bottom place"
                 )
 
                 Assertions.assertTrue(
-                    seeded5to8.contains((seventhEightsTopPlace.registrationOneId as Registration.Real).id),
+                    seeded5to8.contains((seventhEightsTopPlace.registrationOneId as Registration.Real)),
                     "Expected to find one of the fifth to eighth seeded registrations in the fourth quarter's top place"
                 )
                 Assertions.assertTrue(
-                    seeded9to16.contains((seventhEightsBottomPlace.registrationTwoId as Registration.Real).id),
+                    seeded9to16.contains((seventhEightsBottomPlace.registrationTwoId as Registration.Real)),
                     "Expected to find one of the 9 to 16 seeded registrations in the seventh eights bottom place"
                 )
 
                 Assertions.assertTrue(
-                    seeded9to16.contains((lastEightsTopPlace.registrationOneId as Registration.Real).id),
+                    seeded9to16.contains((lastEightsTopPlace.registrationOneId as Registration.Real)),
                     "Expected to find one of the 9 to 16 seeded registrations in the last eights top place"
                 )
                 Assertions.assertEquals(
-                    (lastEightsBottomPlace.registrationTwoId as Registration.Real).id,
+                    (lastEightsBottomPlace.registrationTwoId as Registration.Real),
                     secondSeed.registrationId,
                     "The second best seeded player should be placed on the bottom of the bottom half."
                 )

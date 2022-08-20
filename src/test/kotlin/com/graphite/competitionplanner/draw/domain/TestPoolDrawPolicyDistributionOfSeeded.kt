@@ -109,9 +109,9 @@ class TestPoolDrawPolicyDistributionOfSeeded {
 
         val pools = draw.pools.sortedBy { it.name }
         for (i in seededRegistrations.indices) {
-            val idsInPool = pools[i].registrationIds.map { it.id }
             val seededRegistrationId = seededRegistrations[i].registrationId
-            Assertions.assertTrue(idsInPool.contains(seededRegistrationId), "Expected to find id $seededRegistrationId in ${pools[i]}")
+            Assertions.assertTrue(pools[i].registrationIds.contains(seededRegistrationId),
+                "Expected to find id $seededRegistrationId in ${pools[i]}")
         }
     }
 
