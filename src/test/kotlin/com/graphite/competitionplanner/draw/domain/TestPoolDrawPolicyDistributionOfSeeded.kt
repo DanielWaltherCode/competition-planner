@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner.draw.domain;
+package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
@@ -8,7 +8,7 @@ import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 class TestPoolDrawPolicyDistributionOfSeeded {
