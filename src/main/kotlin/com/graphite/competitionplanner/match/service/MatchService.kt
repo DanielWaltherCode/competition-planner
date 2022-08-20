@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.match.service
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
-import com.graphite.competitionplanner.draw.service.MatchType
+import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService

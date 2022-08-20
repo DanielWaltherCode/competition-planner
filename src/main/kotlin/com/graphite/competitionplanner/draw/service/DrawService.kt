@@ -6,6 +6,7 @@ import com.graphite.competitionplanner.competitioncategory.repository.Competitio
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.api.DrawDTO
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
+import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService
@@ -147,11 +148,6 @@ data class MatchSpec(
     val matchOrderNumber: Int,
     val groupOrRound: String // Either group name (e.g. Group "A") or the round like Round of 64, Quarterfinals
 )
-
-// TODO: Move to repository. Match repository ?
-enum class MatchType {
-    GROUP, PLAYOFF
-}
 
 data class GroupDrawDTO(
     val groups: List<SingleGroupDTO>

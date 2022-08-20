@@ -5,7 +5,7 @@ import com.graphite.competitionplanner.draw.interfaces.GroupStandingWithRegistra
 import com.graphite.competitionplanner.draw.interfaces.SortedBy
 import com.graphite.competitionplanner.draw.interfaces.WonLostDTO
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
-import com.graphite.competitionplanner.draw.service.MatchType
+import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.result.service.ResultDTO

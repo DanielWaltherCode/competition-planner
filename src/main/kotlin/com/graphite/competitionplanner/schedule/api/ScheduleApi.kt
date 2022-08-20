@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.schedule.api
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
-import com.graphite.competitionplanner.draw.service.MatchType
+import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.schedule.domain.CompetitionScheduler
 import com.graphite.competitionplanner.schedule.domain.MatchSchedulerSpec
 import com.graphite.competitionplanner.schedule.interfaces.*

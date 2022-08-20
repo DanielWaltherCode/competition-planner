@@ -4,7 +4,6 @@ import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.service.MatchSpec
-import com.graphite.competitionplanner.draw.service.MatchType
 import com.graphite.competitionplanner.match.domain.*
 import com.graphite.competitionplanner.tables.records.GameRecord
 import com.graphite.competitionplanner.tables.records.MatchRecord

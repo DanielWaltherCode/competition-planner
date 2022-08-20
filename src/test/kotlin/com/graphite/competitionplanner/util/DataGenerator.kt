@@ -10,6 +10,7 @@ import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.draw.service.MatchSpec
 import com.graphite.competitionplanner.match.domain.GameResult
+import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.domain.PlayoffMatch
 import com.graphite.competitionplanner.match.domain.PoolMatch
@@ -124,7 +125,7 @@ class DataGenerator {
         startTime: LocalDateTime? = null,
         endTime: LocalDateTime? = null,
         competitionCategoryId: Int = this.competitionCategoryId++,
-        matchType: com.graphite.competitionplanner.draw.service.MatchType = com.graphite.competitionplanner.draw.service.MatchType.GROUP,
+        matchType: MatchType = MatchType.GROUP,
         firstRegistrationId: Int = this.registrationId++,
         secondRegistrationId: Int = this.registrationId++,
         matchOrderNumber: Int = 1,
