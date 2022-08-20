@@ -6,7 +6,7 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.Competitio
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.*
 import com.graphite.competitionplanner.draw.interfaces.*
-import com.graphite.competitionplanner.draw.service.*
+import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.registration.domain.asInt
 import com.graphite.competitionplanner.tables.records.*
 import org.jetbrains.annotations.NotNull

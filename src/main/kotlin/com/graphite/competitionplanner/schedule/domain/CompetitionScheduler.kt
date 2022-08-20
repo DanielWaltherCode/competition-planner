@@ -7,7 +7,7 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.Competitio
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.service.DrawService
-import com.graphite.competitionplanner.draw.service.MatchType
+import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.schedule.api.ScheduleCategoryContainerDTO
 import com.graphite.competitionplanner.schedule.api.ScheduleCategoryDTO
 import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleDTO

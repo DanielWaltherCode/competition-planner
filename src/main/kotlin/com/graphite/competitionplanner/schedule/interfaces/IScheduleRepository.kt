@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.schedule.interfaces
 
-import com.graphite.competitionplanner.draw.service.MatchType
+import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.tables.records.MatchTimeSlotRecord
 import java.time.LocalDateTime
 

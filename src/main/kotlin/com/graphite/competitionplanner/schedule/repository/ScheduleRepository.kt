@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.schedule.repository
 
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.common.exception.NotFoundException
-import com.graphite.competitionplanner.draw.service.MatchType
+import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.schedule.api.*
 import com.graphite.competitionplanner.schedule.interfaces.*
 import com.graphite.competitionplanner.tables.records.*

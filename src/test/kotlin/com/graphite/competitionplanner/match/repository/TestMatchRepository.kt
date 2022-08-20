@@ -6,7 +6,7 @@ import com.graphite.competitionplanner.competition.interfaces.ICompetitionReposi
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.Round
-import com.graphite.competitionplanner.draw.service.MatchType
+import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.match.domain.PlayoffMatch
 import com.graphite.competitionplanner.match.domain.PoolMatch
 import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
