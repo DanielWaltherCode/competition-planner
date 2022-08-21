@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.common.exception.IllegalActionException
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.common.repository.BaseRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.registration.interfaces.PlayerRegistrationStatus
@@ -14,17 +15,14 @@ import com.graphite.competitionplanner.tables.records.CompetitionCategoryMetadat
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.SelectConditionStep
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
-import kotlin.RuntimeException
 
-/**
- * N..N table for categories at a given competition
- */
 @Repository
-class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCategoryRepository {
-
-    private val logger = LoggerFactory.getLogger(javaClass)
+class CompetitionCategoryRepository(
+    dslContext: DSLContext
+) : BaseRepository(dslContext),
+    ICompetitionCategoryRepository
+{
 
     fun getCategoryType(competitionCategoryId: Int): CategoryRecord {
         return dslContext.select().from(COMPETITION_CATEGORY)
@@ -149,15 +147,10 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
         competitionCategoryRecord.competitionId = competitionId
         competitionCategoryRecord.category = spec.category.id
 
-        try {
-            dslContext.transaction { _ ->
-                competitionCategoryRecord.store()
-                spec.gameSettings.toRecord(competitionCategoryRecord.id).store()
-                spec.settings.toRecord(competitionCategoryRecord.id).store()
-            }
-        } catch (exception: RuntimeException) {
-            logger.error("Failed to store competition category in competition with id $competitionId. Competition category spec: $spec")
-            logger.error("Exception message: ${exception.message}")
+        asTransaction {
+            competitionCategoryRecord.store()
+            spec.gameSettings.toRecord(competitionCategoryRecord.id).store()
+            spec.settings.toRecord(competitionCategoryRecord.id).store()
         }
 
         return CompetitionCategoryDTO(
@@ -170,21 +163,16 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
     }
 
     override fun delete(competitionCategoryId: Int) {
-        try {
-            dslContext.transaction { _ ->
-                dslContext.delete(COMPETITION_CATEGORY_METADATA)
-                    .where(COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
-                    .execute()
-                dslContext.delete(COMPETITION_CATEGORY_GAME_RULES)
-                    .where(COMPETITION_CATEGORY_GAME_RULES.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
-                    .execute()
-                dslContext.deleteFrom(COMPETITION_CATEGORY)
-                    .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
-                    .execute()
-            }
-        } catch (exception: RuntimeException) {
-            logger.error("Failed to delete competition category of competition category with $competitionCategoryId.")
-            logger.error("Exception message: ${exception.message}")
+        asTransaction {
+            dslContext.delete(COMPETITION_CATEGORY_METADATA)
+                .where(COMPETITION_CATEGORY_METADATA.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+                .execute()
+            dslContext.delete(COMPETITION_CATEGORY_GAME_RULES)
+                .where(COMPETITION_CATEGORY_GAME_RULES.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+                .execute()
+            dslContext.deleteFrom(COMPETITION_CATEGORY)
+                .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
+                .execute()
         }
     }
 
@@ -207,14 +195,9 @@ class CompetitionCategoryRepository(val dslContext: DSLContext) : ICompetitionCa
             COMPETITION_CATEGORY_METADATA.ID
         )
 
-        try {
-            dslContext.transaction { _ ->
-                settingRecord.update()
-                gameSettingsRecord.update()
-            }
-        } catch (exception: RuntimeException) {
-            logger.error("Failed to update settings of competition category with $id.")
-            logger.error("Exception message: ${exception.message}")
+        asTransaction {
+            settingRecord.update()
+            gameSettingsRecord.update()
         }
     }
 
