@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.util
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.domain.CategoryType
+import com.graphite.competitionplanner.category.domain.DefaultCategory
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.domain.CreateClub
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
@@ -122,36 +123,9 @@ class SetupTestData(
     }
 
     fun categorySetup() {
-        categoryRepository.addCategory("Herrar 1", CategoryType.SINGLES)
-        categoryRepository.addCategory("Herrar 2", CategoryType.SINGLES)
-        categoryRepository.addCategory("Herrar 3", CategoryType.SINGLES)
-        categoryRepository.addCategory("Herrar 4", CategoryType.SINGLES)
-        categoryRepository.addCategory("Herrar 5", CategoryType.SINGLES)
-        categoryRepository.addCategory("Herrar 6", CategoryType.SINGLES)
-        categoryRepository.addCategory("Damer 1", CategoryType.SINGLES)
-        categoryRepository.addCategory("Damer 2", CategoryType.SINGLES)
-        categoryRepository.addCategory("Damer 3", CategoryType.SINGLES)
-        categoryRepository.addCategory("Damer 4", CategoryType.SINGLES)
-        categoryRepository.addCategory("Damjuniorer 17", CategoryType.SINGLES)
-        categoryRepository.addCategory("Flickor 15", CategoryType.SINGLES)
-        categoryRepository.addCategory("Flickor 14", CategoryType.SINGLES)
-        categoryRepository.addCategory("Flickor 13", CategoryType.SINGLES)
-        categoryRepository.addCategory("Flickor 12", CategoryType.SINGLES)
-        categoryRepository.addCategory("Flickor 11", CategoryType.SINGLES)
-        categoryRepository.addCategory("Flickor 10", CategoryType.SINGLES)
-        categoryRepository.addCategory("Flickor 9", CategoryType.SINGLES)
-        categoryRepository.addCategory("Flickor 8", CategoryType.SINGLES)
-        categoryRepository.addCategory("Herrjuniorer 17", CategoryType.SINGLES)
-        categoryRepository.addCategory("Pojkar 15", CategoryType.SINGLES)
-        categoryRepository.addCategory("Pojkar 14", CategoryType.SINGLES)
-        categoryRepository.addCategory("Pojkar 13", CategoryType.SINGLES)
-        categoryRepository.addCategory("Pojkar 12", CategoryType.SINGLES)
-        categoryRepository.addCategory("Pojkar 11", CategoryType.SINGLES)
-        categoryRepository.addCategory("Pojkar 10", CategoryType.SINGLES)
-        categoryRepository.addCategory("Pojkar 9", CategoryType.SINGLES)
-        categoryRepository.addCategory("Pojkar 8", CategoryType.SINGLES)
-        categoryRepository.addCategory("Herrdubbel", CategoryType.DOUBLES)
-        categoryRepository.addCategory("Damdubbel", CategoryType.DOUBLES)
+        DefaultCategory.values().forEach {
+            categoryRepository.addCategory(it.name, it.type)
+        }
     }
 
     fun setUpPlaceHolderRegistration() {
@@ -423,31 +397,31 @@ class SetupTestData(
 
         addCompetitionCategory.execute(
             lugiCompetitionId,
-            categories.find { it.name == "Herrar 1" }!!.toSpec()
+            categories.find { it.name == DefaultCategory.MEN_1.name }!!.toSpec()
         )
         addCompetitionCategory.execute(
             lugiCompetitionId,
-            categories.find { it.name == "Herrar 2" }!!.toSpec()
+            categories.find { it.name == DefaultCategory.MEN_2.name }!!.toSpec()
         )
         addCompetitionCategory.execute(
             lugiCompetitionId,
-            categories.find { it.name == "Damer 1" }!!.toSpec()
+            categories.find { it.name == DefaultCategory.WOMEN_1.name }!!.toSpec()
         )
         addCompetitionCategory.execute(
             lugiCompetitionId,
-            categories.find { it.name == "Damer 2" }!!.toSpec()
+            categories.find { it.name == DefaultCategory.WOMEN_2.name }!!.toSpec()
         )
         addCompetitionCategory.execute(
             lugiCompetitionId,
-            categories.find { it.name == "Damjuniorer 17" }!!.toSpec()
+            categories.find { it.name == DefaultCategory.WOMEN_JUNIOR_17.name }!!.toSpec()
         )
         addCompetitionCategory.execute(
             lugiCompetitionId,
-            categories.find { it.name == "Damer 3" }!!.toSpec()
+            categories.find { it.name == DefaultCategory.WOMEN_3.name }!!.toSpec()
         )
         addCompetitionCategory.execute(
             lugiCompetitionId,
-            categories.find { it.name == "Herrdubbel" }!!.toSpec()
+            categories.find { it.name == DefaultCategory.MEN_TEAMS.name }!!.toSpec()
         )
 
         val umeaId = util.getClubIdOrDefault("Umeå IK")
@@ -455,23 +429,23 @@ class SetupTestData(
         val umeaCompetitionId = umeaCompetitions[0].id
         addCompetitionCategory.execute(
             umeaCompetitionId,
-            categories.find { it.name == "Herrar 1" }!!.toSpec()
+            categories.find { it.name == DefaultCategory.MEN_1.name }!!.toSpec()
         )
         addCompetitionCategory.execute(
             umeaCompetitionId,
-            categories.find { it.name == "Herrar 2" }!!.toSpec()
+            categories.find { it.name == DefaultCategory.MEN_2.name }!!.toSpec()
         )
         addCompetitionCategory.execute(
             umeaCompetitionId,
-            categories.find { it.name == "Damer 1" }!!.toSpec()
+            categories.find { it.name == DefaultCategory.WOMEN_1.name }!!.toSpec()
         )
         addCompetitionCategory.execute(
             umeaCompetitionId,
-            categories.find { it.name == "Damer 2" }!!.toSpec()
+            categories.find { it.name == DefaultCategory.WOMEN_2.name }!!.toSpec()
         )
         addCompetitionCategory.execute(
             umeaCompetitionId,
-            categories.find { it.name == "Damer 3" }!!.toSpec()
+            categories.find { it.name == DefaultCategory.WOMEN_3.name }!!.toSpec()
         )
     }
 
@@ -819,6 +793,4 @@ class SetupTestData(
         }
         return gameResults
     }
-
 }
-

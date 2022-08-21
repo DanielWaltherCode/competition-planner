@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.draw.domain.groupstanding
 
+import com.graphite.competitionplanner.category.domain.DefaultCategory
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
@@ -62,7 +63,7 @@ class GroupsOfFour(
         val club = newClub()
         val competition = club.addCompetition()
         competitionId = competition.id
-        val competitionCategory = competition.addCompetitionCategory("Herrar 6")
+        val competitionCategory = competition.addCompetitionCategory(DefaultCategory.MEN_6.name)
         val suffixes = listOf("A", "B", "C", "D")
         val players = suffixes.map { club.addPlayer("Player$it") }
         competitionCategoryId = competitionCategory.id

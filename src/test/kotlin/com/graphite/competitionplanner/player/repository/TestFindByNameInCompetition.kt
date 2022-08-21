@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.player.repository
 
+import com.graphite.competitionplanner.category.domain.DefaultCategory
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
@@ -70,8 +71,8 @@ class TestFindByNameInCompetition(
             )
         )
         val competition = club.addCompetition()
-        val category1 = competition.addCategory("Herrar 1")
-        val category2 = competition.addCategory("Herrar 2")
+        val category1 = competition.addCategory(DefaultCategory.MEN_1.name)
+        val category2 = competition.addCategory(DefaultCategory.MEN_2.name)
 
         category1.register(player)
         category2.register(player)
