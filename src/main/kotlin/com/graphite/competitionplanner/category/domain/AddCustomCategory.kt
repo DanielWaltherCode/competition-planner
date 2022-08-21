@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.category.domain
 
-import com.graphite.competitionplanner.category.api.CustomCategorySpec
+import com.graphite.competitionplanner.category.interfaces.CustomCategorySpec
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.competitioncategory.domain.AddCompetitionCategory

@@ -1,7 +1,7 @@
 package com.graphite.competitionplanner.category.repository
 
 import com.graphite.competitionplanner.Tables.CATEGORY
-import com.graphite.competitionplanner.category.api.CustomCategorySpec
+import com.graphite.competitionplanner.category.interfaces.CustomCategorySpec
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.domain.CategoryType
