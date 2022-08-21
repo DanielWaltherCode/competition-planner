@@ -2,22 +2,24 @@ package com.graphite.competitionplanner.match.repository
 
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.common.repository.BaseRepository
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.service.MatchSpec
 import com.graphite.competitionplanner.match.domain.*
 import com.graphite.competitionplanner.tables.records.GameRecord
 import com.graphite.competitionplanner.tables.records.MatchRecord
 import org.jooq.DSLContext
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
 @Repository
-class MatchRepository(val dslContext: DSLContext) : IMatchRepository {
-
-    private val logger = LoggerFactory.getLogger(javaClass)
+class MatchRepository(
+    dslContext: DSLContext
+) : BaseRepository(dslContext),
+    IMatchRepository
+{
 
     fun getMatch(matchId: Int): MatchRecord {
         return dslContext.select().from(MATCH).where(MATCH.ID.eq(matchId)).fetchOneInto(MATCH)
@@ -46,15 +48,10 @@ class MatchRepository(val dslContext: DSLContext) : IMatchRepository {
         val matchRecord = match.toRecord()
         val gameRecords = match.result.map { it.toRecord(match.id) }
 
-        try {
-            dslContext.transaction { _ ->
-                dslContext.deleteFrom(GAME).where(GAME.MATCH_ID.eq(match.id)).execute()
-                matchRecord.update()
-                dslContext.batchStore(gameRecords).execute()
-            }
-        } catch (exception: RuntimeException) {
-            logger.error("Failed to update match with ${match.id}.")
-            logger.error("Exception message: ${exception.message}")
+        asTransaction {
+            dslContext.deleteFrom(GAME).where(GAME.MATCH_ID.eq(match.id)).execute()
+            matchRecord.update()
+            dslContext.batchStore(gameRecords).execute()
         }
     }
 
