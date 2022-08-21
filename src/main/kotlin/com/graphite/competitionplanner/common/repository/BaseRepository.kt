@@ -19,8 +19,7 @@ abstract class BaseRepository(
                 run(block)
             }
         } catch (exception: RuntimeException) {
-            logger.error("Failed to commit transaction")
-            logger.error("Exception message: ${exception.message}")
+            logger.error("Failed to commit transaction", exception)
             throw RuntimeException("Something went wrong")
         }
     }
