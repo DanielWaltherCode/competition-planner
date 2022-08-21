@@ -21,6 +21,7 @@ abstract class BaseRepository(
         } catch (exception: RuntimeException) {
             logger.error("Failed to commit transaction")
             logger.error("Exception message: ${exception.message}")
+            throw RuntimeException("Something went wrong")
         }
     }
 }
