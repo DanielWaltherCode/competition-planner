@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.util
 
+import com.graphite.competitionplanner.category.domain.DefaultCategory
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.repository.ClubRepository
@@ -16,14 +17,14 @@ class TestUtil(
     @Autowired val addCompetitionCategory: AddCompetitionCategory
 ) {
 
-    fun addCompetitionCategory(name: String): Int {
+    fun addCompetitionCategory(category: DefaultCategory): Int {
         val umeaId = getClubIdOrDefault("Umeå IK")
         val umeaCompetitions = findCompetitions.thatBelongTo(umeaId)
         val umeaCompetitionId = umeaCompetitions[0].id
-        val category = categoryRepository.getAvailableCategories().first { it.name == name }
+        val newCategory = categoryRepository.getAvailableCategories().first { it.name == category.name }
         return addCompetitionCategory.execute(
             umeaCompetitionId,
-            CategorySpec(category.id, category.name, category.type)
+            CategorySpec(newCategory.id, newCategory.name, newCategory.type)
         ).id
     }
 

@@ -18,9 +18,9 @@ class TestGetCategories {
     fun shouldFetchFromRepository() {
         // Setup
         val expected = listOf(
-            dataGenerator.newCategoryDTO(id = 0, name = "DAMER 1"),
-            dataGenerator.newCategoryDTO(id = 1, name = "HERRAR 1"),
-            dataGenerator.newCategoryDTO(id = 2, name = "HERRAR 13")
+            dataGenerator.newCategoryDTO(id = 0, name = DefaultCategory.WOMEN_1.name),
+            dataGenerator.newCategoryDTO(id = 1, name = DefaultCategory.MEN_1.name),
+            dataGenerator.newCategoryDTO(id = 2, name = DefaultCategory.MEN_3.name)
         )
         `when`(repository.getAvailableCategories(anyInt())).thenReturn(expected)
 

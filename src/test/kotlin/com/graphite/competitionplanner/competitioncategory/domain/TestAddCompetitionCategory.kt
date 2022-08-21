@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.competitioncategory.domain
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.domain.CategoryType
+import com.graphite.competitionplanner.category.domain.DefaultCategory
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategorySpec
@@ -37,9 +38,9 @@ class TestAddCompetitionCategory {
         `when`(mockedCategoryRepository.getAvailableCategories(anyInt()))
             .thenReturn(
                 listOf(
-                    dataGenerator.newCategoryDTO(id = 0, name = "DAMER 1"),
-                    dataGenerator.newCategoryDTO(id = 1, name = "HERRAR 1"),
-                    dataGenerator.newCategoryDTO(id = 2, name = "HERRAR 13")
+                    dataGenerator.newCategoryDTO(id = 0, name = DefaultCategory.WOMEN_1.name),
+                    dataGenerator.newCategoryDTO(id = 1, name = DefaultCategory.MEN_1.name),
+                    dataGenerator.newCategoryDTO(id = 2, name = DefaultCategory.MEN_4.name)
                 )
             )
 
@@ -55,7 +56,7 @@ class TestAddCompetitionCategory {
     @Test
     fun cannotAddSameCategoryTwiceToSameCompetition() {
         // Setup
-        val spec = dataGenerator.newCategorySpec(id = 0, name = "HERRDUBBEL")
+        val spec = dataGenerator.newCategorySpec(id = 0, name = DefaultCategory.MEN_TEAMS.name)
         val competitionId = 1
         `when`(mockedCategoryRepository.getAvailableCategories(anyInt())).thenReturn(
             listOf(
@@ -80,7 +81,7 @@ class TestAddCompetitionCategory {
     @Test
     fun shouldCallRepositoryToStoreWithDefaultSettings() {
         // Setup
-        val spec = dataGenerator.newCategorySpec(id = 0, name = "HERRDUBBEL")
+        val spec = dataGenerator.newCategorySpec(id = 0, name = DefaultCategory.WOMEN_TEAMS.name)
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO()
         val settings = dataGenerator.newGeneralSettingsDTO(
             cost = 150f,

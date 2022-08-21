@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.registration.domain
 
+import com.graphite.competitionplanner.category.domain.DefaultCategory
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.registration.service.SearchType
 import com.graphite.competitionplanner.util.DataGenerator
@@ -115,8 +116,8 @@ class TestSearchRegistrations {
     @Test
     fun resultShouldBeGroupedByCategoryName() {
         // Setup
-        val categoryOne = dataGenerator.newCategoryDTO(name = "HERRAR1")
-        val categoryTwo = dataGenerator.newCategoryDTO(name = "DAMER1")
+        val categoryOne = dataGenerator.newCategoryDTO(name = DefaultCategory.MEN_1.name)
+        val categoryTwo = dataGenerator.newCategoryDTO(name = DefaultCategory.WOMEN_1.name)
         val player1 = dataGenerator.newPlayerWithClubDTO()
         val player2 = dataGenerator.newPlayerWithClubDTO()
         val player3 = dataGenerator.newPlayerWithClubDTO()
@@ -191,8 +192,8 @@ class TestSearchRegistrations {
     @Test
     fun shouldFilterOutByePlayerWhenGroupingByCategory() {
         // Setup
-        val categoryOne = dataGenerator.newCategoryDTO(name = "HERRAR1")
-        val categoryTwo = dataGenerator.newCategoryDTO(name = "DAMER1")
+        val categoryOne = dataGenerator.newCategoryDTO(name = DefaultCategory.MEN_1.name)
+        val categoryTwo = dataGenerator.newCategoryDTO(name = DefaultCategory.WOMEN_1.name)
         val playerBye = dataGenerator.newPlayerWithClubDTO(lastName = "BYE")
         val player2 = dataGenerator.newPlayerWithClubDTO()
         val player3 = dataGenerator.newPlayerWithClubDTO()

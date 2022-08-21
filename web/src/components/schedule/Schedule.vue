@@ -114,7 +114,7 @@
                   <tbody>
                   <template v-for="categorySchedule in scheduleCategoryContainerDTO.scheduleCategoryList">
                     <tr :key="categorySchedule.categoryDTO.id + categorySchedule.selectedMatchType">
-                      <td>{{ categorySchedule.categoryDTO.category.name }}</td>
+                      <td>{{ tryTranslateCategoryName(categorySchedule.categoryDTO.category.name) }}</td>
                       <!-- Stage (group or playoff) -->
                       <td>
                         <input
@@ -261,6 +261,7 @@ import ScheduleMetadataService from "@/common/api-services/schedule/schedule-met
 import CategoryService from "@/common/api-services/category.service";
 import ScheduleGeneralService from "@/common/api-services/schedule/schedule-general.service";
 import scheduleGeneralService from "@/common/api-services/schedule/schedule-general.service";
+import { tryTranslateCategoryName } from "@/common/util"
 
 export default {
   name: "Schedule",
@@ -503,14 +504,15 @@ export default {
     },
     // Returns e.g. "Herrar 1 (G)"
     createCategoryMatchStringWithGroup(categoryMatch) {
-      return categoryMatch.category.name + ' (' + this.$t("schedule.main.abbreviated." + categoryMatch.groupOrRound) + ")"
+      return this.tryTranslateCategoryName(categoryMatch.category.name) + ' (' + this.$t("schedule.main.abbreviated." + categoryMatch.groupOrRound) + ")"
     },
     createCategoryMatchStringNoGroup(categoryMatch) {
       return categoryMatch.category.name;
     },
     async sleep(msec) {
       return new Promise(resolve => setTimeout(resolve, msec));
-    }
+    },
+    tryTranslateCategoryName: tryTranslateCategoryName
   }
 }
 </script>

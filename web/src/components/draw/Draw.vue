@@ -17,7 +17,7 @@
             <li v-for="category in competitionCategories" class="list-group-item clickable" :key="category.id"
                 @click="makeChoice(category)"
                 :class="category.category.name === chosenCategory.category.name ? 'active' : ''">
-              {{ category.category.name }}
+              {{ tryTranslateCategoryName(category.category.name) }}
             </li>
           </ul>
         </div>
@@ -26,7 +26,7 @@
         <div class="col-md-9 ps-0" v-if="chosenCategory !== null">
           <div class="blue-section row">
             <div class="top-content col-md-10 mx-auto">
-              <h3 class="p-4">{{ chosenCategory.category.name }}</h3>
+              <h3 class="p-4">{{ tryTranslateCategoryName(chosenCategory.category.name) }}</h3>
 
               <!-- If class is not drawn yet -->
               <div v-if="!isChosenCategoryDrawn " class="pb-4 ms-3 ms-md-0">
@@ -106,6 +106,7 @@ import PoolDraw from "@/components/draw/PoolDraw";
 import CategoryService from "@/common/api-services/category.service";
 import MatchListComponent from "@/components/general/MatchListComponent";
 import PlayoffDraw from "@/components/draw/PlayoffDraw";
+import { tryTranslateCategoryName } from "@/common/util"
 
 export default {
   components: {PlayoffDraw, MatchListComponent, PoolDraw},
@@ -203,7 +204,8 @@ export default {
     scrollToPlayoff() {
       const playoffElement = document.getElementById("playoff")
       playoffElement.scrollIntoView({behavior : "smooth"})
-    }
+    },
+    tryTranslateCategoryName: tryTranslateCategoryName
   }
 }
 </script>

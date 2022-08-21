@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.competitioncategory.repository
 
+import com.graphite.competitionplanner.category.domain.DefaultCategory
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
@@ -46,7 +47,7 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldBeAbleToStoreCompetitionCategory() {
         // Setup
-        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
+        val category = categoryRepository.getAvailableCategories().find { it.name == DefaultCategory.MEN_1.name }!!
         val dto =
             dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, category.type))
         val addedCompetitionCategory = repository.store(competition.id, dto)
@@ -62,7 +63,7 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldReturnNewlyStoredCompetitionCategory() {
         // Setup
-        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
+        val category = categoryRepository.getAvailableCategories().find { it.name == DefaultCategory.MEN_1.name }!!
         val spec =
             dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, category.type))
 
@@ -79,7 +80,7 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldNotBeAbleToFindDeletedCompetitionCategory() {
         // Setup
-        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
+        val category = categoryRepository.getAvailableCategories().find { it.name == DefaultCategory.MEN_1.name }!!
         val spec =
             dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, category.type))
         val competitionCategory = repository.store(competition.id, spec)
@@ -103,7 +104,7 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldBeAbleToUpdateCompetitionCategory() {
         // Setup
-        val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
+        val category = categoryRepository.getAvailableCategories().find { it.name == DefaultCategory.MEN_1.name }!!
         val spec =
             dataGenerator.newCompetitionCategorySpec(
                 category = CategorySpec(category.id, category.name, category.type),
