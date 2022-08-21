@@ -47,7 +47,5 @@ data class TimeTableSlotMatchInfo(
         /**
          * ID of the competition category the match belongs to
          */
-        val competitionCategoryId: Int,
-
-        // TODO: More information?
+        val competitionCategoryId: Int
 )
