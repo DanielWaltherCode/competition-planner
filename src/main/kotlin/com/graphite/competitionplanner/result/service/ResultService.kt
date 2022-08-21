@@ -32,13 +32,13 @@ class ResultService(
 ) {
 
     fun addFinalMatchResult(matchId: Int, resultSpec: ResultSpec): ResultDTO {
-        // TODO: Think about what happens if something fails in this function. How do we recover?
-        // TODO: Maybe we have to make all of this in one transaction so we avoid getting into an unwanted state?
-
-        val match = matchRepository.getMatch2(matchId)
-        val competitionCategory = findCompetitionCategory.byId(match.competitionCategoryId)
-        val result = addResult.execute(match, resultSpec, competitionCategory)
-        advanceRegistrations(competitionCategory, match)
+        lateinit var result: ResultDTO
+        competitionDrawRepository.asTransaction {
+            val match = matchRepository.getMatch2(matchId)
+            val competitionCategory = findCompetitionCategory.byId(match.competitionCategoryId)
+            result = addResult.execute(match, resultSpec, competitionCategory)
+            advanceRegistrations(competitionCategory, match)
+        }
         return result
     }
 
