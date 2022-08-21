@@ -39,7 +39,7 @@ class CategoryRepository(val dslContext: DSLContext) : ICategoryRepository {
 
         return CategoryDTO(addedCategoryRecord!!.getValue(CATEGORY.ID),
                 addedCategoryRecord.getValue(CATEGORY.CATEGORY_NAME),
-                addedCategoryRecord.getValue(CATEGORY.CATEGORY_TYPE))
+                CategoryType.valueOf(addedCategoryRecord.getValue(CATEGORY.CATEGORY_TYPE)))
     }
 
     override fun deleteCategory(categoryId: Int) {
@@ -65,9 +65,9 @@ class CategoryRepository(val dslContext: DSLContext) : ICategoryRepository {
                 .execute()
     }
 
-    internal fun clearTable() = dslContext.deleteFrom(Tables.CATEGORY).execute()
+    internal fun clearTable() = dslContext.deleteFrom(CATEGORY).execute()
 
     private fun CategoryRecord.toDto(): CategoryDTO {
-        return CategoryDTO(this.id, this.categoryName, this.categoryType)
+        return CategoryDTO(this.id, this.categoryName, CategoryType.valueOf(this.categoryType))
     }
 }

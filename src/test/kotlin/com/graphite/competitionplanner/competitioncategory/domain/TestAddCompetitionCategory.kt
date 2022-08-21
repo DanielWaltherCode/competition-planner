@@ -62,7 +62,7 @@ class TestAddCompetitionCategory {
                 CategoryDTO(
                     spec.id,
                     spec.name,
-                    spec.type.name
+                    spec.type
                 )
             )
         )
@@ -108,7 +108,7 @@ class TestAddCompetitionCategory {
                 CategoryDTO(
                     spec.id,
                     spec.name,
-                    spec.type.name
+                    spec.type
                 )
             )
         )

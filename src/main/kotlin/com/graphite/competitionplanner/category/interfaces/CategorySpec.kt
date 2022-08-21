@@ -13,7 +13,7 @@ data class CategorySpec(
     constructor(dto: CategoryDTO) : this(
         dto.id,
         dto.name,
-        CategoryType.valueOf(dto.type)
+        dto.type
     )
 }
 

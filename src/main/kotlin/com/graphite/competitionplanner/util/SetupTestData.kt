@@ -476,7 +476,7 @@ class SetupTestData(
     }
 
     private fun CategoryDTO.toSpec(): CategorySpec {
-        return CategorySpec(this.id, this.name, CategoryType.valueOf(this.type))
+        return CategorySpec(this.id, this.name, this.type)
     }
 
     fun registerPlayersDoubles() {

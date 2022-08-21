@@ -267,7 +267,7 @@ class RegistrationRepository(
                 CategoryDTO(
                     it.getValue(CATEGORY.ID),
                     it.getValue(CATEGORY.CATEGORY_NAME),
-                    it.getValue(CATEGORY.CATEGORY_TYPE)
+                    CategoryType.valueOf(it.getValue(CATEGORY.CATEGORY_TYPE))
                 ),
                 PlayerWithClubDTO(
                     it.getValue(PLAYER.ID),

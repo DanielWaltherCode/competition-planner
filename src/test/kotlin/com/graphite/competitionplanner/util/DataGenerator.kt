@@ -243,7 +243,7 @@ class DataGenerator {
     fun newCategoryDTO(
         id: Int = 1,
         name: String = "A Custom Category",
-        type: String = "SINGLES"
+        type: CategoryType = CategoryType.SINGLES
     ) = CategoryDTO(
         id,
         name,

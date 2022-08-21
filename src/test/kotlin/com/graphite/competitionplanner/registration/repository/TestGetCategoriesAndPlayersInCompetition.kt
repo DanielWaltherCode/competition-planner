@@ -1,6 +1,5 @@
 package com.graphite.competitionplanner.registration.repository
 
-import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.repository.ClubRepository
@@ -32,14 +31,14 @@ class TestGetCategoriesAndPlayersInCompetition(
 
     override fun setupCompetitionCategory() {
         // Override this so we set up competition category as a doubles
-        category = categoryRepository.getAvailableCategories().first { it.type == CategoryType.DOUBLES.name }
+        category = categoryRepository.getAvailableCategories().first { it.type == CategoryType.DOUBLES }
         competitionCategory = competitionCategoryRepository.store(
             competitionId = competition.id,
             spec = dataGenerator.newCompetitionCategorySpec(
                 category = dataGenerator.newCategorySpec(
                         id = category.id,
                         name = category.name,
-                        type = CategoryType.valueOf(category.type))))
+                        type = category.type)))
     }
 
     @Test
@@ -53,7 +52,7 @@ class TestGetCategoriesAndPlayersInCompetition(
         val categoriesAndPlayers = registrationRepository.getCategoriesAndPlayersInCompetition(competition.id)
 
         // Assert
-        for ((actualCategory, p) in categoriesAndPlayers) {
+        for ((actualCategory, _) in categoriesAndPlayers) {
             Assertions.assertEquals(category, actualCategory)
         }
 
