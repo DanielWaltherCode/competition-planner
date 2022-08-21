@@ -11,7 +11,7 @@ import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
 
 /**
- * The categories possible for players to compete in. Should be a complete, non-updatable list!
+ * Class for fetching and storing categories
  */
 @Repository
 class CategoryRepository(val dslContext: DSLContext) : ICategoryRepository {
