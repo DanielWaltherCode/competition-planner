@@ -16,7 +16,7 @@
       <div class="p-4">
         <div class="p-4 m-5 custom-card" v-for="registration in registrations" :key="registration.id">
           <div class="pb-2">
-            <h4>{{ registration.competitionCategory.name }}
+            <h4>{{ tryTranslateCategoryName(registration.competitionCategory.name) }}
             </h4>
           </div>
           <div v-if="registration.competitionCategory.type === 'DOUBLES'">
@@ -67,6 +67,7 @@ import PlayerService from "@/common/api-services/player.service";
 import MatchListComponent from "@/components/general/MatchListComponent";
 import DrawService from "@/common/api-services/draw.service";
 import Vue from "vue";
+import { tryTranslateCategoryName } from "@/common/util"
 
 export default {
   name: "PlayerDetail",
@@ -148,6 +149,7 @@ export default {
       })
       this.getRegistrations(this.competition.id, this.player.id)
     },
+    tryTranslateCategoryName: tryTranslateCategoryName
   }
 }
 </script>

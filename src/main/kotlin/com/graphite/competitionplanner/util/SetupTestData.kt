@@ -31,7 +31,6 @@ import com.graphite.competitionplanner.registration.repository.RegistrationRepos
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
-import com.graphite.competitionplanner.result.domain.AddResult
 import com.graphite.competitionplanner.result.service.ResultService
 import com.graphite.competitionplanner.schedule.repository.ScheduleRepository
 import com.graphite.competitionplanner.user.api.UserSpec
@@ -68,7 +67,6 @@ class SetupTestData(
     val addCompetitionCategory: AddCompetitionCategory,
     val createDraw: CreateDraw,
     val resultService: ResultService,
-    val addResult: AddResult,
     val scheduleRepository: ScheduleRepository
 ) {
 

@@ -43,7 +43,7 @@
             </thead>
             <tbody>
             <tr v-for="costSummary in costSummary.costSummaries" :key="costSummary.category.id">
-              <td>{{ costSummary.category.category.name }}</td>
+              <td>{{ tryTranslateCategoryName(costSummary.category.category.name) }}</td>
               <td>{{ costSummary.numberOfStarts }}</td>
               <td>{{ costSummary.price }}</td>
               <td>{{ costSummary.totalPrice }}</td>
@@ -71,7 +71,7 @@
             <tbody>
             <tr v-for="costSummary in playerCostSummary.costSummaryList" :key="costSummary.player.firstName + costSummary.category.category.name">
               <td>{{ costSummary.player.firstName + " " + costSummary.player.lastName }}</td>
-              <td>{{ costSummary.category.category.name }}</td>
+              <td>{{ tryTranslateCategoryName(costSummary.category.category.name) }}</td>
               <td>{{ costSummary.price }}</td>
             </tr>
             <tr>
@@ -93,6 +93,7 @@ import jsPDF from "jspdf";
 import 'jspdf-autotable'
 import {getFormattedDate} from "@/common/util";
 import ClubService from "@/common/api-services/club.service";
+import { tryTranslateCategoryName } from "@/common/util"
 
 export default {
   name: "Billing",
@@ -151,11 +152,9 @@ export default {
         this.$toasted.error(this.$tc("billing.paymentInfo.toastErrorFetch")).goAway(5000)
         this.generalPdfSetup(false)
       })
-
-
-
     },
     getFormattedDate: getFormattedDate,
+    tryTranslateCategoryName: tryTranslateCategoryName,
     generalPdfSetup(includePaymentInfo) {
       const pdf = new jsPDF('p', 'pt', 'a4');
       pdf.setFont("times", "normal")

@@ -34,7 +34,7 @@
             <select class="form-select my-3 mx-auto" v-model="newCategory">
               <option :value="null" disabled hidden>{{ $t("categories.chooseClass") }}</option>
               <option v-for="category in possibleCategories" :value="category" :key="category.id">
-                {{ category.name }}
+                {{ tryTranslateCategoryName(category.name) }}
               </option>
             </select>
             <div class="d-flex justify-content-end">
@@ -80,7 +80,7 @@
                 class="list-group-item text-start"
                 :class="activeCategory.id === category.id ? 'active' : 'none'"
                 @click="chooseCategory(category)">
-              {{ category.category.name }}
+              {{ tryTranslateCategoryName(category.category.name) }}
             </li>
           </ul>
         </div>
@@ -88,7 +88,6 @@
 
       <!-- Main -->
       <div v-if="activeCategory !== null" class="col-md-8 pt-5 px-md-4">
-        <h2> {{ activeCategory.name }}</h2>
         <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
           <li class="nav-item text-black" role="presentation">
             <button class="nav-link text-black" :class="displayChoice === 'SETTINGS' ? 'active' : ''"
@@ -109,7 +108,7 @@
         <div class="text-start row">
           <div class="tab-content custom-card" id="myTabContent">
 
-            <h2 class="p-3">{{ activeCategory.category.name }}</h2>
+            <h2 class="p-3">{{ tryTranslateCategoryName(activeCategory.category.name) }}</h2>
             <div class="d-flex col-12 p-2 justify-content-end">
               <div class="p-2 custom-card">
                 <button class="btn btn-primary me-3" type="button" @click="save"
@@ -141,6 +140,7 @@ import CategoryGameSettings from "@/components/category/CategoryGameRules";
 import CategoryService from "@/common/api-services/category.service";
 import DrawService from "@/common/api-services/draw.service";
 import AddPlayerToCategory from "@/components/category/AddPlayerToCategory";
+import { tryTranslateCategoryName } from "@/common/util"
 
 export default {
   name: "Categories",
@@ -232,6 +232,7 @@ export default {
      return (this.customCategory.name !== null && this.customCategory.name !== undefined
          && this.customCategory.type !== null && this.customCategory.type !== undefined)
     },
+    tryTranslateCategoryName: tryTranslateCategoryName,
     save() {
       this.activeCategory.gameSettings.winScoreFinal = this.activeCategory.gameSettings.winScore // Use same win score setting in endgame matches.
       CategoryService.updateCompetitionCategory(this.competition.id, this.activeCategory.id, this.activeCategory).then(() => {

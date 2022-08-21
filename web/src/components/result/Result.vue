@@ -37,7 +37,7 @@
               <tbody>
               <tr v-for="match in filterMatches" :key="match.id">
                 <td>{{ getTime(match) }}</td>
-                <td v-if="!isMobile">{{ match.competitionCategory.name }}</td>
+                <td v-if="!isMobile">{{ tryTranslateCategoryName(match.competitionCategory.name) }}</td>
                 <td v-if="!isMobile">
                   <span v-if="match.matchType === 'GROUP'"> {{ $t("results.group") + ' ' + match.groupOrRound }}</span>
                   <span v-else>{{ $t("round." + match.groupOrRound) }}</span>
@@ -82,6 +82,7 @@
 import MatchService from "@/common/api-services/match.service";
 import {getPlayerOneWithClub, getPlayerTwoWithClub, isPlayerOneWinner, isPlayerTwoWinner} from "@/common/util";
 import RegisterResult from "@/components/result/RegisterResult";
+import { tryTranslateCategoryName } from "@/common/util"
 
 export default {
   name: "ResultComponent",
@@ -176,7 +177,8 @@ export default {
     },
     hideModal() {
       this.showModal = false
-    }
+    },
+    tryTranslateCategoryName: tryTranslateCategoryName
   }
 }
 </script>

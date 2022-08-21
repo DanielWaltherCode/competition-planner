@@ -146,3 +146,18 @@ export function didPlayerTwoGiveWO(match) {
 export function undefinedOrNull(object) {
     return object === null || object === undefined
 }
+
+/**
+ * In case the category name belongs to one of the default categories we can translate it. Otherwise, we just returned
+ * the given name as it is custom category, and we cannot provide a translation.
+ * @param name Category name
+ * @returns {*} Translated category name if it is default category.
+ */
+export function tryTranslateCategoryName(name) {
+    let key = name
+    let translatedDefaultCategories = this.$t("categories.default")
+    if (key in translatedDefaultCategories) {
+        return translatedDefaultCategories[key]
+    }
+    return name
+}

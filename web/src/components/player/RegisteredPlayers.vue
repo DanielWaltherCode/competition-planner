@@ -33,7 +33,10 @@
         </div>
       </div>
       <div v-for="(players, grouping) in filterPlayers" :key="grouping">
-        <div class="heading">
+        <div v-if="sortingChoice === 'category'" class="heading">
+          <p class="mb-0"> {{ tryTranslateCategoryName(grouping) }} </p>
+        </div>
+        <div v-if="sortingChoice === 'club' || sortingChoice === 'name'" class="heading">
           <p class="mb-0"> {{ grouping }} </p>
         </div>
         <div v-for="player in players" :key="player.id" class="mt-2 d-flex">
@@ -47,6 +50,7 @@
 <script>
 
 import PlayerService from "@/common/api-services/player.service";
+import { tryTranslateCategoryName } from "@/common/util"
 
 export default {
   name: "RegisteredPlayers",
@@ -99,6 +103,7 @@ export default {
         this.registeredPlayersAndGroups = res.data
       })
     },
+    tryTranslateCategoryName: tryTranslateCategoryName
   }
 }
 </script>

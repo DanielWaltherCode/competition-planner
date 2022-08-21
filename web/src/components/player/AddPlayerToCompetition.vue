@@ -22,7 +22,7 @@
             <input class="form-check-input ms-1" type="checkbox" :value="competitionCategory.category.name"
                    :id="competitionCategory.category.id" @change="noCategories = false" v-model="selectedSinglesCategories">
             <label class="form-check-label d-flex ps-2" :for="competitionCategory.category.id">
-              {{ competitionCategory.category.name }}
+              {{ tryTranslateCategoryName(competitionCategory.category.name) }}
             </label>
           </div>
           <p class="fs-6 text-danger text-start" v-if="noCategories">{{ $t("validations.noCategories") }}</p>
@@ -55,7 +55,7 @@
             <input class="form-check-input ms-1" type="checkbox" :value="competitionCategory.category.name"
                    :id="competitionCategory.category.id" @change="noCategories = false" v-model="selectedDoublesCategories">
             <label class="form-check-label d-flex ps-2" :for="competitionCategory.category.id">
-              {{ competitionCategory.category.name }}
+              {{ tryTranslateCategoryName(competitionCategory.category.name) }}
             </label>
           </div>
           <p class="fs-6 text-danger text-start" v-if="noCategories">{{ $t("validations.noCategories") }}</p>
@@ -75,6 +75,7 @@ import CategoryService from "@/common/api-services/category.service";
 
 import RegistrationService from "@/common/api-services/registration.service";
 import SearchPlayerComponent from "@/components/player/SearchPlayerComponent";
+import { tryTranslateCategoryName } from "@/common/util"
 
 export default {
   name: "AddPlayerToCompetition",
@@ -163,9 +164,8 @@ export default {
           this.$toasted.error(err.response.data.message).goAway(3000)
         })
       })
-
-
-    }
+    },
+    tryTranslateCategoryName: tryTranslateCategoryName
   }
 }
 </script>
