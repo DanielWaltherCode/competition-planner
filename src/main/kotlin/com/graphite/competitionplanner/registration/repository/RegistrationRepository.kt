@@ -3,7 +3,7 @@ package com.graphite.competitionplanner.registration.repository
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
-import com.graphite.competitionplanner.category.interfaces.CategoryType
+import com.graphite.competitionplanner.category.domain.CategoryType
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.common.repository.BaseRepository
@@ -267,7 +267,7 @@ class RegistrationRepository(
                 CategoryDTO(
                     it.getValue(CATEGORY.ID),
                     it.getValue(CATEGORY.CATEGORY_NAME),
-                    it.getValue(CATEGORY.CATEGORY_TYPE)
+                    CategoryType.valueOf(it.getValue(CATEGORY.CATEGORY_TYPE))
                 ),
                 PlayerWithClubDTO(
                     it.getValue(PLAYER.ID),

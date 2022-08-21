@@ -1,15 +1,12 @@
 package com.graphite.competitionplanner.competitioncategory.repository
 
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
-import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
-import com.graphite.competitionplanner.common.exception.IllegalActionException
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
-import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
@@ -51,7 +48,7 @@ class TestCompetitionCategoryRepository(
         // Setup
         val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
         val dto =
-            dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, CategoryType.valueOf(category.type)))
+            dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, category.type))
         val addedCompetitionCategory = repository.store(competition.id, dto)
 
         // Act
@@ -67,7 +64,7 @@ class TestCompetitionCategoryRepository(
         // Setup
         val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
         val spec =
-            dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, CategoryType.valueOf(category.type)))
+            dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, category.type))
 
         // Act
         val competitionCategory = repository.store(competition.id, spec)
@@ -84,7 +81,7 @@ class TestCompetitionCategoryRepository(
         // Setup
         val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
         val spec =
-            dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, CategoryType.valueOf(category.type)))
+            dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, category.type))
         val competitionCategory = repository.store(competition.id, spec)
 
         // Act
@@ -109,7 +106,7 @@ class TestCompetitionCategoryRepository(
         val category = categoryRepository.getAvailableCategories().find { it.name == "Herrar 1" }!!
         val spec =
             dataGenerator.newCompetitionCategorySpec(
-                category = CategorySpec(category.id, category.name, CategoryType.valueOf(category.type)),
+                category = CategorySpec(category.id, category.name, category.type),
                 gameSettings = dataGenerator.newGameSettingsDTO(useDifferentRulesInEndGame = false)
             )
         val original = repository.store(competition.id, spec)

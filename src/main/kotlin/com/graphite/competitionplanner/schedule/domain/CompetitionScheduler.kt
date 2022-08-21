@@ -345,7 +345,7 @@ class CompetitionScheduler(
     private fun getCategoryDTO(competitionCategories: List<CompetitionCategoryDTO>, categoryId: Int): CategoryDTO? {
         val selectedCategory = competitionCategories.find { it.id == categoryId } ?: return null
 
-        return CategoryDTO(selectedCategory.id, selectedCategory.category.name, selectedCategory.category.type.name)
+        return CategoryDTO(selectedCategory.id, selectedCategory.category.name, selectedCategory.category.type)
     }
 
     private fun mergeTimeTableSlots(list: List<TimeTableSlotToMatch>): List<TimeTableSlotDTO> {

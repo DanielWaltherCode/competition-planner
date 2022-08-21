@@ -1,18 +1,17 @@
 package com.graphite.competitionplanner.category.repository
 
-import com.graphite.competitionplanner.Tables
 import com.graphite.competitionplanner.Tables.CATEGORY
-import com.graphite.competitionplanner.category.api.CustomCategorySpec
+import com.graphite.competitionplanner.category.interfaces.CustomCategorySpec
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
-import com.graphite.competitionplanner.category.interfaces.CategoryType
+import com.graphite.competitionplanner.category.domain.CategoryType
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.tables.records.CategoryRecord
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
 
 /**
- * The categories possible for players to compete in. Should be a complete, non-updatable list!
+ * Class for fetching and storing categories
  */
 @Repository
 class CategoryRepository(val dslContext: DSLContext) : ICategoryRepository {
@@ -39,7 +38,7 @@ class CategoryRepository(val dslContext: DSLContext) : ICategoryRepository {
 
         return CategoryDTO(addedCategoryRecord!!.getValue(CATEGORY.ID),
                 addedCategoryRecord.getValue(CATEGORY.CATEGORY_NAME),
-                addedCategoryRecord.getValue(CATEGORY.CATEGORY_TYPE))
+                CategoryType.valueOf(addedCategoryRecord.getValue(CATEGORY.CATEGORY_TYPE)))
     }
 
     override fun deleteCategory(categoryId: Int) {
@@ -65,9 +64,9 @@ class CategoryRepository(val dslContext: DSLContext) : ICategoryRepository {
                 .execute()
     }
 
-    internal fun clearTable() = dslContext.deleteFrom(Tables.CATEGORY).execute()
+    internal fun clearTable() = dslContext.deleteFrom(CATEGORY).execute()
 
     private fun CategoryRecord.toDto(): CategoryDTO {
-        return CategoryDTO(this.id, this.categoryName, this.categoryType)
+        return CategoryDTO(this.id, this.categoryName, CategoryType.valueOf(this.categoryType))
     }
 }

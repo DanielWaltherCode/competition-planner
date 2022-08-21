@@ -39,15 +39,6 @@ class RegistrationService(
         unregister.execute(registrationId)
     }
 
-    // TODO: Make this function take a non-nullable input
-    fun getPlayersFromRegistrationId(registrationId: Int?): List<PlayerDTO> {
-        if (registrationId == null) {
-            return emptyList()
-        }
-        return getPlayersFromRegistration.execute(registrationId)
-    }
-
-    // TODO: Make this function take a non-nullable input
     fun getPlayersWithClubFromRegistrationId(registrationId: Int?): List<PlayerWithClubDTO> {
         if (registrationId == null) {
             return emptyList()
@@ -137,11 +128,6 @@ data class CompetitionAndCategoriesDTO(
 data class RegisteredPlayersDTO(
     val groupingType: SearchType,
     val groupingsAndPlayers: Map<String, Set<PlayerWithClubDTO>>
-)
-
-data class CategoryRegistrations(
-    val category: SimpleCompetitionCategoryDTO,
-    val registeredPlayers: List<PlayerWithClubDTO>
 )
 
 data class SimpleCompetitionCategoryDTO(

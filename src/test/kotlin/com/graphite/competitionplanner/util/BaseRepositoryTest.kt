@@ -1,6 +1,5 @@
 package com.graphite.competitionplanner.util
 
-import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
@@ -50,7 +49,7 @@ class BaseRepositoryTest(
                 category = dataGenerator.newCategorySpec(
                     id = category.id,
                     name = category.name,
-                    type = CategoryType.valueOf(category.type)
+                    type = category.type
                 )
             )
         )
@@ -64,7 +63,7 @@ class BaseRepositoryTest(
                 category = dataGenerator.newCategorySpec(
                     id = category.id,
                     name = category.name,
-                    type = CategoryType.valueOf(category.type)
+                    type = category.type
                 )
             )
         )

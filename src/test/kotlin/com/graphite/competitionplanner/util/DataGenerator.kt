@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.util
 
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
-import com.graphite.competitionplanner.category.interfaces.CategoryType
+import com.graphite.competitionplanner.category.domain.CategoryType
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.competition.interfaces.*
@@ -243,7 +243,7 @@ class DataGenerator {
     fun newCategoryDTO(
         id: Int = 1,
         name: String = "A Custom Category",
-        type: String = "SINGLES"
+        type: CategoryType = CategoryType.SINGLES
     ) = CategoryDTO(
         id,
         name,
