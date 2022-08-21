@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.draw.repository
 
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.common.repository.BaseRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.*
@@ -12,18 +13,16 @@ import com.graphite.competitionplanner.registration.domain.asInt
 import com.graphite.competitionplanner.tables.records.*
 import org.jetbrains.annotations.NotNull
 import org.jooq.DSLContext
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 import org.springframework.context.annotation.Lazy
 
 @Repository
 class CompetitionDrawRepository(
-    val dslContext: DSLContext,
+    dslContext: DSLContext,
     val competitionCategoryRepository: ICompetitionCategoryRepository,
     @Lazy val getDraw: GetDraw
-) : ICompetitionDrawRepository {
-
-    private val logger = LoggerFactory.getLogger(javaClass)
+) : BaseRepository(dslContext),
+    ICompetitionDrawRepository {
 
     fun getPoolDraw(competitionCategoryId: Int, groupName: String): List<PoolDrawRecord> {
         return dslContext
@@ -43,22 +42,16 @@ class CompetitionDrawRepository(
     }
 
     override fun store(draw: CompetitionCategoryDrawSpec): CompetitionCategoryDrawDTO {
-        try {
-            dslContext.transaction { _ ->
-                storeSeeding(draw.seeding)
-                competitionCategoryRepository.setStatus(draw.competitionCategoryId, CompetitionCategoryStatus.DRAWN)
-                when (draw) {
-                    is CupDrawSpec -> storeCupDraw(draw)
-                    is PoolAndCupDrawSpec -> storePoolAndCupDraw(draw)
-                    is PoolDrawSpec -> storePoolDraw(draw)
-                }
+        asTransaction {
+            storeSeeding(draw.seeding)
+            competitionCategoryRepository.setStatus(draw.competitionCategoryId, CompetitionCategoryStatus.DRAWN)
+            when (draw) {
+                is CupDrawSpec -> storeCupDraw(draw)
+                is PoolAndCupDrawSpec -> storePoolAndCupDraw(draw)
+                is PoolDrawSpec -> storePoolDraw(draw)
             }
-            return get(draw.competitionCategoryId)
-        } catch (exception: RuntimeException) {
-            logger.error("Failed to store draw for competition category with id ${draw.competitionCategoryId}")
-            logger.error("Exception message: ${exception.message}")
-            throw RuntimeException("Something went wrong")
         }
+        return get(draw.competitionCategoryId)
     }
 
     override fun get(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
@@ -67,16 +60,10 @@ class CompetitionDrawRepository(
 
 
     override fun delete(competitionCategoryId: Int) {
-        try {
-            dslContext.transaction { _ ->
-                competitionCategoryRepository.setStatus(competitionCategoryId, CompetitionCategoryStatus.ACTIVE)
-                dslContext.deleteFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
-                dslContext.deleteFrom(POOL).where(POOL.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
-            }
-        } catch (exception: RuntimeException) {
-            logger.error("Failed to delete draw for competition category with id $competitionCategoryId")
-            logger.error("Exception message: ${exception.message}")
-            throw RuntimeException("Something went wrong")
+        asTransaction {
+            competitionCategoryRepository.setStatus(competitionCategoryId, CompetitionCategoryStatus.ACTIVE)
+            dslContext.deleteFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
+            dslContext.deleteFrom(POOL).where(POOL.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
         }
     }
 
