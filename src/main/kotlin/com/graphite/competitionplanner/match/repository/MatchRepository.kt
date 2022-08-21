@@ -184,38 +184,6 @@ class MatchRepository(
                 .fetchInto(MATCH)
     }
 
-    fun setTimeSlotsAndStartTimeToNull(competitionCategoryIds: List<Int>) {
-        dslContext.update(MATCH)
-                .setNull(MATCH.MATCH_TIME_SLOT_ID)
-                .setNull(MATCH.START_TIME)
-                .where(MATCH.COMPETITION_CATEGORY_ID.`in`(competitionCategoryIds))
-                .execute()
-    }
-
-    fun getDistinctGroupsInCategory(competitionCategoryId: Int): List<String> {
-        return dslContext
-                .selectDistinct(MATCH.GROUP_OR_ROUND).from(MATCH)
-                .where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
-                .fetchInto(String::class.java)
-    }
-
-    fun getDistinctRegistrationIdsInGroup(competitionCategoryId: Int, groupName: String): MutableSet<Int> {
-        val records: List<MatchRecord> = dslContext
-                .select().from(MATCH)
-                .where(
-                        MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
-                                .and(MATCH.GROUP_OR_ROUND.equalIgnoreCase(groupName))
-                )
-                .fetchInto(MATCH)
-
-        val registrationIdSet = mutableSetOf<Int>()
-        for (record in records) {
-            registrationIdSet.add(record.firstRegistrationId)
-            registrationIdSet.add(record.secondRegistrationId)
-        }
-        return registrationIdSet
-    }
-
     fun addMatch(matchSpec: MatchSpec): MatchRecord {
         val matchRecord = dslContext.newRecord(MATCH)
         matchRecord.startTime = matchSpec.startTime
@@ -229,28 +197,6 @@ class MatchRepository(
         matchRecord.wasWalkover = false // Default value in database
         matchRecord.store()
         return matchRecord
-    }
-
-    fun updateMatch(matchId: Int, matchSpec: MatchSpec): MatchRecord {
-        val matchRecord = dslContext.newRecord(MATCH)
-        matchRecord.id = matchId
-        matchRecord.startTime = matchSpec.startTime
-        matchRecord.endTime = matchSpec.endTime
-        matchRecord.competitionCategoryId = matchSpec.competitionCategoryId
-        matchRecord.matchType = matchSpec.matchType.name
-        matchRecord.firstRegistrationId = matchSpec.firstRegistrationId
-        matchRecord.secondRegistrationId = matchSpec.secondRegistrationId
-        matchRecord.matchOrderNumber = matchSpec.matchOrderNumber
-        matchRecord.groupOrRound = matchSpec.groupOrRound
-        matchRecord.update()
-        return matchRecord
-    }
-
-    fun setWinner(matchId: Int, winnerRegistrationId: Int) {
-        dslContext.update(MATCH)
-                .set(MATCH.WINNER, winnerRegistrationId)
-                .where(MATCH.ID.eq(matchId))
-                .execute()
     }
 
     fun isCategoryDrawn(competitionCategoryId: Int): Boolean {
