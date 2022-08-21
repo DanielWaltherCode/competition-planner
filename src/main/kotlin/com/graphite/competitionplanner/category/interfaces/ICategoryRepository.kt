@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.category.interfaces
 
 import com.graphite.competitionplanner.category.api.CustomCategorySpec
+import com.graphite.competitionplanner.category.domain.CategoryType
 
 interface ICategoryRepository {
     /**

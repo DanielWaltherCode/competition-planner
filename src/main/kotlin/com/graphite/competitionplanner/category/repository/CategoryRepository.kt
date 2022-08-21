@@ -1,11 +1,10 @@
 package com.graphite.competitionplanner.category.repository
 
-import com.graphite.competitionplanner.Tables
 import com.graphite.competitionplanner.Tables.CATEGORY
 import com.graphite.competitionplanner.category.api.CustomCategorySpec
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
-import com.graphite.competitionplanner.category.interfaces.CategoryType
+import com.graphite.competitionplanner.category.domain.CategoryType
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.tables.records.CategoryRecord
 import org.jooq.DSLContext

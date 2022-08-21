@@ -3,8 +3,7 @@ package com.graphite.competitionplanner.category.api
 import com.graphite.competitionplanner.category.domain.AddCustomCategory
 import com.graphite.competitionplanner.category.domain.GetCategories
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
-import com.graphite.competitionplanner.category.interfaces.CategoryType
-import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
+import com.graphite.competitionplanner.category.domain.CategoryType
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -33,6 +32,6 @@ class CategoryApi(
 }
 
 data class CustomCategorySpec(
-        val name: String,
-        val type: CategoryType
+    val name: String,
+    val type: CategoryType
 )

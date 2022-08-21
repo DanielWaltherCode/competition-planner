@@ -1,5 +1,7 @@
 package com.graphite.competitionplanner.category.interfaces
 
+import com.graphite.competitionplanner.category.domain.CategoryType
+
 data class CategorySpec(
     val id: Int,
     val name: String,
@@ -15,8 +17,4 @@ data class CategorySpec(
         dto.name,
         dto.type
     )
-}
-
-enum class CategoryType {
-    SINGLES, DOUBLES
 }

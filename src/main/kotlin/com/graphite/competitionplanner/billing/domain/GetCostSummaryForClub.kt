@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.billing.domain
 
 import com.graphite.competitionplanner.billing.interfaces.CostSummaryDTO
 import com.graphite.competitionplanner.billing.interfaces.CostSummaryListDTO
-import com.graphite.competitionplanner.category.interfaces.CategoryType
+import com.graphite.competitionplanner.category.domain.CategoryType
 import com.graphite.competitionplanner.club.domain.FindClub
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO

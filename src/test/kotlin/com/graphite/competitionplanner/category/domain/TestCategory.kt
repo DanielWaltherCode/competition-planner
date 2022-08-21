@@ -1,7 +1,6 @@
 package com.graphite.competitionplanner.category.domain
 
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
-import com.graphite.competitionplanner.category.interfaces.CategoryType
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

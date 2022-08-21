@@ -1,8 +1,6 @@
 package com.graphite.competitionplanner.category.domain
 
 import com.graphite.competitionplanner.category.api.CustomCategorySpec
-import com.graphite.competitionplanner.category.interfaces.CategoryType
-import com.graphite.competitionplanner.club.repository.ClubRepository
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test

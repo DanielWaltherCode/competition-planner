@@ -2,7 +2,7 @@ package com.graphite.competitionplanner.competitioncategory.domain
 
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
-import com.graphite.competitionplanner.category.interfaces.CategoryType
+import com.graphite.competitionplanner.category.domain.CategoryType
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategorySpec
