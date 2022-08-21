@@ -1,10 +1,11 @@
 package com.graphite.competitionplanner.draw.interfaces
 
+import com.graphite.competitionplanner.common.repository.IRepository
 import com.graphite.competitionplanner.draw.domain.CompetitionCategoryDrawSpec
 import com.graphite.competitionplanner.tables.records.PoolRecord
 import com.graphite.competitionplanner.tables.records.PoolResultRecord
 
-interface ICompetitionDrawRepository {
+interface ICompetitionDrawRepository : IRepository {
 
     /**
      * Store the draw of a specific competition category
