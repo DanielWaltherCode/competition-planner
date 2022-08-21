@@ -7,6 +7,7 @@ data class CustomCategorySpec(
     val type: CategoryType
 ) {
     init {
-        require(name.isNotBlank() && name.isNotEmpty()) { "Custom category cannot have a blank or empty name" }
+        require(name.isNotBlank()) { "Custom category cannot have a blank name" }
+        require(name.isNotEmpty()) { "Custom category cannot have an empty name."}
     }
 }
