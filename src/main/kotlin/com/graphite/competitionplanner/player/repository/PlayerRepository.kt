@@ -4,6 +4,7 @@ import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.category.interfaces.CategoryType
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.common.repository.BaseRepository
 import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.player.interfaces.*
 import com.graphite.competitionplanner.registration.domain.asInt
@@ -14,13 +15,14 @@ import com.graphite.competitionplanner.tables.records.PlayerRankingRecord
 import com.graphite.competitionplanner.tables.records.PlayerRecord
 import org.jooq.DSLContext
 import org.jooq.Record
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
 @Repository
-class PlayerRepository(val dslContext: DSLContext) : IPlayerRepository {
-
-    private val logger = LoggerFactory.getLogger(javaClass)
+class PlayerRepository(
+    dslContext: DSLContext
+) : BaseRepository(dslContext),
+    IPlayerRepository
+{
 
     fun getPlayerRanking(playerId: Int): PlayerRankingRecord? {
         return dslContext.select().from(PLAYER_RANKING).where(PLAYER_RANKING.PLAYER_ID.eq(playerId))
@@ -81,16 +83,11 @@ class PlayerRepository(val dslContext: DSLContext) : IPlayerRepository {
         record.lastName = spec.lastName
         record.clubId = spec.clubId
         record.dateOfBirth = spec.dateOfBirth
-        try {
-            dslContext.transaction { _ ->
-                record.store()
-                addPlayerRanking(record.id, rankingSpec.singles, CategoryType.SINGLES.toString())
-                addPlayerRanking(record.id, rankingSpec.doubles, CategoryType.DOUBLES.toString())
-            }
-        } catch (exception: RuntimeException) {
-            logger.error("Failed to store player.")
-            logger.error("Exception message: ${exception.message}")
-            throw RuntimeException("Something went wrong")
+
+        asTransaction {
+            record.store()
+            addPlayerRanking(record.id, rankingSpec.singles, CategoryType.SINGLES.toString())
+            addPlayerRanking(record.id, rankingSpec.doubles, CategoryType.DOUBLES.toString())
         }
 
         return record.toDto()
