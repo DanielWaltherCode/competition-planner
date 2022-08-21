@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.util
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.domain.CategoryType
+import com.graphite.competitionplanner.category.domain.DefaultCategory
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.competition.interfaces.*
@@ -183,7 +184,7 @@ class DataGenerator {
     fun newMatchAndResultDTO(
         id: Int = matchId++,
         competitionCategoryId: Int = 0,
-        competitionCategoryName: String = "Herrar 9",
+        competitionCategoryName: String = DefaultCategory.MEN_3.name,
         startTime: LocalDateTime = LocalDateTime.now(),
         endTime: LocalDateTime = LocalDateTime.now().plusMinutes(15),
         matchType: String = "POOL",
@@ -242,7 +243,7 @@ class DataGenerator {
 
     fun newCategoryDTO(
         id: Int = 1,
-        name: String = "A Custom Category",
+        name: String = DefaultCategory.WOMEN_JUNIOR_17.name,
         type: CategoryType = CategoryType.SINGLES
     ) = CategoryDTO(
         id,
@@ -350,7 +351,7 @@ class DataGenerator {
 
     fun newCategorySpec(
         id: Int = 1,
-        name: String = "Herrar 1",
+        name: String = DefaultCategory.MEN_1.name,
         type: CategoryType = CategoryType.SINGLES
     ) = CategorySpec(
         id,

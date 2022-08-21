@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.result.service
 
+import com.graphite.competitionplanner.category.domain.DefaultCategory
 import com.graphite.competitionplanner.club.repository.ClubRepository
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
@@ -52,7 +53,7 @@ class TestResultService(
 
     @BeforeAll
     fun setUpClassData() {
-        competitionCategoryId = testUtil.addCompetitionCategory("Herrar 3")
+        competitionCategoryId = testUtil.addCompetitionCategory(DefaultCategory.MEN_3)
     }
 
     @BeforeEach
