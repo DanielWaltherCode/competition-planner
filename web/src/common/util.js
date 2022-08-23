@@ -19,7 +19,7 @@ export function getPlayerOneWithClub(match) {
     if (match.firstPlayer.length === 1) {
         playerOne = getFormattedPlayerNameWithClub(match.firstPlayer[0])
     } else if (match.firstPlayer.length === 2) {
-        playerOne = getFormattedPlayerNameWithClub(match.firstPlayer[0]) + getFormattedPlayerNameWithClub(match.firstPlayer[1])
+        playerOne = getFormattedPlayerNameWithClub(match.firstPlayer[0]) + " / " + getFormattedPlayerNameWithClub(match.firstPlayer[1])
     }
     return playerOne
 }
@@ -29,7 +29,7 @@ export function getPlayerTwoWithClub(match) {
     if (match.secondPlayer.length === 1) {
         playerTwo = getFormattedPlayerNameWithClub(match.secondPlayer[0])
     } else if (match.firstPlayer.length === 2) {
-        playerTwo = getFormattedPlayerNameWithClub(match.secondPlayer[0]) + getFormattedPlayerNameWithClub(match.secondPlayer[1])
+        playerTwo = getFormattedPlayerNameWithClub(match.secondPlayer[0]) + " / " + getFormattedPlayerNameWithClub(match.secondPlayer[1])
     }
     return playerTwo
 }
@@ -39,7 +39,7 @@ export function getPlayerOne(match) {
     if (match.firstPlayer.length === 1) {
         playerOne = getFormattedPlayerName(match.firstPlayer[0])
     } else if (match.firstPlayer.length === 2) {
-        playerOne = getFormattedPlayerName(match.firstPlayer[0]) + " " + getFormattedPlayerName(match.firstPlayer[1])
+        playerOne = getFormattedPlayerName(match.firstPlayer[0]) + " / " + getFormattedPlayerName(match.firstPlayer[1])
     }
     return playerOne
 }
@@ -49,7 +49,7 @@ export function getPlayerTwo(match) {
     if (match.secondPlayer.length === 1) {
         playerTwo = getFormattedPlayerName(match.secondPlayer[0])
     } else if (match.firstPlayer.length === 2) {
-        playerTwo = getFormattedPlayerName(match.secondPlayer[0]) + getFormattedPlayerName(match.secondPlayer[1])
+        playerTwo = getFormattedPlayerName(match.secondPlayer[0]) + " / " + getFormattedPlayerName(match.secondPlayer[1])
     }
     return playerTwo
 }

@@ -53,12 +53,12 @@
                   getClub(standing.player)
                 }}
               </td>
-              <td>{{ standing.subgroupStanding.matchesPlayed }}</td>
-              <td>{{ standing.subgroupStanding.matchesWonLost.won }} - {{ standing.subgroupStanding.matchesWonLost.lost }}</td>
-              <td>{{ standing.subgroupStanding.gamesWonLost.won }}/{{ standing.subgroupStanding.gamesWonLost.lost }}</td>
-              <td>{{ standing.subgroupStanding.pointsWonLost.won }}/{{ standing.subgroupStanding.pointsWonLost.lost }}</td>
-              <td>{{ standing.subgroupStanding.groupScore }}</td>
-              <td>{{ $t("draw.pool.subgroupStanding." + standing.sortedBy) }}</td>
+              <td v-if="standing.subgroupStanding != null">{{ standing.subgroupStanding.matchesPlayed }}</td>
+              <td v-if="standing.subgroupStanding != null">{{ standing.subgroupStanding.matchesWonLost.won }} - {{ standing.subgroupStanding.matchesWonLost.lost }}</td>
+              <td v-if="standing.subgroupStanding != null">{{ standing.subgroupStanding.gamesWonLost.won }}/{{ standing.subgroupStanding.gamesWonLost.lost }}</td>
+              <td v-if="standing.subgroupStanding != null">{{ standing.subgroupStanding.pointsWonLost.won }}/{{ standing.subgroupStanding.pointsWonLost.lost }}</td>
+              <td v-if="standing.subgroupStanding != null">{{ standing.subgroupStanding.groupScore }}</td>
+              <td v-if="standing.subgroupStanding != null">{{ $t("draw.pool.subgroupStanding." + standing.sortedBy) }}</td>
             </tr>
             </tbody>
           </table>

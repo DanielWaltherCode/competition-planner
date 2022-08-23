@@ -18,11 +18,11 @@ import java.time.LocalDateTime
 
 @Service
 class MatchService(
-    val matchRepository: MatchRepository,
-    @Lazy val registrationService: RegistrationService,
-    @Lazy val resultService: ResultService,
-    val competitionCategoryRepository: CompetitionCategoryRepository,
-    val resultsRepository: IResultRepository
+        val matchRepository: MatchRepository,
+        @Lazy val registrationService: RegistrationService,
+        @Lazy val resultService: ResultService,
+        val competitionCategoryRepository: CompetitionCategoryRepository,
+        val resultsRepository: IResultRepository
 ) {
 
     fun deleteMatchesInCategory(competitionCategoryId: Int) {
@@ -30,7 +30,7 @@ class MatchService(
     }
 
     fun getMatchesInCompetitionByDay(competitionId: Int, day: LocalDate): List<MatchAndResultDTO> {
-       val matchRecords = matchRepository.getMatchesInCompetitionByDay(competitionId, day)
+        val matchRecords = matchRepository.getMatchesInCompetitionByDay(competitionId, day)
         return transformToMatchAndResultDTO(matchRecords)
     }
 
@@ -55,14 +55,39 @@ class MatchService(
     }
 
     fun transformToMatchAndResultDTO(matches: List<MatchRecord>): List<MatchAndResultDTO> {
-        val results = resultsRepository.getResults(matches.map { it.id })
-        return results.zip(matches).map { (result, match) ->
-            MatchAndResultDTO(
+        val results: MutableMap<Int, ResultDTO> = resultsRepository.getResults(matches.map { it.id })
+        val resultList = mutableListOf<MatchAndResultDTO>()
+        for (match in matches.sortedBy { it.id }) {
+            resultList.add(MatchAndResultDTO(
+                    match.id,
+                    match.startTime,
+                    match.endTime,
+                    SimpleCompetitionCategoryDTO(match.competitionCategoryId,
+                            competitionCategoryRepository.getCategoryType(match.competitionCategoryId).categoryName),
+                    match.matchType,
+                    registrationService.getPlayersWithClubFromRegistrationId(match.firstRegistrationId),
+                    registrationService.getPlayersWithClubFromRegistrationId(match.secondRegistrationId),
+                    match.matchOrderNumber,
+                    match.groupOrRound,
+                    registrationService.getPlayersWithClubFromRegistrationId(match.winner),
+                    match.wasWalkover,
+                    if (results[match.id] == null) ResultDTO(emptyList()) else results[match.id]!!
+            ))
+        }
+        return resultList
+    }
+
+    fun recordToMatchAndResultDTO(match: MatchRecord): MatchAndResultDTO {
+        val result = resultService.getResult(match.id)
+
+        return MatchAndResultDTO(
                 match.id,
                 match.startTime,
                 match.endTime,
-                SimpleCompetitionCategoryDTO(match.competitionCategoryId,
-                    competitionCategoryRepository.getCategoryType(match.competitionCategoryId).categoryName),
+                SimpleCompetitionCategoryDTO(
+                        match.competitionCategoryId,
+                        competitionCategoryRepository.getCategoryType(match.competitionCategoryId).categoryName
+                ),
                 match.matchType,
                 registrationService.getPlayersWithClubFromRegistrationId(match.firstRegistrationId),
                 registrationService.getPlayersWithClubFromRegistrationId(match.secondRegistrationId),
@@ -70,30 +95,7 @@ class MatchService(
                 match.groupOrRound,
                 registrationService.getPlayersWithClubFromRegistrationId(match.winner),
                 match.wasWalkover,
-                result.second
-            )
-        }
-    }
-
-    fun recordToMatchAndResultDTO(match: MatchRecord): MatchAndResultDTO {
-        val result = resultService.getResult(match.id)
-
-        return MatchAndResultDTO(
-            match.id,
-            match.startTime,
-            match.endTime,
-            SimpleCompetitionCategoryDTO(
-                match.competitionCategoryId,
-                competitionCategoryRepository.getCategoryType(match.competitionCategoryId).categoryName
-            ),
-            match.matchType,
-            registrationService.getPlayersWithClubFromRegistrationId(match.firstRegistrationId),
-            registrationService.getPlayersWithClubFromRegistrationId(match.secondRegistrationId),
-            match.matchOrderNumber,
-            match.groupOrRound,
-            registrationService.getPlayersWithClubFromRegistrationId(match.winner),
-            match.wasWalkover,
-            result
+                result
         )
     }
 
@@ -105,18 +107,18 @@ class MatchService(
 }
 
 data class MatchAndResultDTO(
-    val id: Int,
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    val startTime: LocalDateTime?,
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    val endTime: LocalDateTime?,
-    val competitionCategory: SimpleCompetitionCategoryDTO,
-    val matchType: String,
-    val firstPlayer: List<PlayerWithClubDTO>,
-    val secondPlayer: List<PlayerWithClubDTO>,
-    val matchOrderNumber: Int,
-    val groupOrRound: String, // Either group name (e.g. Group "A") or the round like Round of 64, Quarterfinals
-    val winner: List<PlayerWithClubDTO>,
-    val wasWalkover: Boolean,
-    val result: ResultDTO
+        val id: Int,
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+        val startTime: LocalDateTime?,
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+        val endTime: LocalDateTime?,
+        val competitionCategory: SimpleCompetitionCategoryDTO,
+        val matchType: String,
+        val firstPlayer: List<PlayerWithClubDTO>,
+        val secondPlayer: List<PlayerWithClubDTO>,
+        val matchOrderNumber: Int,
+        val groupOrRound: String, // Either group name (e.g. Group "A") or the round like Round of 64, Quarterfinals
+        val winner: List<PlayerWithClubDTO>,
+        val wasWalkover: Boolean,
+        val result: ResultDTO
 )

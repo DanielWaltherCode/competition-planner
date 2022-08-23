@@ -20,7 +20,7 @@ interface IResultRepository {
      * @return A list of Pairs where the first item is the match id, and the second is the result of the match with the
      * same id.
      */
-    fun getResults(matchIds: List<Int>): List<Pair<Int, ResultDTO>>
+    fun getResults(matchIds: List<Int>): MutableMap<Int, ResultDTO>
 
     /**
      * Delete all results from the match

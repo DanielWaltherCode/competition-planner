@@ -19,11 +19,13 @@ class ResultRepository(val dslContext: DSLContext): IResultRepository {
             .map { it.toDto() }
     }
 
-    override fun getResults(matchIds: List<Int>): List<Pair<Int, ResultDTO>> {
+    override fun getResults(matchIds: List<Int>): MutableMap<Int, ResultDTO> {
         val records = dslContext.selectFrom(GAME).where(GAME.MATCH_ID.`in`(matchIds)).orderBy(GAME.MATCH_ID.asc()).fetch()
-        return matchIds.sorted().map {
-            Pair(it, ResultDTO(records.filter { record -> record.matchId == it }.map { record -> record.toDto() }))
+        val matchResultMap = mutableMapOf<Int, ResultDTO>()
+        for (id in matchIds) {
+            matchResultMap[id] = ResultDTO(records.filter { record -> record.matchId == id }.map { record -> record.toDto() })
         }
+        return matchResultMap
     }
 
     override fun deleteResults(matchId: Int) {
