@@ -1,1 +1,1 @@
-alter table category drop constraint category_category_name_key;
+alter table category drop constraint if exists category_category_name_key;
