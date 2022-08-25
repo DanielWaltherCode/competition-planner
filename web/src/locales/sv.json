@@ -68,6 +68,7 @@
     "overview": "Översikt",
     "gameRules": "Matchregler",
     "register": "Registrera spelare",
+    "registerDoubles": "Registrera par",
     "noCategories": "Inga klasser är skapade än så länge",
     "createNew": "Lägg till ny klass i tävlingen",
     "addClass": "Lägg till",
@@ -138,6 +139,8 @@
     "cost": "Avgift för klassen",
     "playersPerGroup": "Antal spelare per grupp",
     "playersToPlayoff": "Antal spelare till slutspel från varje grupp",
+    "playersPerGroupDoubles": "Antal par per grupp",
+    "playersToPlayoffDoubles": "Antal par till slutspel från varje grupp",
     "drawType": "Lottningstyp",
     "drawTypes": {
       "POOL_ONLY": "Enbart gruppspel",
@@ -202,6 +205,7 @@
       "club": "Klubb",
       "dateOfBirth": "Födelsedatum",
       "buttonText": "Anmäl spelare",
+      "buttonTextDoubles": "Anmäl paret",
       "clear": "Rensa spelare"
     },
     "info": "Spelarinfo",

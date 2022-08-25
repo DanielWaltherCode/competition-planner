@@ -20,7 +20,10 @@
       </div>
       <div class="col-sm-12 col-md-6 mb-3" v-if="category.settings.drawType !== 'CUP_ONLY'">
         <label class="h5 form-label"
-               for="inputNumberOfPlayersPerPool">{{ $t("categorySettings.playersPerGroup") }}</label>
+               for="inputNumberOfPlayersPerPool">
+          <p v-if="category.category.type === 'DOUBLES'">{{ $t("categorySettings.playersPerGroupDoubles") }}</p>
+          <p v-else>{{ $t("categorySettings.playersPerGroup") }}</p>
+        </label>
         <select v-model="category.settings.playersPerGroup" id="inputNumberOfPlayersPerPool" class="form-select" :disabled="isDrawMade">
           <option v-for="i in 3" :key="i">
             {{ i + 2 }}
@@ -30,7 +33,10 @@
     </div>
     <div v-if="category.settings.drawType === 'POOL_AND_CUP'" class="row">
       <div class="col-sm-12 col-md-6 d-flex flex-column justify-content-end">
-        <label class="h5 form-label" for="inputPlayersThatAdvance">{{ $t("categorySettings.playersToPlayoff") }}</label>
+        <label class="h5 form-label" for="inputPlayersThatAdvance">
+          <p v-if="category.category.type === 'DOUBLES'">{{ $t("categorySettings.playersToPlayoffDoubles") }}</p>
+          <p v-else>{{ $t("categorySettings.playersToPlayoff") }}</p>
+        </label>
         <input v-model="category.settings.playersToPlayOff" type="text" class="form-control" id="inputPlayersThatAdvance" :disabled="isDrawMade">
       </div>
       <div class="col-sm-12 col-md-6 d-flex flex-column justify-content-end">

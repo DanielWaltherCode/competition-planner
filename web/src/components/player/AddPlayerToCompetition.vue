@@ -62,7 +62,7 @@
         </div>
         <div class="d-flex justify-content-end">
           <button type="button" class="btn btn-primary" @click="registerDoublesPlayers">
-            {{ $t("player.add.buttonText") }}
+            {{ $t("player.add.buttonTextDoubles") }}
           </button>
         </div>
       </div>

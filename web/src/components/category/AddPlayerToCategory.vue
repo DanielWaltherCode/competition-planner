@@ -23,7 +23,7 @@
 
     <!-- If doubles category -->
     <div class="row custom-card p-4" v-if="category.category.type === 'DOUBLES'">
-      <h2 class="p-3">{{ $t("categories.register") }}</h2>
+      <h2 class="p-3">{{ $t("categories.registerDoubles") }}</h2>
       <div class="d-flex justify-content-start px-4">
         <p class="mb-0">{{ $t("player.doublesPlayer1") }}</p>
       </div>
@@ -36,7 +36,7 @@
                                v-on:player-found="doublesPlayer2 = $event"></search-player-component>
       <div class="d-flex justify-content-end">
         <button type="button" class="btn btn-primary" @click="registerDoublesPlayers">
-          {{ $t("player.add.buttonText") }}
+          {{ $t("player.add.buttonTextDoubles") }}
         </button>
       </div>
       <div class="row">
