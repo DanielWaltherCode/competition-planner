@@ -164,35 +164,117 @@ class CompetitionScheduler(
     ) {
         val competition = findCompetitions.byId(competitionId)
         removeTimeSlotCategory(competitionCategoryId, matchSchedulerSpec.matchType)
+
         val matches = scheduleRepository.getScheduleMatches(competitionCategoryId, matchSchedulerSpec.matchType)
-        val settings = ScheduleSettingsDTO(
-                Duration.minutes(15), // Not used
-                matchSchedulerSpec.tableNumbers.size,
-                LocalDateTime.now(), // Not used
-                LocalDateTime.now().plusMinutes(60) // Not used
-        )
-        val schedule = createSchedule.execute(matches, settings)
-        val startTime = LocalDateTime.of(matchSchedulerSpec.day, matchSchedulerSpec.startTime)
-        val timeTableSlots = scheduleRepository.getTimeTableSlotRecords(competitionId, startTime, matchSchedulerSpec.tableNumbers,
-                competition.location.name)
 
-        try {
-            val updateSpec = mutableListOf<MapMatchToTimeTableSlotSpec>()
-            var index = 0
-            for (timeslot in schedule.timeslots) {
-                for (match in timeslot.matches) {
-                    updateSpec.add(MapMatchToTimeTableSlotSpec(match.id, timeTableSlots[index].id))
-                    index++
-                }
-            }
-            scheduleRepository.updateMatchesTimeTablesSlots(updateSpec)
-            scheduleRepository.setCategoryForTimeSlots(updateSpec.map { it.timeTableSlotId }, competitionCategoryId,
-                    matchSchedulerSpec.matchType)
+        val dateTimeFilter = LocalDateTime.of(matchSchedulerSpec.day, matchSchedulerSpec.startTime)
+        val timetable = getSchedule(competition.id)
+            .filter { it.startTime >= dateTimeFilter }
+            .filter { matchSchedulerSpec.tableNumbers.contains(it.tableNumber) }
+            .filter { it.matchInfo.isEmpty() }
+            .groupBy { it.startTime }
 
-        } catch (ex: IndexOutOfBoundsException) {
-            throw IndexOutOfBoundsException(
-                    "Not all matches fit the schedule. Please consider adding more tables or start earlier.")
+        val updateSpec = scheduleMatches(timetable, matches)
+
+        scheduleRepository.updateMatchesTimeTablesSlots(updateSpec)
+        scheduleRepository.setCategoryForTimeSlots(
+            updateSpec.map { it.timeTableSlotId },
+            competitionCategoryId,
+            matchSchedulerSpec.matchType)
+    }
+
+    /**
+     * Schedule the given matches in the timetable.
+     *
+     * @throws IndexOutOfBoundsException If there are not enough slots available to fit all the matches
+     */
+    private fun scheduleMatches(
+        timetable: Map<LocalDateTime, List<TimeTableSlotDTO>>,
+        matches: List<ScheduleMatchDto>
+    ): List<MapMatchToTimeTableSlotSpec> {
+        return if (matches.isEmpty()) {
+            emptyList()
+        } else if (timetable.isEmpty()) {
+            throw IndexOutOfBoundsException("There are too few timetable slots to fit all the matches")
+        } else {
+            val (first, rest) = getFirstTimeBlock(timetable)
+            val (updateSpec, remainingMatchesToSchedule) = scheduleBlockOfTimeslots(first, matches)
+            updateSpec + scheduleMatches(rest, remainingMatchesToSchedule)
         }
+    }
+
+    /**
+     * Tries to schedule a list of matches optimally on a set of timeslots.
+     *
+     * @param block Equal sized timeslots i.e. each timeslot should have the same number of available tables
+     * @param matches Matches to schedule
+     * @return A pair where the first item contains information about successfully scheduled matches, while
+     * the second part is a list of remaining matches that did not fit into the set of timeslots.
+     */
+    private fun scheduleBlockOfTimeslots(
+        block: Map<LocalDateTime, List<TimeTableSlotDTO>>,
+        matches: List<ScheduleMatchDto>
+    ) : Pair<List<MapMatchToTimeTableSlotSpec>, List<ScheduleMatchDto>> {
+
+        assert(block.entries.isNotEmpty()) { "This function may not be called with a empty block" }
+
+        // The block of timeslots are all of equal size!
+        val numberOfTablesAvailableInBlock = block.entries.elementAt(0).value.size
+
+        assert(block.entries.all { it.value.size == numberOfTablesAvailableInBlock }) {
+            "This function must be called with timeslots with same number of available tables."
+        }
+
+        val settings = ScheduleSettingsDTO(
+            Duration.minutes(15), // Not used
+            numberOfTablesAvailableInBlock,
+            LocalDateTime.now(), // Not used
+            LocalDateTime.now().plusMinutes(60) // Not used
+        )
+
+        val schedule = createSchedule.execute(matches, settings)
+
+        val updateSpec2 = mutableListOf<MapMatchToTimeTableSlotSpec>()
+        for ((timeslot, key) in schedule.timeslots.zip(block.keys)) {
+            for ((match, timeTableSlot) in timeslot.matches.zip(block[key]!!)) {
+                val spec = MapMatchToTimeTableSlotSpec(match.id, timeTableSlot.id)
+                updateSpec2.add(spec)
+            }
+        }
+
+        val scheduledMatchIds = updateSpec2.map { it.matchId }
+        val remainingMatches = matches.filterNot { scheduledMatchIds.contains(it.id) }
+        return Pair(updateSpec2, remainingMatches)
+    }
+
+    private fun getFirstTimeBlock(timeslots: Map<LocalDateTime, List<TimeTableSlotDTO>>):
+            Pair<Map<LocalDateTime, List<TimeTableSlotDTO>>, Map<LocalDateTime, List<TimeTableSlotDTO>>> {
+        val time = timeslots.keys.first()
+        val predicate = timeslots[time]!!.size
+        return timeslots.takeWhile { size == predicate };
+    }
+
+    /**
+     * Take timeslots while the given predicate is true
+     */
+    private fun Map<LocalDateTime, List<TimeTableSlotDTO>>.takeWhile(
+        predicate: List<TimeTableSlotDTO>.() -> Boolean):
+            Pair<Map<LocalDateTime, List<TimeTableSlotDTO>>, Map<LocalDateTime, List<TimeTableSlotDTO>>> {
+
+        val predicateTrue = mutableMapOf<LocalDateTime, List<TimeTableSlotDTO>>()
+        val predicateFalse = mutableMapOf<LocalDateTime, List<TimeTableSlotDTO>>()
+
+        var keepTaking = true // Keep taking timeslots as long as this is true
+        for ((k, v) in this) {
+            if (v.predicate() && keepTaking) {
+                predicateTrue[k] = v
+            } else {
+                keepTaking = false
+                predicateFalse[k] = v
+            }
+        }
+
+        return Pair(predicateTrue, predicateFalse)
     }
 
     fun getCategorySchedulerSettings(competitionId: Int): ScheduleCategoryContainerDTO {

@@ -23,6 +23,7 @@ import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.service.ResultDTO
+import com.graphite.competitionplanner.schedule.domain.MatchSchedulerSpec
 import com.graphite.competitionplanner.schedule.interfaces.MatchToTimeTableSlot
 import com.graphite.competitionplanner.schedule.interfaces.ScheduleMatchDto
 import com.graphite.competitionplanner.schedule.interfaces.ScheduleSettingsDTO
@@ -31,6 +32,7 @@ import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotToMatch
 import com.graphite.competitionplanner.schedule.interfaces.MapMatchToTimeTableSlotSpec
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import kotlin.random.Random
 import kotlin.time.Duration
 
@@ -490,6 +492,17 @@ class DataGenerator {
         date
     )
 
+    fun newMatchSchedulerSpec(
+        matchType: MatchType = MatchType.GROUP,
+        tableNumbers: List<Int> = listOf(1, 2, 3, 4),
+        day: LocalDate = LocalDate.now(),
+        startTime: LocalTime = LocalTime.now()
+    ) = MatchSchedulerSpec(
+        matchType,
+        tableNumbers,
+        day,
+        startTime)
+
     fun newScheduleMatchDTO(
         id: Int = this.matchId++,
         competitionCategoryId: Int = this.competitionCategoryId++,
@@ -586,11 +599,11 @@ class DataGenerator {
     /**
      * Pool with 4 players i.e. 6 matches
      */
-    fun pool1(categoryId: Int = 1): List<ScheduleMatchDto> {
+    fun pool1(competitionCategoryId: Int = 1): List<ScheduleMatchDto> {
         return pool1.map {
             ScheduleMatchDto(
                 it.id,
-                categoryId,
+                competitionCategoryId,
                 it.firstTeamPlayerIds,
                 it.secondTeamPlayerIds,
                 "A"
@@ -601,11 +614,11 @@ class DataGenerator {
     /**
      * Pool with 4 players i.e. 6 matches
      */
-    fun pool2(categoryId: Int = 1): List<ScheduleMatchDto> {
+    fun pool2(competitionCategoryId: Int = 1): List<ScheduleMatchDto> {
         return pool2.map {
             ScheduleMatchDto(
                 it.id,
-                categoryId,
+                competitionCategoryId,
                 it.firstTeamPlayerIds,
                 it.secondTeamPlayerIds,
                 "B"
@@ -616,11 +629,11 @@ class DataGenerator {
     /**
      * Pool with 3 players i.e 3 matches
      */
-    fun pool3(categoryId: Int = 1): List<ScheduleMatchDto> {
+    fun pool3(competitionCategoryId: Int = 1): List<ScheduleMatchDto> {
         return pool3.map {
             ScheduleMatchDto(
                 it.id,
-                categoryId,
+                competitionCategoryId,
                 it.firstTeamPlayerIds,
                 it.secondTeamPlayerIds,
                 "C"

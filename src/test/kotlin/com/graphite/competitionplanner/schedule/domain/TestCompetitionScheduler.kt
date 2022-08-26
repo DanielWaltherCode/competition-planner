@@ -167,7 +167,6 @@ class TestCompetitionScheduler {
         Assertions.assertEquals(expectedOrder, timeTableSlotIds)
     }
 
-
     @Captor
     lateinit var classCaptor: ArgumentCaptor<List<MapMatchToTimeTableSlotSpec>>
 
