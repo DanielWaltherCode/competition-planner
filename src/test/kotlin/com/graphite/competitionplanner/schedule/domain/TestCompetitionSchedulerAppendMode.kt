@@ -2,6 +2,7 @@ package com.graphite.competitionplanner.schedule.domain
 
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
+import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
@@ -364,6 +365,58 @@ class TestCompetitionSchedulerAppendMode {
             result.map { it.timeTableSlotId }.sorted(),
             "Expected the ${matchesToSchedule.size} matches to be scheduled on tables 1, 2, 3, 4." +
                     " 4 matches in first time slot, 2 matches in second, and 1 match on the third\n" +
+                    timeTable.printOut())
+    }
+
+    @Test
+    fun schedulingPlayoffMatchesWithVaryingNumberOfAvailableTables() {
+        // Setup
+        val competitionId = 12
+        `when`(mockedFindCompetitions.byId(any())).thenReturn(dataGenerator.newCompetitionDTO(competitionId))
+
+        val competitionCategoryId = 123
+        val duration = 25.toDuration(TimeUnit.MINUTES)
+        val startTime = LocalDateTime.now()
+        val matchSchedulerSpec = dataGenerator.newMatchSchedulerSpec(
+            MatchType.PLAYOFF, listOf(1, 2, 3, 4),
+            startTime.toLocalDate(),
+            startTime.toLocalTime()
+        )
+
+        val matchesToSchedule = dataGenerator.playOff(Round.ROUND_OF_16)
+        `when`(mockedScheduleRepository.getScheduleMatches(any(), any())).thenReturn(matchesToSchedule)
+
+        val timeTable = generateTimeTable(startTime, duration, 8, 4)
+            .mapIndexed{ index, it -> it.setId(index + 1) }
+            // Occupies table number 1 & 2 in the first 3 timeslots
+            .map { if ((it.id % 4 == 1 || it.id % 4 == 2) && it.id < 12 ) it.Occupy() else it }
+
+        `when`(mockedScheduleRepository.getTimeTable(competitionId)).thenReturn(timeTable)
+
+        // Act
+        competitionScheduler.scheduleCompetitionCategory(
+            competitionId,
+            competitionCategoryId,
+            matchSchedulerSpec
+        )
+
+        // Record the spec sent to the repository for validation
+        Mockito.verify(mockedScheduleRepository).updateMatchesTimeTablesSlots(TestHelper.MockitoHelper.capture(classCaptor))
+        val result = classCaptor.value as List<MapMatchToTimeTableSlotSpec>
+
+        // Assert
+        Assertions.assertNotNull(result)
+        Assertions.assertEquals(matchesToSchedule.size, result.size,
+            "Not the correct number of matches scheduled.")
+        Assertions.assertEquals(matchesToSchedule.size, result.map { it.matchId }.distinct().size,
+            "Not all matches were scheduled")
+        Assertions.assertEquals(matchesToSchedule.size, result.map { it.timeTableSlotId }.distinct().size,
+            "Not unique timeslots where used")
+
+        Assertions.assertEquals(
+            listOf(3, 4, 7, 8, 11, 12, 13, 14, 17, 18, 19, 20, 21, 22, 25),
+            result.map { it.timeTableSlotId }.sorted(),
+            "Expected the ${matchesToSchedule.size} matches to be scheduled on tables 1, 2, 3, 4\n" +
                     timeTable.printOut())
     }
 
