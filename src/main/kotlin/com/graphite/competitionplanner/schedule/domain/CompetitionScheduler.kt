@@ -412,8 +412,10 @@ class CompetitionScheduler(
     }
 
     private fun removeTimeSlotCategory(categoryId: Int, matchType: MatchType) {
-        scheduleRepository.removeCategoryAndMatchTypeFromTimeslots(categoryId, matchType)
-        scheduleRepository.removeCategoryTimeSlotFromMatchTable(categoryId, matchType)
+        scheduleRepository.asTransaction {
+            scheduleRepository.removeCategoryAndMatchTypeFromTimeslots(categoryId, matchType)
+            scheduleRepository.removeCategoryTimeSlotFromMatchTable(categoryId, matchType)
+        }
     }
 
     fun clearSchedule(competitionId: Int) {
