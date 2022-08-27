@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.schedule.domain
 
+import com.graphite.competitionplanner.registration.domain.isReal
 import com.graphite.competitionplanner.schedule.interfaces.ScheduleDTO
 import com.graphite.competitionplanner.schedule.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.schedule.interfaces.TimeslotDTO
@@ -22,21 +23,6 @@ class CreateSchedule {
      */
     fun execute(matches: List<ScheduleMatchDto>, settings: ScheduleSettingsDTO): ScheduleDTO {
         return createSchedule(matches, ScheduleDTO(0, emptyList(), settings))
-    }
-
-    /**
-     * Tries to schedule as many matches as possible within the limited number of time slots.
-     *
-     * @param matches Matches to schedule
-     * @param settings Scheduling settings
-     * @param limit Maximum number of timeslots to use
-     * @return A schedule as well as any remaining matches that where not scheduled.
-     */
-    fun execute(matches: List<ScheduleMatchDto>, settings: ScheduleSettingsDTO, limit: Int): Pair<ScheduleDTO, List<ScheduleMatchDto>> {
-        val schedule: ScheduleDTO = createSchedule(matches.take(limit), ScheduleDTO(0, emptyList(), settings))
-        val scheduledMatches = schedule.timeslots.take(limit).flatMap { it.matches }
-        val remaining: List<ScheduleMatchDto> = matches.filterNot { scheduledMatches.contains(it) }
-        return Pair(ScheduleDTO(schedule.id, schedule.timeslots.take(limit), settings), remaining)
     }
 
     private fun createSchedule(tempMatches: List<ScheduleMatchDto>, scheduleTest: ScheduleDTO): ScheduleDTO  {
@@ -136,8 +122,7 @@ class CreateSchedule {
         return if (timeslots.isEmpty())
             listOf(TimeslotDTO(nextTimeSlotId, listOf(match)))
         else {
-            if (numberOfTables == timeslots.first().matches.size || timeslots.first().contains(match.playerIds())
-            ) {
+            if (numberOfTables == timeslots.first().matches.size || timeslots.first().contains(match.playerIds())) {
                 listOf(timeslots.first()) + placeMatchInFirstAvailableTimeslot(
                     timeslots.drop(1),
                     match,
@@ -156,7 +141,7 @@ class CreateSchedule {
      * Return a list of player ids that belongs to this match
      */
     private fun ScheduleMatchDto.playerIds(): List<Int> {
-        return this.firstTeamPlayerIds + this.secondTeamPlayerIds
+        return (this.firstTeamPlayerIds + this.secondTeamPlayerIds).filter { it.isReal() }
     }
 
     /**

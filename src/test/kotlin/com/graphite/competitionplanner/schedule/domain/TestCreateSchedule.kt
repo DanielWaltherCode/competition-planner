@@ -1,12 +1,8 @@
 package com.graphite.competitionplanner.schedule.domain
 
-import com.graphite.competitionplanner.schedule.interfaces.ScheduleMatchDto
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
@@ -247,59 +243,4 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
             )
         }
     }
-
-    data class TestData(
-        val limit: Int,
-        val numberOfTables: Int,
-        val matches: List<ScheduleMatchDto>
-    )
-
-    private val inputTestData = listOf(
-        TestData(1, 1,pool1 + pool2 + pool3),
-        TestData(1, 2,pool1 + pool2 + pool3),
-        TestData(1, 3,pool1 + pool2 + pool3),
-        TestData(2, 1,pool1 + pool2 + pool3),
-        TestData(2, 2,pool1 + pool2 + pool3),
-        TestData(2, 3,pool1 + pool2 + pool3),
-        TestData(3, 1,pool1 + pool2 + pool3),
-        TestData(3, 2,pool1 + pool2 + pool3),
-        TestData(3, 3,pool1 + pool2 + pool3),
-        TestData(4, 1,pool1 + pool2 + pool3),
-        TestData(4, 2,pool1 + pool2 + pool3),
-        TestData(4, 3,pool1 + pool2 + pool3),
-        TestData(5, 1,pool1 + pool2 + pool3),
-        TestData(5, 2,pool1 + pool2 + pool3),
-        TestData(5, 3,pool1 + pool2 + pool3),
-    )
-
-    @TestFactory
-    @Disabled("Might not be applicable anymore when there is one match per time slot")
-    fun testCreateScheduleWithLimit3() = inputTestData
-        .map { testData ->
-            DynamicTest.dynamicTest("When limit is ${testData.limit} and number of tables is ${testData.numberOfTables}") {
-                // Act
-                val (schedule, remainingMatches) = createSchedule.execute(
-                    testData.matches,
-                    dataGenerator.newScheduleSettingsDTO(numberOfTables = testData.numberOfTables),
-                    testData.limit
-                )
-
-                // Assert
-                Assertions.assertEquals(
-                    testData.limit,
-                    schedule.timeslots.size,
-                    "Limit set to ${testData.limit} timeslot"
-                )
-                Assertions.assertEquals(
-                    testData.matches.size - testData.limit * testData.numberOfTables,
-                    remainingMatches.size
-                )
-                Assertions.assertTrue(
-                    remainingMatches.intersect(schedule.timeslots.flatMap { it.matches }.toSet()).isEmpty(),
-                    "At least one match has been scheduled and is also part of the remaining matches"
-                )
-            }
-
-    }
-
 }

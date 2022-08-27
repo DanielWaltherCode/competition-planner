@@ -301,8 +301,8 @@ class ScheduleRepository(
             startTime: LocalDateTime,
             tableNumbers: List<Int>,
             location: String
-    ): List<MatchTimeSlotRecord> {
-        return dslContext.selectFrom(MATCH_TIME_SLOT)
+    ): List<MatchTimeTableSlotDTO> {
+        val records = dslContext.selectFrom(MATCH_TIME_SLOT)
                 .where(
                         MATCH_TIME_SLOT.COMPETITION_ID.eq(competitionId)
                                 .and(MATCH_TIME_SLOT.LOCATION.eq(location))
@@ -311,6 +311,8 @@ class ScheduleRepository(
                 )
                 .orderBy(MATCH_TIME_SLOT.START_TIME.asc(), MATCH_TIME_SLOT.TABLE_NUMBER.asc())
                 .fetch()
+
+        return records.map { it.toDto() }
     }
 
     override fun publishSchedule(competitionId: Int) {
@@ -389,5 +391,17 @@ class ScheduleRepository(
                 .from(PLAYER_REGISTRATION)
                 .where(PLAYER_REGISTRATION.REGISTRATION_ID.eq(registrationId))
         return records.map { it.get(PLAYER_REGISTRATION.PLAYER_ID) }
+    }
+
+    private fun MatchTimeSlotRecord.toDto(): MatchTimeTableSlotDTO {
+        return MatchTimeTableSlotDTO(
+            this.id,
+            this.competitionId,
+            this.startTime,
+            this.tableNumber,
+            this.location,
+            this.competitionCategoryId,
+            if(this.matchType != null) MatchType.valueOf(this.matchType) else null
+        )
     }
 }

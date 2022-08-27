@@ -3,18 +3,12 @@ package com.graphite.competitionplanner.schedule.domain
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.draw.service.DrawService
-import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
-import com.graphite.competitionplanner.schedule.interfaces.MapMatchToTimeTableSlotSpec
 import com.graphite.competitionplanner.schedule.service.AvailableTablesService
 import com.graphite.competitionplanner.util.DataGenerator
-import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
 import org.mockito.Mockito
-import org.mockito.kotlin.any
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDateTime
 
@@ -30,8 +24,13 @@ class TestCompetitionScheduler {
     private val createSchedule = CreateSchedule()
     private val dataGenerator = DataGenerator()
 
-    private val competitionScheduler = CompetitionScheduler(mockedScheduleRepository, createSchedule, mockedFindCompetitions,
-    mockedAvailableTables, mockedDrawService, mockedGetCompetitionCategories)
+    private val competitionScheduler = CompetitionScheduler(
+        mockedScheduleRepository,
+        createSchedule,
+        mockedFindCompetitions,
+        mockedAvailableTables,
+        mockedDrawService,
+        mockedGetCompetitionCategories)
 
     @Test
     fun addingMatchToEmptySlot() {
@@ -87,19 +86,6 @@ class TestCompetitionScheduler {
             timeTableSlot.matchInfo.map { it.id }.containsAll(listOf(matchId, matchId2)),
             "Not the expected match IDs returned"
         )
-    }
-
-    @Test
-    fun something() {
-        // "Schemalägg Gruppspelsmatcher för Herrar 2 på bord 4-7 med start kl 09:00 den 20/5 2022 i Hall A"
-        val competitionId = 12
-        val competitionCategoryId = 123
-        val matchType = MatchType.GROUP
-        val tables = listOf(1, 2, 3)
-        val startTime = LocalDateTime.now()
-        Mockito.`when`(mockedFindCompetitions.byId(any())).thenReturn(dataGenerator.newCompetitionDTO())
-
-        competitionScheduler.scheduleCompetitionCategory(competitionId, competitionCategoryId, MatchSchedulerSpec(matchType, tables, startTime.toLocalDate(), startTime.toLocalTime()))
     }
 
     @Test
@@ -167,79 +153,4 @@ class TestCompetitionScheduler {
         Assertions.assertEquals(expectedOrder, timeTableSlotIds)
     }
 
-
-    @Captor
-    lateinit var classCaptor: ArgumentCaptor<List<MapMatchToTimeTableSlotSpec>>
-
-    @Test
-    fun appendMatchesToTables() {
-        // Setup
-        val competitionId = 192
-        val now = LocalDateTime.now()
-        val matchesToSlots = listOf(
-            dataGenerator.newTimeTableSlotToMatch(id = 1, startTime = now, tableNumber = 1, matchInfo = dataGenerator.newTimeTableMatchInfo(id = 2)),
-            dataGenerator.newTimeTableSlotToMatch(id = 2, startTime = now, tableNumber = 2, matchInfo = dataGenerator.newTimeTableMatchInfo(id = 4)),
-            dataGenerator.newTimeTableSlotToMatch(id = 3, startTime = now, tableNumber = 3, matchInfo = null),
-            dataGenerator.newTimeTableSlotToMatch(id = 4, startTime = now, tableNumber = 4, matchInfo = null),
-            dataGenerator.newTimeTableSlotToMatch(id = 5, startTime = now.plusMinutes(25), tableNumber = 1, matchInfo = null),
-            dataGenerator.newTimeTableSlotToMatch(id = 6, startTime = now.plusMinutes(25), tableNumber = 2, matchInfo = null),
-            dataGenerator.newTimeTableSlotToMatch(id = 7, startTime = now.plusMinutes(25), tableNumber = 3, matchInfo = null),
-            dataGenerator.newTimeTableSlotToMatch(id = 8, startTime = now.plusMinutes(25), tableNumber = 4, matchInfo = null),
-            dataGenerator.newTimeTableSlotToMatch(id = 9, startTime = now.plusMinutes(50), tableNumber = 1, matchInfo = null),
-            dataGenerator.newTimeTableSlotToMatch(id = 10, startTime = now.plusMinutes(50), tableNumber = 2, matchInfo = null),
-            dataGenerator.newTimeTableSlotToMatch(id = 11, startTime = now.plusMinutes(50), tableNumber = 3, matchInfo = null),
-            dataGenerator.newTimeTableSlotToMatch(id = 12, startTime = now.plusMinutes(50), tableNumber = 4, matchInfo = null)
-        )
-        Mockito.`when`(mockedScheduleRepository.getTimeTable(competitionId)).thenReturn(matchesToSlots)
-
-        val competitionCategoryId = 13
-        val matches = dataGenerator.pool1(competitionCategoryId)
-        Mockito.`when`(mockedScheduleRepository.getScheduleMatches(competitionCategoryId, MatchType.GROUP)).thenReturn(matches)
-
-        // Act
-        competitionScheduler.appendMatchesToTables(competitionId, 13, MatchType.GROUP, listOf(1,2,3,4), LocalDateTime.now().minusMinutes(1),"Hall A")
-
-        // Record the spec sent to the repository for validation
-        Mockito.verify(mockedScheduleRepository).updateMatchesTimeTablesSlots(TestHelper.MockitoHelper.capture(classCaptor))
-        val result = classCaptor.value as List<MapMatchToTimeTableSlotSpec>
-
-        Assertions.assertNotNull(result)
-        Assertions.assertEquals(matches.size, result.size, "Wrong number of matches got scheduled")
-        Assertions.assertEquals(matches.size, result.map { it.matchId }.distinct().size, "At least one match did not get scheduled")
-
-        assertTimeSlotGotBooked(result, 3)
-        assertTimeSlotGotBooked(result, 4)
-        assertTimeSlotGotBooked(result, 5)
-        assertTimeSlotGotBooked(result, 6)
-        assertTimeSlotGotBooked(result, 7)
-        assertTimeSlotGotBooked(result, 8)
-    }
-
-    private fun assertTimeSlotGotBooked(timeslots: List<MapMatchToTimeTableSlotSpec>, timeslotId: Int) {
-        val slot3 = timeslots.filter { it.timeTableSlotId == timeslotId}
-        Assertions.assertEquals(1, slot3.size, "Expected only one match to be mapped to this slot")
-    }
-
-    @Test
-    fun shouldThrowIndexOutOfBoundExceptionWhenNotAllMatchesFit() {
-        // Setup
-        val competitionId = 192
-        val now = LocalDateTime.now()
-        val matchesToSlots = listOf(
-            dataGenerator.newTimeTableSlotToMatch(id = 1, startTime = now, tableNumber = 1, matchInfo = dataGenerator.newTimeTableMatchInfo(id = 2)),
-            dataGenerator.newTimeTableSlotToMatch(id = 2, startTime = now, tableNumber = 2, matchInfo = dataGenerator.newTimeTableMatchInfo(id = 4)),
-            dataGenerator.newTimeTableSlotToMatch(id = 3, startTime = now, tableNumber = 3, matchInfo = null),
-            dataGenerator.newTimeTableSlotToMatch(id = 4, startTime = now, tableNumber = 4, matchInfo = null),
-        )
-        Mockito.`when`(mockedScheduleRepository.getTimeTable(competitionId)).thenReturn(matchesToSlots)
-
-        val competitionCategoryId = 13
-        val matches = dataGenerator.pool1(competitionCategoryId)
-        Mockito.`when`(mockedScheduleRepository.getScheduleMatches(competitionCategoryId, MatchType.GROUP)).thenReturn(matches)
-
-        // Act
-        Assertions.assertThrows(IndexOutOfBoundsException::class.java) {
-            competitionScheduler.appendMatchesToTables(competitionId, 13, MatchType.GROUP, listOf(1,2,3,4), LocalDateTime.now(),"Hall A")
-        }
-    }
 }

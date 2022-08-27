@@ -67,7 +67,7 @@ interface IScheduleRepository: IRepository {
         startTime: LocalDateTime,
         tableNumbers: List<Int>,
         location: String
-    ): List<MatchTimeSlotRecord>
+    ): List<MatchTimeTableSlotDTO>
 
     /**
      * Publish the schedule of the competition

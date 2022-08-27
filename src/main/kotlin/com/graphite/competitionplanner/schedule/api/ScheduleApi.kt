@@ -50,13 +50,16 @@ class ScheduleApi(
             @PathVariable competitionCategoryId: Int,
             @RequestBody spec: ScheduleCategorySpec
     ) {
-        when(spec.mode) {
-            ScheduleMode.ABSOLUTE -> competitionScheduler.scheduleCompetitionCategory(
-                    competitionId, competitionCategoryId, MatchSchedulerSpec(spec.matchType, spec.tableNumbers, spec.startTime.toLocalDate(),spec.startTime.toLocalTime())
+        competitionScheduler.scheduleCompetitionCategory(
+            competitionId,
+            competitionCategoryId,
+            MatchSchedulerSpec(
+                spec.matchType,
+                spec.tableNumbers,
+                spec.startTime.toLocalDate(),
+                spec.startTime.toLocalTime()
             )
-            ScheduleMode.APPEND -> competitionScheduler.appendMatchesToTables(
-                    competitionId, competitionCategoryId, spec.matchType, spec.tableNumbers, spec.startTime, spec.location)
-        }
+        )
     }
 
     /**

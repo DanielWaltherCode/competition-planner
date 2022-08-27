@@ -8,6 +8,10 @@ fun Registration.asInt(): Int {
     }
 }
 
+fun Int.isReal(): Boolean {
+    return this > 0
+}
+
 fun Int.asRegistration(): Registration {
     return if (this > 0) {
         return Registration.Real(this)
