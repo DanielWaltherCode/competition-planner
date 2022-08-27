@@ -401,7 +401,7 @@ class ScheduleRepository(
             this.tableNumber,
             this.location,
             this.competitionCategoryId,
-            MatchType.valueOf(this.matchType)
+            if(this.matchType != null) MatchType.valueOf(this.matchType) else null
         )
     }
 }

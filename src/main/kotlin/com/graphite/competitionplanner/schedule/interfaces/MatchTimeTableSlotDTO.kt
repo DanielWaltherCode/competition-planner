@@ -9,6 +9,6 @@ data class MatchTimeTableSlotDTO(
     val startTime: LocalDateTime,
     val tableNumber: Int,
     val location: String,
-    val competitionCategoryId: Int,
-    val matchType: MatchType
+    val competitionCategoryId: Int?,
+    val matchType: MatchType?
 )
