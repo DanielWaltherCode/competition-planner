@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.schedule.domain
 
+import com.graphite.competitionplanner.registration.domain.isReal
 import com.graphite.competitionplanner.schedule.interfaces.ScheduleDTO
 import com.graphite.competitionplanner.schedule.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.schedule.interfaces.TimeslotDTO
@@ -136,8 +137,7 @@ class CreateSchedule {
         return if (timeslots.isEmpty())
             listOf(TimeslotDTO(nextTimeSlotId, listOf(match)))
         else {
-            if (numberOfTables == timeslots.first().matches.size || timeslots.first().contains(match.playerIds())
-            ) {
+            if (numberOfTables == timeslots.first().matches.size || timeslots.first().contains(match.playerIds())) {
                 listOf(timeslots.first()) + placeMatchInFirstAvailableTimeslot(
                     timeslots.drop(1),
                     match,
@@ -156,7 +156,7 @@ class CreateSchedule {
      * Return a list of player ids that belongs to this match
      */
     private fun ScheduleMatchDto.playerIds(): List<Int> {
-        return this.firstTeamPlayerIds + this.secondTeamPlayerIds
+        return (this.firstTeamPlayerIds + this.secondTeamPlayerIds).filter { it.isReal() }
     }
 
     /**
