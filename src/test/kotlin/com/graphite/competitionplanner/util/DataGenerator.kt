@@ -214,15 +214,9 @@ class DataGenerator {
 
 
     fun newScheduleSettingsDTO(
-        averageMatchTime: Duration = Duration.minutes(15),
-                numberOfTables: Int = 8,
-        startTime: LocalDateTime = LocalDateTime.now(),
-        endTime: LocalDateTime = LocalDateTime.now().plusHours(8)
+        numberOfTables: Int = 8,
     ) = ScheduleSettingsDTO(
-        averageMatchTime,
         numberOfTables,
-        startTime,
-        endTime
     )
 
     fun newCompetitionDTO(

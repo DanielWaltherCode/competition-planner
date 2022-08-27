@@ -246,12 +246,7 @@ class CompetitionScheduler(
             "This function must be called with timeslots with same number of available tables."
         }
 
-        val settings = ScheduleSettingsDTO(
-            Duration.minutes(15), // Not used
-            numberOfTablesAvailableInBlock,
-            LocalDateTime.now(), // Not used
-            LocalDateTime.now().plusMinutes(60) // Not used
-        )
+        val settings = ScheduleSettingsDTO(numberOfTablesAvailableInBlock)
 
         val schedule = createSchedule.execute(matches, settings)
 
