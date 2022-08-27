@@ -19,6 +19,7 @@ import com.graphite.competitionplanner.match.domain.PoolMatch
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.registration.domain.asInt
 import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
@@ -33,6 +34,7 @@ import com.graphite.competitionplanner.schedule.interfaces.MapMatchToTimeTableSl
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import kotlin.math.pow
 import kotlin.random.Random
 import kotlin.time.Duration
 
@@ -595,6 +597,23 @@ class DataGenerator {
         return matches
     }
 
+    fun playOff(startingRound: Round = Round.QUARTER_FINAL): List<ScheduleMatchDto> {
+        val rounds = Round.values().filter { it <= startingRound}
+        val result = rounds.flatMapIndexed { index, round ->
+            val matchesPerRound = (2.0.pow(index)).toInt()
+            (1 .. matchesPerRound).map {
+                ScheduleMatchDto(
+                    this.matchId++,
+                    this.competitionCategoryId,
+                    listOf(Registration.Placeholder().asInt()),
+                    listOf(Registration.Placeholder().asInt()),
+                    round.name
+                )
+            }
+        }
+        return result
+    }
+
 
     /**
      * Pool with 4 players i.e. 6 matches
@@ -681,5 +700,6 @@ class DataGenerator {
         ScheduleMatchDto(14, 0, listOf(p9.id), listOf(p11.id), "C"),
         ScheduleMatchDto(15, 0, listOf(p10.id), listOf(p11.id), "C")
     )
+
 
 }
