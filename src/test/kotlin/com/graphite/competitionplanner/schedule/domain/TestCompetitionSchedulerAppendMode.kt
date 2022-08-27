@@ -176,7 +176,7 @@ class TestCompetitionSchedulerAppendMode {
         val duration = 25.toDuration(TimeUnit.MINUTES)
         val timeTable = generateTimeTable(startTime, duration, 8, 4)
             .mapIndexed{ index, it -> it.setId(index + 1) }
-            .map { if (it.id % 4 == 1) it.Occupy() else it } // Occupies table number 1
+            .map { if (it.id % 4 == 1) it.occupy() else it } // Occupies table number 1
 
         `when`(mockedScheduleRepository.getTimeTable(competitionId)).thenReturn(timeTable)
 
@@ -232,7 +232,7 @@ class TestCompetitionSchedulerAppendMode {
         val timeTable = generateTimeTable(startTime, duration, 8, 4)
             .mapIndexed{ index, it -> it.setId(index + 1) }
             // Occupies table number 1 & 2 in the first 3 timeslots
-            .map { if ((it.id % 4 == 1 || it.id % 4 == 2) && it.id < 12 ) it.Occupy() else it }
+            .map { if ((it.id % 4 == 1 || it.id % 4 == 2) && it.id < 12 ) it.occupy() else it }
 
 
         `when`(mockedScheduleRepository.getTimeTable(competitionId)).thenReturn(timeTable)
@@ -389,7 +389,7 @@ class TestCompetitionSchedulerAppendMode {
         val timeTable = generateTimeTable(startTime, duration, 8, 4)
             .mapIndexed{ index, it -> it.setId(index + 1) }
             // Occupies table number 1 & 2 in the first 3 timeslots
-            .map { if ((it.id % 4 == 1 || it.id % 4 == 2) && it.id < 12 ) it.Occupy() else it }
+            .map { if ((it.id % 4 == 1 || it.id % 4 == 2) && it.id < 12 ) it.occupy() else it }
 
         `when`(mockedScheduleRepository.getTimeTable(competitionId)).thenReturn(timeTable)
 
@@ -418,6 +418,72 @@ class TestCompetitionSchedulerAppendMode {
             result.map { it.timeTableSlotId }.sorted(),
             "Expected the ${matchesToSchedule.size} matches to be scheduled on tables 1, 2, 3, 4\n" +
                     timeTable.printOut())
+    }
+
+    @Test
+    fun schedulingPlayoffWhenNotEnoughSlotsAvailable() {
+        // Setup
+        val competitionId = 12
+        `when`(mockedFindCompetitions.byId(any())).thenReturn(dataGenerator.newCompetitionDTO(competitionId))
+
+        val competitionCategoryId = 123
+        val duration = 25.toDuration(TimeUnit.MINUTES)
+        val startTime = LocalDateTime.now()
+        val matchSchedulerSpec = dataGenerator.newMatchSchedulerSpec(
+            MatchType.PLAYOFF, listOf(1, 2, 3, 4),
+            startTime.toLocalDate(),
+            startTime.toLocalTime()
+        )
+
+        val matchesToSchedule = dataGenerator.playOff(Round.QUARTER_FINAL)
+        `when`(mockedScheduleRepository.getScheduleMatches(any(), any())).thenReturn(matchesToSchedule)
+
+        val timeTable = generateTimeTable(startTime, duration, 1, 4)
+            .mapIndexed { index, it -> it.setId(index + 1) }
+
+        `when`(mockedScheduleRepository.getTimeTable(competitionId)).thenReturn(timeTable)
+
+        // Act & Assert
+        Assertions.assertThrows(IndexOutOfBoundsException::class.java) {
+            competitionScheduler.scheduleCompetitionCategory(
+                competitionId,
+                competitionCategoryId,
+                matchSchedulerSpec
+            )
+        }
+    }
+
+    @Test
+    fun schedulingPoolMatchesWhenNotEnoughSlotsAvailable() {
+        // Setup
+        val competitionId = 12
+        `when`(mockedFindCompetitions.byId(any())).thenReturn(dataGenerator.newCompetitionDTO(competitionId))
+
+        val competitionCategoryId = 123
+        val duration = 25.toDuration(TimeUnit.MINUTES)
+        val startTime = LocalDateTime.now()
+        val matchSchedulerSpec = dataGenerator.newMatchSchedulerSpec(
+            MatchType.GROUP, listOf(1, 2, 3, 4),
+            startTime.toLocalDate(),
+            startTime.toLocalTime()
+        )
+
+        val matchesToSchedule = dataGenerator.pool1()
+        `when`(mockedScheduleRepository.getScheduleMatches(any(), any())).thenReturn(matchesToSchedule)
+
+        val timeTable = generateTimeTable(startTime, duration, 1, 4)
+            .mapIndexed { index, it -> it.setId(index + 1) }
+
+        `when`(mockedScheduleRepository.getTimeTable(competitionId)).thenReturn(timeTable)
+
+        // Act & Assert
+        Assertions.assertThrows(IndexOutOfBoundsException::class.java) {
+            competitionScheduler.scheduleCompetitionCategory(
+                competitionId,
+                competitionCategoryId,
+                matchSchedulerSpec
+            )
+        }
     }
 
     private fun List<TimeTableSlotToMatch>.printOut(): String {
@@ -470,7 +536,7 @@ class TestCompetitionSchedulerAppendMode {
         )
     }
 
-    private fun TimeTableSlotToMatch.Occupy(): TimeTableSlotToMatch {
+    private fun TimeTableSlotToMatch.occupy(): TimeTableSlotToMatch {
         return TimeTableSlotToMatch(
             this.id,
             this.startTime,

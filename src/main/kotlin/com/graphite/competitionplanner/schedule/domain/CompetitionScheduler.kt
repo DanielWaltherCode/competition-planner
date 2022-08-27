@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import kotlin.time.Duration
 
 /**
  * Class that provides methods to schedule matches within the same competition.
@@ -177,7 +176,7 @@ class CompetitionScheduler(
         val updateSpec = if (matchSchedulerSpec.matchType == MatchType.PLAYOFF) {
             schedulePlayOffMatches(timetable, matches)
         } else {
-            schedulePoolMatches(timetable, matches)
+            scheduleMatches(timetable, matches)
         }
 
         scheduleRepository.updateMatchesTimeTablesSlots(updateSpec)
@@ -196,7 +195,7 @@ class CompetitionScheduler(
         var restTable = timetable
         for (round in sortedRounds) {
             val matchesInRound = matches.filter { it.groupOrRound == round.name }
-            val spec = schedulePoolMatches(restTable, matchesInRound)
+            val spec = scheduleMatches(restTable, matchesInRound)
             val usedTimeSlots = spec.map { it.timeTableSlotId }
             restTable = restTable.filterNot { (_, tables) -> tables.any { usedTimeSlots.contains(it.id) } }
             updateSpec.addAll(spec)
@@ -209,7 +208,7 @@ class CompetitionScheduler(
      *
      * @throws IndexOutOfBoundsException If there are not enough slots available to fit all the matches
      */
-    private fun schedulePoolMatches(
+    private fun scheduleMatches(
         timetable: Map<LocalDateTime, List<TimeTableSlotDTO>>,
         matches: List<ScheduleMatchDto>
     ): List<MapMatchToTimeTableSlotSpec> {
@@ -220,7 +219,7 @@ class CompetitionScheduler(
         } else {
             val (first, rest) = getFirstTimeBlock(timetable)
             val (updateSpec, remainingMatchesToSchedule) = scheduleBlockOfTimeslots(first, matches)
-            updateSpec + schedulePoolMatches(rest, remainingMatchesToSchedule)
+            updateSpec + scheduleMatches(rest, remainingMatchesToSchedule)
         }
     }
 
