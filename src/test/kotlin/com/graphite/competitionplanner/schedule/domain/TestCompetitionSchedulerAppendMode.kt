@@ -316,6 +316,57 @@ class TestCompetitionSchedulerAppendMode {
                     timeTable.printOut())
     }
 
+    @Test
+    fun schedulingPlayoffMatches() {
+        // Setup
+        val competitionId = 12
+        `when`(mockedFindCompetitions.byId(any())).thenReturn(dataGenerator.newCompetitionDTO(competitionId))
+
+        val competitionCategoryId = 123
+        val duration = 25.toDuration(TimeUnit.MINUTES)
+        val startTime = LocalDateTime.now()
+        val matchSchedulerSpec = dataGenerator.newMatchSchedulerSpec(
+            MatchType.PLAYOFF, listOf(1, 2, 3, 4),
+            startTime.toLocalDate(),
+            startTime.toLocalTime()
+        )
+
+        val matchesToSchedule = dataGenerator.playOff()
+        `when`(mockedScheduleRepository.getScheduleMatches(any(), any())).thenReturn(matchesToSchedule)
+
+        val timeTable = generateTimeTable(startTime, duration, 8, 4)
+            .mapIndexed{ index, it -> it.setId(index + 1) }
+
+        `when`(mockedScheduleRepository.getTimeTable(competitionId)).thenReturn(timeTable)
+
+        // Act
+        competitionScheduler.scheduleCompetitionCategory(
+            competitionId,
+            competitionCategoryId,
+            matchSchedulerSpec
+        )
+
+        // Record the spec sent to the repository for validation
+        Mockito.verify(mockedScheduleRepository).updateMatchesTimeTablesSlots(TestHelper.MockitoHelper.capture(classCaptor))
+        val result = classCaptor.value as List<MapMatchToTimeTableSlotSpec>
+
+        // Assert
+        Assertions.assertNotNull(result)
+        Assertions.assertEquals(matchesToSchedule.size, result.size,
+            "Not the correct number of matches scheduled.")
+        Assertions.assertEquals(matchesToSchedule.size, result.map { it.matchId }.distinct().size,
+            "Not all matches were scheduled")
+        Assertions.assertEquals(matchesToSchedule.size, result.map { it.timeTableSlotId }.distinct().size,
+            "Not unique timeslots where used")
+
+        Assertions.assertEquals(
+            listOf(1, 2, 3, 4, 5, 6, 9),
+            result.map { it.timeTableSlotId }.sorted(),
+            "Expected the ${matchesToSchedule.size} matches to be scheduled on tables 1, 2, 3, 4." +
+                    " 4 matches in first time slot, 2 matches in second, and 1 match on the third\n" +
+                    timeTable.printOut())
+    }
+
     private fun List<TimeTableSlotToMatch>.printOut(): String {
         val groupedByTime = this.groupBy { it.startTime }
         var printOut = "Timetable:\n"

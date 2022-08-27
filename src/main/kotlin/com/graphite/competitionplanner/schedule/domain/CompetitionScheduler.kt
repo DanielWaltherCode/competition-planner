@@ -174,7 +174,11 @@ class CompetitionScheduler(
             .filter { it.matchInfo.isEmpty() }
             .groupBy { it.startTime }
 
-        val updateSpec = scheduleMatches(timetable, matches)
+        val updateSpec = if (matchSchedulerSpec.matchType == MatchType.PLAYOFF) {
+            schedulePlayOffMatches(timetable, matches)
+        } else {
+            schedulePoolMatches(timetable, matches)
+        }
 
         scheduleRepository.updateMatchesTimeTablesSlots(updateSpec)
         scheduleRepository.setCategoryForTimeSlots(
@@ -183,12 +187,29 @@ class CompetitionScheduler(
             matchSchedulerSpec.matchType)
     }
 
+    private fun schedulePlayOffMatches(
+        timetable: Map<LocalDateTime, List<TimeTableSlotDTO>>,
+        matches: List<ScheduleMatchDto>
+    ): List<MapMatchToTimeTableSlotSpec> {
+        val sortedRounds = matches.map { it.groupOrRound }.distinct().map { Round.valueOf(it) }.sorted().reversed()
+        val updateSpec = mutableListOf<MapMatchToTimeTableSlotSpec>()
+        var restTable = timetable
+        for (round in sortedRounds) {
+            val matchesInRound = matches.filter { it.groupOrRound == round.name }
+            val spec = schedulePoolMatches(restTable, matchesInRound)
+            val usedTimeSlots = spec.map { it.timeTableSlotId }
+            restTable = restTable.filterNot { (_, tables) -> tables.any { usedTimeSlots.contains(it.id) } }
+            updateSpec.addAll(spec)
+        }
+        return updateSpec
+    }
+
     /**
      * Schedule the given matches in the timetable.
      *
      * @throws IndexOutOfBoundsException If there are not enough slots available to fit all the matches
      */
-    private fun scheduleMatches(
+    private fun schedulePoolMatches(
         timetable: Map<LocalDateTime, List<TimeTableSlotDTO>>,
         matches: List<ScheduleMatchDto>
     ): List<MapMatchToTimeTableSlotSpec> {
@@ -199,7 +220,7 @@ class CompetitionScheduler(
         } else {
             val (first, rest) = getFirstTimeBlock(timetable)
             val (updateSpec, remainingMatchesToSchedule) = scheduleBlockOfTimeslots(first, matches)
-            updateSpec + scheduleMatches(rest, remainingMatchesToSchedule)
+            updateSpec + schedulePoolMatches(rest, remainingMatchesToSchedule)
         }
     }
 
@@ -251,7 +272,7 @@ class CompetitionScheduler(
             Pair<Map<LocalDateTime, List<TimeTableSlotDTO>>, Map<LocalDateTime, List<TimeTableSlotDTO>>> {
         val time = timeslots.keys.first()
         val predicate = timeslots[time]!!.size
-        return timeslots.takeWhile { size == predicate };
+        return timeslots.takeWhile { size == predicate }
     }
 
     /**
