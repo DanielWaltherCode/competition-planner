@@ -3,18 +3,12 @@ package com.graphite.competitionplanner.schedule.domain
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.draw.service.DrawService
-import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
-import com.graphite.competitionplanner.schedule.interfaces.MapMatchToTimeTableSlotSpec
 import com.graphite.competitionplanner.schedule.service.AvailableTablesService
 import com.graphite.competitionplanner.util.DataGenerator
-import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
 import org.mockito.Mockito
-import org.mockito.kotlin.any
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDateTime
 
