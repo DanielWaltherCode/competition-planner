@@ -1,10 +1,8 @@
 package com.graphite.competitionplanner.common.api
 
+import com.graphite.competitionplanner.common.exception.BadRequestException
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.common.exception.GameValidationException
-import com.graphite.competitionplanner.competitioncategory.domain.CannotDeleteCompetitionCategoryException
-import com.graphite.competitionplanner.draw.interfaces.NotEnoughRegistrationsException
-import com.graphite.competitionplanner.registration.interfaces.PlayerAlreadyRegisteredException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -30,15 +28,23 @@ class ExceptionAdvisor {
 
     @ResponseBody
     @ExceptionHandler(
-        IllegalArgumentException::class,
-        CannotDeleteCompetitionCategoryException::class,
-        NotEnoughRegistrationsException::class,
-        PlayerAlreadyRegisteredException::class)
+        IllegalArgumentException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun entityValidationError(exception: IllegalArgumentException, request: WebRequest): ResponseEntity<Any> {
         val body = mutableMapOf<String, Any>()
         body["timestamp"] = LocalDateTime.now()
         body["message"] = "${exception.message}"
+        return ResponseEntity(body, HttpStatus.BAD_REQUEST)
+    }
+
+    @ResponseBody
+    @ExceptionHandler(BadRequestException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun badRequestWithErrorType(exception: BadRequestException, request: WebRequest): ResponseEntity<Any> {
+        val body = mutableMapOf<String, Any>()
+        body["timestamp"] = LocalDateTime.now()
+        body["errorType"] = exception.exceptionType.name
+        body["message"] = exception.errorMessage
         return ResponseEntity(body, HttpStatus.BAD_REQUEST)
     }
 

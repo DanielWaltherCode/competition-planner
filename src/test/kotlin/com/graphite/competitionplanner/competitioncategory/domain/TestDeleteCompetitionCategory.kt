@@ -1,5 +1,7 @@
 package com.graphite.competitionplanner.competitioncategory.domain
 
+import com.graphite.competitionplanner.common.exception.BadRequestException
+import com.graphite.competitionplanner.common.exception.BadRequestType
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.util.DataGenerator
@@ -40,8 +42,15 @@ class TestDeleteCompetitionCategory {
         `when`(mockedRegistrationRepository.getRegistrationsIn(competitionCategory.id)).thenReturn(listOf(registration))
 
         // Act & Assert
-        Assertions.assertThrows(CannotDeleteCompetitionCategoryException::class.java) {
+        Assertions.assertThrows(BadRequestException::class.java) {
             deleteCompetitionCategory.execute(competitionCategory.id)
+        }
+
+        try {
+            deleteCompetitionCategory.execute(competitionCategory.id)
+        }
+        catch (exception: BadRequestException) {
+            Assertions.assertEquals(exception.exceptionType, BadRequestType.CATEGORY_CANNOT_DELETE_WITH_PLAYERS)
         }
     }
 }

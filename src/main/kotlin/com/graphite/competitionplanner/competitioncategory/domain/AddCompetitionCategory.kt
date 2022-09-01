@@ -3,6 +3,8 @@ package com.graphite.competitionplanner.competitioncategory.domain
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
+import com.graphite.competitionplanner.common.exception.BadRequestException
+import com.graphite.competitionplanner.common.exception.BadRequestType
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.draw.interfaces.Round
 import org.springframework.stereotype.Component
@@ -17,12 +19,13 @@ class AddCompetitionCategory(
         val availableCategories: List<CategoryDTO> = categoryRepository.getAvailableCategories(competitionId)
         val categoryDto = CategoryDTO(category.id, category.name, category.type)
         if (availableCategories.none { it == categoryDto }) {
-            throw IllegalArgumentException("Not a valid category: $category")
+            throw BadRequestException(BadRequestType.CATEGORY_NOT_VALID, "Not a valid category: $category")
         }
 
         val addedCategories: List<CompetitionCategoryDTO> = repository.getAll(competitionId)
         if (addedCategories.any { it.category == category }) {
-            throw IllegalArgumentException("The category $category has already been added")
+            throw BadRequestException(BadRequestType.CATEGORY_ALREADY_ADDED,
+                    "The category $category has already been added")
         }
 
         val spec = CompetitionCategorySpec(

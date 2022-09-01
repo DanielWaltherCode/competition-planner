@@ -1,0 +1,10 @@
+package com.graphite.competitionplanner.common.exception
+
+enum class BadRequestType {
+    CATEGORY_CANNOT_DELETE_WITH_PLAYERS,
+    CATEGORY_NOT_VALID,
+    CATEGORY_ALREADY_ADDED,
+    DRAW_NOT_ENOUGH_REGISTRATIONS,
+    PLAYER_ALREADY_REGISTERED,
+    REGISTRATION_WRONG_CATEGORY_TYPE
+}

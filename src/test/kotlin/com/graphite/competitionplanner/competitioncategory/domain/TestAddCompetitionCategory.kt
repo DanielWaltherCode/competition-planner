@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.domain.CategoryType
 import com.graphite.competitionplanner.category.domain.DefaultCategory
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
+import com.graphite.competitionplanner.common.exception.BadRequestException
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategorySpec
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
@@ -45,7 +46,7 @@ class TestAddCompetitionCategory {
             )
 
         // Act
-        Assertions.assertThrows(IllegalArgumentException::class.java) {
+        Assertions.assertThrows(BadRequestException::class.java) {
             addCompetitionCategory.execute(
                 competitionId,
                 spec
@@ -73,7 +74,7 @@ class TestAddCompetitionCategory {
             )
 
         // Act
-        Assertions.assertThrows(IllegalArgumentException::class.java) {
+        Assertions.assertThrows(BadRequestException::class.java) {
             addCompetitionCategory.execute(competitionId, spec)
         }
     }
