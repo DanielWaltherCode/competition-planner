@@ -16,6 +16,7 @@ import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepo
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.domain.AddResult
 import com.graphite.competitionplanner.result.interfaces.IResultRepository
+import com.graphite.competitionplanner.tables.records.MatchRecord
 import com.graphite.competitionplanner.tables.records.PoolRecord
 import com.graphite.competitionplanner.tables.records.PoolResultRecord
 import org.jooq.DSLContext
@@ -98,28 +99,27 @@ class ResultService(
                     if (playoffPosition.position == 1) {
                         record.firstRegistrationId = registrationId
                         if (record.secondRegistrationId == Registration.Bye.asInt()) {
-                            record.winner = registrationId
-                            record.update()
-                            val pm = PlayoffMatch(Round.valueOf(record.groupOrRound), record.matchOrderNumber, record.id,
-                                record.competitionCategoryId, record.firstRegistrationId,
-                                record.secondRegistrationId, record.wasWalkover, registrationId)
-                            handleAdvancementOf(pm)
+                            handleDirectAdvancementWhenMeetingBye(this, registrationId, record)
                         }
                     }else {
                         record.secondRegistrationId = registrationId
                         if (record.firstRegistrationId == Registration.Bye.asInt()) {
-                            record.winner = registrationId
-                            record.update()
-                            val pm = PlayoffMatch(Round.valueOf(record.groupOrRound), record.matchOrderNumber, record.id,
-                                record.competitionCategoryId, record.firstRegistrationId,
-                                record.secondRegistrationId, record.wasWalkover, registrationId)
-                            handleAdvancementOf(pm)
+                            handleDirectAdvancementWhenMeetingBye(this, registrationId, record)
                         }
                     }
                     record.update()
                 }
             }
         }
+    }
+
+    private fun handleDirectAdvancementWhenMeetingBye(competitionCategoryDTO: CompetitionCategoryDTO, winnerRegistrationId: Int, record: MatchRecord) {
+        record.winner = winnerRegistrationId
+        record.update()
+        val pm = PlayoffMatch(Round.valueOf(record.groupOrRound), record.matchOrderNumber, record.id,
+            record.competitionCategoryId, record.firstRegistrationId,
+            record.secondRegistrationId, record.wasWalkover, record.winner)
+        competitionCategoryDTO.handleAdvancementOf(pm)
     }
 
     fun getResult(matchId: Int): ResultDTO {
