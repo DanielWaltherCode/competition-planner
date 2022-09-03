@@ -46,7 +46,7 @@ class TestAdvanceToPlayoff(
     /**
      * In this scenario we have 10 players, pools size of 4, which means we will have 3 pools. One pool will have
      * size 4, and two pools size 3. We also have 2 players advancing from each group i.e. 6 players in total. This
-     * makes it, so we have to BYEs in first round i.e. the quarter-final. One BYE against A1 and one BYE against B1
+     * makes it, so we have two BYEs in first round i.e. the quarter-final. One BYE against A1 and one BYE against B1
      */
     @Test
     fun whenFirstRoundIsAgainstBye() {
