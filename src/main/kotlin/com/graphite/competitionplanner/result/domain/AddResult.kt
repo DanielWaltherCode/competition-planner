@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.result.domain
 
-import com.graphite.competitionplanner.common.exception.GameValidationException
+import com.graphite.competitionplanner.common.exception.BadRequestException
+import com.graphite.competitionplanner.common.exception.BadRequestType
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.GameSettingsDTO
 import com.graphite.competitionplanner.match.domain.GameResult
@@ -51,23 +52,23 @@ class ResultValidationSpecification(val numberOfSets: Int, val winMargin: Int, v
     /**
      * Check the validity of the reported results and return the winner's id.
      *
-     * @throws GameValidationException When the results are invalid.
+     * @throws BadRequestException When the results are invalid.
      * @return The registration id of the winner.
      */
-    @Throws(GameValidationException::class)
+    @Throws(BadRequestException::class)
     fun validateResultAndReturnWinner(match: Match, result: ResultSpec): Int {
 
         if (result.gameList.size > this.numberOfSets) {
-            throw GameValidationException(GameValidationException.Reason.TOO_MANY_SETS_REPORTED)
+            throw BadRequestException(BadRequestType.GAME_TOO_MANY_SETS_REPORTED, "Too many sets reported")
         }
 
         if (result.gameList.any { it.firstRegistrationResult < this.winScore  &&
                     it.secondRegistrationResult < this.winScore }) {
-            throw GameValidationException(GameValidationException.Reason.TOO_FEW_POINTS_IN_SET)
+            throw BadRequestException(BadRequestType.GAME_TOO_FEW_POINTS_IN_SET, "Too few points in set")
         }
 
         if (result.gameList.any { abs(it.firstRegistrationResult - it.secondRegistrationResult) < this.winMargin }) {
-            throw GameValidationException(GameValidationException.Reason.NOT_ENOUGH_WIN_MARGIN)
+            throw BadRequestException(BadRequestType.GAME_NOT_ENOUGH_WIN_MARGIN, "The win margin is too small")
         }
 
         val requiredWins = ceil(this.numberOfSets / 2.0).toInt()
@@ -75,7 +76,7 @@ class ResultValidationSpecification(val numberOfSets: Int, val winMargin: Int, v
         val secondRegistrationWins = result.gameList.filter { it.firstRegistrationResult < it.secondRegistrationResult }.size
 
         if (firstRegistrationWins < requiredWins && secondRegistrationWins < requiredWins) {
-            throw GameValidationException(GameValidationException.Reason.COULD_NOT_DECIDE_WINNER)
+            throw BadRequestException(BadRequestType.GAME_COULD_NOT_DECIDE_WINNER, "Couldn't decide winner")
         }
 
         return if (firstRegistrationWins > secondRegistrationWins) {
