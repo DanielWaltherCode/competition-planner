@@ -6,6 +6,7 @@ import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
+import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
@@ -55,7 +56,10 @@ class BaseRepositoryTest(
         )
     }
 
-    fun CompetitionDTO.addCompetitionCategory(categoryName: String): CompetitionCategoryDTO {
+    fun CompetitionDTO.addCompetitionCategory(
+        categoryName: String,
+        drawType: DrawType = DrawType.POOL_ONLY
+    ): CompetitionCategoryDTO {
         val category = categoryRepository.getAvailableCategories().first { c -> c.name == categoryName }
         return competitionCategoryRepository.store(
             this.id,
@@ -64,6 +68,9 @@ class BaseRepositoryTest(
                     id = category.id,
                     name = category.name,
                     type = category.type
+                ),
+                settings = dataGenerator.newGeneralSettingsDTO(
+                    drawType = drawType
                 )
             )
         )

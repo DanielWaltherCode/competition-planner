@@ -10,7 +10,9 @@ import com.graphite.competitionplanner.match.domain.PlayoffMatch
 import com.graphite.competitionplanner.match.domain.PoolMatch
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
-import com.graphite.competitionplanner.registration.repository.RegistrationRepository
+import com.graphite.competitionplanner.registration.domain.Registration
+import com.graphite.competitionplanner.registration.domain.asInt
+import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.domain.AddResult
 import com.graphite.competitionplanner.result.interfaces.IResultRepository
@@ -27,7 +29,7 @@ class ResultService(
     val findCompetitionCategory: FindCompetitionCategory,
     val addResult: AddResult,
     val competitionDrawRepository: ICompetitionDrawRepository,
-    val registrationRepository: RegistrationRepository,
+    val registrationRepository: IRegistrationRepository,
     val dslContext: DSLContext
 ) {
 
@@ -95,8 +97,24 @@ class ResultService(
                     val record = matchRepository.getMatch(playoffPosition.matchId)
                     if (playoffPosition.position == 1) {
                         record.firstRegistrationId = registrationId
+                        if (record.secondRegistrationId == Registration.Bye.asInt()) {
+                            record.winner = registrationId
+                            record.update()
+                            val pm = PlayoffMatch(Round.valueOf(record.groupOrRound), record.matchOrderNumber, record.id,
+                                record.competitionCategoryId, record.firstRegistrationId,
+                                record.secondRegistrationId, record.wasWalkover, registrationId)
+                            handleAdvancementOf(pm)
+                        }
                     }else {
                         record.secondRegistrationId = registrationId
+                        if (record.firstRegistrationId == Registration.Bye.asInt()) {
+                            record.winner = registrationId
+                            record.update()
+                            val pm = PlayoffMatch(Round.valueOf(record.groupOrRound), record.matchOrderNumber, record.id,
+                                record.competitionCategoryId, record.firstRegistrationId,
+                                record.secondRegistrationId, record.wasWalkover, registrationId)
+                            handleAdvancementOf(pm)
+                        }
                     }
                     record.update()
                 }
