@@ -20,7 +20,7 @@ class CreateDraw(
     /**
      * Creates a draw for the given competition category
      *
-     * @throws NotEnoughRegistrationsException
+     * @throws BadRequestException
      */
     fun execute(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
         val competitionCategory: CompetitionCategoryDTO = findCompetitionCategory.byId(competitionCategoryId)

@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.result.domain
 
-import com.graphite.competitionplanner.common.exception.GameValidationException
+import com.graphite.competitionplanner.common.exception.BadRequestException
+import com.graphite.competitionplanner.common.exception.BadRequestType
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.match.domain.IMatchRepository
 import com.graphite.competitionplanner.util.DataGenerator
@@ -35,11 +36,11 @@ class TestReportPlayoffResult {
         val spec = dataGenerator.newResultSpec(listOf(gameSpec1, gameSpec2))
 
         // Act & Assertions
-        val message = Assertions.assertThrows(GameValidationException::class.java) {
+        val exceptionType = Assertions.assertThrows(BadRequestException::class.java) {
             addResult.execute(match, spec, competitionCategory)
-        }.message
+        }.exceptionType
 
-        Assertions.assertEquals(GameValidationException.Reason.TOO_MANY_SETS_REPORTED.toString(), message)
+        Assertions.assertEquals(BadRequestType.GAME_TOO_MANY_SETS_REPORTED, exceptionType)
     }
 
     @Test
@@ -56,11 +57,11 @@ class TestReportPlayoffResult {
         val gameSpec = dataGenerator.newGameSpec(firstRegistrationResult = 6, secondRegistrationResult = 4)
 
         // Act & Assertions
-        val message = Assertions.assertThrows(GameValidationException::class.java) {
+        val exceptionType = Assertions.assertThrows(BadRequestException::class.java) {
             addResult.execute(match, dataGenerator.newResultSpec(listOf(gameSpec)), competitionCategory)
-        }.message
+        }.exceptionType
 
-        Assertions.assertEquals(GameValidationException.Reason.TOO_FEW_POINTS_IN_SET.toString(), message)
+        Assertions.assertEquals(BadRequestType.GAME_TOO_FEW_POINTS_IN_SET, exceptionType)
     }
 
     @Test
@@ -76,11 +77,11 @@ class TestReportPlayoffResult {
         val gameSpec = dataGenerator.newGameSpec(firstRegistrationResult = 10, secondRegistrationResult = 8)
 
         // Act & Assertions
-        val message = Assertions.assertThrows(GameValidationException::class.java) {
+        val exceptionType = Assertions.assertThrows(BadRequestException::class.java) {
             addResult.execute(match, dataGenerator.newResultSpec(listOf(gameSpec)), competitionCategory)
-        }.message
+        }.exceptionType
 
-        Assertions.assertEquals(GameValidationException.Reason.NOT_ENOUGH_WIN_MARGIN.toString(), message)
+        Assertions.assertEquals(BadRequestType.GAME_NOT_ENOUGH_WIN_MARGIN, exceptionType)
     }
 
     @Test
@@ -102,11 +103,11 @@ class TestReportPlayoffResult {
         )
 
         // Act & Assertions
-        val message = Assertions.assertThrows(GameValidationException::class.java) {
+        val exceptionType = Assertions.assertThrows(BadRequestException::class.java) {
             addResult.execute(match, resultSpec, competitionCategory)
-        }.message
+        }.exceptionType
 
-        Assertions.assertEquals(GameValidationException.Reason.COULD_NOT_DECIDE_WINNER.toString(), message)
+        Assertions.assertEquals(BadRequestType.GAME_COULD_NOT_DECIDE_WINNER, exceptionType)
     }
 
     @Test
@@ -130,10 +131,10 @@ class TestReportPlayoffResult {
         )
 
         // Act & Assertions
-        val message = Assertions.assertThrows(GameValidationException::class.java) {
+        val exceptionType = Assertions.assertThrows(BadRequestException::class.java) {
             addResult.execute(match, resultSpec, competitionCategory)
-        }.message
+        }.exceptionType
 
-        Assertions.assertEquals(GameValidationException.Reason.COULD_NOT_DECIDE_WINNER.toString(), message)
+        Assertions.assertEquals(BadRequestType.GAME_COULD_NOT_DECIDE_WINNER, exceptionType)
     }
 }

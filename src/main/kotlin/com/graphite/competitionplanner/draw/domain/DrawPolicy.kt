@@ -1,8 +1,9 @@
 package com.graphite.competitionplanner.draw.domain
 
+import com.graphite.competitionplanner.common.exception.BadRequestException
+import com.graphite.competitionplanner.common.exception.BadRequestType
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
-import com.graphite.competitionplanner.draw.interfaces.NotEnoughRegistrationsException
 import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.registration.domain.Registration
@@ -63,7 +64,7 @@ sealed class DrawPolicy(
 
     /**
      * Check if there are enough registrations in the competition category.
-     * @throws NotEnoughRegistrationsException When there are not enough registrations to make a draw
+     * @throws BadRequestException When there are not enough registrations to make a draw
      */
     abstract fun throwExceptionIfNotEnoughRegistrations(registrations: List<RegistrationSeedDTO>)
 
@@ -202,7 +203,7 @@ class CupDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(co
     }
 
     override fun throwExceptionIfNotEnoughRegistrations(registrations: List<RegistrationSeedDTO>) {
-        if (registrations.size < 2) throw NotEnoughRegistrationsException("Failed to draw cup only. Requires at least two registrations.")
+        if (registrations.size < 2) throw BadRequestException(BadRequestType.DRAW_NOT_ENOUGH_REGISTRATIONS, "Failed to draw cup only. Requires at least two registrations.")
     }
 
     private fun List<Registration>.shuffleSeeded(): List<Registration> {
@@ -290,7 +291,9 @@ class PoolAndCupDrawPolicy(
     }
 
     override fun throwExceptionIfNotEnoughRegistrations(registrations: List<RegistrationSeedDTO>) {
-        if ((competitionCategory.settings.playersToPlayOff == 1 && registrations.size <= competitionCategory.settings.playersPerGroup) || (registrations.size < 2)) throw NotEnoughRegistrationsException(
+        if ((competitionCategory.settings.playersToPlayOff == 1
+                        && registrations.size <= competitionCategory.settings.playersPerGroup)
+                || (registrations.size < 2)) throw BadRequestException(BadRequestType.DRAW_NOT_ENOUGH_REGISTRATIONS,
             "Failed to draw pool and cup. Too few people would have advanced to playoff."
         )
     }
@@ -478,7 +481,7 @@ class PoolOnlyDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPoli
     }
 
     override fun throwExceptionIfNotEnoughRegistrations(registrations: List<RegistrationSeedDTO>) {
-        if (registrations.size < 2) throw NotEnoughRegistrationsException("Failed to draw pool only. Requires at least two registrations.")
+        if (registrations.size < 2) throw BadRequestException(BadRequestType.DRAW_NOT_ENOUGH_REGISTRATIONS, "Failed to draw pool only. Requires at least two registrations.")
     }
 
     private fun drawPools(registrations: List<RegistrationSeedDTO>): List<Pool> {

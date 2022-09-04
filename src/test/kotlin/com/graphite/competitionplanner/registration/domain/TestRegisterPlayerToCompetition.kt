@@ -1,11 +1,11 @@
 package com.graphite.competitionplanner.registration.domain
 
 import com.graphite.competitionplanner.category.domain.CategoryType
+import com.graphite.competitionplanner.common.exception.BadRequestException
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.player.domain.FindPlayer
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
-import com.graphite.competitionplanner.registration.interfaces.PlayerAlreadyRegisteredException
 import com.graphite.competitionplanner.registration.interfaces.PlayerRegistrationStatus
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesDTO
 import com.graphite.competitionplanner.util.DataGenerator
@@ -54,7 +54,7 @@ class TestRegisterPlayerToCompetition {
         )
 
         // Act & Assert
-        Assertions.assertThrows(IllegalArgumentException::class.java) {
+        Assertions.assertThrows(BadRequestException::class.java) {
             registerPlayer.execute(spec)
         }
     }
@@ -158,7 +158,7 @@ class TestRegisterPlayerToCompetition {
         )
 
         // Act
-        Assertions.assertThrows(PlayerAlreadyRegisteredException::class.java) {
+        Assertions.assertThrows(BadRequestException::class.java) {
             registerPlayer.execute(spec)
         }
 

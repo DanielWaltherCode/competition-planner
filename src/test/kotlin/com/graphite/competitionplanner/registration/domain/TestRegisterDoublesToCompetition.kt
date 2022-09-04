@@ -1,11 +1,12 @@
 package com.graphite.competitionplanner.registration.domain
 
 import com.graphite.competitionplanner.category.domain.CategoryType
+import com.graphite.competitionplanner.common.exception.BadRequestException
+import com.graphite.competitionplanner.common.exception.BadRequestType
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.player.domain.FindPlayer
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
-import com.graphite.competitionplanner.registration.interfaces.PlayerAlreadyRegisteredException
 import com.graphite.competitionplanner.util.DataGenerator
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
@@ -50,7 +51,7 @@ class TestRegisterDoublesToCompetition {
                 category = dataGenerator.newCategorySpec(type = CategoryType.SINGLES)))
 
         // Act & Assert
-        Assertions.assertThrows(IllegalArgumentException::class.java) {
+        Assertions.assertThrows(BadRequestException::class.java) {
             registerDoubles.execute(spec)
         }
     }
@@ -159,8 +160,15 @@ class TestRegisterDoublesToCompetition {
                 category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES)))
 
         // Act
-        Assertions.assertThrows(PlayerAlreadyRegisteredException::class.java) {
+        Assertions.assertThrows(BadRequestException::class.java) {
             registerDoubles.execute(spec)
+        }
+
+        try {
+            registerDoubles.execute(spec)
+        }
+        catch (exception: BadRequestException) {
+            Assertions.assertEquals(BadRequestType.PLAYER_ALREADY_REGISTERED, exception.exceptionType)
         }
 
         // Assert
@@ -182,7 +190,7 @@ class TestRegisterDoublesToCompetition {
                 category = dataGenerator.newCategorySpec(type = CategoryType.DOUBLES)))
 
         // Act
-        Assertions.assertThrows(PlayerAlreadyRegisteredException::class.java) {
+        Assertions.assertThrows(BadRequestException::class.java) {
             registerDoubles.execute(spec)
         }
 
