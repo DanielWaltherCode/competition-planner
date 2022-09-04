@@ -131,6 +131,8 @@ export default {
         }
         RegistrationService.registerPlayerSingles(this.competition.id, registrationSpec).then(() => {
           this.$toasted.success(this.$tc("toasts.player.added")).goAway(3000)
+        }).catch(err => {
+          this.errorHandler(err.data)
         })
       })
       this.singlesPlayer = null
@@ -161,7 +163,7 @@ export default {
           this.$refs.double2.clearPlayer()
           this.selectedSinglesCategories = []
         }).catch(err => {
-          this.$toasted.error(err.response.data.message).goAway(3000)
+          this.errorHandler(err.data)
         })
       })
     },

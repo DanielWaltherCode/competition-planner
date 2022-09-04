@@ -161,3 +161,12 @@ export function tryTranslateCategoryName(name) {
     }
     return name
 }
+
+export function generalErrorHandler(error) {
+    if (error.errorType !== null && error.errorType !== undefined) {
+        this.$toasted.error(this.$tc("errors." + error.errorType)).goAway(5000)
+    }
+    else {
+        this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
+    }
+}

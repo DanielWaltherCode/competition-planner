@@ -71,12 +71,15 @@ class ResultValidationSpecification(val numberOfSets: Int, val winMargin: Int, v
             throw BadRequestException(BadRequestType.GAME_NOT_ENOUGH_WIN_MARGIN, "The win margin is too small")
         }
 
+        // KOlla om den ena har mer än winScore och den andra under 9
+        // KOlla om för många vunna set är inrapporterade
+
         val requiredWins = ceil(this.numberOfSets / 2.0).toInt()
         val firstRegistrationWins = result.gameList.filter { it.firstRegistrationResult > it.secondRegistrationResult }.size
         val secondRegistrationWins = result.gameList.filter { it.firstRegistrationResult < it.secondRegistrationResult }.size
 
         if (firstRegistrationWins < requiredWins && secondRegistrationWins < requiredWins) {
-            throw BadRequestException(BadRequestType.GAME_COULD_NOT_DECIDE_WINNER, "Couldn't decide winner")
+            throw BadRequestException(BadRequestType.GAME_TOO_FEW_SETS_REPORTED, "Too few sets reported")
         }
 
         return if (firstRegistrationWins > secondRegistrationWins) {
