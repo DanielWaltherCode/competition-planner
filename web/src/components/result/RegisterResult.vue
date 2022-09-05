@@ -93,7 +93,7 @@
 
 <script>
 import ResultService from "@/common/api-services/result.service";
-import {getPlayerOneWithClub, getPlayerTwoWithClub} from "@/common/util";
+import {generalErrorHandler, getPlayerOneWithClub, getPlayerTwoWithClub} from "@/common/util";
 import CategoryService from "@/common/api-services/category.service";
 import DefinitionComponent from "@/components/general/DefinitionComponent";
 import RegistrationService from "@/common/api-services/registration.service";
@@ -185,12 +185,13 @@ export default {
           resultsToSubmit.push(result)
         }
       })
-      ResultService.updateFullMatchResult(this.competition.id, this.selectedMatch.id, {gameList: resultsToSubmit}).then(() => {
-        this.$emit("closeAndUpdate", this.selectedMatch.id)
-        this.$toasted.success(this.$tc("toasts.resultRegistered")).goAway(3000)
-      }).catch(err => {
-        const response = err.response.data
-        this.error = this.$t("results.modal.errors." + response.message)
+      ResultService.updateFullMatchResult(this.competition.id, this.selectedMatch.id, {gameList: resultsToSubmit})
+          .then(data => {
+            console.log("Success block")
+            this.$emit("closeAndUpdate", this.selectedMatch.id)
+            this.$toasted.success(this.$tc("toasts.resultRegistered")).goAway(3000)
+          }).catch(err => {
+        this.errorHandler(err.data)
       })
     },
     addGame() {
@@ -236,7 +237,8 @@ export default {
       }
     },
     getPlayerOne: getPlayerOneWithClub,
-    getPlayerTwo: getPlayerTwoWithClub
+    getPlayerTwo: getPlayerTwoWithClub,
+    errorHandler: generalErrorHandler
   }
 }
 </script>

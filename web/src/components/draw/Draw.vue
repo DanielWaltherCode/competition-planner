@@ -183,8 +183,8 @@ export default {
           this.$toasted.success(this.$tc("toasts.categoryDrawDeleted")).goAway(3000)
           this.isChosenCategoryDrawn = false
           this.getRegisteredPlayers()
-        }).catch(() => {
-          this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
+        }).catch(err => {
+          this.errorHandler(err.data)
         })
       }
     },

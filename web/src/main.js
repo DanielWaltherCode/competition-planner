@@ -53,19 +53,20 @@ Axios.interceptors.request.use(
 
 // Response interceptor
 
-Axios.interceptors.response.use((response) => {
+Axios.interceptors.response.use(
+    response => {
         return response
     },
-    function (error) {
+    error => {
+        console.log(error.response)
         const currentRequest = error.config
         const refreshToken = store.getters.refreshToken
-        console.log(error)
         if (error.response.status === 401) {
             if (refreshToken != null) {
                 // If previous request tried to refresh token but failed, abort here
                 console.log("original request: " + currentRequest.url)
                 if (currentRequest.url.includes("request-token")) {
-                   logout(error)
+                    logout(error)
                 }
                 return UserService.refreshToken(refreshToken).then(res => {
                     // 1) put token to LocalStorage
@@ -81,10 +82,16 @@ Axios.interceptors.response.use((response) => {
             }
             // If there is no refresh token
             else {
-               logout(error)
+                logout(error)
             }
         }
+        throw new ResponseException(error)
     })
+
+function ResponseException(error) {
+    this.status = error.status
+    this.data = error.response.data
+}
 
 function logout(error) {
     store.commit("logout")

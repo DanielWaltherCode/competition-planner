@@ -95,7 +95,7 @@ class TestReportPoolPlayResult {
             addResult.execute(match, resultSpec, competitionCategory)
         }.exceptionType
 
-        Assertions.assertEquals(BadRequestType.GAME_COULD_NOT_DECIDE_WINNER, exceptionType)
+        Assertions.assertEquals(BadRequestType.GAME_TOO_FEW_SETS_REPORTED, exceptionType)
     }
 
     @Test
@@ -122,6 +122,6 @@ class TestReportPoolPlayResult {
             addResult.execute(match, resultSpec, competitionCategory)
         }.exceptionType
 
-        Assertions.assertEquals(BadRequestType.GAME_COULD_NOT_DECIDE_WINNER, exceptionType)
+        Assertions.assertEquals(BadRequestType.GAME_TOO_FEW_SETS_REPORTED, exceptionType)
     }
 }

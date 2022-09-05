@@ -89,7 +89,7 @@ export default {
         this.singlesPlayer = null
         this.$refs["singles-search"].clearPlayer()
       }).catch(() => {
-        this.$toasted.error(this.$tc("toasts.player.couldNotBeAddedToCompetition")).goAway(3000)
+        this.errorHandler(err.data)
       })
     },
     registerDoublesPlayers() {
@@ -107,8 +107,8 @@ export default {
         this.$toasted.success(this.$tc("toasts.player.added")).goAway(3000)
         this.$refs.double1.clearPlayer()
         this.$refs.double2.clearPlayer()
-      }).catch(() => {
-        this.$toasted.error(this.$tc("toasts.player.couldNotBeAddedToCompetition")).goAway(3000)
+      }).catch(err => {
+        this.errorHandler(err.data)
       })
     }
   }

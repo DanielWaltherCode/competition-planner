@@ -250,6 +250,8 @@ export default {
             if (this.competitionCategories.length > 0) {
               this.activeCategory = this.competitionCategories[0]
             }
+          }).catch(err => {
+            this.errorHandler(err.data)
           })
         })
       }

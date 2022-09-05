@@ -147,13 +147,6 @@ export default {
     },
     isPlayerOneWinner: isPlayerOneWinner,
     isPlayerTwoWinner: isPlayerTwoWinner,
-    removeGame() {
-      if (this.gamesToAdd.length > 0) {
-        this.removedGames.push(this.gamesToAdd.pop())
-      } else if (this.selectedMatch.result.gameList.length > 0) {
-        this.removedGames.push(this.selectedMatch.result.gameList.pop())
-      }
-    },
     selectMatch(selectedMatch) {
       this.selectedMatch = selectedMatch
       this.showModal = true
