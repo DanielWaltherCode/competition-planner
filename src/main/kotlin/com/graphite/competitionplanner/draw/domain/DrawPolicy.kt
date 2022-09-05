@@ -176,7 +176,7 @@ class CupDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(co
 
         val placeholderMatches = buildRemainingPlayOffTree(firstRoundOfMatches.size / 2)
 
-        return CupDrawSpec(1, firstRoundOfMatches + placeholderMatches)
+        return CupDrawSpec(competitionCategory.id, firstRoundOfMatches + placeholderMatches)
     }
 
     override fun calculateNumberOfSeeds(numberOfRegistrations: Int): Int {
