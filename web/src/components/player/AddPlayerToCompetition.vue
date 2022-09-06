@@ -111,7 +111,7 @@ export default {
   methods: {
     addSinglesPlayerToCompetition() {
       if (this.singlesPlayer === null) {
-        this.$toasted.error(this.$tc("toasts.player.couldNotBeAddedToCompetition")).goAway(5000)
+        this.$toasted.error(this.$tc("toasts.player.couldNotBeAddedToCompetition")).goAway(7000)
         return;
       }
       this.registerSinglesPlayer()
@@ -141,7 +141,7 @@ export default {
     },
     registerDoublesPlayers() {
       if (this.doublesPlayer1 === null || this.doublesPlayer2 === null) {
-        this.$toasted.error(this.$tc("toasts.player.doubleRegistrationError")).goAway(5000)
+        this.$toasted.error(this.$tc("toasts.player.doubleRegistrationError")).goAway(7000)
         return;
       }
       const categoriesToRegisterIn = this.competitionCategories.filter(val => this.selectedDoublesCategories.includes(val.category.name))

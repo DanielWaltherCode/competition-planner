@@ -140,7 +140,7 @@ import CategoryGameSettings from "@/components/category/CategoryGameRules";
 import CategoryService from "@/common/api-services/category.service";
 import DrawService from "@/common/api-services/draw.service";
 import AddPlayerToCategory from "@/components/category/AddPlayerToCategory";
-import { tryTranslateCategoryName } from "@/common/util"
+import {generalErrorHandler, tryTranslateCategoryName} from "@/common/util"
 
 export default {
   name: "Categories",
@@ -208,7 +208,7 @@ export default {
         this.isDrawMade = false
         this.newCategory = null
       }).catch(() => {
-        this.$toasted.error(this.$tc("toasts.categoryNotAdded")).goAway(5000)
+        this.$toasted.error(this.$tc("toasts.categoryNotAdded")).goAway(7000)
       })
     },
     addCustomCategory() {
@@ -225,7 +225,7 @@ export default {
         this.customCategory = {}
         this.customCategoryToggleSelected = false
       }).catch(() => {
-        this.$toasted.error(this.$tc("toasts.categoryNotAdded")).goAway(5000)
+        this.$toasted.error(this.$tc("toasts.categoryNotAdded")).goAway(7000)
       })
     },
     customCategoryFilledOut() {
@@ -237,8 +237,8 @@ export default {
       this.activeCategory.gameSettings.winScoreFinal = this.activeCategory.gameSettings.winScore // Use same win score setting in endgame matches.
       CategoryService.updateCompetitionCategory(this.competition.id, this.activeCategory.id, this.activeCategory).then(() => {
         this.$toasted.success(this.$tc("toasts.categoryUpdated")).goAway(3000)
-      }).catch(() => {
-        this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
+      }).catch(err => {
+        this.errorHandler(err.data)
       })
     },
     deleteCategory() {
@@ -255,7 +255,8 @@ export default {
           })
         })
       }
-    }
+    },
+    errorHandler: generalErrorHandler
   }
 }
 </script>

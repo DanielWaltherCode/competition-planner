@@ -119,7 +119,7 @@ export default {
         this.chooseClub(this.clubs[0])
       }
     }).catch(() => {
-      this.$toasted.error(this.$tc("billing.toasts.club-error")).goAway(5000)
+      this.$toasted.error(this.$tc("billing.toasts.club-error")).goAway(7000)
     })
 
     ClubService.getClub(this.competition.organizingClubId).then(res => {
@@ -135,13 +135,13 @@ export default {
       BillingService.getCostSummaryForClub(this.competition.id, this.chosenClub.id).then(res => {
         this.costSummary = res.data
       }).catch(() => {
-        this.$toasted.error(this.$tc("billing.toasts.summary-error")).goAway(5000)
+        this.$toasted.error(this.$tc("billing.toasts.summary-error")).goAway(7000)
       })
 
       BillingService.getCostSummaryForPlayers(this.competition.id, this.chosenClub.id).then(res => {
         this.playerCostSummary = res.data
       }).catch(() => {
-        this.$toasted.error(this.$tc("billing.toasts.summary-error")).goAway(5000)
+        this.$toasted.error(this.$tc("billing.toasts.summary-error")).goAway(7000)
       })
     },
     getPdf() {
@@ -149,7 +149,7 @@ export default {
         this.paymentInfo = res.data
         this.generalPdfSetup(true)
       }).catch(() => {
-        this.$toasted.error(this.$tc("billing.paymentInfo.toastErrorFetch")).goAway(5000)
+        this.$toasted.error(this.$tc("billing.paymentInfo.toastErrorFetch")).goAway(7000)
         this.generalPdfSetup(false)
       })
     },

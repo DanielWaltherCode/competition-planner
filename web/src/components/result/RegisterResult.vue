@@ -148,10 +148,6 @@ export default {
           counter++
         }
       })
-          .catch(err => {
-            console.log("Couldn't fetch match rules")
-            console.log(err)
-          })
     },
     resetVariables() {
       this.showInfo = false
@@ -168,7 +164,7 @@ export default {
         this.$emit("closeAndUpdate", this.selectedMatch.id)
         this.$toasted.success(this.$tc("toasts.temporaryResultRegistered")).goAway(3000)
       }).catch(() => {
-        this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
+        this.$toasted.error(this.$tc("toasts.error.general.save")).goAway(7000)
       })
     },
     validateSubmission() {
@@ -227,7 +223,7 @@ export default {
             this.$toasted.success(this.$tc("toasts.resultRegistered")).goAway(3000)
           })
               .catch(() => {
-                this.$toasted.error(this.$tc("toasts.error.WO")).goAway(5000)
+                this.$toasted.error(this.$tc("toasts.error.WO")).goAway(7000)
               })
         })
             .catch(() => {
