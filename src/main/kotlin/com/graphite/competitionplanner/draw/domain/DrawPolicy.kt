@@ -174,7 +174,6 @@ class CupDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(co
             }
         }
 
-
         val placeholderMatches = buildRemainingPlayOffTree(firstRoundOfMatches.size / 2)
 
         val byeMatches = firstRoundOfMatches.filter {
@@ -185,7 +184,6 @@ class CupDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(co
             val nextRoundMatches = placeholderMatches.filter { it.round == secondRound }
             moveRealRegistrationsToNextRound(byeMatches, nextRoundMatches)
         }
-
 
         return CupDrawSpec(competitionCategory.id, firstRoundOfMatches + placeholderMatches)
     }
