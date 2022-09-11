@@ -106,7 +106,7 @@ export default {
         this.clearPlayer()
       })
           .catch(() => {
-            this.$toasted.error(this.$tc("toasts.error.general")).goAway(3000)
+            this.$toasted.error(this.$tc("toasts.error.general.update")).goAway(3000)
           })
     },
     validateSubmission() {

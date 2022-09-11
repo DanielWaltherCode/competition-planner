@@ -437,7 +437,7 @@ export default {
       ScheduleGeneralService.publishSchedule(this.competition.id).then(() => {
         this.$toasted.success(this.$tc("schedule.toasts.schedulePublishedSuccess")).goAway(3000)
       }).catch(() => {
-        this.$toasted.error(this.$tc("schedule.toasts.schedulePublishedError")).goAway(5000)
+        this.$toasted.error(this.$tc("schedule.toasts.schedulePublishedError")).goAway(7000)
       })
     },
     deleteSchedule() {
@@ -446,7 +446,7 @@ export default {
           this.$toasted.success(this.$tc("schedule.toasts.scheduleDeletedSuccess")).goAway(3000)
           window.location.reload()
         }).catch(() => {
-          this.$toasted.error(this.$tc("schedule.toasts.scheduleDeletedError")).goAway(5000)
+          this.$toasted.error(this.$tc("schedule.toasts.scheduleDeletedError")).goAway(7000)
         })
       }
     },

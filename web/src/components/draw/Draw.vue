@@ -158,7 +158,7 @@ export default {
           this.draw = res.data
           this.isChosenCategoryDrawn = true
         }).catch(() => {
-          this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
+          this.$toasted.error(this.$tc("toasts.error.general.update")).goAway(7000)
         })
       }
     },
@@ -170,10 +170,10 @@ export default {
             this.draw = res.data
             this.isChosenCategoryDrawn = true
           }).catch(() => {
-            this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
+            this.$toasted.error(this.$tc("toasts.error.general.update")).goAway(7000)
           })
         }).catch(() => {
-          this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
+          this.errorHandler(err.data)
         })
       }
     },
@@ -192,7 +192,7 @@ export default {
       DrawService.getDraw(this.competition.id, categoryId).then(res => {
         this.draw = res.data
       }).catch(() => {
-        this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
+        this.$toasted.error(this.$tc("toasts.error.general.get")).goAway(7000)
       })
     },
     getRegisteredPlayers() {

@@ -167,6 +167,6 @@ export function generalErrorHandler(error) {
         this.$toasted.error(this.$tc("errors." + error.errorType)).goAway(5000)
     }
     else {
-        this.$toasted.error(this.$tc("toasts.error.general")).goAway(5000)
+        this.$toasted.error(this.$tc("toasts.error.general.standard")).goAway(5000)
     }
 }

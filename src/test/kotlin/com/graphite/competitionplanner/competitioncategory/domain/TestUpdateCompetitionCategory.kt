@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.competitioncategory.domain
 
-import com.graphite.competitionplanner.common.exception.IllegalActionException
+import com.graphite.competitionplanner.common.exception.BadRequestException
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
@@ -59,7 +59,7 @@ class TestUpdateCompetitionCategory {
             dataGenerator.newCompetitionCategoryDTO(status = CompetitionCategoryStatus.DRAWN.toString()))
 
         // Act & Assert
-        Assertions.assertThrows(IllegalActionException::class.java) {
+        Assertions.assertThrows(BadRequestException::class.java) {
             updateCompetitionCategory.execute(competitionCategoryId, spec)
         }
     }

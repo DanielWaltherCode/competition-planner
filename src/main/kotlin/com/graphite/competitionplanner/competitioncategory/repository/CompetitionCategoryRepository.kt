@@ -3,7 +3,6 @@ package com.graphite.competitionplanner.competitioncategory.repository
 import com.graphite.competitionplanner.Tables.*
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.domain.CategoryType
-import com.graphite.competitionplanner.common.exception.IllegalActionException
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.common.repository.BaseRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
@@ -176,7 +175,7 @@ class CompetitionCategoryRepository(
         }
     }
 
-    @Throws(NotFoundException::class, IllegalActionException::class)
+    @Throws(NotFoundException::class)
     override fun update(id: Int, spec: CompetitionCategoryUpdateSpec) {
         dslContext.selectFrom(COMPETITION_CATEGORY).where(COMPETITION_CATEGORY.ID.eq(id)).fetchOne()
             ?: throw NotFoundException("Could not update. Competition category with id $id not found.")
