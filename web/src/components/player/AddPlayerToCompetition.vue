@@ -75,7 +75,7 @@ import CategoryService from "@/common/api-services/category.service";
 
 import RegistrationService from "@/common/api-services/registration.service";
 import SearchPlayerComponent from "@/components/player/SearchPlayerComponent";
-import { tryTranslateCategoryName } from "@/common/util"
+import {generalErrorHandler, tryTranslateCategoryName} from "@/common/util"
 
 export default {
   name: "AddPlayerToCompetition",
@@ -167,7 +167,8 @@ export default {
         })
       })
     },
-    tryTranslateCategoryName: tryTranslateCategoryName
+    tryTranslateCategoryName: tryTranslateCategoryName,
+    errorHandler: generalErrorHandler
   }
 }
 </script>

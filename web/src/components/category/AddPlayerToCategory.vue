@@ -54,6 +54,7 @@
 <script>
 import SearchPlayerComponent from "@/components/player/SearchPlayerComponent";
 import RegistrationService from "@/common/api-services/registration.service";
+import {generalErrorHandler} from "@/common/util";
 
 export default {
   name: "AddPlayerToCategory",
@@ -88,7 +89,7 @@ export default {
         this.$toasted.success(this.$tc("toasts.player.added")).goAway(3000)
         this.singlesPlayer = null
         this.$refs["singles-search"].clearPlayer()
-      }).catch(() => {
+      }).catch(err => {
         this.errorHandler(err.data)
       })
     },
@@ -110,7 +111,8 @@ export default {
       }).catch(err => {
         this.errorHandler(err.data)
       })
-    }
+    },
+    errorHandler: generalErrorHandler
   }
 }
 </script>
