@@ -28,7 +28,7 @@ export function getPlayerTwoWithClub(match) {
     let playerTwo = ""
     if (match.secondPlayer.length === 1) {
         playerTwo = getFormattedPlayerNameWithClub(match.secondPlayer[0])
-    } else if (match.firstPlayer.length === 2) {
+    } else if (match.secondPlayer.length === 2) {
         playerTwo = getFormattedPlayerNameWithClub(match.secondPlayer[0]) + " / " + getFormattedPlayerNameWithClub(match.secondPlayer[1])
     }
     return playerTwo
@@ -48,7 +48,7 @@ export function getPlayerTwo(match) {
     let playerTwo = ""
     if (match.secondPlayer.length === 1) {
         playerTwo = getFormattedPlayerName(match.secondPlayer[0])
-    } else if (match.firstPlayer.length === 2) {
+    } else if (match.secondPlayer.length === 2) {
         playerTwo = getFormattedPlayerName(match.secondPlayer[0]) + " / " + getFormattedPlayerName(match.secondPlayer[1])
     }
     return playerTwo
