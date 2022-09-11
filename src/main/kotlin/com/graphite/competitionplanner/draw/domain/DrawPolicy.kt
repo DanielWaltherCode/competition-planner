@@ -176,7 +176,27 @@ class CupDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(co
 
         val placeholderMatches = buildRemainingPlayOffTree(firstRoundOfMatches.size / 2)
 
+        val byeMatches = firstRoundOfMatches.filter {
+            it.registrationOneId == Registration.Bye || it.registrationTwoId == Registration.Bye }
+
+        if (byeMatches.isNotEmpty()) {
+            val secondRound = (numberOfRounds-1).asRound()
+            val nextRoundMatches = placeholderMatches.filter { it.round == secondRound }
+            moveRealRegistrationsToNextRound(byeMatches, nextRoundMatches)
+        }
+
         return CupDrawSpec(competitionCategory.id, firstRoundOfMatches + placeholderMatches)
+    }
+
+    private fun moveRealRegistrationsToNextRound(byeMatches: List<PlayOffMatch>, nextRoundMatches: List<PlayOffMatch>) {
+        byeMatches.forEach {
+            val nextOrderNumber = ceil( it.order / 2.0 ).toInt() // 1 -> 1, 2 -> 1, 3 -> 2, etc.
+            if (it.registrationOneId is Registration.Real) {
+                nextRoundMatches.first { match -> match.order == nextOrderNumber }.registrationOneId = it.registrationOneId
+            } else {
+                nextRoundMatches.first { match -> match.order == nextOrderNumber}.registrationTwoId = it.registrationTwoId
+            }
+        }
     }
 
     override fun calculateNumberOfSeeds(numberOfRegistrations: Int): Int {

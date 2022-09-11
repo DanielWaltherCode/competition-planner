@@ -70,8 +70,8 @@ data class Pool(
 )
 
 data class PlayOffMatch(
-    val registrationOneId: Registration,
-    val registrationTwoId: Registration,
+    var registrationOneId: Registration,
+    var registrationTwoId: Registration,
     var order: Int,
     var round: Round
 )
