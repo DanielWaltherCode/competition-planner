@@ -222,8 +222,8 @@ class TestCupDrawPolicyNumberOfMatches {
                     val registrationsInRund =
                         matchesInRound.flatMap { listOf(it.registrationOneId, it.registrationTwoId) }
                     Assertions.assertTrue(
-                        registrationsInRund.all { it is Registration.Placeholder },
-                        "Found a non-placeholder registration in round ${expected.round}"
+                        registrationsInRund.all { it is Registration.Placeholder || it is Registration.Real },
+                        "Found a registration in round that was neither a placeholder or real ${expected.round}"
                     )
                 }
 
