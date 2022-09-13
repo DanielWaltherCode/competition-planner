@@ -45,8 +45,12 @@ class MatchService(
     }
 
     fun getMatchesInCompetition(competitionId: Int): List<MatchAndResultDTO> {
-        val matchRecords = matchRepository.getMatchesInCompetition(competitionId)
+        val matchRecords = matchRepository.getMatchesInCompetition(competitionId).filter { notContainBye(it) }
         return transformToMatchAndResultDTO(matchRecords)
+    }
+
+    private fun notContainBye(record: MatchRecord): Boolean {
+        return record.firstRegistrationId != Registration.Bye.asInt() && record.secondRegistrationId != Registration.Bye.asInt()
     }
 
     fun getMatchesInCompetitionForRegistration(competitionId: Int, registrationId: Int): List<MatchAndResultDTO> {
