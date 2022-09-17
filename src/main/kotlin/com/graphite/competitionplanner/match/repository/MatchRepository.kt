@@ -210,10 +210,6 @@ class MatchRepository(
         )
     }
 
-    fun deleteMatchesForCategory(competitionCategoryId: Int) {
-        dslContext.deleteFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
-    }
-
     fun clearTable() {
         dslContext.deleteFrom(MATCH).execute()
     }
