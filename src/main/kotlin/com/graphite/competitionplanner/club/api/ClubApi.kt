@@ -50,7 +50,11 @@ class ClubApi(
     }
 
     @PutMapping("/{clubId}/payment-info/{paymentInfoId}")
-    fun updatePaymentInfo(@PathVariable clubId: Int, @PathVariable paymentInfoId: Int, @RequestBody paymentInfoSpec: PaymentInfoSpec): PaymentInfoDTO {
+    fun updatePaymentInfo(
+        @PathVariable clubId: Int,
+        @PathVariable paymentInfoId: Int,
+        @RequestBody paymentInfoSpec: PaymentInfoSpec
+    ): PaymentInfoDTO {
         return paymentRepository.update(paymentInfoId, clubId, paymentInfoSpec)
     }
 }

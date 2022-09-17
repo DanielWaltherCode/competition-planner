@@ -18,7 +18,6 @@ class TestUpdateCompetitionCategory {
     val updateCompetitionCategory = UpdateCompetitionCategory(mockedRepository)
     val dataGenerator = DataGenerator()
 
-
     @Test
     fun shouldCallRepositoryUpdateOnce() {
         // Setup

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
  * where two people proceed from each group proceed to playoff
  */
 @Component
-class DrawUtilTwoProceed(val drawUtil: DrawUtil) {
+class DrawUtilTwoProceed {
 
     fun playoffDrawWhereTwoProceed(groups: List<String> ): List<MatchUp> {
         val bye = "BYE"

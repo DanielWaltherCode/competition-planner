@@ -1,6 +1,8 @@
 package com.graphite.competitionplanner.common
 
 import java.time.LocalDate
+import java.time.LocalDateTime
+import kotlin.time.Duration
 
 /**
  * Return a list of dates of the closed range
@@ -17,4 +19,12 @@ fun ClosedRange<LocalDate>.toList(): List<LocalDate> {
     }
 
     return result
+}
+
+
+/**
+ * Adds the duration to the LocalDateTime and return a copy of it
+ */
+fun LocalDateTime.plusDuration(duration: Duration): LocalDateTime {
+    return this.plusMinutes(duration.inWholeMinutes)
 }

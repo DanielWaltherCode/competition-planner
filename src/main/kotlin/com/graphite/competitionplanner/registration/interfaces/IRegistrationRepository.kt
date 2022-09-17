@@ -8,7 +8,6 @@ import com.graphite.competitionplanner.player.interfaces.PlayerDTO
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.tables.records.PlayerRegistrationRecord
 
-
 interface IRegistrationRepository {
 
     /**

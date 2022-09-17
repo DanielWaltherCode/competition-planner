@@ -30,7 +30,7 @@ class TestGetCategoriesAndPlayersInCompetition(
 ) {
 
     override fun setupCompetitionCategory() {
-        // Override this so we set up competition category as a doubles
+        // Override this, so we set up competition category as a doubles
         category = categoryRepository.getAvailableCategories().first { it.type == CategoryType.DOUBLES }
         competitionCategory = competitionCategoryRepository.store(
             competitionId = competition.id,

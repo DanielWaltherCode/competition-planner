@@ -8,7 +8,7 @@ import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
  */
 data class CompetitionCategoryDrawDTO(
     /**
-     * Id of the competition category
+     * ID of the competition category
      */
     val competitionCategoryId: Int,
     /**
@@ -32,40 +32,6 @@ data class CompetitionCategoryDrawDTO(
 data class PlayoffRoundDTO(
     val round: Round,
     val matches: List<MatchAndResultDTO>
-)
-
-/**
- * A match played in playoff
- */
-data class PlayOffMatchDTO(
-    /**
-     * Match id
-     */
-    val id: Int,
-    /**
-     * List of players in team one. Contains two players if it is a double game
-     */
-    val firstPlayer: List<PlayerWithClubDTO>,
-    /**
-     * List of players in team two. Contains two players if it is a double game
-     */
-    val secondPlayer: List<PlayerWithClubDTO>,
-    /**
-     * Match order. Starts at 1 and ends at the number equal to the total matches for this round.
-     *
-     * Important: Winners from matches with order 1 and 2, end up playing each other i the next round. The same goes
-     * for 3 and 4, 5 and 6, etc.
-     */
-    var order: Int,
-    /**
-     * The round this match is played in.
-     */
-    var round: Round,
-    /**
-     * The winner of this match. If list is is empty, then no winner has been decided. Contains two players if it is a
-     * double game
-     */
-    val winner: List<PlayerWithClubDTO>,
 )
 
 /**
@@ -100,28 +66,6 @@ data class SubGroupContainer(
     val groupStandingList: List<GroupStandingDTO>
 )
 
-/**
- * A match player in the group stage
- */
-data class GroupMatchDTO(
-    /**
-     * Match id
-     */
-    val id: Int,
-    /**
-     * List of players in team one. Contains two players if it is a double game
-     */
-    val firstPlayer: List<PlayerWithClubDTO>,
-    /**
-     * List of players in team two. Contains two players if it is a double game
-     */
-    val secondPlayer: List<PlayerWithClubDTO>,
-    /**
-     * The winner of this match. If list is is empty, then no winner has been decided. Contains two players if it is a
-     * double game
-     */
-    val winner: List<PlayerWithClubDTO>
-)
 
 /**
  * A position in a group

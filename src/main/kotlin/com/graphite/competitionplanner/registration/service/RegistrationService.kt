@@ -60,7 +60,7 @@ class RegistrationService(
         val uniqueCompetitionIds = competitionPlayingCategories.map { it.competitionId }.distinct()
 
         for (id in uniqueCompetitionIds) {
-            // Get playing categories for each competitions and add player data to dto
+            // Get playing categories for each competition and add player data to dto
             val competition = findCompetitions.byId(id)
             val categories = competitionPlayingCategories.filter { it.competitionId == id }
             playerCompetitions.add(

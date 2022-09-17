@@ -84,9 +84,7 @@ class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository
 
     @Throws(NotFoundException::class)
     override fun update(id: Int, spec: CompetitionUpdateSpec): CompetitionDTO {
-        val record = spec.toRecord()
-        record.reset(COMPETITION.ORGANIZING_CLUB) // This make it so we do not try to update club id
-        record.id = id
+        val record = spec.toRecord(id)
         val rowsUpdated = record.update()
         if (rowsUpdated < 1) {
             throw NotFoundException("Could not update. Competition with id $id not found.")
@@ -101,8 +99,10 @@ class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository
         return dslContext.selectFrom(COMPETITION).where(COMPETITION.ID.eq(id)).fetchOne()
     }
 
-    private fun CompetitionUpdateSpec.toRecord(): CompetitionRecord {
+    private fun CompetitionUpdateSpec.toRecord(id: Int): CompetitionRecord {
         val record = dslContext.newRecord(Competition.COMPETITION)
+        record.id = id
+        record.reset(COMPETITION.ORGANIZING_CLUB) // This make it, so we do not try to update club id
         record.location = this.location.name
         record.name = this.name
         record.competitionLevel = this.competitionLevel

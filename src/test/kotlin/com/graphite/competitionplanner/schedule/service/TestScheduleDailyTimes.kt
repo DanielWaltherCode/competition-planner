@@ -52,7 +52,6 @@ class TestScheduleDailyTimes(
     @Test
     fun getDailyStartEndForDay() {
         val dailyStartEnd = dailyStartEndService.getDailyStartAndEnd(competitionId, LocalDate.now())
-                ?: fail("Expected to find daily start end")
         Assertions.assertNotNull(dailyStartEnd)
         Assertions.assertNotNull(dailyStartEnd.id)
         Assertions.assertNotNull(dailyStartEnd.startTime)
@@ -63,8 +62,6 @@ class TestScheduleDailyTimes(
     @Test
     fun updateDailyStartAndEnd() {
         // Update start and end times for first day of competition
-        val dailyStartEnd = dailyStartEndService.getDailyStartAndEnd(competitionId, LocalDate.now())
-                ?: fail("Expected to find daily start end")
         val newStartTime = LocalTime.of(10, 0)
         val newEndTime = LocalTime.of(19, 0)
 
@@ -74,7 +71,6 @@ class TestScheduleDailyTimes(
                 newEndTime
         )
         dailyStartEndService.updateDailyStartAndEnd(competitionId, updateSpec)
-                ?: fail("Expected to find daily start end")
 
         val updatedDailyStartAndEnd = dailyStartEndService.getDailyStartAndEnd(competitionId, LocalDate.now())
 

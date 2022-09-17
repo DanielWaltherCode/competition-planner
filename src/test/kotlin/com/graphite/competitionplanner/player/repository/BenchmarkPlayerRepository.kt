@@ -18,7 +18,7 @@ class BenchmarkPlayerRepository(
     @Test
     fun comparingFetchingMultiplePlayers() {
         val club = clubRepository.store(dataGenerator.newClubSpec())
-        var playersIds = mutableListOf<Int>()
+        val playersIds = mutableListOf<Int>()
         for (i in 1..100) {
             playersIds.add(repository.store(dataGenerator.newPlayerSpec(clubId = club.id)).id)
         }

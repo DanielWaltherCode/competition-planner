@@ -1,12 +1,14 @@
 package com.graphite.competitionplanner.draw.service
 
 import com.graphite.competitionplanner.draw.interfaces.Round
-import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import org.springframework.stereotype.Service
 
 @Service
-class DrawUtil(val matchRepository: MatchRepository, val competitionDrawRepository: CompetitionDrawRepository) {
+class DrawUtil(
+    val matchRepository: MatchRepository
+)
+{
 
     fun getNrPlayersInGroup(nrGroupMatches: Int): Int {
         return when(nrGroupMatches) {

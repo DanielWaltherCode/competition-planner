@@ -60,14 +60,14 @@ class TestScheduleMetadata(
         val originalMetadataDTO = scheduleMetadataService.getScheduleMetadata(competitionId)
         val newPauseInGroup = 20 // Minutes
 
-        val specToAddd = ScheduleMetadataSpec(
+        val specToAdd = ScheduleMetadataSpec(
             originalMetadataDTO.minutesPerMatch,
             originalMetadataDTO.pauseAfterGroupStage,
             newPauseInGroup,
             originalMetadataDTO.pauseBetweenPlayoffMatches
         )
 
-        val updatedDTO = scheduleMetadataService.updateScheduleMetadata(originalMetadataDTO.id, competitionId, specToAddd)
+        val updatedDTO = scheduleMetadataService.updateScheduleMetadata(originalMetadataDTO.id, competitionId, specToAdd)
         Assertions.assertEquals(updatedDTO.minutesPerMatch, originalMetadataDTO.minutesPerMatch)
         Assertions.assertEquals(updatedDTO.pauseAfterGroupStage, originalMetadataDTO.pauseAfterGroupStage)
         Assertions.assertEquals(updatedDTO.pauseBetweenGroupMatches, newPauseInGroup)

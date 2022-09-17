@@ -38,7 +38,7 @@ abstract class AbstractApiTest(
         val loginDetails = UserLogin("abraham", "anders")
         val valueToSend = objectMapper.writeValueAsString(loginDetails)
         val httpHeaders = HttpHeaders()
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON)
+        httpHeaders.contentType = MediaType.APPLICATION_JSON
         val entityToSend = HttpEntity(valueToSend, httpHeaders)
 
         val loginResult = testRestTemplate.postForEntity(

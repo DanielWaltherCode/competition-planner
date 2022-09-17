@@ -34,7 +34,7 @@ class TestUpdateClub {
         val original = ClubDTO(12, "OldName", "Address1")
         val spec = dataGenerator.newClubSpec("OldName", "Address3")
 
-        // Simulate that we found ourself
+        // Simulate that we found our self
         `when`(mockedClubRepository.getAll()).thenReturn(listOf(original))
 
         updateClub.execute(12, spec)

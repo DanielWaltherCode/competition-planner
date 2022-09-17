@@ -10,7 +10,6 @@ import java.time.LocalDate
 @SpringBootTest
 class TestRegistrationDoubleSpecWithDate {
 
-
     @Test
     fun playerOneAndTwoCannotHaveSameId() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {

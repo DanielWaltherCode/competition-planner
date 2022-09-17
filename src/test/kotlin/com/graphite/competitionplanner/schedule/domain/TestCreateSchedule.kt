@@ -156,7 +156,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
          * - Category 2 can play 4 parallel matches
          * - We are bound to 8 tables
          *
-         * Current implementation performs scheduling in a round robin fashion which means we would expect four
+         * Current implementation performs scheduling in a round-robin fashion which means we would expect four
          * matches from each category be scheduled per timeslot (until the smaller class runs out of matches)
          */
 
@@ -183,7 +183,7 @@ class TestCreateSchedule(@Autowired val createSchedule: CreateSchedule) {
     @Test
     fun balanceMatchesWithThreeCategories() {
         /**
-         * Due to the round robin scheduling we can expect that each category gets at least two matches per timeslot given
+         * Due to the round-robin scheduling we can expect that each category gets at least two matches per timeslot given
          * we have 8 tables divided on 3 categories.
          */
         val classOnePoolA = dataGenerator.poolOf(numberOfPlayers = 4, categoryId = 1)

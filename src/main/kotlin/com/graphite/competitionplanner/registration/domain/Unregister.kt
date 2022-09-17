@@ -8,12 +8,7 @@ import org.springframework.stereotype.Component
 class Unregister(
     @Autowired val repository: IRegistrationRepository
 ) {
-
     fun execute(registrationId: Int) {
         repository.remove(registrationId)
-    }
-
-    fun unregisterIndividualPlayer(registrationId: Int, playerId: Int) {
-        repository.unregisterIndividualPlayer(registrationId, playerId)
     }
 }

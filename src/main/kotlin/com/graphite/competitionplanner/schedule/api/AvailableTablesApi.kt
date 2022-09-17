@@ -7,13 +7,11 @@ import com.graphite.competitionplanner.schedule.service.AvailableTablesService
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
-import java.time.LocalTime
 
 @RestController
 @RequestMapping("/schedule/{competitionId}/available-tables")
 class AvailableTablesApi(
     val availableTablesService: AvailableTablesService,
-    val scheduleRepository: ScheduleRepository
 ) {
 
     @GetMapping("/{day}")

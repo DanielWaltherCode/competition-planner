@@ -1,10 +1,8 @@
 package com.graphite.competitionplanner.draw.domain
 
-import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.registration.domain.Registration
-import com.graphite.competitionplanner.registration.interfaces.RegistrationRankingDTO
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -45,18 +43,5 @@ class TestCupDrawByeMatches : TestBaseCreateDraw() {
         Assertions.assertEquals(realRegistrations, quarterFinalRealRegistrations,
             "We expected all real registrations that was matched against a BYE in first round to " +
                     "automatically advance to next round")
-    }
-
-    private fun generateRegistrationRanks(
-        numberOfRegistrations: Int,
-        competitionCategory: CompetitionCategoryDTO
-    ): List<RegistrationRankingDTO> {
-        return (1..numberOfRegistrations).toList().map {
-            dataGenerator.newRegistrationRankDTO(
-                id = it,
-                competitionCategoryId = competitionCategory.id,
-                rank = numberOfRegistrations - it + 1
-            )
-        }
     }
 }

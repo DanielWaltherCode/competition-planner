@@ -20,8 +20,14 @@ class TestUpdateCompetition {
     private final val mockedStartEnd = Mockito.mock(DailyStartEndService::class.java)
     private final val mockedAvailableTables = Mockito.mock(AvailableTablesService::class.java)
     private final val mockedScheduleRepository = Mockito.mock(ScheduleRepository::class.java)
-    val updateCompetition = Mockito.spy(UpdateCompetition(mockedRepository, mockedTimeTableHandler,
-            mockedStartEnd, mockedAvailableTables, mockedScheduleRepository))
+    val updateCompetition: UpdateCompetition = Mockito.spy(
+        UpdateCompetition(
+            mockedRepository,
+            mockedTimeTableHandler,
+            mockedStartEnd,
+            mockedAvailableTables,
+            mockedScheduleRepository)
+    )
 
     @Test
     fun shouldDelegateToRepository() {
