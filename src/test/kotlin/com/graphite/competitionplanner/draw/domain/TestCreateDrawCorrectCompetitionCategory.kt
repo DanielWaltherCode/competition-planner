@@ -1,8 +1,6 @@
 package com.graphite.competitionplanner.draw.domain
 
-import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
-import com.graphite.competitionplanner.registration.interfaces.RegistrationRankingDTO
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -69,18 +67,5 @@ class TestCreateDrawCorrectCompetitionCategory : TestBaseCreateDraw() {
 
         // Assert
         Assertions.assertEquals(competitionCategory.id, draw.competitionCategoryId, "Wrong competition category id")
-    }
-
-    private fun generateRegistrationRanks(
-        numberOfRegistrations: Int,
-        competitionCategory: CompetitionCategoryDTO
-    ): List<RegistrationRankingDTO> {
-        return (1..numberOfRegistrations).toList().map {
-            dataGenerator.newRegistrationRankDTO(
-                id = it,
-                competitionCategoryId = competitionCategory.id,
-                rank = numberOfRegistrations - it + 1
-            )
-        }
     }
 }

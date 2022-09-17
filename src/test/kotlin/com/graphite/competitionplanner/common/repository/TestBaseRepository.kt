@@ -34,7 +34,6 @@ class TestBaseRepository(
             // Ignoring just so test is not marked as failed here
         }
 
-
         // Assert
         val allClubs = clubRepository.getAll()
         Assertions.assertTrue(

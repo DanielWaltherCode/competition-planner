@@ -14,22 +14,22 @@ import java.time.LocalDate
 
 @Service
 class AvailableTablesService(
-        val scheduleRepository: ScheduleRepository,
-        val findCompetitions: FindCompetitions,
-        val getDaysOfCompetition: GetDaysOfCompetition,
-        @org.springframework.context.annotation.Lazy val timeTableSlotHandler: TimeTableSlotHandler
+    val scheduleRepository: ScheduleRepository,
+    val findCompetitions: FindCompetitions,
+    val getDaysOfCompetition: GetDaysOfCompetition,
+    @org.springframework.context.annotation.Lazy val timeTableSlotHandler: TimeTableSlotHandler
 ) {
     fun registerTablesAvailable(
-            competitionId: Int,
-            availableTablesSpec: AvailableTablesSpec
+        competitionId: Int,
+        availableTablesSpec: AvailableTablesSpec
     ): AvailableTablesDTO {
         val tablesRecord = scheduleRepository.registerTablesAvailable(competitionId, availableTablesSpec)
         return availableTablesRecordToDTO(tablesRecord)
     }
 
     fun updateTablesAvailable(
-            competitionId: Int,
-           availableTablesAllDaysSpec: AvailableTablesAllDaysSpec
+        competitionId: Int,
+        availableTablesAllDaysSpec: AvailableTablesAllDaysSpec
     ) {
         for (tableDay in availableTablesAllDaysSpec.tableDays) {
             scheduleRepository.updateTablesAvailable(competitionId, tableDay)
@@ -62,13 +62,16 @@ class AvailableTablesService(
 
     // Used as helper function when competition is set up
     fun registerTablesAvailableForWholeCompetition(
-            competitionId: Int,
-            availableTablesWholeCompetitionSpec: AvailableTablesWholeCompetitionSpec
+        competitionId: Int,
+        availableTablesWholeCompetitionSpec: AvailableTablesWholeCompetitionSpec
     ) {
         val competition = findCompetitions.byId(competitionId)
         val competitionDays = getDaysOfCompetition.execute(competition)
         for (day in competitionDays) {
-            registerTablesAvailable(competitionId, AvailableTablesSpec(availableTablesWholeCompetitionSpec.nrTables, day))
+            registerTablesAvailable(
+                competitionId,
+                AvailableTablesSpec(availableTablesWholeCompetitionSpec.nrTables, day)
+            )
         }
         // Update time tables
         timeTableSlotHandler.execute(competitionId)
@@ -76,22 +79,22 @@ class AvailableTablesService(
 
     private fun availableTablesRecordToDTO(availableTablesRecord: ScheduleAvailableTablesRecord): AvailableTablesDTO {
         return AvailableTablesDTO(
-                availableTablesRecord.id,
-                availableTablesRecord.nrTables,
-                availableTablesRecord.day,
+            availableTablesRecord.id,
+            availableTablesRecord.nrTables,
+            availableTablesRecord.day,
         )
     }
 }
 
 data class AvailableTablesDTO(
-        val id: Int,
-        val nrTables: Int,
-        @JsonFormat(pattern = "yyyy-MM-dd")
-        val day: LocalDate,
+    val id: Int,
+    val nrTables: Int,
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    val day: LocalDate,
 )
 
 data class AvailableTablesDayDTO(
-        val nrTables: Int,
-        @JsonFormat(pattern = "yyyy-MM-dd")
-        val day: LocalDate
+    val nrTables: Int,
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    val day: LocalDate
 )

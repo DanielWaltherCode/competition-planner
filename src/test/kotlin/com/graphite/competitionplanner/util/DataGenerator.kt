@@ -13,7 +13,6 @@ import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.draw.service.MatchSpec
 import com.graphite.competitionplanner.match.domain.GameResult
 import com.graphite.competitionplanner.match.domain.MatchType
-import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.domain.PlayoffMatch
 import com.graphite.competitionplanner.match.domain.PoolMatch
 import com.graphite.competitionplanner.player.interfaces.PlayerDTO
@@ -23,7 +22,6 @@ import com.graphite.competitionplanner.registration.domain.asInt
 import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.api.ResultSpec
-import com.graphite.competitionplanner.result.service.ResultDTO
 import com.graphite.competitionplanner.schedule.domain.MatchSchedulerSpec
 import com.graphite.competitionplanner.schedule.interfaces.MatchToTimeTableSlot
 import com.graphite.competitionplanner.schedule.interfaces.ScheduleMatchDto
@@ -36,7 +34,6 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import kotlin.math.pow
 import kotlin.random.Random
-import kotlin.time.Duration
 
 /**
  * A class that help with the creation of DTOs and Specs
@@ -48,40 +45,6 @@ class DataGenerator {
     private var matchId = 0
     private var competitionCategoryId = 0
     private var registrationId = 1
-
-//    internal fun newMatch(
-//        id: Int = matchId++,
-//        competitionCategoryId: Int = 0,
-//        startTime: LocalDateTime = LocalDateTime.now(),
-//        endTime: LocalDateTime = LocalDateTime.now().plusMinutes(15),
-//        matchType: MatchType = MatchType("POOL"),
-//        firstPlayer: List<Int> = listOf(playerId++),
-//        secondPlayer: List<Int> = listOf(playerId++),
-//        orderNumber: Int = 0,
-//        groupOrRound: String = "GROUP A"
-//    ) = Match(
-//        id,
-//        competitionCategoryId,
-//        startTime,
-//        endTime,
-//        matchType,
-//        firstPlayer,
-//        secondPlayer,
-//        orderNumber,
-//        groupOrRound
-//    )
-//
-//    internal fun newScheduleSettings(
-//        averageMatchTime: Duration = Duration.minutes(15),
-//        numberOfTables: Int = 8,
-//        startTime: LocalDateTime = LocalDateTime.now(),
-//        endTime: LocalDateTime = LocalDateTime.now().plusHours(8)
-//    ) = ScheduleSettings(
-//        averageMatchTime,
-//        numberOfTables,
-//        startTime,
-//        endTime
-//    )
 
     internal fun newLocationSpec(
         name: String = "Svedala Arena"
@@ -184,34 +147,6 @@ class DataGenerator {
         wasWalkover,
         winner
     )
-
-    fun newMatchAndResultDTO(
-        id: Int = matchId++,
-        competitionCategoryId: Int = 0,
-        competitionCategoryName: String = DefaultCategory.MEN_3.name,
-        startTime: LocalDateTime = LocalDateTime.now(),
-        endTime: LocalDateTime = LocalDateTime.now().plusMinutes(15),
-        matchType: String = "POOL",
-        firstPlayer: List<PlayerWithClubDTO> = listOf(newPlayerWithClubDTO(firstName = "Lars", lastName = "Åkesson")),
-        secondPlayer: List<PlayerWithClubDTO> = listOf(newPlayerWithClubDTO(firstName = "Lars", lastName = "Åkesson")),
-        orderNumber: Int = 0,
-        groupOrRound: String = "GROUP A",
-        wasWalkover: Boolean = false,
-    ) = MatchAndResultDTO(
-        id,
-        startTime,
-        endTime,
-        com.graphite.competitionplanner.registration.service.SimpleCompetitionCategoryDTO(competitionCategoryId, competitionCategoryName),
-        matchType,
-        firstPlayer,
-        secondPlayer,
-        orderNumber,
-        groupOrRound,
-        firstPlayer,
-        wasWalkover,
-        ResultDTO(emptyList())
-    )
-
 
     fun newScheduleSettingsDTO(
         numberOfTables: Int = 8,
@@ -498,20 +433,6 @@ class DataGenerator {
         tableNumbers,
         day,
         startTime)
-
-    fun newScheduleMatchDTO(
-        id: Int = this.matchId++,
-        competitionCategoryId: Int = this.competitionCategoryId++,
-        firstPlayer: List<Int> = listOf(1),
-        secondPlayer: List<Int> = listOf(2),
-        groupOrRound: String = "A"
-    ) = ScheduleMatchDto(
-        id,
-        competitionCategoryId,
-        firstPlayer,
-        secondPlayer,
-        groupOrRound
-    )
 
     fun newMatchToTimeTableSlot(
         matchId: Int = this.matchId++,

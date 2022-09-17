@@ -58,15 +58,6 @@ class CompetitionScheduler(
     }
 
     /**
-     * Updates the TimeTableSlots for multiple matches.
-     *
-     * @param matchToTimeTableSlots Mapping from matches to TimeTableSlots
-     */
-    fun addMultipleMatchToTimeTableSlot(matchToTimeTableSlots: List<MapMatchToTimeTableSlotSpec>) {
-        scheduleRepository.updateMatchesTimeTablesSlots(matchToTimeTableSlots)
-    }
-
-    /**
      * This will publish the schedule.
      *
      * DEVELOPER NOTE: Internally it means that we copy time-information from the TimeTableSlots db-table to the

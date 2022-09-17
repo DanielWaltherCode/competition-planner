@@ -22,7 +22,7 @@ class Withdraw(
 
     /**
      * This method is called before competition begins. If draw is made, matches are lost.
-     * Otherwise player is just removed from competition but can still be billed for participating.
+     * Otherwise, player is just removed from competition but can still be billed for participating.
      * A player withdraws for a given registration in one category. To withdraw from the entire competition
      * the player must withdraw from each category he/she is registered in.
      */
@@ -32,7 +32,7 @@ class Withdraw(
             loseRemainingMatches(competitionId, categoryId, registrationId)
         }
 
-        // Set registration status to withdrawn
+        // Set registration status to withdraw
         registrationRepository.updatePlayerRegistrationStatus(
             registrationId,
             PlayerRegistrationStatus.WITHDRAWN

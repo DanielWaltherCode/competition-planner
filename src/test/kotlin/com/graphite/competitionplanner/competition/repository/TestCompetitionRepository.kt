@@ -3,7 +3,6 @@ package com.graphite.competitionplanner.competition.repository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.common.exception.NotFoundException
-import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
 import com.graphite.competitionplanner.competition.interfaces.LocationSpec
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.AfterEach

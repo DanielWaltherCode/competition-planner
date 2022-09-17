@@ -14,7 +14,7 @@ class CreateSchedule {
      * returns a schedule for the matches. The schedule promise that:
      * - No player will be scheduled more than once per time unit
      * - Nor will more matches than there are available tables be scheduled per time unit
-     * - Matches from different categories will scheduled in a round robin fashion so that each category gets an
+     * - Matches from different categories will be scheduled in a round-robin fashion so that each category gets an
      * equal chance to be scheduled in any given time unit.
      *
      * This scheduler assumes that the length of each match is exactly the same, and that all tables are available during

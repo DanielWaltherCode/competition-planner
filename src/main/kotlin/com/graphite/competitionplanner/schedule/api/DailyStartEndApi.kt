@@ -1,7 +1,6 @@
 package com.graphite.competitionplanner.schedule.api
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.graphite.competitionplanner.schedule.repository.ScheduleRepository
 import com.graphite.competitionplanner.schedule.service.DailyStartAndEndDTO
 import com.graphite.competitionplanner.schedule.service.DailyStartAndEndWithOptionsDTO
 import com.graphite.competitionplanner.schedule.service.DailyStartEndService
@@ -11,7 +10,7 @@ import java.time.LocalTime
 
 @RestController
 @RequestMapping("/schedule/{competitionId}/daily-start-end")
-class DailyStartEndApi(val dailyStartEndService: DailyStartEndService, val scheduleRepository: ScheduleRepository) {
+class DailyStartEndApi(val dailyStartEndService: DailyStartEndService) {
 
     @PostMapping
     fun addDailyStartEnd(

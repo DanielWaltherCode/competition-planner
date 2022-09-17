@@ -5,7 +5,6 @@ import com.graphite.competitionplanner.competitioncategory.domain.*
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import org.springframework.web.bind.annotation.*
 
-/* Handle categories in competitions */
 @RestController
 @RequestMapping("/competition/{competitionId}/category")
 class CompetitionCategoryApi(

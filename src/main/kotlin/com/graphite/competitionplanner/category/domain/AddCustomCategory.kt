@@ -9,13 +9,15 @@ import org.springframework.stereotype.Service
 
 @Service
 class AddCustomCategory(
-        val categoryRepository: ICategoryRepository,
-        val addCompetitionCategory: AddCompetitionCategory
+    val categoryRepository: ICategoryRepository,
+    val addCompetitionCategory: AddCompetitionCategory
 ) {
 
     fun execute(competitionId: Int, customCategorySpec: CustomCategorySpec): CompetitionCategoryDTO {
         val addedCategory = categoryRepository.addCustomCategory(competitionId, customCategorySpec)
-        return addCompetitionCategory.execute(competitionId,
-                CategorySpec(addedCategory.id, addedCategory.name, addedCategory.type))
+        return addCompetitionCategory.execute(
+            competitionId,
+            CategorySpec(addedCategory.id, addedCategory.name, addedCategory.type)
+        )
     }
 }

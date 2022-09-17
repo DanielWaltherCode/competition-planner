@@ -2,7 +2,6 @@ package com.graphite.competitionplanner.schedule.service
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
-import com.graphite.competitionplanner.competition.domain.GetDaysOfCompetition
 import com.graphite.competitionplanner.schedule.api.DailyStartAndEndSpec
 import com.graphite.competitionplanner.schedule.repository.ScheduleRepository
 import com.graphite.competitionplanner.tables.records.ScheduleDailyTimesRecord
@@ -14,8 +13,8 @@ import java.time.temporal.ChronoUnit
 @Service
 class DailyStartEndService(
     val scheduleRepository: ScheduleRepository,
-val findCompetitions: FindCompetitions,
-val getDaysOfCompetition: GetDaysOfCompetition) {
+    val findCompetitions: FindCompetitions
+) {
 
     fun addDailyStartAndEnd(
         competitionId: Int,

@@ -104,7 +104,7 @@ class TestCompetitionApi {
 
         // Assert
         val expectedRounds = Round.values()
-        val equal = expectedRounds.intersect(rounds.toList()).size == expectedRounds.size
+        val equal = expectedRounds.intersect(rounds.toSet()).size == expectedRounds.size
         Assertions.assertTrue(equal)
     }
 

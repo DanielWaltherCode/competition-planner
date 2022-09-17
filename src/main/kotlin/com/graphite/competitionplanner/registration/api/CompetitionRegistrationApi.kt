@@ -1,8 +1,6 @@
 package com.graphite.competitionplanner.registration.api
 
-import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
-import com.graphite.competitionplanner.registration.domain.Unregister
 import com.graphite.competitionplanner.registration.domain.Withdraw
 import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
@@ -17,8 +15,7 @@ import org.springframework.web.bind.annotation.*
 class CompetitionRegistrationApi(
     val registrationService: RegistrationService,
     val registrationRepository: RegistrationRepository,
-    val widthDraw: Withdraw,
-    val unregister: Unregister
+    val widthDraw: Withdraw
 ) {
 
     // Supports search by club, category, name

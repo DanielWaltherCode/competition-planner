@@ -70,7 +70,7 @@ class Club(
         val clubs = getAllResponse.body
 
         // Assert that our newly created club is part of the collection
-        Assertions.assertTrue(clubs!!.filter { it.id == club.id }.any())
+        Assertions.assertTrue(clubs!!.any { it.id == club.id })
 
         // Setup delete
         val deleteRequest = HttpEntity(Boolean, getAuthenticationHeaders())

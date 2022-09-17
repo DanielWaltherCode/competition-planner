@@ -56,15 +56,4 @@ class TestScheduleAvailableTables(
         Assertions.assertTrue(availableTables.isNotEmpty())
         Assertions.assertEquals(availableTables[0].nrTables, 15)
     }
-
-    @Test
-    fun updateTablesAvailable() {
-        val tableToUpdate = availableTablesService.getTablesAvailableByDay(competitionId, LocalDate.now())
-        val newNrTables = 18
-        val spec = AvailableTablesSpec(
-            newNrTables,
-            LocalDate.now(),
-        )
-        availableTablesService.updateTablesAvailable(competitionId, AvailableTablesAllDaysSpec(listOf(spec)))
-    }
 }

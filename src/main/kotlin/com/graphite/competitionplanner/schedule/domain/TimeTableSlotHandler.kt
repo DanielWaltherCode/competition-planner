@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.schedule.domain
 
+import com.graphite.competitionplanner.common.plusDuration
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
@@ -8,7 +9,6 @@ import com.graphite.competitionplanner.schedule.interfaces.TimeTableSlotSpec
 import com.graphite.competitionplanner.schedule.service.AvailableTablesService
 import com.graphite.competitionplanner.schedule.service.DailyStartEndService
 import com.graphite.competitionplanner.schedule.service.ScheduleMetadataService
-import com.graphite.competitionplanner.util.plusDuration
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import kotlin.time.Duration
