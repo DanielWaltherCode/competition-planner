@@ -77,6 +77,11 @@ class MatchRepository(
                 record.matchType = MatchType.PLAYOFF.name
             }
         }
+
+        // In JOOQ, you have to reset fields that you do not want to update. Not doing this would set fields to null
+        record.reset(MATCH.START_TIME)
+        record.reset(MATCH.END_TIME)
+
         return record
     }
 
