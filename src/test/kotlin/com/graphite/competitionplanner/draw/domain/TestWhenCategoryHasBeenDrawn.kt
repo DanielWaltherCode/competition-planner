@@ -32,7 +32,7 @@ class TestWhenCategoryHasBeenDrawn : TestBaseCreateDraw() {
                 drawType = DrawType.POOL_AND_CUP,
                 playersPerGroup = 4
             ),
-            status = CompetitionCategoryStatus.DRAWN.name
+            status = CompetitionCategoryStatus.DRAWN
         )
         Mockito.`when`(mockedFindCompetitionCategory.byId(competitionCategory.id)).thenReturn(competitionCategory)
 

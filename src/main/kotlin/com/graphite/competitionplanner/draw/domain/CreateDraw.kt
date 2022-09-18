@@ -25,7 +25,7 @@ class CreateDraw(
     fun execute(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
         val competitionCategory: CompetitionCategoryDTO = findCompetitionCategory.byId(competitionCategoryId)
 
-        if (competitionCategory.status == CompetitionCategoryStatus.DRAWN.name) {
+        if (competitionCategory.status == CompetitionCategoryStatus.DRAWN) {
             return drawRepository.get(competitionCategoryId)
         }
 

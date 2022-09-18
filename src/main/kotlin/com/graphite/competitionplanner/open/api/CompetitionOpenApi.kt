@@ -91,7 +91,7 @@ class CompetitionOpenApi(
     @GetMapping("/{competitionId}/categories/{categoryId}")
     fun getCategory(@PathVariable categoryId: Int): CompetitionCategory {
         val dto = findCompetitionCategory.byId(categoryId)
-        return CompetitionCategory(dto.id, dto.category.name, dto.status)
+        return CompetitionCategory(dto.id, dto.category.name, dto.status.name)
     }
 
     @GetMapping("/{competitionId}/matches")

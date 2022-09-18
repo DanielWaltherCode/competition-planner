@@ -4,7 +4,7 @@ import com.graphite.competitionplanner.category.interfaces.CategorySpec
 
 data class CompetitionCategoryDTO(
     val id: Int,
-    val status: String,
+    val status: CompetitionCategoryStatus,
     val category: CategorySpec,
     val settings: GeneralSettingsDTO,
     val gameSettings: GameSettingsDTO

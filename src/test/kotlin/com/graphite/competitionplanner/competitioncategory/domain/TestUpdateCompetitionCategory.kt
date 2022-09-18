@@ -24,7 +24,7 @@ class TestUpdateCompetitionCategory {
         val competitionCategoryId = 10
         val spec = dataGenerator.newCompetitionCategoryUpdateSpec()
         `when`(mockedRepository.get(competitionCategoryId)).thenReturn(
-            dataGenerator.newCompetitionCategoryDTO(status = CompetitionCategoryStatus.ACTIVE.toString()))
+            dataGenerator.newCompetitionCategoryDTO(status = CompetitionCategoryStatus.ACTIVE))
 
         // Act
         updateCompetitionCategory.execute(competitionCategoryId, spec)
@@ -40,7 +40,7 @@ class TestUpdateCompetitionCategory {
         val competitionCategoryId = 10
         val spec = dataGenerator.newCompetitionCategoryUpdateSpec()
         `when`(mockedRepository.get(competitionCategoryId)).thenReturn(
-            dataGenerator.newCompetitionCategoryDTO(status = CompetitionCategoryStatus.ACTIVE.toString()))
+            dataGenerator.newCompetitionCategoryDTO(status = CompetitionCategoryStatus.ACTIVE))
         `when`(mockedRepository.update(competitionCategoryId, spec)).thenThrow(NotFoundException::class.java)
 
         // Act & Assert
@@ -55,7 +55,7 @@ class TestUpdateCompetitionCategory {
         val competitionCategoryId = 10
         val spec = dataGenerator.newCompetitionCategoryUpdateSpec()
         `when`(mockedRepository.get(competitionCategoryId)).thenReturn(
-            dataGenerator.newCompetitionCategoryDTO(status = CompetitionCategoryStatus.DRAWN.toString()))
+            dataGenerator.newCompetitionCategoryDTO(status = CompetitionCategoryStatus.DRAWN))
 
         // Act & Assert
         Assertions.assertThrows(BadRequestException::class.java) {
