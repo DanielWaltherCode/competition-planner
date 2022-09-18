@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.draw.service
 
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.Round
@@ -126,7 +127,7 @@ class DrawService(
     }
 
     fun isDrawMade(competitionCategoryId: Int): Boolean {
-        return matchRepository.isCategoryDrawn(competitionCategoryId)
+        return findCompetitionCategory.byId(competitionCategoryId).status == CompetitionCategoryStatus.DRAWN
     }
 
     fun poolDrawRecordToDTO(poolDrawRecord: PoolDrawRecord): PoolDrawDTO {

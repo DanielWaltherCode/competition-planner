@@ -85,7 +85,7 @@ class MatchRepository(
         return record
     }
 
-    fun GameResult.toRecord(matchId: Int): GameRecord {
+    private fun GameResult.toRecord(matchId: Int): GameRecord {
         val record = dslContext.newRecord(GAME)
         record.matchId = matchId
         record.gameNumber = this.number
@@ -94,7 +94,7 @@ class MatchRepository(
         return record
     }
 
-    fun MatchRecord.toMatch(): Match {
+    private fun MatchRecord.toMatch(): Match {
         return if (this.matchType == MatchType.GROUP.name) {
             PoolMatch(
                     this.groupOrRound,
@@ -119,7 +119,7 @@ class MatchRepository(
         }
     }
 
-    fun GameRecord.toGameResult(): GameResult {
+    private fun GameRecord.toGameResult(): GameResult {
         return GameResult(
                 this.id,
                 this.gameNumber,
@@ -202,12 +202,6 @@ class MatchRepository(
         matchRecord.wasWalkover = false // Default value in database
         matchRecord.store()
         return matchRecord
-    }
-
-    fun isCategoryDrawn(competitionCategoryId: Int): Boolean {
-        return dslContext.fetchExists(
-                dslContext.selectFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
-        )
     }
 
     fun clearTable() {

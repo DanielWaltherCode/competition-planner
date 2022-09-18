@@ -4,9 +4,9 @@ import com.graphite.competitionplanner.category.interfaces.CategoryDTO
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.draw.interfaces.Round
-import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.schedule.api.ScheduleCategoryContainerDTO
 import com.graphite.competitionplanner.schedule.api.ScheduleCategoryDTO
@@ -31,7 +31,6 @@ class CompetitionScheduler(
         val createSchedule: CreateSchedule,
         val findCompetitions: FindCompetitions,
         val availableTablesService: AvailableTablesService,
-        val drawService: DrawService,
         val getCompetitionCategories: GetCompetitionCategories
 ) {
 
@@ -285,7 +284,7 @@ class CompetitionScheduler(
 
     fun getCategorySchedulerSettings(competitionId: Int): ScheduleCategoryContainerDTO {
         val competitionCategories = getCompetitionCategories.execute(competitionId)
-        val drawnCategories = competitionCategories.filter { drawService.isDrawMade(it.id) }
+        val drawnCategories = competitionCategories.filter { it.status == CompetitionCategoryStatus.DRAWN }
         val availableTableDays = availableTablesService.getTablesAvailableForMainTable(competitionId)
 
         // Check if categories already are in timetable (i.e. scheduling is under way)
