@@ -8,7 +8,6 @@ import com.graphite.competitionplanner.common.repository.BaseRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.registration.interfaces.PlayerRegistrationStatus
-import com.graphite.competitionplanner.tables.records.CategoryRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryGameRulesRecord
 import com.graphite.competitionplanner.tables.records.CompetitionCategoryMetadataRecord
 import org.jooq.DSLContext
@@ -22,15 +21,6 @@ class CompetitionCategoryRepository(
 ) : BaseRepository(dslContext),
     ICompetitionCategoryRepository
 {
-
-    fun getCategoryType(competitionCategoryId: Int): CategoryRecord {
-        return dslContext.select().from(COMPETITION_CATEGORY)
-            .join(CATEGORY).on(CATEGORY.ID.eq(COMPETITION_CATEGORY.CATEGORY))
-            .where(COMPETITION_CATEGORY.ID.eq(competitionCategoryId))
-            .fetchOneInto(CATEGORY)
-            ?: throw NotFoundException("No competition category type found for categoryId $competitionCategoryId")
-
-    }
 
     // Should return competition information, disciplines
     fun getByPlayerId(playerId: Int): List<CompetitionAndCategories> {
