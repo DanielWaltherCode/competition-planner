@@ -67,7 +67,7 @@ class MatchService(
                     match.endTime,
                     SimpleCompetitionCategoryDTO(
                         match.competitionCategoryId,
-                        competitionCategoryRepository.getCategoryType(match.competitionCategoryId).categoryName
+                        competitionCategoryRepository.get(match.competitionCategoryId).category.name
                     ),
                     match.matchType,
                     registrationService.getPlayersWithClubFromRegistrationId(match.firstRegistrationId),
@@ -92,7 +92,7 @@ class MatchService(
             match.endTime,
             SimpleCompetitionCategoryDTO(
                 match.competitionCategoryId,
-                competitionCategoryRepository.getCategoryType(match.competitionCategoryId).categoryName
+                competitionCategoryRepository.get(match.competitionCategoryId).category.name
             ),
             match.matchType,
             registrationService.getPlayersWithClubFromRegistrationId(match.firstRegistrationId),

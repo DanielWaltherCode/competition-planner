@@ -23,13 +23,16 @@ interface ICompetitionRepository {
 
     /***
      * Return all competitions that are within the given dates
+     *
+     * @param start Beginning of search
+     * @param end End of search
      */
     fun findCompetitions(start: LocalDate, end: LocalDate): List<CompetitionWithClubDTO>
 
     /**
      * Return the competition with the given id
      *
-     * @param competitionId: Id of the competition
+     * @param competitionId ID of the competition
      * @return The competition
      * @throws NotFoundException - When a competition with the given id cannot be found
      */
