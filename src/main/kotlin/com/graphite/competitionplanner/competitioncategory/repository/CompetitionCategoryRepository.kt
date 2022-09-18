@@ -142,7 +142,7 @@ class CompetitionCategoryRepository(
 
     override fun store(competitionId: Int, spec: CompetitionCategorySpec): CompetitionCategoryDTO {
         val competitionCategoryRecord = dslContext.newRecord(COMPETITION_CATEGORY)
-        competitionCategoryRecord.status = spec.status.toString()
+        competitionCategoryRecord.status = spec.status.name
         competitionCategoryRecord.competitionId = competitionId
         competitionCategoryRecord.category = spec.category.id
 
@@ -154,7 +154,7 @@ class CompetitionCategoryRepository(
 
         return CompetitionCategoryDTO(
             id = competitionCategoryRecord.id,
-            status = spec.status.name,
+            status = spec.status,
             category = spec.category,
             settings = spec.settings,
             gameSettings = spec.gameSettings
@@ -226,7 +226,7 @@ class CompetitionCategoryRepository(
         return records.map {
             CompetitionCategoryDTO(
                 it.getValue(COMPETITION_CATEGORY.ID),
-                it.getValue(COMPETITION_CATEGORY.STATUS),
+                CompetitionCategoryStatus.valueOf(it.getValue(COMPETITION_CATEGORY.STATUS)),
                 CategorySpec(
                     it.getValue(CATEGORY.ID),
                     it.getValue(CATEGORY.CATEGORY_NAME),

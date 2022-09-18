@@ -186,7 +186,7 @@ class DataGenerator {
 
     fun newCompetitionCategoryDTO(
         id: Int = 1,
-        status: String = CompetitionCategoryStatus.ACTIVE.name,
+        status: CompetitionCategoryStatus = CompetitionCategoryStatus.ACTIVE,
         category: CategorySpec = newCategorySpec(),
         settings: GeneralSettingsDTO = newGeneralSettingsDTO(),
         gameSettings: GameSettingsDTO = newGameSettingsDTO()

@@ -104,7 +104,7 @@ class TestPoolAndCup(
         Assertions.assertEquals("A2", secondSemi.secondPlayer.first().firstName)
 
         val status = competitionCategoryRepository.get(result.competitionCategoryId).status
-        Assertions.assertEquals(CompetitionCategoryStatus.DRAWN.name, status)
+        Assertions.assertEquals(CompetitionCategoryStatus.DRAWN, status)
     }
 
     @Test
@@ -163,7 +163,7 @@ class TestPoolAndCup(
         Assertions.assertEquals(0, draw.playOff.size)
 
         val status = competitionCategoryRepository.get(competitionCategory.id).status
-        Assertions.assertEquals(CompetitionCategoryStatus.ACTIVE.name, status, "Status of category was not reset")
+        Assertions.assertEquals(CompetitionCategoryStatus.ACTIVE, status, "Status of category was not reset")
     }
 
     private fun List<PlayoffRoundDTO>.inRound(round: Round): PlayoffRoundDTO {

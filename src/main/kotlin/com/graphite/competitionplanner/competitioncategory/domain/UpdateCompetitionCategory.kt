@@ -14,7 +14,7 @@ class UpdateCompetitionCategory(
 
     fun execute(competitionCategoryId: Int, spec: CompetitionCategoryUpdateSpec) {
         val competitionCategory = repository.get(competitionCategoryId)
-        if (competitionCategory.status == CompetitionCategoryStatus.DRAWN.toString()) {
+        if (competitionCategory.status == CompetitionCategoryStatus.DRAWN) {
             throw BadRequestException(BadRequestType.CATEGORY_CANNOT_UPDATE_AFTER_DRAW,
                     "Cannot update the game settings when the category has already been drawn.")
         }

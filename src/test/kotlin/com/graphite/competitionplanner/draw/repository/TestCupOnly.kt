@@ -71,7 +71,7 @@ class TestCupOnly(
         Assertions.assertEquals(Round.FINAL.name, final.groupOrRound)
 
         val status = competitionCategoryRepository.get(drawDTO.competitionCategoryId).status
-        Assertions.assertEquals(CompetitionCategoryStatus.DRAWN.name, status)
+        Assertions.assertEquals(CompetitionCategoryStatus.DRAWN, status)
     }
 
     @Test
@@ -211,7 +211,7 @@ class TestCupOnly(
         Assertions.assertEquals(0, draw.playOff.size)
 
         val status = competitionCategoryRepository.get(competitionCategory.id).status
-        Assertions.assertEquals(CompetitionCategoryStatus.ACTIVE.name, status, "Status of category was not reset")
+        Assertions.assertEquals(CompetitionCategoryStatus.ACTIVE, status, "Status of category was not reset")
     }
 
     @Test

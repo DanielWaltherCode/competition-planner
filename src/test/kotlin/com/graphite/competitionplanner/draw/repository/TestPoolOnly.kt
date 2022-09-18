@@ -74,7 +74,7 @@ class TestPoolOnly(
         AssertionHelper.assertGroupDrawDto(spec.pools.first { it.name == "B" }, club, players.takeLast(2), groups.first {it.name == "B"})
 
         val status = competitionCategoryRepository.get(result.competitionCategoryId).status
-        Assertions.assertEquals(CompetitionCategoryStatus.DRAWN.name, status)
+        Assertions.assertEquals(CompetitionCategoryStatus.DRAWN, status)
     }
 
     @Test
@@ -115,7 +115,7 @@ class TestPoolOnly(
         AssertionHelper.assertGroupDrawDto(spec.pools.first { it.name == "Z" }, club, players, groups.first {it.name == "Z"})
 
         val status = competitionCategoryRepository.get(result.competitionCategoryId).status
-        Assertions.assertEquals(CompetitionCategoryStatus.DRAWN.name, status)
+        Assertions.assertEquals(CompetitionCategoryStatus.DRAWN, status)
     }
 
     @Test
@@ -154,7 +154,7 @@ class TestPoolOnly(
         Assertions.assertEquals(0, draw.playOff.size)
 
         val status = competitionCategoryRepository.get(competitionCategory.id).status
-        Assertions.assertEquals(CompetitionCategoryStatus.ACTIVE.name, status, "Status of category was not reset")
+        Assertions.assertEquals(CompetitionCategoryStatus.ACTIVE, status, "Status of category was not reset")
     }
 
     @Test
