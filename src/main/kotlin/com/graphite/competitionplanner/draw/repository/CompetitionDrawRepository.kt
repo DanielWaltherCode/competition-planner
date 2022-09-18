@@ -122,7 +122,7 @@ class CompetitionDrawRepository(
                         competitionCategoryId = draw.competitionCategoryId
                         poolId =
                             poolRecords.first {
-                                playOffMatch.registrationOneId.toString().first().toString() == it.name
+                                playOffMatch.registrationOneId.toString().dropLast(1) == it.name // Drop group position number
                             }.id
                         poolPosition = playOffMatch.registrationOneId.toString().last().digitToInt()
                         matchId = matchesFirstRound.first { it.matchOrderNumber == playOffMatch.order }.id
@@ -136,7 +136,7 @@ class CompetitionDrawRepository(
                         competitionCategoryId = draw.competitionCategoryId
                         poolId =
                             poolRecords.first {
-                                playOffMatch.registrationTwoId.toString().first().toString() == it.name
+                                playOffMatch.registrationTwoId.toString().dropLast(1) == it.name // Drop group position number
                             }.id
                         poolPosition = playOffMatch.registrationTwoId.toString().last().digitToInt()
                         matchId = matchesFirstRound.first { it.matchOrderNumber == playOffMatch.order }.id
