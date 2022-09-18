@@ -1,7 +1,8 @@
 package com.graphite.competitionplanner.registration.domain
 
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
-import com.graphite.competitionplanner.draw.service.DrawService
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.registration.interfaces.PlayerRegistrationStatus
@@ -16,7 +17,6 @@ class Withdraw(
     val registrationRepository: IRegistrationRepository,
     val matchRepository: MatchRepository,
     val resultService: ResultService,
-    val drawService: DrawService,
     val findCompetitionCategory: FindCompetitionCategory,
 ) {
 
@@ -26,10 +26,11 @@ class Withdraw(
      * A player withdraws for a given registration in one category. To withdraw from the entire competition
      * the player must withdraw from each category he/she is registered in.
      */
-    fun beforeCompetition(competitionId: Int, categoryId: Int, registrationId: Int) {
+    fun beforeCompetition(competitionId: Int, competitionCategoryId: Int, registrationId: Int) {
+        val competitionCategory = findCompetitionCategory.byId(competitionCategoryId)
         // Withdrawing means losing all registered matches
-        if (drawService.isDrawMade(categoryId)) {
-            loseRemainingMatches(competitionId, categoryId, registrationId)
+        if (competitionCategory.status == CompetitionCategoryStatus.DRAWN) {
+            loseRemainingMatches(competitionId, competitionCategory, registrationId)
         }
 
         // Set registration status to withdraw
@@ -40,7 +41,8 @@ class Withdraw(
     }
 
     fun walkOver(competitionId: Int, competitionCategoryId: Int, registrationId: Int) {
-        loseRemainingMatches(competitionId, competitionCategoryId, registrationId)
+        val competitionCategory = findCompetitionCategory.byId(competitionCategoryId)
+        loseRemainingMatches(competitionId, competitionCategory, registrationId)
 
         // Set registration status to walkover
         registrationRepository.updatePlayerRegistrationStatus(
@@ -49,9 +51,9 @@ class Withdraw(
         )
     }
 
-    private fun loseRemainingMatches(competitionId: Int, categoryId: Int, registrationId: Int) {
+    private fun loseRemainingMatches(competitionId: Int, competitionCategory: CompetitionCategoryDTO, registrationId: Int) {
         val matches: List<MatchRecord> = matchRepository.getMatchesInCompetitionForRegistration(competitionId, registrationId)
-        val gameRules = findCompetitionCategory.byId(categoryId).gameSettings
+        val gameRules = competitionCategory.gameSettings
         for (match in matches) {
             // If match already has a winner, this method is called for a walkover, then ignore this match and continue.
             if (match.winner != null) {

@@ -3,7 +3,6 @@ package com.graphite.competitionplanner.schedule.domain
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.draw.interfaces.Round
-import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
 import com.graphite.competitionplanner.schedule.interfaces.MapMatchToTimeTableSlotSpec
@@ -32,7 +31,6 @@ class TestCompetitionSchedulerAppendMode {
     private val mockedScheduleRepository: IScheduleRepository = Mockito.mock(IScheduleRepository::class.java)
     private val mockedAvailableTables = Mockito.mock(AvailableTablesService::class.java)
     private val mockedFindCompetitions = Mockito.mock(FindCompetitions::class.java)
-    private val mockedDrawService = Mockito.mock(DrawService::class.java)
     private val mockedGetCompetitionCategories = Mockito.mock(GetCompetitionCategories::class.java)
     private val createSchedule = CreateSchedule()
 
@@ -41,7 +39,6 @@ class TestCompetitionSchedulerAppendMode {
         createSchedule,
         mockedFindCompetitions,
         mockedAvailableTables,
-        mockedDrawService,
         mockedGetCompetitionCategories
     )
 

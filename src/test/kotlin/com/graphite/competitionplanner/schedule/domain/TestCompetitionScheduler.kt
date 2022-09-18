@@ -2,7 +2,6 @@ package com.graphite.competitionplanner.schedule.domain
 
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
-import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.schedule.interfaces.IScheduleRepository
 import com.graphite.competitionplanner.schedule.service.AvailableTablesService
 import com.graphite.competitionplanner.util.DataGenerator
@@ -19,7 +18,6 @@ class TestCompetitionScheduler {
     private val mockedScheduleRepository: IScheduleRepository = Mockito.mock(IScheduleRepository::class.java)
     private val mockedFindCompetitions = Mockito.mock(FindCompetitions::class.java)
     private val mockedAvailableTables = Mockito.mock(AvailableTablesService::class.java)
-    private val mockedDrawService = Mockito.mock(DrawService::class.java)
     private val mockedGetCompetitionCategories = Mockito.mock(GetCompetitionCategories::class.java)
     private val createSchedule = CreateSchedule()
     private val dataGenerator = DataGenerator()
@@ -29,7 +27,6 @@ class TestCompetitionScheduler {
         createSchedule,
         mockedFindCompetitions,
         mockedAvailableTables,
-        mockedDrawService,
         mockedGetCompetitionCategories)
 
     @Test
