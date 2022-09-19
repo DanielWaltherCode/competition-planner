@@ -403,8 +403,8 @@ class PoolAndCupDrawPolicy(
     }
 
     private fun List<Registration>.findWinnersFromSamePool(winners: List<Registration>): List<Registration> {
-        val groupPrefixes = winners.map { it.toString().first() }
-        return this.filterNot { it is Registration.Bye }.filter { groupPrefixes.contains(it.toString().first()) }
+        val groupPrefixes = winners.map { it.toString().dropLast(1) }
+        return this.filterNot { it is Registration.Bye }.filter { groupPrefixes.contains(it.toString().dropLast(1)) }
     }
 
     private fun Halves.splitRemainingWinnersOnDifferentHalves(): Halves {
@@ -556,7 +556,11 @@ class PoolOnlyDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPoli
             20 -> "T"
             21 -> "U"
             22 -> "V"
-            else -> "X" + (this % 22).asPoolName()
+            else -> {
+                val s = "X"
+                val t = (this - 22).asPoolName()
+                s + t
+            }
         }
     }
 
