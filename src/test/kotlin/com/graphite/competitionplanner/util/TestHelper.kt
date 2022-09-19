@@ -25,9 +25,10 @@ class TestHelper {
     }
 
     object Benchmark {
+
         fun realtime(body: () -> Unit): Duration {
             val start = Instant.now()
-            var end: Instant
+            val end: Instant
             try {
                 body()
             } finally {
@@ -35,5 +36,38 @@ class TestHelper {
             }
             return Duration.between(start, end)
         }
+
+        /**
+         * Run the given code the given number of times and calculate some basic performance metrics
+         *
+         * @param body Code to run
+         * @param times Number of times to run the code
+         * @return Statistics of the performance test
+         */
+        fun runTimes(times: Int, body: () -> Unit) : Results {
+
+            val durations = mutableListOf<Duration>()
+            repeat((1..times).count()) {
+                val duration = realtime {
+                    realtime(body)
+                }
+                durations.add(duration)
+            }
+
+            val worst = durations.maxOf { it }
+            val best = durations.minOf { it }
+            val avg = durations.sumOf { it.toMillis() } / durations.size.toDouble()
+            return Results(worst, best, avg)
+        }
+
+        data class Results(
+            val worst: Duration,
+            val best: Duration,
+
+            /**
+             * Average execution time in milliseconds
+             */
+            val avg: Double
+        )
     }
 }
