@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        lang="en">
+<body>
+  <ul th:fragment="competition-list(competitionList)">
+      <li class="list-group-item py-4 d-flex flex-column align-items-center" th:each="competition : ${competitionList}">
+           <a class="mb-1 list-header fw-bolder fs-4"
+             th:href="'/open/competition/' + ${competition.id}">
+                [[${competition.name}]]
+          </a>
+
+          <p class="fs-6 mb-0 me-4 text-uppercase" th:text="${competition.organizerClub.name}">Name</p>
+          <p class="fs-6 mb-0" th:text="${competition.startDate + ' &#8212 ' + competition.endDate}"> Startdate - Enddate</p>
+      </li>
+  </ul>
+</body>
+</html>

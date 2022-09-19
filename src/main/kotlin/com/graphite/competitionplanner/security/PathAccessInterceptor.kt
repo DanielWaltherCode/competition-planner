@@ -18,9 +18,9 @@ class PathAccessInterceptor(val findCompetitions: FindCompetitions) : HandlerInt
 
     @Throws(Exception::class)
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-        val pathVariables = request
-            .getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE) as Map<String, String>
-
+        if (request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE) != null) {
+            val pathVariables = request
+                    .getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE) as Map<String, String>
             // If the path does not contain a competitionId, don't protect here
             val competitionId = pathVariables["competitionId"] ?: return true
 
@@ -33,9 +33,10 @@ class PathAccessInterceptor(val findCompetitions: FindCompetitions) : HandlerInt
             // If the list of competitions hosted by this club contains the competition id sent in, permit
             if (competitionIds.contains(competitionIdAsInt)) {
                 return true
-            }
-            else {
+            } else {
                 throw ResponseStatusException(HttpStatus.FORBIDDEN, "Cannot access competition not belonging to club")
             }
+        }
+        return true
     }
 }

@@ -30,4 +30,8 @@ class FindCompetitions(
     fun byId(competitionId: Int): CompetitionDTO {
         return repository.findById(competitionId)
     }
+
+    fun byName(searchString: String): List<CompetitionWithClubDTO> {
+        return repository.findByName(searchString)
+    }
 }

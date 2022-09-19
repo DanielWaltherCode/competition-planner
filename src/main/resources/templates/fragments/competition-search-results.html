@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+<table class="table table-borderless table-striped">
+    <thead>
+    <tr>
+        <th th:text="#{competition.search.name}">Name</th>
+        <th th:text="#{competition.search.club}">Club</th>
+        <th th:text="#{competition.search.dates}">Dates</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="competition : ${searchResults}">
+        <td th:text="${competition.name}"></td>
+        <td th:text="${competition.organizerClub.name}"></td>
+        <td th:text="${competition.startDate + ' &#8212 ' + competition.endDate}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
