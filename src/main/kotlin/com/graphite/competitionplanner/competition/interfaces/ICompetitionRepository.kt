@@ -54,4 +54,10 @@ interface ICompetitionRepository {
      * @Throws NotFoundException When the competition cannot be found
      */
     fun update(id: Int, spec: CompetitionUpdateSpec): CompetitionDTO
+
+    /**
+     * Searches club or competition name for a given string
+     * @return List of matching competitions or empty list if nothing is found
+     */
+    fun findByName(searchString: String): List<CompetitionWithClubDTO>
 }

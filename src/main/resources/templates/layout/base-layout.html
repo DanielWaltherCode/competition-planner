@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="webjars/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/application.css}">
+    <script src="http://localhost:35729/livereload.js"></script>
+</head>
+<body>
+<nav th:replace="navbar :: navbar"></nav>
+<section layout:fragment="page-content">
+</section>
+<th:block layout:fragment="page-scripts">
+
+</th:block>
+</body>
+</html>

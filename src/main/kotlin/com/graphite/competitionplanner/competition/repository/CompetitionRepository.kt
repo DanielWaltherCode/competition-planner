@@ -64,6 +64,36 @@ class CompetitionRepository(val dslContext: DSLContext) : ICompetitionRepository
         return result
     }
 
+    override fun findByName(searchString: String): List<CompetitionWithClubDTO> {
+        val records = dslContext.select()
+                .from(Competition.COMPETITION)
+                .join(Club.CLUB)
+                .on(Competition.COMPETITION.ORGANIZING_CLUB.eq(Club.CLUB.ID))
+                .where(
+                        Competition.COMPETITION.NAME.containsIgnoreCase(searchString)
+                                .or(CLUB.NAME.containsIgnoreCase(searchString))
+                )
+                .fetch()
+
+        val result = mutableListOf<CompetitionWithClubDTO>()
+        for (record in records) {
+            val competition = record.into(COMPETITION)
+            val club = record.into(CLUB)
+            result.add(
+                    CompetitionWithClubDTO(
+                            competition.id,
+                            LocationDTO(competition.location),
+                            competition.name,
+                            competition.welcomeText,
+                            ClubDTO(club.id, club.name, club.address),
+                            competition.startDate,
+                            competition.endDate
+                    )
+            )
+        }
+        return result
+    }
+
     @Throws(NotFoundException::class)
     override fun findById(competitionId: Int): CompetitionDTO {
         val record = dslContext.selectFrom(COMPETITION).where(COMPETITION.ID.eq(competitionId)).fetchOne()
