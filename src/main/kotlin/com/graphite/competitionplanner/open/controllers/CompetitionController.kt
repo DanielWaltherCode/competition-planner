@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import java.time.LocalDate
 
 @Controller
-@RequestMapping("/open/competitions")
+@RequestMapping("open/competitions")
 class CompetitionController(
         val findCompetitions: FindCompetitions
 ) {

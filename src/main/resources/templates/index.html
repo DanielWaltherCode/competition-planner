@@ -9,6 +9,15 @@
     <title>CompetitionPlanner</title>
     <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
 </head>
+<style>
+    #competition-select {
+        width: 100%;
+        height: 100vh;
+        background: url('/static/hero-bg.png') top center no-repeat;
+        background-size: cover;
+        border-top: 5px solid var(--main-color);
+    }
+</style>
 <body>
 
 <section layout:fragment="page-content">
@@ -20,15 +29,20 @@
                     <div class="btn-group py-4" role="group">
                         <a type="button"
                            th:href="@{'/open?searchPeriod=PREVIOUS'}"
+                           th:classappend="${#request.getParameter('searchPeriod') != null and #request.getParameter('searchPeriod') == 'PREVIOUS'
+                           ? 'active' : ''}"
                            class="btn btn-outline-primary" th:text="#{landing.earlier}">
                             Earlier
                         </a>
                         <a type="button"
                            th:href="@{'/open?searchPeriod=CURRENT'}"
+                           th:classappend="${(#request.getParameter('searchPeriod') == null ) ||
+                           (#request.getParameter('searchPeriod') != null and #request.getParameter('searchPeriod') == 'CURRENT') ? 'active' : ''}"
                            class="btn btn-outline-primary" th:text="#{landing.thisWeek}"> This week
                         </a>
                         <a type="button"
                            th:href="@{'/open?searchPeriod=COMING'}"
+                           th:classappend="${#request.getParameter('searchPeriod') != null and #request.getParameter('searchPeriod') == 'COMING' ? 'active' : ''}"
                            class="btn btn-outline-primary" th:text="#{landing.coming}">Coming
                         </a>
                     </div>

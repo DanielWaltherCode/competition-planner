@@ -14,7 +14,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Controller
-@RequestMapping("/open")
+@RequestMapping("open")
 class RootController(
         val findCompetitions: FindCompetitions
 ) {

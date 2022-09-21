@@ -40,6 +40,7 @@ class WebSecurity(
                         "/request-token/**",
                         "/open/**",
                         "/css/**",
+                        "/static/**",
                 "/user"
                 ).permitAll()
                 .and().authorizeRequests().anyRequest()
