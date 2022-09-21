@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.security
 
 import com.graphite.competitionplanner.user.service.UserService
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -29,6 +30,8 @@ class WebSecurity(
         http.csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthEntryPoint)
                 .and() // These urls don't need authentication
+                .authorizeRequests().requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                .and()
                 .authorizeRequests().antMatchers(
                         "/v2/api-docs",
                         "/swagger-resources/configuration/ui",
@@ -40,6 +43,7 @@ class WebSecurity(
                         "/request-token/**",
                         "/open/**",
                         "/css/**",
+                        "/images/**",
                         "/static/**",
                 "/user"
                 ).permitAll()
