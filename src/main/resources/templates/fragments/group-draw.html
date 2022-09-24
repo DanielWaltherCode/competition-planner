@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        lang="en">
+<body>
+<div th:fragment="group-draw(group)" >
+    <!-- Current standing in group -->
+      <h5 class="black text-start fw-bolder" th:text="#{draw.pool.standing}"></h5>
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead class="table-light">
+          <tr>
+            <th scope="col"></th>
+            <th scope="col" th:text="#{draw.pool.nrMatches}"></th>
+            <th scope="col" th:text="#{draw.pool.matches}"></th>
+            <th scope="col" th:text="#{draw.pool.games}"></th>
+            <th scope="col" th:text="#{draw.pool.points}"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="standing : ${group.groupStandingList}" th:with="playerList = ${standing.player}">
+            <td class="text-start ps-3">
+              <span th:if="${standing.groupPosition != 0}" th:text="${standing.groupPosition}" ></span>
+                <span th:if="${playerList.size == 1}"
+                   th:text="${playerList.get(0).firstName} + ' ' + ${playerList.get(0).lastName} + ' ' + ${playerList.get(0).club.name}">
+                </span>
+                <span th:if="${playerList.size == 2}"
+                   th:text="${playerList.get(0).firstName} + ' ' + ${playerList.get(0).lastName} + ' ' + ${playerList.get(0).club.name}
+                 + ' / ' + ${playerList.get(1).firstName} + ' ' + ${playerList.get(1).lastName} + ' ' + ${playerList.get(1).club.name}">
+                </span>
+              </span>
+            </td>
+            <td th:text="${standing.matchesPlayed}"></td>
+            <td th:text="${standing.matchesWonLost.won} + '-' + ${standing.matchesWonLost.lost}"></td>
+            <td th:text="${standing.gamesWonLost.won} + '-' + ${standing.gamesWonLost.lost}"></td>
+            <td th:text="${standing.pointsWonLost.won} + '-' + ${standing.pointsWonLost.lost}"></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</body>
+</html>

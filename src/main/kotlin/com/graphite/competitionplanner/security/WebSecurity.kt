@@ -45,7 +45,8 @@ class WebSecurity(
                         "/css/**",
                         "/images/**",
                         "/static/**",
-                "/user"
+                        "/js/**",
+                        "/user"
                 ).permitAll()
                 .and().authorizeRequests().anyRequest()
                 .authenticated() // by default uses a Bean by the type CorsConfigurationSource (defined below)

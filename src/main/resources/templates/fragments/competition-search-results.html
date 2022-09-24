@@ -12,7 +12,9 @@
     </thead>
     <tbody>
     <tr th:each="competition : ${searchResults}">
-        <td th:text="${competition.name}"></td>
+        <td>
+            <a class="text-decoration-none text-black" th:text="${competition.name}" th:href="'/open/competitions/' + ${competition.id} + '/overview'"></a>
+        </td>
         <td th:text="${competition.organizerClub.name}"></td>
         <td th:text="${competition.startDate + ' &#8212 ' + competition.endDate}"></td>
     </tr>
