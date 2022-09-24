@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        lang="en">
+<body>
+<span th:fragment="players(playerList)">
+    <span th:if="${playerList.size == 1 && playerList.get(0).firstName.equalsIgnoreCase('placeholder')}"
+    th:text="PLACEHOLDER">
+    </span>
+    <span th:if="${playerList.size == 1 && !playerList.get(0).firstName.equalsIgnoreCase('placeholder')}"
+          th:text="${playerList.get(0).firstName} + ' ' + ${playerList.get(0).lastName} + ' ' + ${playerList.get(0).club.name}">
+                </span>
+    <span th:if="${playerList.size == 2}"
+          th:text="${playerList.get(0).firstName} + ' ' + ${playerList.get(0).lastName} + ' ' + ${playerList.get(0).club.name}
+                 + ' / ' + ${playerList.get(1).firstName} + ' ' + ${playerList.get(1).lastName} + ' ' + ${playerList.get(1).club.name}">
+                </span>
+</span>
+</body>

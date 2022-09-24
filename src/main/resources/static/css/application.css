@@ -80,7 +80,6 @@ h1, h2, h3 {
     min-height: 100vh;
     z-index: 0;
     background: white;
-    margin-top: -18px;
     box-shadow: 3px 3px 2px 1px #efefef;
 }
 
@@ -143,4 +142,84 @@ h1, h2, h3 {
 
 .custom-card {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+/**
+** Competition detail page
+ */
+
+#competition-header {
+    background-color: var(--main-color);
+}
+
+#competition-header nav {
+    box-shadow: 0 3px #efefef;
+}
+
+#competition-header .navbar {
+    background-color: var(--main-color) !important;
+}
+
+#competition-header .nav-link {
+    color: white !important;
+}
+
+#competition-header .active {
+    font-weight: bold;
+}
+
+#competition-header #navbar button {
+    margin-left: 10px;
+}
+
+/**
+** Playoff tree
+ */
+#bracket {
+    background-color: rgba(225, 225, 225, 0.20);
+    font-size: 12px;
+    padding: 40px 0;
+    height: 100%;
+}
+
+
+#bracket .round {
+    display: block;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+}
+
+#bracket .split-one .round {
+    margin: 0 2.5% 0 0;
+}
+
+
+#bracket .score {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #2C7399;
+    font-weight: bold;
+    right: 5px;
+}
+
+#bracket .round-details {
+    font-size: 13px;
+    color: #2C7399;
+    text-transform: uppercase;
+    text-align: center;
+    height: 40px;
+}
+
+#bracket .current li {
+    opacity: 1;
+}
+
+#bracket div p {
+    min-height: 30px !important;
+    display: flex;
+    align-items: center;
 }

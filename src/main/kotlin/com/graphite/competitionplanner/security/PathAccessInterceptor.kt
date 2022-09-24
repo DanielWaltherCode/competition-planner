@@ -23,6 +23,10 @@ class PathAccessInterceptor(val findCompetitions: FindCompetitions) : HandlerInt
                     .getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE) as Map<String, String>
             // If the path does not contain a competitionId, don't protect here
             val competitionId = pathVariables["competitionId"] ?: return true
+            // If request is to Open, don't protect here
+            if (request.requestURI.contains("open")) {
+                return true
+            }
 
             val competitionIdAsInt = competitionId.toInt()
             val authentication: Authentication = SecurityContextHolder.getContext().authentication

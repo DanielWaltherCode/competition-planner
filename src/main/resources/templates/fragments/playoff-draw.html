@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+<section th:fragment="playoff(playoffRounds)" id="bracket">
+  <div class="d-flex">
+    <div class="round current w-100 d-flex align-content-between m-4" th:each="round : ${playoffRounds}">
+      <div class="round-details" th:text="#{${'round.' + round.round}}"></div>
+      <div class="w-100 h-100 d-flex flex-column justify-content-around">
+        <div class="matchup" th:each="match : ${round.matches}">
+          <table class="table table-responsive mb-2">
+            <tbody class="bg-white">
+            <tr>
+              <td>
+                <div th:if="${match.firstPlayer[0].firstName.equals('BYE')}">
+                  <p class="mb-0 text-black-50 fs-6 text-uppercase">
+                    BYE
+                  </p>
+                </div>
+                <div th:if="${!match.firstPlayer[0].firstName.equals('BYE')}">
+                  <p class="mb-0">
+                    <span th:replace="fragments/player-fragment :: players(playerList=${match.firstPlayer})"></span>
+                  </p>
+                </div>
+              </td>
+              <td class="score" th:each="game : ${match.result.gameList}">
+                <span th:text="${game.firstRegistrationResult}"></span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div th:if="${match.secondPlayer[0].firstName.equals('BYE')}">
+                  <p class="mb-0 text-black-50 fs-6 text-uppercase">
+                    BYE
+                  </p>
+                </div>
+                <div th:if="${!match.secondPlayer[0].firstName.equals('BYE')}">
+                  <p class="mb-0">
+                    <span th:replace="fragments/player-fragment :: players(playerList=${match.secondPlayer})"></span>
+                  </p>
+                </div>
+              </td>
+              <td class="score" th:each="game : ${match.result.gameList}">
+                <span th:text="${game.secondRegistrationResult}"></span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>

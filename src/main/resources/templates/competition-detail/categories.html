@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base-layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>CompetitionPlanner</title>
+</head>
+<body>
+<section layout:fragment="page-content">
+    <div th:insert="~{fragments/competition-detail-header :: competition-detail-header(competition=${competition})}">
+
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="sidebar col-md-3">
+                <div class="sidebar-header">
+                    <h4 th:text="#{categories.sidebar.header}"> </h4>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item" th:each="category : ${categories}">
+                        <a th:href="'/open/competitions/' + ${competition.id} + '/categories/' + ${category.id}"
+                        class="text-black text-decoration-none"
+                        th:classappend="${selectedCategory.id == category.id} ? 'fw-bold' : ''"
+                        th:text="#{${'categories.name.' + category.category.name}}">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-9" th:if="${categories.isEmpty()}">
+                <p class="h-25 custom-card d-flex align-items-center ps-5" th:text="#{categories.empty}"></p>
+            </div>
+            <div class="col-md-9" th:if="${!categories.isEmpty()}" th:insert="fragments/category-draw :: category-draw(category=${selectedCategory},
+             isCategoryDrawn=${isCategoryDrawn},
+             registeredPlayers=${registeredPlayers},
+             draw=${draw})"></div>
+
+        </div>
+    </div>
+</section>
+
+</body>
+</html>
