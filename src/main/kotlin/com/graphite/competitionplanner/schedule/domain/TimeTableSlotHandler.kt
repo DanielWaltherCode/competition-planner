@@ -43,9 +43,9 @@ class TimeTableSlotHandler(
 
         for (dailyStartEndDTO in dailyStartAndEndList) {
             val validStartTimes = generateStartTimes(
-                    LocalDateTime.of(dailyStartEndDTO.day, dailyStartEndDTO.startTime),
-                    LocalDateTime.of(dailyStartEndDTO.day, dailyStartEndDTO.endTime),
-                    Duration.minutes(matchDuration)
+                LocalDateTime.of(dailyStartEndDTO.day, dailyStartEndDTO.startTime),
+                LocalDateTime.of(dailyStartEndDTO.day, dailyStartEndDTO.endTime),
+                Duration.minutes(matchDuration)
             )
             val dailyNrTables = nrTables.first { it.day == dailyStartEndDTO.day }
 

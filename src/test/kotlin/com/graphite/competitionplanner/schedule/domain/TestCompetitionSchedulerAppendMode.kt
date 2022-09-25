@@ -21,9 +21,7 @@ import org.mockito.kotlin.any
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
-import kotlin.time.toDuration
 
 @SpringBootTest
 class TestCompetitionSchedulerAppendMode {
@@ -66,7 +64,7 @@ class TestCompetitionSchedulerAppendMode {
         val matchesToSchedule = dataGenerator.pool1(competitionCategoryId)
         `when`(mockedScheduleRepository.getScheduleMatches(any(), any())).thenReturn(matchesToSchedule)
 
-        val duration = 25.toDuration(TimeUnit.MINUTES)
+        val duration = Duration.minutes(25)
         val timeTable = generateTimeTable(startTime, duration, 4, 4)
             .mapIndexed{ index, it -> it.setId(index + 1) }
 
@@ -117,7 +115,7 @@ class TestCompetitionSchedulerAppendMode {
         val matchesToSchedule = dataGenerator.pool1(competitionCategoryId) + dataGenerator.pool2(competitionCategoryId)
         `when`(mockedScheduleRepository.getScheduleMatches(any(), any())).thenReturn(matchesToSchedule)
 
-        val duration = 25.toDuration(TimeUnit.MINUTES)
+        val duration = Duration.minutes(25)
         val timeTable = generateTimeTable(startTime, duration, 8, 4)
             .mapIndexed{ index, it -> it.setId(index + 1) }
 
@@ -170,7 +168,7 @@ class TestCompetitionSchedulerAppendMode {
         val matchesToSchedule = dataGenerator.pool1(competitionCategoryId) + dataGenerator.pool2(competitionCategoryId)
         `when`(mockedScheduleRepository.getScheduleMatches(any(), any())).thenReturn(matchesToSchedule)
 
-        val duration = 25.toDuration(TimeUnit.MINUTES)
+        val duration = Duration.minutes(25)
         val timeTable = generateTimeTable(startTime, duration, 8, 4)
             .mapIndexed{ index, it -> it.setId(index + 1) }
             .map { if (it.id % 4 == 1) it.occupy() else it } // Occupies table number 1
@@ -225,7 +223,7 @@ class TestCompetitionSchedulerAppendMode {
         val matchesToSchedule = dataGenerator.pool1(competitionCategoryId) + dataGenerator.pool2(competitionCategoryId)
         `when`(mockedScheduleRepository.getScheduleMatches(any(), any())).thenReturn(matchesToSchedule)
 
-        val duration = 25.toDuration(TimeUnit.MINUTES)
+        val duration = Duration.minutes(25)
         val timeTable = generateTimeTable(startTime, duration, 8, 4)
             .mapIndexed{ index, it -> it.setId(index + 1) }
             // Occupies table number 1 & 2 in the first 3 timeslots
@@ -269,7 +267,7 @@ class TestCompetitionSchedulerAppendMode {
         `when`(mockedFindCompetitions.byId(any())).thenReturn(dataGenerator.newCompetitionDTO(competitionId))
 
         val competitionCategoryId = 123
-        val duration = 25.toDuration(TimeUnit.MINUTES)
+        val duration = Duration.minutes(25)
         val startTime = LocalDateTime.now()
         val userSelectedStartTime = startTime.plusMinutes(duration.inWholeMinutes * 3) // Skip first 2 time slots
         val matchSchedulerSpec = dataGenerator.newMatchSchedulerSpec(
@@ -321,7 +319,7 @@ class TestCompetitionSchedulerAppendMode {
         `when`(mockedFindCompetitions.byId(any())).thenReturn(dataGenerator.newCompetitionDTO(competitionId))
 
         val competitionCategoryId = 123
-        val duration = 25.toDuration(TimeUnit.MINUTES)
+        val duration = Duration.minutes(25)
         val startTime = LocalDateTime.now()
         val matchSchedulerSpec = dataGenerator.newMatchSchedulerSpec(
             MatchType.PLAYOFF, listOf(1, 2, 3, 4),
@@ -372,7 +370,7 @@ class TestCompetitionSchedulerAppendMode {
         `when`(mockedFindCompetitions.byId(any())).thenReturn(dataGenerator.newCompetitionDTO(competitionId))
 
         val competitionCategoryId = 123
-        val duration = 25.toDuration(TimeUnit.MINUTES)
+        val duration = Duration.minutes(25)
         val startTime = LocalDateTime.now()
         val matchSchedulerSpec = dataGenerator.newMatchSchedulerSpec(
             MatchType.PLAYOFF, listOf(1, 2, 3, 4),
@@ -424,7 +422,7 @@ class TestCompetitionSchedulerAppendMode {
         `when`(mockedFindCompetitions.byId(any())).thenReturn(dataGenerator.newCompetitionDTO(competitionId))
 
         val competitionCategoryId = 123
-        val duration = 25.toDuration(TimeUnit.MINUTES)
+        val duration = Duration.minutes(25)
         val startTime = LocalDateTime.now()
         val matchSchedulerSpec = dataGenerator.newMatchSchedulerSpec(
             MatchType.PLAYOFF, listOf(1, 2, 3, 4),
@@ -457,7 +455,7 @@ class TestCompetitionSchedulerAppendMode {
         `when`(mockedFindCompetitions.byId(any())).thenReturn(dataGenerator.newCompetitionDTO(competitionId))
 
         val competitionCategoryId = 123
-        val duration = 25.toDuration(TimeUnit.MINUTES)
+        val duration = Duration.minutes(25)
         val startTime = LocalDateTime.now()
         val matchSchedulerSpec = dataGenerator.newMatchSchedulerSpec(
             MatchType.GROUP, listOf(1, 2, 3, 4),
