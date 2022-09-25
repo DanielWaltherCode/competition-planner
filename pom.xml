@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>11</java.version>
-        <kotlin.version>1.5.31</kotlin.version>
+        <kotlin.version>1.7.10</kotlin.version>
     </properties>
 
     <dependencies>
@@ -158,7 +158,7 @@
                 <configuration>
                     <args>
                         <arg>-Xjsr305=strict</arg>
-                        <arg>-Xopt-in=kotlin.time.ExperimentalTime</arg>
+                        <arg>-opt-in=kotlin.time.ExperimentalTime</arg>
                     </args>
                     <compilerPlugins>
                         <plugin>spring</plugin>
