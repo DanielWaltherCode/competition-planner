@@ -216,6 +216,7 @@ class CompetitionDrawRepository(
         record.secondRegistrationId = this.registrationTwoId.asInt()
         record.matchOrderNumber = this.order
         record.groupOrRound = this.round.name
+        record.winner = this.winner?.asInt()
         return record
     }
 }
