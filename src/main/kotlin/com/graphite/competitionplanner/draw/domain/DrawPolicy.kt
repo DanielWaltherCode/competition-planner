@@ -193,8 +193,10 @@ class CupDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(co
             val nextOrderNumber = ceil( it.order / 2.0 ).toInt() // 1 -> 1, 2 -> 1, 3 -> 2, etc.
             if (it.registrationOneId is Registration.Real) {
                 nextRoundMatches.first { match -> match.order == nextOrderNumber }.registrationOneId = it.registrationOneId
+                it.winner = it.registrationOneId
             } else {
                 nextRoundMatches.first { match -> match.order == nextOrderNumber}.registrationTwoId = it.registrationTwoId
+                it.winner = it.registrationTwoId
             }
         }
     }

@@ -43,5 +43,7 @@ class TestCupDrawByeMatches : TestBaseCreateDraw() {
         Assertions.assertEquals(realRegistrations, quarterFinalRealRegistrations,
             "We expected all real registrations that was matched against a BYE in first round to " +
                     "automatically advance to next round")
+        Assertions.assertTrue(byeMatches.all { it.winner != null && it.winner is Registration.Real },
+        "Expected all real players in BYE matches to be marked as winners")
     }
 }

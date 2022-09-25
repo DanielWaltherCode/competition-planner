@@ -73,7 +73,11 @@ data class PlayOffMatch(
     var registrationOneId: Registration,
     var registrationTwoId: Registration,
     var order: Int,
-    var round: Round
+    var round: Round,
+    /**
+     * Winner of the match. This happens when a real player goes up against a BYE in first round in play off.
+     */
+    var winner: Registration? = null
 )
 
 data class PoolMatch(
