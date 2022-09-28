@@ -4,7 +4,7 @@
 <body>
 <div th:fragment="competition-detail-header(competition)" id="competition-header">
   <div id="nav-top" class="d-flex align-items-center justify-content-center pt-3">
-    <i class="fas fa-tag fa-2x text-white me-2"></i>
+    <i class="bi bi-circle-fill text-white-50 fs-4 me-2"></i>
     <h2 class="text-white" th:text="${competition.name}"></h2>
   </div>
   <header class="header">
@@ -32,7 +32,7 @@
             </li>
             <li class="nav-item">
               <a class="nav-link"
-                 th:href="'/open/competitions/' + ${competition.id} + '/matches'"
+                 th:href="'/open/competitions/' + ${competition.id} + '/results'"
                  th:classappend="${#httpServletRequest.requestURI.contains('matches') ? 'active' : ''}"
                  th:text="#{competition.nav.matches}">
               </a>

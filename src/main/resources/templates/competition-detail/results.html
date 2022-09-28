@@ -1,0 +1,32 @@
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base-layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>CompetitionPlanner</title>
+</head>
+<body>
+<section layout:fragment="page-content">
+    <div th:insert="~{fragments/competition-detail-header :: competition-detail-header(competition=${competition})}">
+
+    </div>
+    <div class="container-fluid">
+        <!-- Main content -->
+        <h2 th:text="#{results.heading}" class="text-center"></h2>
+        <div id="match-container" class="d-grid mb-4">
+            <div th:each="match : ${matches}">
+                <div th:replace="fragments/match-result :: match-result(match=${match})">
+
+                </div>
+            </div>
+        </div>
+        <div th:if="${matches.isEmpty()}">
+            <p th:text="#{results.notDrawn}">
+            </p>
+        </div>
+    </div>
+</section>
+</body>
+</html>

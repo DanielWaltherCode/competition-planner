@@ -5,7 +5,10 @@ import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClu
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.draw.domain.GetDraw
 import com.graphite.competitionplanner.draw.service.DrawService
+import com.graphite.competitionplanner.match.service.MatchService
+import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
+import io.swagger.annotations.ApiModelProperty
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -20,7 +23,8 @@ class CompetitionController(
         val getCompetitionCategories: GetCompetitionCategories,
         val drawService: DrawService,
         val getDraw: GetDraw,
-        val registrationService: RegistrationService
+        val registrationService: RegistrationService,
+        val matchService: MatchService
 ) {
 
 
@@ -74,7 +78,41 @@ class CompetitionController(
         return "competition-detail/categories"
     }
 
+    @GetMapping("/{competitionId}/results")
+    fun getResults(model: Model, @PathVariable competitionId: Int): String {
+        val competition = findCompetitions.byId(competitionId)
+        val matches = matchService.getMatchesInCompetition(competitionId)
+        model.addAttribute("competition", competition)
+        model.addAttribute("matches", matches)
+        return "competition-detail/results"
+    }
 
+    @GetMapping("/{competitionId}/players")
+    @ApiModelProperty(value = "Allowed values", allowableValues = "club, category, name", required = false)
+    fun getPlayersInCompetition(
+            model: Model,
+            @PathVariable competitionId: Int,
+            @RequestParam(required = false, defaultValue = "club") searchType: String
+    ): String {
+        val competition = findCompetitions.byId(competitionId)
+        val registeredPlayersDTO = registrationService.getRegisteredPlayers(competitionId, searchType)
+        model.addAttribute("competition", competition)
+        model.addAttribute("registeredPlayersDTO", registeredPlayersDTO)
+        return "competition-detail/players"
+    }
+
+    @GetMapping("/{competitionId}/players/htmx")
+    @ApiModelProperty(value = "Allowed values", allowableValues = "club, category, name", required = false)
+    fun getPlayersInCompetitionHtmx(
+            model: Model,
+            @PathVariable competitionId: Int,
+            @RequestParam searchType: String
+    ): String {
+        val registeredPlayersDTO = registrationService.getRegisteredPlayers(competitionId, searchType)
+        model.addAttribute("sortingChoice", registeredPlayersDTO.groupingType)
+        model.addAttribute("groupingsAndPlayers", registeredPlayersDTO.groupingsAndPlayers)
+        return "fragments/registered-players-htmx"
+    }
 }
 
 enum class SearchPeriod {
