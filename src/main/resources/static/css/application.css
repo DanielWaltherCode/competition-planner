@@ -132,10 +132,6 @@ h1, h2, h3 {
     background-color: #e1f1ff;
 }
 
-.blue-section .h1, h2, h3, h4, h5, h6 {
-    color: #8f4570;
-}
-
 .purple {
     color: #8f4570 !important;
 }
@@ -222,4 +218,36 @@ h1, h2, h3 {
     min-height: 30px !important;
     display: flex;
     align-items: center;
+}
+
+/*
+** Match results
+ */
+#match-container th {
+    text-decoration: underline;
+}
+
+#match-container {
+    margin-top: 30px;
+    grid-gap: 2rem;
+}
+
+@media (min-width: 600px) {
+    #match-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 800px) {
+    #match-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/**
+** Main navigation bar
+ */
+
+#main-nav a {
+    font-size: 1.1rem;
 }

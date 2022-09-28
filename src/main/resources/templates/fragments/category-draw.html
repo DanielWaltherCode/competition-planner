@@ -7,27 +7,23 @@
             <h1 th:text="#{${'categories.name.' + category.category.name}}"></h1>
 
             <!-- If class is not drawn yet -->
-            <div class="row">
+            <div class="row" th:if="${!isCategoryDrawn}">
 
-                <div class="col-md-4 text-start mx-auto" th:if="${!isCategoryDrawn}">
+                <div class="col-md-6 text-center mx-auto py-4">
                     <div class="main-upper" th:if="${!registeredPlayers.isEmpty()}">
-                        <p th:text="#{draw.notDrawnTitle}"></p>
+                        <p class="fs-5" th:text="#{draw.notDrawnTitle}"></p>
                     </div>
                     <div th:if="${registeredPlayers.isEmpty()}">
                         <p th:text="#{draw.notDrawnNoPlayers}"></p>
                     </div>
-                    <!-- List of registered players if there are any -->
-                    <div class="col-md-7" id="registered-players" th:if="${!registeredPlayers.isEmpty()}">
-                        <h3 class="text-start" th:text="#{draw.registeredPlayers}"></h3>
-                        <div th:each="playerList : ${registeredPlayers}">
-
-                            <p th:if="${playerList.size == 1}"
-                               th:text="${playerList.get(0).firstName} + ' ' + ${playerList.get(0).lastName} + ' ' + ${playerList.get(0).club.name}">
-                            </p>
-                            <p th:if="${playerList.size == 2}"
-                               th:text="${playerList.get(0).firstName} + ' ' + ${playerList.get(0).lastName} + ' ' + ${playerList.get(0).club.name}
-                 + ' / ' + ${playerList.get(1).firstName} + ' ' + ${playerList.get(1).lastName} + ' ' + ${playerList.get(1).club.name}">
-                            </p>
+                </div>
+                <!-- List of registered players if there are any -->
+                <div class="col-12 bg-grey py-4 rounded" th:if="${!registeredPlayers.isEmpty()}">
+                    <div class="text-center" id="registered-players" >
+                        <h3 class="text-center" th:text="#{draw.registeredPlayers}"></h3>
+                        <div id="player-list" th:each="playerList : ${registeredPlayers}">
+                            <span th:replace="fragments/player-fragment :: players(playerList=${playerList})">
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -36,7 +32,7 @@
             <div th:if="${isCategoryDrawn && draw != null}">
                 <div id="group-section">
                     <div th:each="group : ${draw.groups}" class="row custom-card col-sm-11 mx-auto mt-3 mb-4 d-flex align-items-start p-3">
-                        <h3 class="text-start ms-2 mb-3"
+                        <h3 class="text-start mb-3"
                             th:text="#{draw.group(${group.name})}"></h3>
                         <!-- Group table -->
                         <div class="col-md-8" th:insert="fragments/group-draw :: group-draw(group=${group})">
@@ -61,15 +57,15 @@
                                                 <span th:if="${match.startTime != null}" th:text="${match.startTime}"></span>
                                                 <span th:if="${match.startTime == null}" th:text="#{draw.pool.noTime}"></span>
                                             <td>
-                                            <span th:replace="fragments/player-fragment :: players(playerList=${playerOneList})"></span>
+                                                <span th:replace="fragments/player-fragment :: players(playerList=${playerOneList})"></span>
                                             </td>
-                                            <td >
+                                            <td>
                                                 <span th:replace="fragments/player-fragment :: players(playerList=${playerTwoList})"></span>
                                             </td>
                                             <td>
                                                 <p class="pe-2 d-inline"
                                                    th:each="game : ${match.result.gameList}"
-                                                th:text="${game.firstRegistrationResult} + '-' + ${game.secondRegistrationResult}">
+                                                   th:text="${game.firstRegistrationResult} + '-' + ${game.secondRegistrationResult}">
                                                 </p>
                                             </td>
                                         </tr>

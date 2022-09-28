@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+<section id="registered-players" th:fragment="registered-players(sortingChoice, groupingsAndPlayers)" class="col-sm-8 mx-auto">
+    <div th:each="element : ${groupingsAndPlayers}" class="mb-3">
+        <div th:if="${sortingChoice.name.equalsIgnoreCase('category')}" class="heading" th:with="namekey=${'categories.name.' + element.key}">
+            <p class="mb-0" th:if="${#messages.msgOrNull(namekey)} == null">
+                <span class="mb-0 fw-bolder text-uppercase" th:text="${element.key}"></span>
+            </p>
+            <p class="mb-0" th:if="${#messages.msgOrNull(namekey)} != null">
+                <span class="mb-0 fw-bolder text-uppercase" th:text="#{${namekey}}  "></span>
+            </p>
+            <hr class="bg-black mt-0">
+        </div>
+        <div th:if="${sortingChoice.name.equalsIgnoreCase('club')} or ${sortingChoice.name.equalsIgnoreCase('name')}" class="heading">
+            <p class="mb-0 fw-bolder text-uppercase" th:text="${element.key}"> </p>
+            <hr class="bg-black mt-0">
+        </div>
+            <span class="player-name me-2" th:each="player : ${element.value}" th:text="${player.firstName} + ' ' + ${player.lastName}">
+            </span>
+    </div>
+</section>
+</body>
+</html>

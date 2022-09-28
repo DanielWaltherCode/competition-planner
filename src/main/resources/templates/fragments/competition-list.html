@@ -5,7 +5,7 @@
 <body>
   <ul th:fragment="competition-list(competitionList)">
       <li class="list-group-item py-4 d-flex flex-column align-items-center" th:each="competition : ${competitionList}">
-           <a class="mb-1 list-header fw-bolder fs-4 text-decoration-none clickable"
+           <a class="mb-1 list-header fw-bold fs-4 text-decoration-none clickable text-primary"
              th:href="'/open/competitions/' + ${competition.id} + '/overview'">
                 [[${competition.name}]]
           </a>

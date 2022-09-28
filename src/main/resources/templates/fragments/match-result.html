@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html
+        xmlns:th="http://www.thymeleaf.org"
+        lang="en">
+<body>
+<div th:fragment="match-result(match)" class="custom-card">
+    <div class="bg-grey p-1 d-flex justify-content-center">
+        <h2 class="fs-6 text-uppercase"
+            th:if="${match.matchType.equalsIgnoreCase('group')}"
+            th:text="#{'categories.name.' + ${match.competitionCategory.name}} + ' | ' + #{results.group} + ' ' + ${match.groupOrRound}"> </h2>
+        <h2 class="fs-6 text-uppercase"
+            th:if="!${match.matchType.equalsIgnoreCase('group')}"
+            th:text="#{'categories.name.' + ${match.competitionCategory.name}} + ' | ' + #{'round.' + ${match.groupOrRound}}">
+        </h2>
+    </div>
+    <div class="p-2">
+        <div class="row">
+            <p class="col-5 text-start">
+                <span th:replace="fragments/player-fragment :: players(playerList=${match.firstPlayer})"></span>
+            </p>
+            <p class="col-1 p-0" th:each="game : ${match.result.gameList}">
+                <span th:text="${game.firstRegistrationResult}"></span>
+            </p>
+        </div>
+        <div class="row">
+            <p class="col-5 text-start">
+                <span th:replace="fragments/player-fragment :: players(playerList=${match.secondPlayer})"></span>
+            </p>
+            <p class="col-1 p-0" th:each="game : ${match.result.gameList}">
+                <span th:text="${game.secondRegistrationResult}"></span>
+            </p>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
