@@ -22,8 +22,8 @@
                 </div>
             </div>
         </div>
-        <div th:if="${matches.isEmpty()}">
-            <p th:text="#{results.notDrawn}">
+        <div th:if="${matches.isEmpty()}" class="custom-card fs-5" style="min-height: 100px">
+            <p class="text-center pt-3" th:text="#{results.notDrawn}">
             </p>
         </div>
     </div>

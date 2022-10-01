@@ -2,7 +2,7 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
 <body>
-<table class="table table-borderless table-striped">
+<table class="table table-borderless table-striped bg-white" th:if="!${searchResults.isEmpty()}">
     <thead>
     <tr>
         <th th:text="#{competition.search.name}">Name</th>
@@ -13,7 +13,10 @@
     <tbody>
     <tr th:each="competition : ${searchResults}">
         <td>
-            <a class="text-decoration-none text-black" th:text="${competition.name}" th:href="'/open/competitions/' + ${competition.id} + '/overview'"></a>
+            <a class="text-decoration-none text-black clickable" th:href="'/open/competitions/' + ${competition.id} + '/overview'">
+                <i class="bi bi-cursor-fill"></i>
+                <span th:text="${competition.name}"></span>
+            </a>
         </td>
         <td th:text="${competition.organizerClub.name}"></td>
         <td th:text="${competition.startDate + ' &#8212 ' + competition.endDate}"></td>

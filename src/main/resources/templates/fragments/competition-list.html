@@ -3,16 +3,20 @@
         xmlns:th="http://www.thymeleaf.org"
         lang="en">
 <body>
-  <ul th:fragment="competition-list(competitionList)">
-      <li class="list-group-item py-4 d-flex flex-column align-items-center" th:each="competition : ${competitionList}">
+  <ul >
+      <li class="list-group-item py-4 d-flex flex-column align-items-center" th:each="competition : ${competitions}">
            <a class="mb-1 list-header fw-bold fs-4 text-decoration-none clickable text-primary"
              th:href="'/open/competitions/' + ${competition.id} + '/overview'">
-                [[${competition.name}]]
+               <i class="bi bi-cursor-fill"></i>
+               <span>[[${competition.name}]]</span>
           </a>
 
           <p class="fs-6 mb-0 me-4 text-uppercase" th:text="${competition.organizerClub.name}">Name</p>
           <p class="fs-6 mb-0" th:text="${competition.startDate + ' &#8212 ' + competition.endDate}"> Startdate - Enddate</p>
       </li>
   </ul>
+    <div th:if="${competitions.isEmpty() }" class="text-center" style="min-height: 100px">
+        <p> Inga tävlingar hittades för den valda perioden</p>
+    </div>
 </body>
 </html>
