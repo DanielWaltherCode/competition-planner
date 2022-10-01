@@ -301,7 +301,27 @@ class PoolAndCupDrawPolicy(
 
     override fun createDraw(registrations: List<RegistrationSeedDTO>): CompetitionCategoryDrawSpec {
         val pools: List<Pool> = (poolDrawPolicy.createDraw(registrations) as PoolDrawSpec).pools
-        val playOffMatches: List<PlayOffMatch> = createPoolAndCupPlayoff(pools, poolDrawPolicy.calculateNumberOfSeeds(registrations.size))
+
+        val numberOfSeededRegistrationsInPlayOff = when (pools.size) {
+            // Only consider number of pools when determining number of seeds in play off, even if snake-draw.
+            in 0 .. 1 -> {
+                0
+            }
+            in 2..3 -> {
+                2
+            }
+            in 4..7 -> {
+                4
+            }
+            in 8..15 -> {
+                8
+            }
+            else -> {
+                16
+            }
+        }
+
+        val playOffMatches: List<PlayOffMatch> = createPoolAndCupPlayoff(pools, numberOfSeededRegistrationsInPlayOff)
         return PoolAndCupDrawSpec(
             competitionCategory.id,
             pools,
