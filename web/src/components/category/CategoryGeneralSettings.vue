@@ -35,7 +35,7 @@
       </div>
       <div class="col-sm-12 col-md-6 d-flex flex-column justify-content-end">
         <label class="h5 form-label" for="inputDrawStrategy">{{ $t("categorySettings.drawStrategy") }}</label>
-        <select id="inputDrawStrategy" class="form-select" :disabled="isDrawMade">
+        <select v-model="category.settings.poolDrawStrategy" id="inputDrawStrategy" class="form-select" :disabled="isDrawMade">
           <option v-for="drawStrategy in possibleDrawOptions.drawStrategies" :value="drawStrategy" :key="drawStrategy">
             {{$t("categorySettings.drawStrategies." + drawStrategy)}}
           </option>
