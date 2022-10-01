@@ -23,32 +23,27 @@
                     <div>
                         <div id="sort-choice" class="d-flex justify-content-center">
                             <div class="btn-group py-4" role="group">
-                                <button
-                                        th:text="#{player.name}"
-                                        hx-get="players/htmx?searchType=name"
-                                        hx-target="#registered-players"
-                                        hx-indicator=".htmx-indicator"
-                                        class="btn btn-outline-primary">
-                                </button>
-                                <button class="btn btn-outline-primary"
-                                        hx-get="players/htmx?searchType=club"
-                                        hx-target="#registered-players"
-                                        hx-indicator=".htmx-indicator"
-                                        th:text="#{player.club}">
-                                </button>
-                                <button class="btn btn-outline-primary"
-                                        hx-get="players/htmx?searchType=category"
-                                        hx-target="#registered-players"
-                                        hx-indicator=".htmx-indicator"
-                                        th:text="#{player.categories}">
-                                </button>
+                                <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"
+                                       hx-get="players/htmx?searchType=category"
+                                       hx-target="#registered-players">
+                                <label class="btn btn-outline-primary" th:text="#{player.categories}" for="btnradio1">Categories</label>
+
+                                <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" checked
+                                       hx-trigger="click, load"
+                                       hx-get="players/htmx?searchType=club"
+                                       hx-target="#registered-players">
+                                <label class="btn btn-outline-primary" for="btnradio2" th:text="#{player.club}">Club</label>
+
+                                <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off"
+                                       hx-get="players/htmx?searchType=name"
+                                       hx-target="#registered-players">
+                                <label class="btn btn-outline-primary" th:text="#{player.name}" for="btnradio3">Namn</label>
                             </div>
                         </div>
                     </div>
                 </div>
-            <div th:replace="fragments/registered-players :: registered-players(sortingChoice=${registeredPlayersDTO.groupingType}, groupingsAndPlayers=${registeredPlayersDTO.groupingsAndPlayers})">
-
-            </div>
+                <section id="registered-players">
+                </section>
 
             </div>
         </div>

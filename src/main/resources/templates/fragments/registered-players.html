@@ -2,7 +2,7 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
 <body>
-<section id="registered-players" th:fragment="registered-players(sortingChoice, groupingsAndPlayers)" class="col-sm-8 mx-auto">
+<section id="registered-players" class="col-sm-8 mx-auto">
     <div th:each="element : ${groupingsAndPlayers}" class="mb-3">
         <div th:if="${sortingChoice.name.equalsIgnoreCase('category')}" class="heading" th:with="namekey=${'categories.name.' + element.key}">
             <p class="mb-0" th:if="${#messages.msgOrNull(namekey)} == null">

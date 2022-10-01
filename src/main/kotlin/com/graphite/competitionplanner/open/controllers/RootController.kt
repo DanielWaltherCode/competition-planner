@@ -20,25 +20,7 @@ class RootController(
 ) {
 
     @GetMapping
-    fun index(model: Model,
-              @RequestParam(required = false, defaultValue = "CURRENT") searchPeriod: SearchPeriod): String {
-        val startDate: LocalDate
-        val endDate: LocalDate
-        val today: LocalDate = LocalDate.now()
-        if (searchPeriod == SearchPeriod.PREVIOUS) {
-            startDate = today.minusDays(90)
-            endDate = today.minusDays(today.dayOfWeek.value.toLong()) // End of last week
-        }
-        else if (searchPeriod == SearchPeriod.CURRENT) {
-            startDate = today.minusDays(today.dayOfWeek.value.toLong() -1)
-            endDate = today.plusDays((7 - today.dayOfWeek.value.toLong()))
-        }
-        else { // Coming competitions
-            startDate = today.plusDays((7 - today.dayOfWeek.value.toLong() + 1))
-            endDate = today.plusDays(60)
-        }
-        val competitions = findCompetitions.thatStartOrEndWithin(startDate, endDate)
-        model.addAttribute("competitions", competitions.map { convertCompetitionDTO(it) })
+    fun index(model: Model): String {
         return "index"
     }
 

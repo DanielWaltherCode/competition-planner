@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
 
 @Controller
 @RequestMapping("open/competitions")
@@ -95,9 +98,7 @@ class CompetitionController(
             @RequestParam(required = false, defaultValue = "club") searchType: String
     ): String {
         val competition = findCompetitions.byId(competitionId)
-        val registeredPlayersDTO = registrationService.getRegisteredPlayers(competitionId, searchType)
         model.addAttribute("competition", competition)
-        model.addAttribute("registeredPlayersDTO", registeredPlayersDTO)
         return "competition-detail/players"
     }
 
@@ -111,7 +112,29 @@ class CompetitionController(
         val registeredPlayersDTO = registrationService.getRegisteredPlayers(competitionId, searchType)
         model.addAttribute("sortingChoice", registeredPlayersDTO.groupingType)
         model.addAttribute("groupingsAndPlayers", registeredPlayersDTO.groupingsAndPlayers)
-        return "fragments/registered-players-htmx"
+        return "fragments/registered-players"
+    }
+
+    @GetMapping("/{searchPeriod}")
+    fun getCompetitionsBySearchPeriod(model: Model, @PathVariable searchPeriod: SearchPeriod): String {
+        val startDate: LocalDate
+        val endDate: LocalDate
+        val today: LocalDate = LocalDate.now()
+        if (searchPeriod == SearchPeriod.PREVIOUS) {
+            startDate = today.minusDays(90)
+            endDate = today.minusDays(today.dayOfWeek.value.toLong()) // End of last week
+        }
+        else if (searchPeriod == SearchPeriod.CURRENT) {
+            startDate = today.minusDays(today.dayOfWeek.value.toLong() -1)
+            endDate = today.plusDays(7).with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
+        }
+        else { // Coming competitions
+            startDate = today.plusDays(7).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+            endDate = today.plusDays(60)
+        }
+        val competitions = findCompetitions.thatStartOrEndWithin(startDate, endDate)
+        model.addAttribute("competitions", competitions.map { convertCompetitionDTO(it) })
+        return "fragments/competition-list"
     }
 }
 
