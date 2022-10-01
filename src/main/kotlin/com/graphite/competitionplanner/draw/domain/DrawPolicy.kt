@@ -521,11 +521,9 @@ class PoolOnlyDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPoli
 
         return when(this.competitionCategory.settings.poolDrawStrategy) {
             PoolDrawStrategy.SNAKE -> addSnakeWay(pools, seededRegistrations)
-            PoolDrawStrategy.NORMAL ->
-                addRoundRobin(pools, seededRegistrations + nonSeededRegistrations.shuffled())
-                    .map {
-                        it.apply { this.matches = generateMatchesFor(this.registrationIds) }
-                    }
+            PoolDrawStrategy.NORMAL -> addRoundRobin(pools, seededRegistrations + nonSeededRegistrations.shuffled())
+        }.map {
+            it.apply { this.matches = generateMatchesFor(this.registrationIds) }
         }
     }
 
@@ -620,7 +618,7 @@ class PoolOnlyDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPoli
                         val first: Registration.Real = registrations.first()
                         val pool: Pool = addRegistrationToPool(pools.last(), first)
                         val remaining: List<Registration.Real> = registrations.takeLast(registrations.size - 1)
-                        listOf(pool) + addSnakeWay(pools.take(pools.size - 1), remaining, direction)
+                        addSnakeWay(pools.take(pools.size - 1), remaining, direction) + listOf(pool)
                     }
                 }
             } else {
