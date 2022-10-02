@@ -4,6 +4,7 @@ import com.graphite.competitionplanner.common.exception.BadRequestException
 import com.graphite.competitionplanner.common.exception.BadRequestType
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
+import com.graphite.competitionplanner.competitioncategory.interfaces.PoolDrawStrategy
 import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.registration.domain.Registration
@@ -300,7 +301,27 @@ class PoolAndCupDrawPolicy(
 
     override fun createDraw(registrations: List<RegistrationSeedDTO>): CompetitionCategoryDrawSpec {
         val pools: List<Pool> = (poolDrawPolicy.createDraw(registrations) as PoolDrawSpec).pools
-        val playOffMatches: List<PlayOffMatch> = createPoolAndCupPlayoff(pools, poolDrawPolicy.calculateNumberOfSeeds(registrations.size))
+
+        val numberOfSeededRegistrationsInPlayOff = when (pools.size) {
+            // Only consider number of pools when determining number of seeds in play off, even if snake-draw.
+            in 0 .. 1 -> {
+                0
+            }
+            in 2..3 -> {
+                2
+            }
+            in 4..7 -> {
+                4
+            }
+            in 8..15 -> {
+                8
+            }
+            else -> {
+                16
+            }
+        }
+
+        val playOffMatches: List<PlayOffMatch> = createPoolAndCupPlayoff(pools, numberOfSeededRegistrationsInPlayOff)
         return PoolAndCupDrawSpec(
             competitionCategory.id,
             pools,
@@ -483,7 +504,9 @@ class PoolOnlyDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPoli
     }
 
     override fun calculateNumberOfSeeds(numberOfRegistrations: Int): Int {
-        return when (numberOfPools(numberOfRegistrations)) {
+        return when(this.competitionCategory.settings.poolDrawStrategy) {
+            PoolDrawStrategy.SNAKE -> numberOfRegistrations
+            PoolDrawStrategy.NORMAL -> when (numberOfPools(numberOfRegistrations)) {
                 in 0 .. 1 -> {
                     0
                 }
@@ -500,6 +523,7 @@ class PoolOnlyDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPoli
                     16
                 }
             }
+        }
     }
 
     override fun throwExceptionIfNotEnoughRegistrations(registrations: List<RegistrationSeedDTO>) {
@@ -515,10 +539,12 @@ class PoolOnlyDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPoli
         val nonSeededRegistrations: List<Registration.Real> =
             registrations.filter { it.seed == null }.map { it.registration }
 
-        return addRoundRobin(pools, seededRegistrations + nonSeededRegistrations.shuffled())
-            .map {
-                it.apply { this.matches = generateMatchesFor(this.registrationIds) }
-            }
+        return when(this.competitionCategory.settings.poolDrawStrategy) {
+            PoolDrawStrategy.SNAKE -> addSnakeWay(pools, seededRegistrations)
+            PoolDrawStrategy.NORMAL -> addRoundRobin(pools, seededRegistrations + nonSeededRegistrations.shuffled())
+        }.map {
+            it.apply { this.matches = generateMatchesFor(this.registrationIds) }
+        }
     }
 
     private fun createEmptyPools(numberOfPools: Int): List<Pool> {
@@ -584,6 +610,52 @@ class PoolOnlyDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPoli
                 val round: List<Pool> = addRoundRobin(pools, registrations.take(pools.size))
                 addRoundRobin(round, registrations.takeLast(registrations.size - pools.size))
             }
+        }
+    }
+
+    /**
+     * Adds a set of registrations to a set of pools in a snake-way. The first round of registrations is added,
+     * left to right, then the second pool player is added right to left, and so on until all registrations are placed
+     * in pools.
+     */
+    private fun addSnakeWay(
+        pools: List<Pool>,
+        registrations: List<Registration.Real>,
+        direction: Direction = Direction.LEFT_TO_RIGHT
+    ): List<Pool> {
+        return if (registrations.isEmpty()) {
+            pools
+        } else {
+            return if (registrations.size <= pools.size) {
+                when(direction) {
+                    Direction.LEFT_TO_RIGHT -> {
+                        val first: Registration.Real = registrations.first()
+                        val pool: Pool = addRegistrationToPool(pools.first(), first)
+                        val remaining: List<Registration.Real> = registrations.takeLast(registrations.size - 1)
+                        listOf(pool) + addSnakeWay(pools.takeLast(pools.size - 1), remaining, direction)
+                    }
+                    Direction.RIGHT_TO_LEFT -> {
+                        val first: Registration.Real = registrations.first()
+                        val pool: Pool = addRegistrationToPool(pools.last(), first)
+                        val remaining: List<Registration.Real> = registrations.takeLast(registrations.size - 1)
+                        addSnakeWay(pools.take(pools.size - 1), remaining, direction) + listOf(pool)
+                    }
+                }
+            } else {
+                val round: List<Pool> = addSnakeWay(pools, registrations.take(pools.size), direction)
+                addSnakeWay(round, registrations.takeLast(registrations.size - pools.size), direction.opposite())
+            }
+        }
+    }
+
+    enum class Direction {
+        LEFT_TO_RIGHT, RIGHT_TO_LEFT
+    }
+
+    private fun Direction.opposite(): Direction {
+        return when(this) {
+            Direction.LEFT_TO_RIGHT -> Direction.RIGHT_TO_LEFT
+            Direction.RIGHT_TO_LEFT -> Direction.LEFT_TO_RIGHT
         }
     }
 
