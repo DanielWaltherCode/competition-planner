@@ -220,7 +220,7 @@ class TestPlayerRepository(
         // Assertions
         Assertions.assertTrue(matchingPlayerIds.contains(lasse.id))
         Assertions.assertTrue(matchingPlayerIds.contains(lass.id))
-        Assertions.assertTrue(matchingPlayerIds.contains(lasson.id))
+        Assertions.assertFalse(matchingPlayerIds.contains(lasson.id))
         Assertions.assertFalse(matchingPlayerIds.contains(klas.id))
 
         // Clean up
