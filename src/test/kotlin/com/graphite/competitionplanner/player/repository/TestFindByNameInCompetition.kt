@@ -44,17 +44,21 @@ class TestFindByNameInCompetition(
             playerRepository.store(dataGenerator.newPlayerSpec(firstName = "Bisse", "Nisseson", clubId = club.id))
         val player3 =
             playerRepository.store(dataGenerator.newPlayerSpec(firstName = "Cisse", "Filipsson", clubId = club.id))
-        val competition1 = club.createCompetitionAndRegister(listOf(player1, player2, player3))
-
         val player4 =
+                playerRepository.store(dataGenerator.newPlayerSpec(firstName = "Nisse", "Henriksson", clubId = club.id))
+        val player5 =
+                playerRepository.store(dataGenerator.newPlayerSpec(firstName = "Nisse", "Halsberg", clubId = club.id))
+        val competition1 = club.createCompetitionAndRegister(listOf(player1, player2, player3, player4, player5))
+
+        val player6 =
             playerRepository.store(dataGenerator.newPlayerSpec(firstName = "Nisse", "Hanson", clubId = club.id))
-        club.createCompetitionAndRegister(listOf(player4)) // Create additional competition. Should not get result from this
+        club.createCompetitionAndRegister(listOf(player6)) // Create additional competition. Should not get result from this
 
         // Act
-        val players = playerRepository.findByNameInCompetition("Nis", competition1.id)
+        val players = playerRepository.findByNameInCompetition("Nisse ha", competition1.id)
 
         // Assert
-        val expectedPlayerIds = listOf(player1, player2).map { it.id }.sorted()
+        val expectedPlayerIds = listOf(player1, player5).map { it.id }.sorted()
         val actualPlayerIds = players.map { it.id }.sorted()
         Assertions.assertEquals(expectedPlayerIds, actualPlayerIds)
     }
