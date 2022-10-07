@@ -15,6 +15,7 @@ import com.graphite.competitionplanner.tables.records.PlayerRankingRecord
 import com.graphite.competitionplanner.tables.records.PlayerRecord
 import org.jooq.DSLContext
 import org.jooq.Record
+import org.jooq.impl.DSL.*
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -72,6 +73,7 @@ class PlayerRepository(
         playerRecord.lastName = playerSpec.lastName
         playerRecord.clubId = playerSpec.clubId
         playerRecord.dateOfBirth = playerSpec.dateOfBirth
+        playerRecord.fullName = playerSpec.firstName.trim() + ' ' + playerSpec.lastName.trim()
         playerRecord.store()
 
         return playerRecord
@@ -83,6 +85,7 @@ class PlayerRepository(
         record.lastName = spec.lastName
         record.clubId = spec.clubId
         record.dateOfBirth = spec.dateOfBirth
+        record.fullName = spec.firstName.trim() + ' ' + spec.lastName.trim()
 
         asTransaction {
             record.store()
@@ -131,10 +134,9 @@ class PlayerRepository(
     }
 
     override fun findByName(startOfName: String): List<PlayerWithClubDTO> {
-        val records = dslContext.select().distinctOn(PLAYER.ID).from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID)).where(
-            PLAYER.FIRST_NAME.startsWithIgnoreCase(startOfName)
-                .or(PLAYER.LAST_NAME.startsWithIgnoreCase(startOfName))
-        ).fetch()
+        val records = dslContext.select().distinctOn(PLAYER.ID).from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID))
+                .where(PLAYER.FULL_NAME.startsWithIgnoreCase(startOfName))
+                .limit(4).fetch()
         return records.map { transformIntoPlayerWithClubDto(it) }
     }
 
@@ -160,9 +162,8 @@ class PlayerRepository(
             .join(PLAYER_REGISTRATION).on(PLAYER_REGISTRATION.REGISTRATION_ID.eq(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID))
             .join(PLAYER).on(PLAYER.ID.eq(PLAYER_REGISTRATION.PLAYER_ID))
             .join(CLUB).on(CLUB.ID.eq(PLAYER.CLUB_ID))
-            .where(PLAYER.FIRST_NAME.startsWithIgnoreCase(startOfName)
-                .or(PLAYER.LAST_NAME.startsWithIgnoreCase(startOfName))
-                .and(COMPETITION.ID.eq(competitionId))).fetch()
+            .where(PLAYER.FULL_NAME.startsWithIgnoreCase(startOfName)
+                .and(COMPETITION.ID.eq(competitionId))).limit(4).fetch()
 
         return records.map { transformIntoPlayerWithClubDto(it) }
     }
@@ -187,6 +188,7 @@ class PlayerRepository(
         record.lastName = spec.lastName
         record.clubId = spec.clubId
         record.dateOfBirth = spec.dateOfBirth
+        record.fullName = spec.firstName.trim() + ' ' + spec.lastName.trim()
         val rowsUpdated = record.update()
         if (rowsUpdated < 1) {
             throw NotFoundException("Could not update. Player with id $id not found.")
