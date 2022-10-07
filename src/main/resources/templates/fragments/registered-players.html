@@ -17,8 +17,10 @@
             <p class="mb-0 fw-bolder text-uppercase" th:text="${element.key}"> </p>
             <hr class="bg-black mt-0">
         </div>
-            <span class="player-name me-2" th:each="player : ${element.value}" th:text="${player.firstName} + ' ' + ${player.lastName}">
-            </span>
+        <a th:each="player : ${element.value}" th:text="${player.firstName} + ' ' + ${player.lastName}"
+           th:href="'/open/players/' + ${competitionId} + '/' + ${player.id}"
+           class="player-name me-2 text-black text-decoration-none">
+        </a>
     </div>
 </section>
 </body>

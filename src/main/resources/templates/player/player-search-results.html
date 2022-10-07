@@ -5,7 +5,9 @@
 <div th:if="!${players.isEmpty()}">
   <div class="custom-card p-4 mx-auto" style="width: 400px">
     <p th:each="player : ${players}">
-      <span th:text="${player.firstName} + ' ' + ${player.lastName} + ' ' + ${player.club.name}">"></span>
+      <a th:href="'/open/players/' + ${player.id}"
+      class="text-decoration-none clickable text-primary"
+         th:text="${player.firstName} + ' ' + ${player.lastName} + ' ' + ${player.club.name}"></a>
     </p>
   </div>
 </div>
