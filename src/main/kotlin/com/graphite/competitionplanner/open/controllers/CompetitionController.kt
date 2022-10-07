@@ -112,6 +112,7 @@ class CompetitionController(
         val registeredPlayersDTO = registrationService.getRegisteredPlayers(competitionId, searchType)
         model.addAttribute("sortingChoice", registeredPlayersDTO.groupingType)
         model.addAttribute("groupingsAndPlayers", registeredPlayersDTO.groupingsAndPlayers)
+        model.addAttribute("competitionId", competitionId)
         return "fragments/registered-players"
     }
 

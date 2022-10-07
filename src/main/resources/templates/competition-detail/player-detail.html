@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base-layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>CompetitionPlanner</title>
+</head>
+<body>
+<section layout:fragment="page-content">
+    <div th:insert="~{fragments/competition-detail-header :: competition-detail-header(competition=${competition})}">
+
+    </div>
+    <div class="row p-4 d-flex align-items-center">
+        <div class="p-4 col-md-8 custom-card mx-auto" th:if="${player} != null">
+            <h2 class="black" th:text="${player.firstName} + ' ' + ${player.lastName}"></h2>
+                <div class="p-4 m-5 custom-card" th:each="registration : ${registrations.registrations}" th:with="categoryName=${'categories.name.' + registration.competitionCategory.name}">
+                    <div class="pb-2">
+                        <h4>
+                          <span class="mb-0" th:if="${#messages.msgOrNull(categoryName)} == null">
+                            <span class="mb-0 fw-bolder text-uppercase" th:text="${registration.competitionCategory.name}"></span>
+                          </span>
+                          <span class="mb-0" th:if="${#messages.msgOrNull(categoryName)} != null">
+                            <span class="mb-0 fw-bolder text-uppercase" th:text="#{${categoryName}}"></span>
+                          </span>
+                        </h4>
+                    </div>
+                    <div th:if="${registration.competitionCategory.type} == 'DOUBLES' and ${registration.accompanyingPlayer} != null">
+                        <span th:text="#{player.playingWith}">
+                        </span>
+                        <a th:href="'/open/players/' + ${competition.id} + '/' + ${registration.accompanyingPlayer.id}"
+                           class="player-name me-2 text-black text-decoration-none"
+                            th:text="${registration.accompanyingPlayer.firstName} + ' ' + ${registration.accompanyingPlayer.lastName}"></a>
+                    </div>
+                  <p class="py-2" th:if="!${areCategoriesDrawn.get(registration.competitionCategory.id)}" th:text="#{draw.notDrawnTitle}"></p>
+                  <div th:each="match : ${registration.matches}" class="col-md-10 mx-auto">
+                    <div th:replace="fragments/match-result :: match-result(match=${match})">
+
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>

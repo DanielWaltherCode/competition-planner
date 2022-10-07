@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base-layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>CompetitionPlanner</title>
+</head>
+<body>
+<section layout:fragment="page-content">
+    <div class="row p-4 d-flex align-items-center">
+        <div class="p-4 custom-card" th:if="${player} != null">
+            <h2 class="black" th:text="${player.firstName} + ' ' + ${player.lastName}"></h2>
+            <div id="competition-list">
+                <h4 th:text="#{navbar.competitions}"></h4>
+                <div th:each="competitionAndCategory : ${competitions.competitionsAndCategories}" th:with="competition=${competitionAndCategory.competition}">
+                    <a th:href="'/open/players/' + ${competition.id} + '/' + ${player.id}" th:text="${competition.name}"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
