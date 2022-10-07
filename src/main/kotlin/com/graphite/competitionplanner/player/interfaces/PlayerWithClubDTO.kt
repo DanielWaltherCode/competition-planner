@@ -11,7 +11,7 @@ data class PlayerWithClubDTO(
     val firstName: String,
     val lastName: String,
     val club: ClubDTO,
-    val dateOfBirth: LocalDate
+    val dateOfBirth: LocalDate,
 ) {
 
     constructor(player: PlayerDTO, club: ClubDTO) : this(

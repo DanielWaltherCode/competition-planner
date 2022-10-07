@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base-layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>CompetitionPlanner</title>
+    <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
+</head>
+<body>
+<section layout:fragment="page-content">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-center">
+            <input
+                    class="form-control w-75 my-4 border border-secondary"
+                    type="search"
+                    name="search" th:placeholder="#{player.search}"
+                    hx-get="/open/players/search"
+                    hx-trigger="keyup changed delay:200ms, search"
+                    hx-target="#search-results">
+        </div>
+
+        <div id="search-results">
+
+        </div>
+
+    </div>
+</section>
+</body>
+</html>
