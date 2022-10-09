@@ -1,4 +1,4 @@
-package com.graphite.competitionplanner;
+package com.graphite.competitionplanner.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

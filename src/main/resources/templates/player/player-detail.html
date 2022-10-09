@@ -15,6 +15,7 @@
             <h2 class="black" th:text="${player.firstName} + ' ' + ${player.lastName}"></h2>
             <div id="competition-list">
                 <h4 th:text="#{navbar.competitions}"></h4>
+                <p th:if="${competitions.competitionsAndCategories.isEmpty()}" th:text="#{player.noCompetitions}"></p>
                 <div th:each="competitionAndCategory : ${competitions.competitionsAndCategories}" th:with="competition=${competitionAndCategory.competition}">
                     <a th:href="'/open/players/' + ${competition.id} + '/' + ${player.id}" th:text="${competition.name}"></a>
                 </div>

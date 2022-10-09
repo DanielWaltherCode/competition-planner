@@ -21,10 +21,18 @@
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{'/open/players'}" th:text="#{navbar.players}">Players</a>
                 </li>
+                <li class="nav-item dropdown ms-3">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-globe2"></i>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" th:href="${#httpServletRequest.requestURI} + '?lang=en'">English</a></li>
+                        <li><a class="dropdown-item" th:href="${#httpServletRequest.requestURI} + '?lang=sv'">Svenska</a></li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>
 </nav>
-</div>
 </body>
 </html>
