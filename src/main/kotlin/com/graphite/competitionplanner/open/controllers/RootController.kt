@@ -1,6 +1,5 @@
 package com.graphite.competitionplanner.open.controllers
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
@@ -9,8 +8,6 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Controller
@@ -23,7 +20,6 @@ class RootController(
     fun index(model: Model): String {
         return "index"
     }
-
 }
 
 data class CompetitionWithDatesAsStringsDTO(

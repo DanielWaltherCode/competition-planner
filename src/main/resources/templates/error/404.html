@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      lang="en"
+      layout:decorate="~{layout/base-layout}">
+<head>
+  <meta charset="UTF-8">
+  <title>CompetitionPlanner</title>
+
+</head>
+<body>
+
+<section layout:fragment="page-content">
+  <div class="custom-card col-md-8 mt-3 mx-auto p-5">
+    <h4 th:text="#{error.notFound}"></h4>
+    <a th:href="'/open'" th:text="#{error.return}"></a>
+  </div>
+</section>
+
+</body>
+</html>
