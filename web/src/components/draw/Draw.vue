@@ -89,7 +89,7 @@
                 </div>
               </div>
               <!-- If there is a playoff/cup -->
-              <playoff-draw id="playoff" v-if="draw != null && draw.playOff != null"
+              <playoff-draw id="playoff" v-if="draw != null && draw.playOff != null && shouldShowPlayoff(draw.playOff)"
                             :playoff-rounds="draw.playOff"></playoff-draw>
             </div>
           </div>
@@ -187,6 +187,21 @@ export default {
           this.errorHandler(err.data)
         })
       }
+    },
+    shouldShowPlayoff(playoff) {
+      let shouldShowPlayoff = false;
+      if (playoff === null) {
+        return shouldShowPlayoff;
+      }
+      playoff[0].matches.forEach(match => {
+        const firstPlayerId = match.firstPlayer[0].id
+        const secondPlayerId = match.secondPlayer[0].id
+        if ( (firstPlayerId !== 0 && firstPlayerId !== -1)
+        || (secondPlayerId !== 0 && secondPlayerId !== -1)) {
+          shouldShowPlayoff = true;
+        }
+      })
+      return shouldShowPlayoff;
     },
     getDraw(categoryId) {
       DrawService.getDraw(this.competition.id, categoryId).then(res => {
