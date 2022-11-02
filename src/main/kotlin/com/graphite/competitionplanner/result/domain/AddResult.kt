@@ -67,12 +67,18 @@ class ResultValidationSpecification(val numberOfSets: Int, val winMargin: Int, v
             throw BadRequestException(BadRequestType.GAME_TOO_FEW_POINTS_IN_SET, "Too few points in set")
         }
 
+        // If winning score is too high (e.g. 13-5) we should stop that here
+        if (result.gameList.any{ (it.firstRegistrationResult > this.winScore  ||
+                        it.secondRegistrationResult > this.winScore) && abs(it.firstRegistrationResult - it.secondRegistrationResult) > this.winMargin }) {
+            throw BadRequestException(BadRequestType.GAME_TOO_MANY_POINTS_IN_SET, "Too many points in set")
+        }
+
         if (result.gameList.any { abs(it.firstRegistrationResult - it.secondRegistrationResult) < this.winMargin }) {
             throw BadRequestException(BadRequestType.GAME_NOT_ENOUGH_WIN_MARGIN, "The win margin is too small")
         }
 
-        // KOlla om den ena har mer än winScore och den andra under 9
-        // KOlla om för många vunna set är inrapporterade
+        // Kolla om den ena har mer än winScore och den andra under 9
+        // Kolla om för många vunna set är inrapporterade
 
         val requiredWins = ceil(this.numberOfSets / 2.0).toInt()
         val firstRegistrationWins = result.gameList.filter { it.firstRegistrationResult > it.secondRegistrationResult }.size
@@ -80,6 +86,10 @@ class ResultValidationSpecification(val numberOfSets: Int, val winMargin: Int, v
 
         if (firstRegistrationWins < requiredWins && secondRegistrationWins < requiredWins) {
             throw BadRequestException(BadRequestType.GAME_TOO_FEW_SETS_REPORTED, "Too few sets reported")
+        }
+
+        if (firstRegistrationWins > requiredWins || secondRegistrationWins > requiredWins) {
+            throw BadRequestException(BadRequestType.GAME_TOO_MANY_SETS_REPORTED, "Too many sets reported")
         }
 
         return if (firstRegistrationWins > secondRegistrationWins) {

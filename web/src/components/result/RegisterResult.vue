@@ -1,52 +1,50 @@
 <template>
   <div class="modal__content">
     <i class="modal__close fas fa-times clickable" @click="$emit('close')"></i>
-    <div class="row p-md-5 p-sm-3 p-1 table-responsive-sm">
-      <table class="table table-borderless">
-        <thead>
-        <tr>
-          <th class="col-3 col-sm-4"></th>
-          <th v-for="set in matchRules.numberOfSets" :key="set" class="col-auto">{{ set }}</th>
-        </tr>
-        </thead>
-        <tbody>
-        <!-- Player 1 -->
-        <tr v-if="this.selectedMatch !== null">
-          <td>{{ getPlayerOne(this.selectedMatch) }}
+    <div class="container-fluid p-md-5 p-sm-3 p-1 light-grey" v-if="selectedMatch != null">
+      <div id="player1" class="row">
+        <div class="col-1 text-start">
+          <p class="fw-bold">{{$t("results.games")}}</p>
+        </div>
+        <div class="col-4">
+          <p class="fw-bold"> {{ getPlayerOne(selectedMatch) }}
             <br>
-            <button class="btn btn-light btn-sm ps-1" type="button"
-                    @click="giveWalkover(selectedMatch.competitionCategory.id, 'PLAYER_ONE')">
-              {{ $t("results.modal.walkover") }}
-            </button>
-          </td>
-          <td v-for="(game, index) in setList" :key="index">
-            <select class="form-select custom-select p-1 text-center" v-model="game.firstRegistrationResult">
-              <option v-for="i in 31" :key="i" :value="i-1" class="p-2">
-                {{ i - 1 }}
-              </option>
-            </select>
-          </td>
-        </tr>
-
-        <!-- Player 2 -->
-        <tr v-if="selectedMatch !== null">
-          <td>{{ getPlayerTwo(this.selectedMatch) }}
+            <span class="fs-6 fw-light fst-italic clickable"
+                  @click="giveWalkover(selectedMatch.competitionCategory.id, 'PLAYER_ONE')"> {{
+                $t("results.modal.walkover")
+              }}
+         </span></p>
+        </div>
+        <div class="col-4">
+          <p class="fw-bold">{{ getPlayerTwo(selectedMatch) }}
             <br>
-            <button class="btn btn-light btn-sm ps-1" type="button"
-                    @click="giveWalkover(selectedMatch.competitionCategory.id, 'PLAYER_TWO')">
+            <span class="fs-6 fw-light fst-italic clickable"
+                  @click="giveWalkover(selectedMatch.competitionCategory.id, 'PLAYER_TWO')">
               {{ $t("results.modal.walkover") }}
-            </button>
-          </td>
-          <td v-for="(game, index) in setList" :key="index">
-            <select class="form-select custom-select p-1 text-center" v-model="game.secondRegistrationResult">
-              <option v-for="i in 31" :key="i" :value="i-1" class="p-2">
-                {{ i - 1 }}
-              </option>
-            </select>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+         </span></p>
+        </div>
+      </div>
+      <div v-for="(game, index) in setList" class="row mb-3" :key="index">
+        <div class="d-flex align-items-center col-1">
+          <span class="pe-4">{{ index + 1 }}</span>
+        </div>
+        <div class="col-4">
+          <input
+              v-model="game.firstRegistrationResult"
+              type="text"
+              class="form-control p-1"
+              max="30"
+              min="0">
+        </div>
+        <div class="col-4">
+          <input
+              v-model="game.secondRegistrationResult"
+              type="text"
+              class="form-control p-1 col-4"
+              max="30"
+              min="0">
+        </div>
+      </div>
     </div>
     <div class="row mx-auto">
       <div class="modal-footer p-2">
@@ -156,7 +154,7 @@ export default {
     savePartialResults() {
       const resultsToSubmit = []
       this.setList.forEach(result => {
-        if (!(result.firstRegistrationResult === 0 && result.secondRegistrationResult === 0)) {
+        if (!(result.firstRegistrationResult === 0 || result.firstRegistrationResult === "" && result.secondRegistrationResult === 0 || result.secondRegistrationResult === "")) {
           resultsToSubmit.push(result)
         }
       })
@@ -174,16 +172,14 @@ export default {
       if (!this.validateSubmission()) {
         return
       }
-      this.error = null
       const resultsToSubmit = []
       this.setList.forEach(result => {
-        if (!(result.firstRegistrationResult === 0 && result.secondRegistrationResult === 0)) {
+        if (!(result.firstRegistrationResult === 0 || result.firstRegistrationResult === "" && result.secondRegistrationResult === 0 || result.secondRegistrationResult === "")) {
           resultsToSubmit.push(result)
         }
       })
       ResultService.updateFullMatchResult(this.competition.id, this.selectedMatch.id, {gameList: resultsToSubmit})
-          .then(data => {
-            console.log("Success block")
+          .then(() => {
             this.$emit("closeAndUpdate", this.selectedMatch.id)
             this.$toasted.success(this.$tc("toasts.resultRegistered")).goAway(3000)
           }).catch(err => {

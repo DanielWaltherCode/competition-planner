@@ -44,13 +44,38 @@ class TestReportPlayoffResult {
     }
 
     @Test
+    @Description("Here the user tries to enter a game result of 13-5 even though 11 is enough to win")
+    fun cannotHaveTooHighWinScore() {
+        // Setup
+        val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
+                gameSettings = dataGenerator.newGameSettingsDTO(
+                        winScore = 11,
+                        winMargin = 2,
+                        numberOfSets = 5,
+                        useDifferentRulesInEndGame = false
+                )
+        )
+        val match = dataGenerator.newPlayOffMatch(round = Round.ROUND_OF_128)
+        val gameSpec1 = dataGenerator.newGameSpec(firstRegistrationResult = 13, secondRegistrationResult = 8)
+        val spec = dataGenerator.newResultSpec(listOf(gameSpec1))
+
+        // Act & Assertions
+        val exceptionType = Assertions.assertThrows(BadRequestException::class.java) {
+            addResult.execute(match, spec, competitionCategory)
+        }.exceptionType
+
+        Assertions.assertEquals(BadRequestType.GAME_TOO_MANY_POINTS_IN_SET, exceptionType)
+    }
+
+    @Test
     fun cannotReportResultsWithoutWinner() {
         // Setup
         val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
             gameSettings = dataGenerator.newGameSettingsDTO(
-                winScore = 7,
-                winScoreFinal = 5,
-                useDifferentRulesInEndGame = false
+                    winScore = 7,
+                    winMargin = 2,
+                    numberOfSets = 5,
+                    useDifferentRulesInEndGame = false
             )
         )
         val match = dataGenerator.newPlayOffMatch(round = Round.QUARTER_FINAL)
@@ -136,5 +161,33 @@ class TestReportPlayoffResult {
         }.exceptionType
 
         Assertions.assertEquals(BadRequestType.GAME_TOO_FEW_SETS_REPORTED, exceptionType)
+    }
+
+    @Test
+    fun cannotReportResultIfTooManyGamesHaveBeenPlayed() {
+        val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
+                gameSettings = dataGenerator.newGameSettingsDTO(
+                        winScore = 11,
+                        winMargin = 2,
+                        numberOfSets = 5,
+                        useDifferentRulesInEndGame = false
+                )
+        )
+        val match = dataGenerator.newPlayOffMatch(round = Round.UNKNOWN)
+        val resultSpec = dataGenerator.newResultSpec(
+                games = listOf(
+                        dataGenerator.newGameSpec(firstRegistrationResult = 11, secondRegistrationResult = 5),
+                        dataGenerator.newGameSpec(firstRegistrationResult = 11, secondRegistrationResult = 5),
+                        dataGenerator.newGameSpec(firstRegistrationResult = 11, secondRegistrationResult = 5),
+                        dataGenerator.newGameSpec(firstRegistrationResult = 11, secondRegistrationResult = 5),
+                )
+        )
+
+        // Act & Assertions
+        val exceptionType = Assertions.assertThrows(BadRequestException::class.java) {
+            addResult.execute(match, resultSpec, competitionCategory)
+        }.exceptionType
+
+        Assertions.assertEquals(BadRequestType.GAME_TOO_MANY_SETS_REPORTED, exceptionType)
     }
 }

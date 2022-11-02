@@ -349,6 +349,7 @@
     "update": "Uppdatera resultat",
     "round": "Grupp/runda",
     "group": "Pool",
+    "games": "Set",
     "search": "Sök på en spelare eller klubb",
     "modal": {
       "header": "Registrera resultat",
@@ -465,6 +466,7 @@
     "GAME_TOO_FEW_POINTS_IN_SET": "I minst ett av setten verkar båda spelare ha lägre resultat än det som krävs för att vinna. Dubbelkolla gärna inställningarna för klassen för att se vilka regler som är uppsatta",
     "GAME_COULD_NOT_DECIDE_WINNER": "Det gick inte att avgöra vem som vann matchen. Dubbelkolla det inmatade resultatet eller prova igen senare",
     "GAME_TOO_MANY_SETS_REPORTED": "För många set verkar ha rapporteras in. Dubbelkolla det inmatade resultatet eller prova igen senare",
-    "GAME_NOT_ENOUGH_WIN_MARGIN": "I minst ett av setten så finns ingen vinnare på grund av att vinstmarginalen är för liten. Dubbelkolla det inmatade resultatet och prova igen"
+    "GAME_NOT_ENOUGH_WIN_MARGIN": "I minst ett av setten så finns ingen vinnare på grund av att vinstmarginalen är för liten. Dubbelkolla det inmatade resultatet och prova igen",
+    "GAME_TOO_MANY_POINTS_IN_SET": "I minst ett av setten verkar vinstmarginalen vara för stor. Dubbelkolla det inmatade resultatet och prova igen"
   }
 }
