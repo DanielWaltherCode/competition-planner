@@ -25,13 +25,13 @@ import kotlin.math.ceil
 
 @Service
 class ResultService(
-    val resultRepository: IResultRepository,
-    val matchRepository: MatchRepository,
-    val findCompetitionCategory: FindCompetitionCategory,
-    val addResult: AddResult,
-    val competitionDrawRepository: ICompetitionDrawRepository,
-    val registrationRepository: IRegistrationRepository,
-    val dslContext: DSLContext
+        val resultRepository: IResultRepository,
+        val matchRepository: MatchRepository,
+        val findCompetitionCategory: FindCompetitionCategory,
+        val addResult: AddResult,
+        val competitionDrawRepository: ICompetitionDrawRepository,
+        val registrationRepository: IRegistrationRepository,
+        val dslContext: DSLContext
 ) {
 
     fun addFinalMatchResult(matchId: Int, resultSpec: ResultSpec): ResultDTO {
@@ -47,26 +47,24 @@ class ResultService(
 
     private fun advanceRegistrations(competitionCategory: CompetitionCategoryDTO, match: Match) {
         // Match has now been completed, and we need to decide if we need to advance players (registrations) to next round
-        when(match) {
+        when (match) {
             is PlayoffMatch -> competitionCategory.handleAdvancementOf(match)
             is PoolMatch -> competitionCategory.handleAdvancementOf(match)
         }
     }
 
     private fun CompetitionCategoryDTO.handleAdvancementOf(match: PlayoffMatch) {
-        if (match.round == Round.FINAL) {
-            // Nothing to advance
-        } else {
+        if (match.round != Round.FINAL) {
             val draw = competitionDrawRepository.get(this.id)
             val winner = matchRepository.getMatch(match.id).winner
             val nextRound = draw.playOff.filter { it.round < match.round }.maxByOrNull { it.round }!!
-            val nextOrderNumber = ceil( match.orderNumber / 2.0 ).toInt() // 1 -> 1, 2 -> 1, 3 -> 2, etc.
+            val nextOrderNumber = ceil(match.orderNumber / 2.0).toInt() // 1 -> 1, 2 -> 1, 3 -> 2, etc.
             val nextMatch = matchRepository.getMatch2(
-                nextRound.matches.first { it.matchOrderNumber == nextOrderNumber }.id
+                    nextRound.matches.first { it.matchOrderNumber == nextOrderNumber }.id
             )
             if (match.orderNumber % 2 == 1) {
                 nextMatch.firstRegistrationId = winner
-            }else {
+            } else {
                 nextMatch.secondRegistrationId = winner
             }
             matchRepository.save(nextMatch)
@@ -79,17 +77,21 @@ class ResultService(
         } else {
             val draw: CompetitionCategoryDrawDTO = competitionDrawRepository.get(this.id)
             val matchesInPool: List<MatchAndResultDTO> = draw.groups.first { it.name == match.name }.matches
-            val allMatchesHaveBeenPlayedInPool: Boolean = matchesInPool.all { it.winner.isNotEmpty() } // If winner is empty, then there is no winner.
+            val allMatchesHaveBeenPlayedInPool: Boolean =
+                    matchesInPool.all { it.winner.isNotEmpty() } // If winner is empty, then there is no winner.
             if (allMatchesHaveBeenPlayedInPool) {
                 val groupStanding: List<GroupStandingDTO> = draw.groups.first { it.name == match.name }.groupStandingList
                 // Store final group results
-                storeFinalGroupResult(groupStanding, competitionDrawRepository.getPool(match.competitionCategoryId, match.name))
+                storeFinalGroupResult(groupStanding,
+                        competitionDrawRepository.getPool(match.competitionCategoryId, match.name))
 
                 val allRegistrations: List<Int> = groupStanding.sortedBy { it.groupPosition }.map {
                     registrationRepository.getRegistrationIdForPlayerInCategory(this.id, it.player.first().id)
                 }
 
-                val groupToPlayoff: List<GroupToPlayoff> = draw.poolToPlayoffMap.filter { it.groupPosition.groupName == match.name }.sortedBy { it.groupPosition.position }
+                val groupToPlayoff: List<GroupToPlayoff> =
+                        draw.poolToPlayoffMap.filter { it.groupPosition.groupName == match.name }
+                                .sortedBy { it.groupPosition.position }
                 val registrationsToAdvance = allRegistrations.subList(0, groupToPlayoff.size)
                 assert(groupToPlayoff.size == registrationsToAdvance.size) { "Number of players advancing does not match the number of group to playoff mappings" }
 
@@ -101,7 +103,7 @@ class ResultService(
                         if (record.secondRegistrationId == Registration.Bye.asInt()) {
                             handleDirectAdvancementWhenMeetingBye(this, registrationId, record)
                         }
-                    }else {
+                    } else {
                         record.secondRegistrationId = registrationId
                         if (record.firstRegistrationId == Registration.Bye.asInt()) {
                             handleDirectAdvancementWhenMeetingBye(this, registrationId, record)
@@ -113,12 +115,13 @@ class ResultService(
         }
     }
 
-    private fun handleDirectAdvancementWhenMeetingBye(competitionCategoryDTO: CompetitionCategoryDTO, winnerRegistrationId: Int, record: MatchRecord) {
+    private fun handleDirectAdvancementWhenMeetingBye(competitionCategoryDTO: CompetitionCategoryDTO,
+                                                      winnerRegistrationId: Int, record: MatchRecord) {
         record.winner = winnerRegistrationId
         record.update()
         val pm = PlayoffMatch(Round.valueOf(record.groupOrRound), record.matchOrderNumber, record.id,
-            record.competitionCategoryId, record.firstRegistrationId,
-            record.secondRegistrationId, record.wasWalkover, record.winner)
+                record.competitionCategoryId, record.firstRegistrationId,
+                record.secondRegistrationId, record.wasWalkover, record.winner)
         competitionCategoryDTO.handleAdvancementOf(pm)
     }
 
@@ -130,7 +133,8 @@ class ResultService(
     private fun storeFinalGroupResult(groupStanding: List<GroupStandingDTO>, pool: PoolRecord) {
         for (standing in groupStanding) {
             val poolResultRecord: PoolResultRecord = dslContext.newRecord(POOL_RESULT)
-            val registrationId = registrationRepository.getRegistrationIdForPlayerInCategory(pool.competitionCategoryId, standing.player.first().id)
+            val registrationId = registrationRepository.getRegistrationIdForPlayerInCategory(pool.competitionCategoryId,
+                    standing.player.first().id)
             poolResultRecord.poolPosition = standing.groupPosition
             poolResultRecord.poolId = pool.id
             poolResultRecord.registrationId = registrationId
@@ -140,12 +144,12 @@ class ResultService(
 }
 
 data class ResultDTO(
-    val gameList: List<GameDTO>
+        val gameList: List<GameDTO>
 )
 
 data class GameDTO(
-    val gameId: Int,
-    val gameNumber: Int,
-    val firstRegistrationResult: Int,
-    val secondRegistrationResult: Int
+        val gameId: Int,
+        val gameNumber: Int,
+        val firstRegistrationResult: Int,
+        val secondRegistrationResult: Int
 )

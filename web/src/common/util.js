@@ -164,7 +164,7 @@ export function tryTranslateCategoryName(name) {
 
 export function generalErrorHandler(error) {
     if (error.errorType !== null && error.errorType !== undefined) {
-        this.$toasted.error(this.$tc("errors." + error.errorType)).goAway(5000)
+        this.$toasted.error(this.$tc("errors." + error.errorType)).goAway(8000)
     }
     else {
         this.$toasted.error(this.$tc("toasts.error.general.standard")).goAway(5000)
