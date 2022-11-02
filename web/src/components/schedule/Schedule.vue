@@ -64,23 +64,31 @@
                 <div class="col-xl-4 mx-auto bg-grey shadow mb-2 pb-2">
                   <h5 class="p-3 text-center">{{ $t("schedule.generalInfo.averageMatchTimeHeading") }}</h5>
                   <p>{{ $t("schedule.generalInfo.averageMatchTimeHelper") }}</p>
-                  <select id="match-length-selection" class="form-control mb-2" @change="setMinutesPerMatch($event)">
+                  <select id="match-length-selection" class="form-control mb-2" @change="setMinutesPerMatch($event)" v-model="scheduleMetadata.minutesPerMatch">
                     <option v-for="i in minutesPerMatchOptions" :key="i" :value="i">
                       {{ i + " " + $t("schedule.generalInfo.minutes") }}
                     </option>
                   </select>
                 </div>
-                <div>
-                  <button v-if="metaOptionsChanged === true" type="button" class="btn btn-warning" @click="saveChanges">
-                    {{ $t("general.saveChanges") }}
-                  </button>
+                <div v-if="metaOptionsChanged === true" class="bg-grey">
+                  <div class="p-2">
+                    <button  type="button" class="btn btn-primary me-2" @click="saveChanges">
+                      {{ $t("general.saveChanges") }}
+                    </button>
+                    <button type="button" class="btn btn-warning" @click="discardChanges">
+                      {{ $t("general.close") }}
+                    </button>
+                  </div>
+                  <div class="d-flex justify-content-center">
+                    <p class="fs-6">{{$t("schedule.main.needSaving")}}</p>
+                  </div>
                 </div>
               </div>
             </div>
 
 
             <!-- Choose date and time for individual categories -->
-            <div v-if="scheduleCategoryContainerDTO !== null"
+            <div v-if="scheduleCategoryContainerDTO !== null && metaOptionsChanged === false"
                  id="categories"
                  class="row p-5 col-lg-11 mx-auto custom-card">
               <div>
@@ -197,7 +205,7 @@
           </div>
 
           <!-- See generated schedule -->
-          <div v-if="generatedScheduleContainer!== null && generatedScheduleContainer.excelScheduleList.length > 0"
+          <div v-if="generatedScheduleContainer!== null && generatedScheduleContainer.excelScheduleList.length > 0 && metaOptionsChanged === false"
                class="col-sm-11 mx-auto my-4 custom-card p-1">
             <!-- Select date -->
             <div>
@@ -421,17 +429,22 @@ export default {
     formatTime: getHoursMinutes,
     undefinedOrNull: undefinedOrNull,
     saveChanges() {
-      const saveGeneralChanges = {
-        dailyStartEnd: {
-          dailyStartEndList: this.dailyStartEndDTO.dailyStartEndList.map(object => this.convertToDailyStartEndSpec(object))
-        },
-        minutesPerMatchSpec: {minutesPerMatch: this.scheduleMetadata.minutesPerMatch},
-        availableTables: {tableDays: this.availableTables}
-      }
+      if (confirm(this.$tc("confirm.scheduleChange"))) {
+        const saveGeneralChanges = {
+          dailyStartEnd: {
+            dailyStartEndList: this.dailyStartEndDTO.dailyStartEndList.map(object => this.convertToDailyStartEndSpec(object))
+          },
+          minutesPerMatchSpec: {minutesPerMatch: this.scheduleMetadata.minutesPerMatch},
+          availableTables: {tableDays: this.availableTables}
+        }
 
-      ScheduleGeneralService.saveMainScheduleChanges(this.competition.id, saveGeneralChanges).then(() => {
-        window.location.reload()
-      })
+        ScheduleGeneralService.saveMainScheduleChanges(this.competition.id, saveGeneralChanges).then(() => {
+          window.location.reload()
+        })
+      }
+    },
+    discardChanges() {
+      window.location.reload()
     },
     publishSchedule() {
       ScheduleGeneralService.publishSchedule(this.competition.id).then(() => {

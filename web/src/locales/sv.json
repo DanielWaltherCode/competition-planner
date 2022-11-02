@@ -274,8 +274,9 @@
     },
     "main": {
       "heading": "Schema och tidssättning",
-      "helperText": "Om en klass har lottats kan du här ange när den ska spelas. Fyll först i fälten ovan för antal tillgängliga bord och matchtid. När alla fält är ifyllda uppdateras det genererade schemat nedan så att man kan se när matcherna i klassen spelas.",
+      "helperText": "Om en klass har lottats kan du här ange när den ska spelas. Fyll först i fälten ovan för antal tillgängliga bord och matchtid. När alla fält är ifyllda kan du klicka på 'Schemalägg'. Då uppdateras det genererade schemat nedan så att man kan se när matcherna i klassen spelas.",
       "categoryStartTimes": "Tidssättning för klasser",
+      "needSaving": "Ändringarna behöver sparas (eller tas bort) innan du går vidare",
       "category": "Klass",
       "stage": "Omgång",
       "day": "Speldag",
@@ -452,7 +453,8 @@
     "redraw": "Är du säker på att du vill göra en ny lottning för klassen?",
     "deleteDraw": "Är du säker på att du vill ta bort lottningen för klassen?",
     "deleteCategory": "Är du säker på att du vill ta bort klassen?",
-    "deleteResult": "Är du säker på att du vill ta bort resultatet?"
+    "deleteResult": "Är du säker på att du vill ta bort resultatet?",
+    "scheduleChange": "Ändringar här medför att all existerande schemaläggning tas bort. Är du säker på att du vill göra ändringar?"
   },
   "errors": {
     "CATEGORY_CANNOT_DELETE_WITH_PLAYERS": "Kan inte ta bort en klass som har anmälda spelare",
