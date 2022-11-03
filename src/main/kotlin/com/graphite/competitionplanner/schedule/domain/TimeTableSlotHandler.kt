@@ -1,5 +1,7 @@
 package com.graphite.competitionplanner.schedule.domain
 
+import com.graphite.competitionplanner.common.exception.GeneralException
+import com.graphite.competitionplanner.common.exception.GeneralExceptionType
 import com.graphite.competitionplanner.common.plusDuration
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository

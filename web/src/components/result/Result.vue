@@ -20,7 +20,7 @@
             </div>
           </div>
           <div id="table-container" class="table-responsive" v-if="matches.length > 0">
-            <table class="table table-borderless">
+            <table class="table table-borderless table-striped">
               <thead>
               <tr>
                 <th scope="col" class="col-1">{{ $t("results.startTime") }}</th>
@@ -30,7 +30,7 @@
                 </th>
                 <th scope="col" class="col-2"></th>
                 <th scope="col" class="col-2"></th>
-                <th scope="col" class="col-2">{{ $t("results.result") }}</th>
+                <th scope="col" class="col-2 text-start">{{ $t("results.result") }}</th>
                 <th scope="col" class="col-1"></th>
               </tr>
               </thead>
@@ -42,14 +42,15 @@
                   <span v-if="match.matchType === 'GROUP'"> {{ $t("results.group") + ' ' + match.groupOrRound }}</span>
                   <span v-else>{{ $t("round." + match.groupOrRound) }}</span>
                 </td>
-                <td :class="isPlayerOneWinner(match) ? 'fw-bold': ''">{{ getPlayerOne(match) }}</td>
-                <td :class="isPlayerTwoWinner(match) ? 'fw-bold': ''">{{ getPlayerTwo(match) }}</td>
-                <td v-if="match !== null" class="d-flex justify-content-center">
+                <td class="text-start" :class="isPlayerOneWinner(match) ? 'fw-bold': ''">{{ getPlayerOne(match) }}</td>
+                <td class="text-start" :class="isPlayerTwoWinner(match) ? 'fw-bold': ''">{{ getPlayerTwo(match) }}</td>
+                <td v-if="match !== null && match.result.gameList.length > 0" class="d-flex justify-content-start">
                    <p class="pe-2" v-for="game in match.result.gameList" :key="game.id">
                     {{ game.firstRegistrationResult }} - {{ game.secondRegistrationResult }}
                   </p></td>
+                <td v-else></td>
                 <td>
-                  <button type="button" class="btn btn-light" @click="selectMatch(match)">
+                  <button type="button" class="btn btn-outline-primary" @click="selectMatch(match)">
                     <span v-if="match.result.gameList.length === 0">{{ $t("results.register") }}</span>
                     <span v-if="match.result.gameList.length > 0">{{ $t("results.update") }}</span>
                   </button>

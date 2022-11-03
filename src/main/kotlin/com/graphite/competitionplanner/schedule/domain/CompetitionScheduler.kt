@@ -1,6 +1,8 @@
 package com.graphite.competitionplanner.schedule.domain
 
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
+import com.graphite.competitionplanner.common.exception.BadRequestException
+import com.graphite.competitionplanner.common.exception.BadRequestType
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
@@ -196,7 +198,7 @@ class CompetitionScheduler(
     /**
      * Schedule the given matches in the timetable.
      *
-     * @throws IndexOutOfBoundsException If there are not enough slots available to fit all the matches
+     * @throws BadRequestException If there are not enough slots available to fit all the matches
      */
     private fun scheduleMatches(
         timetable: Map<LocalDateTime, List<TimeTableSlotDTO>>,
@@ -205,7 +207,8 @@ class CompetitionScheduler(
         return if (matches.isEmpty()) {
             emptyList()
         } else if (timetable.isEmpty()) {
-            throw IndexOutOfBoundsException("There are too few timetable slots to fit all the matches")
+            throw BadRequestException(BadRequestType.SCHEDULE_TOO_FEW_TIMESLOTS,
+                    "There are too few timetable slots to fit all the matches")
         } else {
             val (first, rest) = getFirstTimeBlock(timetable)
             val (updateSpec, remainingMatchesToSchedule) = scheduleBlockOfTimeslots(first, matches)
@@ -395,7 +398,7 @@ class CompetitionScheduler(
         }
     }
 
-    private fun removeTimeSlotCategory(categoryId: Int, matchType: MatchType) {
+    fun removeTimeSlotCategory(categoryId: Int, matchType: MatchType) {
         scheduleRepository.asTransaction {
             scheduleRepository.removeCategoryAndMatchTypeFromTimeslots(categoryId, matchType)
             scheduleRepository.removeCategoryTimeSlotFromMatchTable(categoryId, matchType)
