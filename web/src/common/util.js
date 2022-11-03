@@ -147,6 +147,10 @@ export function undefinedOrNull(object) {
     return object === null || object === undefined
 }
 
+export function undefinedOrNullOrEmpty(object) {
+    return object === "" || undefinedOrNull(object)
+}
+
 /**
  * In case the category name belongs to one of the default categories we can translate it. Otherwise, we just returned
  * the given name as it is custom category, and we cannot provide a translation.

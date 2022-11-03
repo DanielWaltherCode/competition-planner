@@ -27,7 +27,7 @@ class ScheduleApi(
 
     @GetMapping("/timetable-info")
     fun getTimeTableInfo(
-        @PathVariable competitionId: Int,
+            @PathVariable competitionId: Int,
     ): ExcelScheduleDTOContainer {
         return competitionScheduler.getScheduleForFrontend(competitionId)
     }
@@ -36,6 +36,7 @@ class ScheduleApi(
     fun getCategorySchedulerSettings(@PathVariable competitionId: Int): ScheduleCategoryContainerDTO {
         return competitionScheduler.getCategorySchedulerSettings(competitionId)
     }
+
     //Updates daily start end, minutes per match and available tables at once
     // This is done to make it easier to update match time slots correctly
     @PutMapping
@@ -51,15 +52,23 @@ class ScheduleApi(
             @RequestBody spec: ScheduleCategorySpec
     ) {
         competitionScheduler.scheduleCompetitionCategory(
-            competitionId,
-            competitionCategoryId,
-            MatchSchedulerSpec(
-                spec.matchType,
-                spec.tableNumbers,
-                spec.startTime.toLocalDate(),
-                spec.startTime.toLocalTime()
-            )
+                competitionId,
+                competitionCategoryId,
+                MatchSchedulerSpec(
+                        spec.matchType,
+                        spec.tableNumbers,
+                        spec.startTime.toLocalDate(),
+                        spec.startTime.toLocalTime()
+                )
         )
+    }
+
+    // Where "stage" is group or playoff
+    @DeleteMapping("category/{competitionCategoryId}/{stage}")
+    fun clearSchedulingForCategory(@PathVariable competitionCategoryId: Int,
+                                   @PathVariable stage: String) {
+        val matchType = if (stage.lowercase() == "group") MatchType.GROUP else MatchType.PLAYOFF
+        competitionScheduler.removeTimeSlotCategory(competitionCategoryId, matchType)
     }
 
     /**
@@ -71,26 +80,26 @@ class ScheduleApi(
     }
 
     data class ScheduleCategorySpec(
-        /**
-         * Scheduling mode
-         */
-        val mode: ScheduleMode,
-        /**
-         * Type of matches to schedule
-         */
-        val matchType: MatchType,
-        /**
-         * Tables to schedule the matches on
-         */
-        val tableNumbers: List<Int>,
-        /**
-         * Location where the matches are scheduled
-         */
-        val location: String,
-        /**
-         * When the first matches will be scheduled. Only applicable if mode is ABSOLUTE
-         */
-        val startTime: LocalDateTime
+            /**
+             * Scheduling mode
+             */
+            val mode: ScheduleMode,
+            /**
+             * Type of matches to schedule
+             */
+            val matchType: MatchType,
+            /**
+             * Tables to schedule the matches on
+             */
+            val tableNumbers: List<Int>,
+            /**
+             * Location where the matches are scheduled
+             */
+            val location: String,
+            /**
+             * When the first matches will be scheduled. Only applicable if mode is ABSOLUTE
+             */
+            val startTime: LocalDateTime
     )
 
     enum class ScheduleMode {

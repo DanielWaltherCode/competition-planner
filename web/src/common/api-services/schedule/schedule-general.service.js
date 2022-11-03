@@ -19,6 +19,9 @@ const ScheduleGeneralService = {
     },
     deleteSchedule(competitionId) {
         return Axios.delete(`/schedule/${competitionId}/`, {withCredentials: true})
+    },
+    clearCategory(competitionId, categoryId, stage) {
+        return Axios.delete(`/schedule/${competitionId}/category/${categoryId}/${stage}`, {withCredentials: true})
     }
 }
 

@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.schedule.domain
 
+import com.graphite.competitionplanner.common.exception.BadRequestException
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.draw.interfaces.Round
@@ -439,7 +440,7 @@ class TestCompetitionSchedulerAppendMode {
         `when`(mockedScheduleRepository.getTimeTable(competitionId)).thenReturn(timeTable)
 
         // Act & Assert
-        Assertions.assertThrows(IndexOutOfBoundsException::class.java) {
+        Assertions.assertThrows(BadRequestException::class.java) {
             competitionScheduler.scheduleCompetitionCategory(
                 competitionId,
                 competitionCategoryId,
@@ -472,7 +473,7 @@ class TestCompetitionSchedulerAppendMode {
         `when`(mockedScheduleRepository.getTimeTable(competitionId)).thenReturn(timeTable)
 
         // Act & Assert
-        Assertions.assertThrows(IndexOutOfBoundsException::class.java) {
+        Assertions.assertThrows(BadRequestException::class.java) {
             competitionScheduler.scheduleCompetitionCategory(
                 competitionId,
                 competitionCategoryId,
