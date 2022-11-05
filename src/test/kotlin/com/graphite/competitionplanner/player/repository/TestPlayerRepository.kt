@@ -6,7 +6,6 @@ import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import io.jsonwebtoken.lang.Assert
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,13 +22,8 @@ class TestPlayerRepository(
 
     @BeforeEach
     fun saveAClub() {
-        val spec = dataGenerator.newClubSpec("Fake Club", "Fake Address")
+        val spec = dataGenerator.newClubSpec()
         club = clubRepository.store(spec)
-    }
-
-    @AfterEach
-    fun deleteClub() {
-        clubRepository.delete(club.id)
     }
 
     @Test
@@ -50,16 +44,13 @@ class TestPlayerRepository(
             dataGenerator.newPlayerSpec("Nils", "Nilsson", club.id),
             dataGenerator.newPlayerSpec("Simon", "Nilsson", club.id)
         )
-
-        val storedPlayers = players.map { playerRepository.store(it) }
+        players.map { playerRepository.store(it) }
 
         // Act
         val playersInClub = playerRepository.playersInClub(club.id)
 
+        // Assert
         Assertions.assertEquals(players.size, playersInClub.size)
-
-        // Clean up
-        storedPlayers.map { playerRepository.delete(it.id) }
     }
 
     @Test
@@ -70,18 +61,15 @@ class TestPlayerRepository(
             dataGenerator.newPlayerSpec("Nils", "Nilsson", club.id),
             dataGenerator.newPlayerSpec("Simon", "Nilsson", club.id)
         )
-
-        val storedPlayers = players.map { playerRepository.store(it) }
+        players.map { playerRepository.store(it) }
 
         // Act
         val playersInClub = playerRepository.playersInClub(club.id)
 
+        // Assert
         for (player in playersInClub) {
             Assertions.assertEquals(player.club, club)
         }
-
-        // Clean up
-        storedPlayers.map { playerRepository.delete(it.id) }
     }
 
     @Test
@@ -106,9 +94,6 @@ class TestPlayerRepository(
         Assertions.assertEquals(updateSpec.clubId, updated.clubId)
         Assertions.assertEquals(updateSpec.dateOfBirth, updated.dateOfBirth)
         Assertions.assertEquals(player.id, updated.id)
-
-        // Clean up
-        playerRepository.delete(updated.id)
     }
 
     @Test
@@ -125,15 +110,12 @@ class TestPlayerRepository(
         // Act
         val found = playerRepository.findById(player.id)
 
-        // Assertions
+        // Assert
         Assertions.assertEquals(player.id, found.id)
         Assertions.assertEquals(player.firstName, found.firstName)
         Assertions.assertEquals(player.lastName, found.lastName)
         Assertions.assertEquals(player.clubId, found.clubId)
         Assertions.assertEquals(player.dateOfBirth, found.dateOfBirth)
-
-        // Clean up
-        playerRepository.delete(player.id)
     }
 
     @Test
@@ -159,10 +141,6 @@ class TestPlayerRepository(
         Assertions.assertTrue(playerIds.size == 2)
         Assertions.assertTrue(playerIds.contains(player1.id))
         Assertions.assertTrue(playerIds.contains(player2.id))
-
-        // Clean up
-        playerRepository.delete(player1.id)
-        playerRepository.delete(player2.id)
     }
 
     @Test
@@ -194,40 +172,25 @@ class TestPlayerRepository(
         // Act
         val deletedPlayer = playerRepository.delete(player.id)
 
-        // Assertions
+        // Assert
         Assertions.assertThrows(NotFoundException::class.java) { playerRepository.findById(deletedPlayer.id) }
     }
 
     @Test
-    fun shouldReturnPlayerThatStartWithName() {
+    fun shouldReturnPlayersWhoseFullNameStartWithName() {
         // Setup
-        val lasseSpec = dataGenerator.newPlayerSpec("Lasse", "Nilsson", club.id)
-        val lasse = playerRepository.store(lasseSpec)
-
-        val lassSpec = dataGenerator.newPlayerSpec("Lass", "Nilsson", club.id)
-        val lass = playerRepository.store(lassSpec)
-
-        val lassonSpec = dataGenerator.newPlayerSpec("Karl", "Lasson", club.id)
-        val lasson = playerRepository.store(lassonSpec)
-
-        val klasDto = dataGenerator.newPlayerSpec("Klas", "Klasson", club.id)
-        val klas = playerRepository.store(klasDto)
+        playerRepository.store(dataGenerator.newPlayerSpec("Lasse", "Nilsson", club.id))
+        playerRepository.store(dataGenerator.newPlayerSpec("Lass", "Nilsson", club.id))
+        playerRepository.store(dataGenerator.newPlayerSpec("Karl", "Lasson", club.id))
+        playerRepository.store(dataGenerator.newPlayerSpec("Klas", "Klasson", club.id))
 
         // Act
         val matchingPlayers = playerRepository.findByName("las")
-        val matchingPlayerIds = matchingPlayers.map { it.id }
 
-        // Assertions
-        Assertions.assertTrue(matchingPlayerIds.contains(lasse.id))
-        Assertions.assertTrue(matchingPlayerIds.contains(lass.id))
-        Assertions.assertFalse(matchingPlayerIds.contains(lasson.id))
-        Assertions.assertFalse(matchingPlayerIds.contains(klas.id))
-
-        // Clean up
-        playerRepository.delete(lasse.id)
-        playerRepository.delete(lass.id)
-        playerRepository.delete(lasson.id)
-        playerRepository.delete(klas.id)
+        // Assert
+        Assertions.assertTrue(matchingPlayers.isNotEmpty(), "Did not expect to get an empty result back.")
+        Assertions.assertTrue(matchingPlayers.all { it.firstName.startsWith("las", ignoreCase = true) },
+            "At least one player does not have a name that begins with \"las\"")
     }
 
 }
