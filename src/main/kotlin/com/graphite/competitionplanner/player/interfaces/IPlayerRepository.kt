@@ -39,8 +39,7 @@ interface IPlayerRepository {
     fun findAllForIds(playerIds: List<Int>): List<PlayerWithClubDTO>
 
     /**
-     * Return a list of players where the first name or last name
-     * starts with the given search string
+     * Return a list of players where the first name starts with the given search string
      *
      * @param startOfName: Search string
      * @return List of Players
