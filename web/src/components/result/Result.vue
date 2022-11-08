@@ -9,14 +9,22 @@
       <div class="row">
         <!-- Main content -->
         <div id="main" class="p-4">
-          <div class="col-sm-7 mb-2">
-            <div class="d-flex align-items-center mb-2">
-              <i class="fas fa-search me-2"></i>
-              <label for="playerSearch" class="form-label d-flex mb-0"> {{ $t("results.search") }}</label>
+          <!-- Filters -->
+          <div class="row mb-2 d-flex align-items-center p-3 bg-grey">
+            <div class="col-7">
+              <div class="d-flex align-items-center mb-2">
+                <i class="fas fa-search me-2"></i>
+                <label for="playerSearch" class="form-label d-flex mb-0"> {{ $t("results.search") }}</label>
+              </div>
+              <div class="d-flex">
+                <input type="text" class="form-control me-3" v-model="searchString" id="playerSearch">
+                <button type="button" class="btn btn-primary" @click="searchString = ''">{{ $t("general.clear") }}
+                </button>
+              </div>
             </div>
-            <div class="d-flex">
-              <input type="text" class="form-control me-3" v-model="searchString" id="playerSearch">
-              <button type="button" class="btn btn-primary" @click="searchString = ''">{{$t("general.clear")}}</button>
+            <div class="col-3 ms-4 form-check d-flex justify-content-start">
+              <input id="hide-finished-matches" v-model="hideFinishedMatches" type="checkbox" class="form-check-input">
+              <label class="form-check-label ms-2" for="hide-finished-matches">{{ $t("results.hideFinished") }}</label>
             </div>
           </div>
           <div id="table-container" class="table-responsive" v-if="matches.length > 0">
@@ -44,8 +52,8 @@
                 </td>
                 <td class="text-start" :class="isPlayerOneWinner(match) ? 'fw-bold': ''">{{ getPlayerOne(match) }}</td>
                 <td class="text-start" :class="isPlayerTwoWinner(match) ? 'fw-bold': ''">{{ getPlayerTwo(match) }}</td>
-                <td v-if="match !== null && match.result.gameList.length > 0" class="d-flex justify-content-start">
-                   <p class="pe-2" v-for="game in match.result.gameList" :key="game.id">
+                <td v-if="match !== null && match.result.gameList.length > 0" class="text-start">
+                  <p v-for="game in match.result.gameList" :key="game.id" class="pe-2 pb-0 d-inline">
                     {{ game.firstRegistrationResult }} - {{ game.secondRegistrationResult }}
                   </p></td>
                 <td v-else></td>
@@ -83,7 +91,7 @@
 import MatchService from "@/common/api-services/match.service";
 import {getPlayerOneWithClub, getPlayerTwoWithClub, isPlayerOneWinner, isPlayerTwoWinner} from "@/common/util";
 import RegisterResult from "@/components/result/RegisterResult";
-import { tryTranslateCategoryName } from "@/common/util"
+import {tryTranslateCategoryName} from "@/common/util"
 
 export default {
   name: "ResultComponent",
@@ -96,7 +104,8 @@ export default {
       gameResults: [],
       nrGames: null,
       showModal: false,
-      searchString: ""
+      searchString: "",
+      hideFinishedMatches: false
     }
   },
   computed: {
@@ -105,18 +114,29 @@ export default {
     },
     filterMatches() {
       let filteredMatches = []
-      if (this.searchString !== "") {
+      if (this.hideFinishedMatches) {
         this.matches.forEach(match => {
-          if (this.getPlayerOne(match).toLowerCase().includes(this.searchString.toLowerCase())) {
-            filteredMatches.push(match)
-          } else if (this.getPlayerTwo(match).toLowerCase().includes(this.searchString.toLowerCase())) {
+          if (match.winner.length === 0) {
             filteredMatches.push(match)
           }
         })
       } else {
-        return this.matches
+        filteredMatches = this.matches
       }
-      return filteredMatches
+
+      let matchesWithSearchString = []
+      if (this.searchString !== "") {
+        filteredMatches.forEach(match => {
+          if (this.getPlayerOne(match).toLowerCase().includes(this.searchString.toLowerCase())) {
+            matchesWithSearchString.push(match)
+          } else if (this.getPlayerTwo(match).toLowerCase().includes(this.searchString.toLowerCase())) {
+            matchesWithSearchString.push(match)
+          }
+        })
+      } else {
+        return filteredMatches
+      }
+      return matchesWithSearchString
     },
     isMobile: function () {
       const width = window.innerWidth
@@ -223,6 +243,7 @@ tr td {
     border-radius: 0.25rem;
     background: #fff;
   }
+
   ::v-deep .modal-footer {
     justify-content: center;
   }

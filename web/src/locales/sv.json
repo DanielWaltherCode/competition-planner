@@ -348,11 +348,12 @@
     "category": "Klass",
     "result": "Resultat",
     "register": "Registrera",
-    "update": "Uppdatera resultat",
+    "update": "Uppdatera",
     "round": "Grupp/runda",
     "group": "Pool",
     "games": "Set",
     "search": "Sök på en spelare eller klubb",
+    "hideFinished": "Dölj färdigspelade matcher",
     "modal": {
       "header": "Registrera resultat",
       "savePartial": "Spara delresultat",
