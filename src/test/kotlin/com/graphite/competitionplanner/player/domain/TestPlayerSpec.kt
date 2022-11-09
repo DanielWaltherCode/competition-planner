@@ -20,13 +20,6 @@ class TestPlayerSpec {
     }
 
     @Test
-    fun firstNameCannotContainNumbers() {
-        Assertions.assertThrows(IllegalArgumentException::class.java) {
-            dataGenerator.newPlayerSpec(firstName = "Lennart1")
-        }
-    }
-
-    @Test
     fun firstNameCanContainNonEnglishLetters() {
         Assertions.assertDoesNotThrow {
             dataGenerator.newPlayerSpec(firstName = "ÅÄÖГ敗")
@@ -37,13 +30,6 @@ class TestPlayerSpec {
     fun lastNameCannotBeEmpty() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             dataGenerator.newPlayerSpec(lastName = "")
-        }
-    }
-
-    @Test
-    fun lastNameCannotContainLetters() {
-        Assertions.assertThrows(IllegalArgumentException::class.java) {
-            dataGenerator.newPlayerSpec(lastName = "lastname123")
         }
     }
 
