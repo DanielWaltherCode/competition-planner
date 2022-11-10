@@ -167,6 +167,11 @@
     "close": "Avbryt",
     "clear": "Rensa"
   },
+  "club": {
+    "title": "Lägg till ny klubb",
+    "name": "Namn",
+    "address": "Address"
+  },
   "player": {
     "sidebar": {
       "title": "Spelaralternativ",
@@ -443,6 +448,7 @@
     "startTimesSet": "Starttider satta",
     "resultRegistered": "Resultatet är sparat",
     "temporaryResultRegistered": "Tillfälligt resultat är sparat",
+    "clubAdded": "Klubb tillagd",
     "error": {
       "general": {
         "standard": "Något gick fel",

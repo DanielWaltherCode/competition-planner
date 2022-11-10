@@ -18,6 +18,24 @@ class ClubRepository(val dslContext: DSLContext) : IClubRepository {
         return records.map { ClubDTO(it.id, it.name, it.address) }
     }
 
+    override fun getAllClubsForCompetition(competitionId: Int): List<ClubDTO> {
+        val records = dslContext
+                .select()
+                .from(CLUB)
+                .where(CLUB.COMPETITION_ID.eq(competitionId).or(CLUB.COMPETITION_ID.isNull))
+                .fetchInto(CLUB)
+        return records.map { ClubDTO(it.id, it.name, it.address) }
+    }
+
+    override fun storeForCompetition(competitionId: Int, spec: ClubSpec): ClubDTO {
+        val record: ClubRecord = dslContext.newRecord(CLUB)
+        record.name = spec.name
+        record.address = spec.address
+        record.competitionId = competitionId
+        record.store()
+        return record.toDto()
+    }
+
     override fun store(spec: ClubSpec): ClubDTO {
         val record: ClubRecord = dslContext.newRecord(CLUB)
         record.name = spec.name

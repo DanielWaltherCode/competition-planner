@@ -14,6 +14,12 @@ const ClubService = {
     },
     getClub(clubId) {
         return Axios.get(`${RESOURCE_NAME}/${clubId}`, {withCredentials: true})
+    },
+    getClubsForCompetition(competitionId) {
+        return Axios.get(`${RESOURCE_NAME}/competition/${competitionId}`, {withCredentials: true})
+    },
+    addClubForCompetition(competitionId, clubSpec) {
+        return Axios.post(`${RESOURCE_NAME}/competition/${competitionId}`, clubSpec, {withCredentials: true})
     }
 }
 

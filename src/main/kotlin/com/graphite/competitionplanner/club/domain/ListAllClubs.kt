@@ -12,4 +12,8 @@ class ListAllClubs(
     fun execute(): List<ClubDTO> {
         return clubRepository.getAll()
     }
+
+    fun executeForCompetition(competitionId: Int): List<ClubDTO> {
+        return clubRepository.getAllClubsForCompetition(competitionId)
+    }
 }

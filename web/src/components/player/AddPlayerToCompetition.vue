@@ -104,7 +104,8 @@ export default {
   },
   mounted() {
     CategoryService.getCompetitionCategories(this.competition.id).then(res => {
-      this.competitionCategories = res.data
+      const allCategories = res.data
+      this.competitionCategories = allCategories.filter(category => category.status === "ACTIVE")
     })
 
   },

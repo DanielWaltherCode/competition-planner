@@ -24,6 +24,11 @@ class ClubApi(
         return createClub.execute(clubSpec)
     }
 
+    @PostMapping("/competition/{competitionId}")
+    fun addClubForCompetition(@PathVariable competitionId: Int, @RequestBody clubSpec: ClubSpec): ClubDTO {
+        return createClub.executeForCompetition(competitionId, clubSpec)
+    }
+
     @PutMapping("/{clubId}")
     fun updateClub(@PathVariable clubId: Int, @RequestBody clubSpec: ClubSpec): ClubDTO {
         return updateClub.execute(clubId, clubSpec)
@@ -37,6 +42,11 @@ class ClubApi(
     @GetMapping
     fun getAll(): List<ClubDTO> {
         return listAllClubs.execute()
+    }
+
+    @GetMapping("competition/{competitionId}")
+    fun getAllClubsForCompetition(@PathVariable competitionId: Int): List<ClubDTO> {
+        return listAllClubs.executeForCompetition(competitionId)
     }
 
     @DeleteMapping("/{clubId}")
