@@ -18,4 +18,5 @@ class UpdateClub(val clubRepository: IClubRepository) {
             throw Exception("Cannot update club name to ${spec.name} since there is already a club with that name.")
         }
     }
+
 }

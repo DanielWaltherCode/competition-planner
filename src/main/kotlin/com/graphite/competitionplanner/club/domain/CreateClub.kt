@@ -25,6 +25,18 @@ class CreateClub(
         }
     }
 
+    fun executeForCompetition(competitionId: Int, spec: ClubSpec): ClubDTO {
+        val nameIsAvailable: Boolean = clubRepository.getAllClubsForCompetition(competitionId).none { it.name == spec.name }
+        if (nameIsAvailable) {
+            val club: ClubDTO = clubRepository.storeForCompetition(competitionId, spec)
+            // Set up empty paymentinfo for each club
+            clubPaymentRepository.add(club.id, getEmptyPaymentInfo())
+            return club
+        } else {
+            throw IllegalArgumentException("Cannot add club. Club with name ${spec.name} already exist ")
+        }
+    }
+
     fun getEmptyPaymentInfo(): PaymentInfoSpec {
         return PaymentInfoSpec(
             "", "", "", "", "", "", "",

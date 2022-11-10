@@ -2,35 +2,6 @@
   <div>
     <div class="modal__content">
       <i class="modal__close fas fa-times clickable" @click="$emit('close')"></i>
-      <!--
-      <div class="col-sm-9">
-        <h5 class="black text-center fw-bolder">{{ $t("draw.pool.standing") }}</h5>
-        <table class="table table-bordered table-responsive">
-          <thead>
-          <tr>
-            <th scope="col"></th>
-            <th scope="col">{{ $t("draw.pool.nrMatches") }}</th>
-            <th scope="col">{{ $t("draw.pool.matches") }}</th>
-            <th scope="col">{{ $t("draw.pool.games") }}</th>
-            <th scope="col">{{ $t("draw.pool.points") }}</th>
-            <th scope="col">{{ $t("draw.pool.groupPoints") }}</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="(standing, index) in groupStandingList" :key="index">
-            <td class="text-start ps-3">{{ index + 1 + ". " + getName(standing.player) }} {{
-                getClub(standing.player)
-              }}
-            </td>
-            <td>{{ standing.matchesPlayed }}</td>
-            <td>{{ standing.matchesWonLost.won }} - {{ standing.matchesWonLost.lost }}</td>
-            <td>{{ standing.gamesWonLost.won }} - {{ standing.gamesWonLost.lost }}</td>
-            <td>{{ standing.pointsWonLost.won }} - {{ standing.pointsWonLost.lost }}</td>
-            <td>{{ standing.groupScore }}</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>-->
       <div class="col-sm-11">
         <h3> {{ $t("draw.pool.subgroupStanding.heading") }}</h3>
         <p class="fs-6 text-black-50">{{ $t("draw.pool.subgroupStanding.introText") }}</p>

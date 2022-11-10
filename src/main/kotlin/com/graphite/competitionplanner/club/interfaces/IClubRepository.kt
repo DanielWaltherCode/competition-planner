@@ -64,4 +64,15 @@ interface IClubRepository {
      * Returns all stored Clubs
      */
     fun getAll(): List<ClubDTO>
+
+    /**
+     * Returns all clubs where competition id is null (i.e. general clubs)
+     * or clubs created specifically for this competition
+     */
+    fun getAllClubsForCompetition(competitionId: Int): List<ClubDTO>
+
+    /**
+     * Add a new club for a given competition
+     */
+    fun storeForCompetition(competitionId: Int, spec: ClubSpec): ClubDTO
 }
