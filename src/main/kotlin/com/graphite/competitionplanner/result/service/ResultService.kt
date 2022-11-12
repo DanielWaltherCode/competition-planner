@@ -1,17 +1,20 @@
 package com.graphite.competitionplanner.result.service
 
+import com.graphite.competitionplanner.Tables.POOL
 import com.graphite.competitionplanner.Tables.POOL_RESULT
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.match.domain.Match
+import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.match.domain.PlayoffMatch
 import com.graphite.competitionplanner.match.domain.PoolMatch
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.registration.domain.asInt
+import com.graphite.competitionplanner.registration.domain.isReal
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.domain.AddResult
@@ -43,6 +46,28 @@ class ResultService(
             advanceRegistrations(competitionCategory, match)
         }
         return result
+    }
+
+    /**
+     * Delete the results of the match. This can potentially revert any advancements from pool to playoff.
+     */
+    fun deleteResults(matchId: Int) {
+        competitionDrawRepository.asTransaction {
+            val match = matchRepository.getMatch2(matchId)
+            match.winner = null
+            match.result = emptyList()
+            matchRepository.save(match)
+
+            if (match is PoolMatch) {
+                removeAnyFinalGroupResult(match)
+                revertAnyAdvancementsToPlayoffFromGivenGroup(match.competitionCategoryId, match.name)
+            }
+        }
+    }
+
+    fun getResult(matchId: Int): ResultDTO {
+        val resultList = resultRepository.getResult(matchId)
+        return ResultDTO(resultList)
     }
 
     private fun advanceRegistrations(competitionCategory: CompetitionCategoryDTO, match: Match) {
@@ -125,9 +150,45 @@ class ResultService(
         competitionCategoryDTO.handleAdvancementOf(pm)
     }
 
-    fun getResult(matchId: Int): ResultDTO {
-        val resultList = resultRepository.getResult(matchId)
-        return ResultDTO(resultList)
+
+    private fun removeAnyFinalGroupResult(match: PoolMatch) {
+        dslContext.deleteFrom(POOL_RESULT)
+            .where(POOL_RESULT.POOL_ID.`in`(
+                dslContext
+                    .select(POOL.ID)
+                    .from(POOL)
+                    .where(POOL.COMPETITION_CATEGORY_ID.eq(match.competitionCategoryId).and(POOL.NAME.eq(match.name)))
+            ))
+            .execute()
+    }
+
+    private fun revertAnyAdvancementsToPlayoffFromGivenGroup(competitionCategoryId: Int, groupName: String) {
+        val draw = competitionDrawRepository.get(competitionCategoryId)
+
+        // We need to revert any play off matches that contain players from the given pool.
+        val s = matchRepository.getMatchesInCategoryForMatchType(competitionCategoryId, MatchType.GROUP)
+        val t = s.filter { it.groupOrRound == groupName }
+        val registrationIdsInGroup = t.flatMap { listOf(it.firstRegistrationId, it.secondRegistrationId) }.distinct()
+
+        draw.playOff.forEach {
+            it.matches.forEach { m ->
+                val playoffMatch = matchRepository.getMatch2(m.id)
+                var resetResult = false
+                if (playoffMatch.firstRegistrationId.isReal() && registrationIdsInGroup.contains(playoffMatch.firstRegistrationId)) {
+                    playoffMatch.firstRegistrationId = Registration.Placeholder().asInt()
+                    resetResult = true
+                }
+                if (playoffMatch.secondRegistrationId.isReal() && registrationIdsInGroup.contains(playoffMatch.secondRegistrationId)) {
+                    playoffMatch.secondRegistrationId = Registration.Placeholder().asInt()
+                    resetResult = true
+                }
+                if (resetResult) {
+                    playoffMatch.winner = null
+                    playoffMatch.result = emptyList()
+                }
+                matchRepository.save(playoffMatch)
+            }
+        }
     }
 
     private fun storeFinalGroupResult(groupStanding: List<GroupStandingDTO>, pool: PoolRecord) {

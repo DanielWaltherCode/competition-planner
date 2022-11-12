@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*
 class ResultApi(
     val resultService: ResultService,
     val addPartialResult: AddPartialResult,
-    val resultRepository: IResultRepository
+    val resultRepository: IResultRepository // TODO: Remove this dependency
 ) {
 
     @PutMapping("/{matchId}/partial")
@@ -31,8 +31,8 @@ class ResultApi(
     }
 
     @DeleteMapping("/{matchId}")
-    fun removeMatchResult(@PathVariable matchId: Int) {
-        resultRepository.deleteResults(matchId)
+    fun deleteMatchResult(@PathVariable matchId: Int) {
+        resultService.deleteResults(matchId)
     }
 }
 
