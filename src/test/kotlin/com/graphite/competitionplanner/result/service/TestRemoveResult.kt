@@ -8,8 +8,11 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.CreateDraw
 import com.graphite.competitionplanner.draw.domain.GetDraw
+import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
+import com.graphite.competitionplanner.registration.domain.Registration
+import com.graphite.competitionplanner.registration.domain.asInt
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.interfaces.IResultRepository
@@ -73,7 +76,7 @@ class TestRemoveResult(
             GameSpec(3, 11, 0))
 
         val lastMatch = poolMatches.last()
-        val rest = poolMatches.dropLast(1);
+        val rest = poolMatches.dropLast(1)
 
         for (match in rest) {
             service.addFinalMatchResult(match.id, dataGenerator.newResultSpec(games = gameResults))
@@ -84,7 +87,7 @@ class TestRemoveResult(
 
         // Act
         service.addFinalMatchResult(lastMatch.id, dataGenerator.newResultSpec(games = gameResults))
-        service.deleteResults(lastMatch.id);
+        service.deleteResults(lastMatch.id)
 
         // Assert
         val afterRemovingResult = getDraw.execute(competitionCategory.id)
@@ -101,5 +104,101 @@ class TestRemoveResult(
         Assertions.assertEquals(drawJustBeforeLastMatch.playOff, afterRemovingResult.playOff,
             "The playoff was not rolled back properly"
         )
+    }
+
+    @Test
+    fun whenRemovingFinalPlayoffMatchResult() {
+        // Setup
+        val club = newClub()
+        val competition = club.addCompetition()
+        val competitionCategory = competition.addCompetitionCategory(
+            DefaultCategory.MEN_1.name,
+            drawType = DrawType.CUP_ONLY)
+
+        val suffix = listOf("A", "B", "C", "D")
+        val players = suffix.map {
+            club.addPlayer("Player$it")
+        }
+
+        players.forEach { competitionCategory.registerPlayer(it) }
+
+        val draw = createDraw.execute(competitionCategory.id)
+
+        // Play all matches in playoff
+        val gameResults = listOf(
+            GameSpec(1, 11, 0),
+            GameSpec(2, 11, 0),
+            GameSpec(3, 11, 0))
+
+        draw.playOff.forEach { round ->
+            round.matches.forEach { match ->
+                service.addFinalMatchResult(match.id, dataGenerator.newResultSpec(games = gameResults))
+            }
+        }
+
+        // Act
+        val finalRound = draw.playOff.first { it.round == Round.FINAL }
+        service.deleteResults(finalRound.matches.first().id)
+
+        // Assert
+        val drawAfterDeletedResult = getDraw.execute(competitionCategory.id)
+        val finalMatch = drawAfterDeletedResult.playOff.first { it.round == Round.FINAL }.matches.first()
+        Assertions.assertTrue(finalMatch.firstPlayer.first().id > 0, "First player was reset")
+        Assertions.assertTrue(finalMatch.secondPlayer.first().id > 0, "Second player was reset")
+        Assertions.assertTrue(finalMatch.winner.isEmpty(), "Winner was not reset")
+        Assertions.assertTrue(finalMatch.result.gameList.isEmpty(), "Result was not reset")
+    }
+
+    @Test
+    fun whenRemovingPreviousRoundResult() {
+        // Setup
+        val club = newClub()
+        val competition = club.addCompetition()
+        val competitionCategory = competition.addCompetitionCategory(
+            DefaultCategory.MEN_1.name,
+            drawType = DrawType.CUP_ONLY)
+
+        val suffix = listOf("A", "B", "C", "D")
+        val players = suffix.map {
+            club.addPlayer("Player$it")
+        }
+
+        players.forEach { competitionCategory.registerPlayer(it) }
+
+        val draw = createDraw.execute(competitionCategory.id)
+
+        // Play all semi-finals
+        val gameResults = listOf(
+            GameSpec(1, 11, 0),
+            GameSpec(2, 11, 0),
+            GameSpec(3, 11, 0))
+
+        draw.playOff.filter { it.round == Round.SEMI_FINAL }.forEach { round ->
+            round.matches.forEach { match ->
+                service.addFinalMatchResult(match.id, dataGenerator.newResultSpec(games = gameResults))
+            }
+        }
+
+        // Act
+        draw.playOff.filter { it.round == Round.SEMI_FINAL }.forEach { round ->
+            round.matches.forEach { match ->
+                service.deleteResults(match.id)
+            }
+        }
+
+        // Assert
+        val drawAfterDeletedResult = getDraw.execute(competitionCategory.id)
+        drawAfterDeletedResult.playOff.filter { it.round == Round.SEMI_FINAL }.forEach { round ->
+            round.matches.forEach { semifinal ->
+                Assertions.assertTrue(semifinal.firstPlayer.first().id > 0, "First player was reset")
+                Assertions.assertTrue(semifinal.secondPlayer.first().id > 0, "Second player was reset")
+                Assertions.assertTrue(semifinal.winner.isEmpty(), "Winner was not reset")
+                Assertions.assertTrue(semifinal.result.gameList.isEmpty(), "Result was not reset")
+            }
+        }
+
+        val finalMatch = drawAfterDeletedResult.playOff.first { it.round == Round.FINAL }.matches.first()
+        Assertions.assertTrue(finalMatch.firstPlayer.first().id == Registration.Placeholder().asInt() , "First player was not reset to be a Placeholder")
+        Assertions.assertTrue(finalMatch.secondPlayer.first().id == Registration.Placeholder().asInt(), "Second player was not reset to be a Placeholder")
     }
 }
