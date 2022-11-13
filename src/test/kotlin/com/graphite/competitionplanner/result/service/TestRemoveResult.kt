@@ -59,7 +59,7 @@ class TestRemoveResult(
             DefaultCategory.MEN_1.name,
             drawType = DrawType.POOL_AND_CUP)
 
-        val suffix = listOf("A", "B", "C", "D", "E", "F", "G", "H", "J", "H")
+        val suffix = listOf("A", "B", "C", "D")
         val players = suffix.map {
             club.addPlayer("Player$it")
         }
@@ -92,15 +92,24 @@ class TestRemoveResult(
         // Assert
         val afterRemovingResult = getDraw.execute(competitionCategory.id)
 
-        Assertions.assertEquals(drawJustBeforeLastMatch.groups.first().name, afterRemovingResult.groups.first().name)
-        Assertions.assertEquals(drawJustBeforeLastMatch.groups.first().matches, afterRemovingResult.groups.first().matches)
-        Assertions.assertEquals(drawJustBeforeLastMatch.groups.first().players, afterRemovingResult.groups.first().players)
+        val groupStandingBefore = drawJustBeforeLastMatch.groups.first().groupStandingList
+        val groupStandingAfter = afterRemovingResult.groups.first().groupStandingList
+        Assertions.assertEquals(groupStandingBefore[0], groupStandingAfter[0],
+            "Position 1 in the group is not the same as before we removed the result")
+        Assertions.assertEquals(groupStandingBefore[1], groupStandingAfter[1],
+            "Position 2 in the group is not the same as before we removed the result")
+        Assertions.assertEquals(2, groupStandingBefore[2].matchesPlayed, "Not the correct number of matches played")
+        Assertions.assertEquals(2, groupStandingBefore[3].matchesPlayed, "Not the correct number of matches played")
 
-        // TODO: If we figure out how to get stable group standing and subgroup list we can uncomment here.
-//        Assertions.assertEquals(drawJustBeforeLastMatch.groups.first().groupStandingList, afterRemovingResult.groups.first().groupStandingList)
-//        Assertions.assertEquals(drawJustBeforeLastMatch.groups.first().subGroupList, afterRemovingResult.groups.first().subGroupList)
-//        Assertions.assertEquals(drawJustBeforeLastMatch.groups, afterRemovingResult.groups,
-//            "The group stage was not rolled back properly")
+        val subGroupStandingBefore = drawJustBeforeLastMatch.groups.first().subGroupList
+        val subGroupStandingAfter = afterRemovingResult.groups.first().subGroupList
+        Assertions.assertEquals(subGroupStandingBefore.size, subGroupStandingAfter.size,
+            "Not expected size of sub group standing")
+        Assertions.assertEquals(
+            subGroupStandingBefore.flatMap { it.groupStandingList.flatMap { sub -> sub.player.map { p -> p.firstName } } }.sorted(),
+            subGroupStandingAfter.flatMap { it.groupStandingList.flatMap { sub -> sub.player.map { p -> p.firstName } } }.sorted(),
+            "Not the same players in the sub group")
+
         Assertions.assertEquals(drawJustBeforeLastMatch.playOff, afterRemovingResult.playOff,
             "The playoff was not rolled back properly"
         )
@@ -198,7 +207,9 @@ class TestRemoveResult(
         }
 
         val finalMatch = drawAfterDeletedResult.playOff.first { it.round == Round.FINAL }.matches.first()
-        Assertions.assertTrue(finalMatch.firstPlayer.first().id == Registration.Placeholder().asInt() , "First player was not reset to be a Placeholder")
-        Assertions.assertTrue(finalMatch.secondPlayer.first().id == Registration.Placeholder().asInt(), "Second player was not reset to be a Placeholder")
+        Assertions.assertTrue(finalMatch.firstPlayer.first().id == Registration.Placeholder().asInt() ,
+            "First player was not reset to be a Placeholder")
+        Assertions.assertTrue(finalMatch.secondPlayer.first().id == Registration.Placeholder().asInt(),
+            "Second player was not reset to be a Placeholder")
     }
 }

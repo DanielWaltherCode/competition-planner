@@ -226,7 +226,7 @@ class ResultService(
         val draw = competitionDrawRepository.get(match.competitionCategoryId)
         val nextRoundsMatch = draw.getNextRoundsMatch(match)
         if (nextRoundsMatch?.winner != null) {
-            throw BadRequestException(BadRequestType.CANNOT_DELETE_RESULT,
+            throw BadRequestException(BadRequestType.RESULT_CANNOT_DELETE,
                 "Next round has already been played. Delete that result first.")
         } else if (nextRoundsMatch != null) {
             if (match.orderNumber % 2 == 1) {
