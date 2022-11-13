@@ -1,7 +1,6 @@
 package com.graphite.competitionplanner.result.api
 
 import com.graphite.competitionplanner.result.domain.AddPartialResult
-import com.graphite.competitionplanner.result.interfaces.IResultRepository
 import com.graphite.competitionplanner.result.service.ResultDTO
 import com.graphite.competitionplanner.result.service.ResultService
 import org.springframework.web.bind.annotation.*
@@ -10,8 +9,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/result/{competitionId}")
 class ResultApi(
     val resultService: ResultService,
-    val addPartialResult: AddPartialResult,
-    val resultRepository: IResultRepository
+    val addPartialResult: AddPartialResult
 ) {
 
     @PutMapping("/{matchId}/partial")
@@ -31,8 +29,8 @@ class ResultApi(
     }
 
     @DeleteMapping("/{matchId}")
-    fun removeMatchResult(@PathVariable matchId: Int) {
-        resultRepository.deleteResults(matchId)
+    fun deleteMatchResult(@PathVariable matchId: Int) {
+        resultService.deleteResults(matchId)
     }
 }
 

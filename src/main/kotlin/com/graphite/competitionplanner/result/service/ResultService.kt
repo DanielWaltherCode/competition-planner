@@ -1,17 +1,22 @@
 package com.graphite.competitionplanner.result.service
 
+import com.graphite.competitionplanner.Tables.POOL
 import com.graphite.competitionplanner.Tables.POOL_RESULT
+import com.graphite.competitionplanner.common.exception.BadRequestException
+import com.graphite.competitionplanner.common.exception.BadRequestType
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.match.domain.Match
+import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.match.domain.PlayoffMatch
 import com.graphite.competitionplanner.match.domain.PoolMatch
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.registration.domain.asInt
+import com.graphite.competitionplanner.registration.domain.isReal
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.domain.AddResult
@@ -21,6 +26,7 @@ import com.graphite.competitionplanner.tables.records.PoolRecord
 import com.graphite.competitionplanner.tables.records.PoolResultRecord
 import org.jooq.DSLContext
 import org.springframework.stereotype.Service
+import kotlin.jvm.Throws
 import kotlin.math.ceil
 
 @Service
@@ -43,6 +49,33 @@ class ResultService(
             advanceRegistrations(competitionCategory, match)
         }
         return result
+    }
+
+    /**
+     * Delete the results of the match. This can potentially revert any advancements from pool to playoff.
+     */
+    fun deleteResults(matchId: Int) {
+        competitionDrawRepository.asTransaction {
+            val match = matchRepository.getMatch2(matchId)
+            match.winner = null
+            match.result = emptyList()
+            matchRepository.save(match)
+
+            when(match) {
+                is PoolMatch -> {
+                    removeAnyFinalGroupResult(match)
+                    revertAnyAdvancementsToPlayoffFromGivenGroup(match.competitionCategoryId, match.name)
+                }
+                is PlayoffMatch -> {
+                    tryRevertAnyPlayoffAdvancement(match)
+                }
+            }
+        }
+    }
+
+    fun getResult(matchId: Int): ResultDTO {
+        val resultList = resultRepository.getResult(matchId)
+        return ResultDTO(resultList)
     }
 
     private fun advanceRegistrations(competitionCategory: CompetitionCategoryDTO, match: Match) {
@@ -69,6 +102,22 @@ class ResultService(
             }
             matchRepository.save(nextMatch)
         }
+    }
+
+    /**
+     * Returns next rounds match that the winner of the given match will advance to. Returns null if the given
+     * match is the final.
+     */
+    private fun CompetitionCategoryDrawDTO.getNextRoundsMatch(match: PlayoffMatch): Match? {
+        if (match.round == Round.FINAL) {
+            return null
+        }
+
+        val nextRound = this.playOff.filter { it.round < match.round }.maxByOrNull { it.round }!!
+        val nextOrderNumber = ceil(match.orderNumber / 2.0).toInt() // 1 -> 1, 2 -> 1, 3 -> 2, etc.
+        return matchRepository.getMatch2(
+            nextRound.matches.first { it.matchOrderNumber == nextOrderNumber }.id
+        )
     }
 
     private fun CompetitionCategoryDTO.handleAdvancementOf(match: PoolMatch) {
@@ -125,9 +174,68 @@ class ResultService(
         competitionCategoryDTO.handleAdvancementOf(pm)
     }
 
-    fun getResult(matchId: Int): ResultDTO {
-        val resultList = resultRepository.getResult(matchId)
-        return ResultDTO(resultList)
+
+    private fun removeAnyFinalGroupResult(match: PoolMatch) {
+        dslContext.deleteFrom(POOL_RESULT)
+            .where(POOL_RESULT.POOL_ID.`in`(
+                dslContext
+                    .select(POOL.ID)
+                    .from(POOL)
+                    .where(POOL.COMPETITION_CATEGORY_ID.eq(match.competitionCategoryId).and(POOL.NAME.eq(match.name)))
+            ))
+            .execute()
+    }
+
+    private fun revertAnyAdvancementsToPlayoffFromGivenGroup(competitionCategoryId: Int, groupName: String) {
+        val draw = competitionDrawRepository.get(competitionCategoryId)
+
+        // We need to revert any play off matches that contain players from the given pool.
+        val s = matchRepository.getMatchesInCategoryForMatchType(competitionCategoryId, MatchType.GROUP)
+        val t = s.filter { it.groupOrRound == groupName }
+        val registrationIdsInGroup = t.flatMap { listOf(it.firstRegistrationId, it.secondRegistrationId) }.distinct()
+
+        draw.playOff.forEach {
+            it.matches.forEach { m ->
+                val playoffMatch = matchRepository.getMatch2(m.id)
+                var resetResult = false
+                if (playoffMatch.firstRegistrationId.isReal() && registrationIdsInGroup.contains(playoffMatch.firstRegistrationId)) {
+                    playoffMatch.firstRegistrationId = Registration.Placeholder().asInt()
+                    resetResult = true
+                }
+                if (playoffMatch.secondRegistrationId.isReal() && registrationIdsInGroup.contains(playoffMatch.secondRegistrationId)) {
+                    playoffMatch.secondRegistrationId = Registration.Placeholder().asInt()
+                    resetResult = true
+                }
+                if (resetResult) {
+                    playoffMatch.winner = null
+                    playoffMatch.result = emptyList()
+                }
+                matchRepository.save(playoffMatch)
+            }
+        }
+    }
+
+    /**
+     * Try and revert any advancement from the given match. Nothing happens if this is the FINAL as there is no
+     * advancement to revert.
+     *
+     * @throws BadRequestException If the next round's match has already been played.
+     */
+    @Throws(BadRequestException::class)
+    private fun tryRevertAnyPlayoffAdvancement(match: PlayoffMatch) {
+        val draw = competitionDrawRepository.get(match.competitionCategoryId)
+        val nextRoundsMatch = draw.getNextRoundsMatch(match)
+        if (nextRoundsMatch?.winner != null) {
+            throw BadRequestException(BadRequestType.RESULT_CANNOT_DELETE,
+                "Next round has already been played. Delete that result first.")
+        } else if (nextRoundsMatch != null) {
+            if (match.orderNumber % 2 == 1) {
+                nextRoundsMatch.firstRegistrationId = Registration.Placeholder().asInt()
+            } else {
+                nextRoundsMatch.secondRegistrationId = Registration.Placeholder().asInt()
+            }
+            matchRepository.save(nextRoundsMatch)
+        }
     }
 
     private fun storeFinalGroupResult(groupStanding: List<GroupStandingDTO>, pool: PoolRecord) {
