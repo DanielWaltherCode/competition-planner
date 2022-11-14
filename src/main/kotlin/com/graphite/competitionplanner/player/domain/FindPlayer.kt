@@ -33,6 +33,13 @@ class FindPlayer(
         return repository.findByName(partName)
     }
 
+    /**
+     * Returns general players plus those added for the competition
+     */
+    fun byPartNameWithCompetition(competitionId: Int, partName: String): List<PlayerWithClubDTO> {
+        return repository.findByNameWithCompetition(competitionId, partName)
+    }
+
     fun byPartNameInCompetition(partName: String, competition: CompetitionDTO): List<PlayerWithClubDTO> {
         return repository.findByNameInCompetition(partName, competition.id)
     }

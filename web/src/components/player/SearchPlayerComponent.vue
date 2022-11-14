@@ -69,13 +69,18 @@ export default {
       player: null
     }
   },
+  computed: {
+    competition: function () {
+      return this.$store.getters.competition
+    }
+  },
   methods: {
     searchPlayers(input) {
       if (input.length < 1) {
         return [];
       }
       return new Promise(resolve => {
-        PlayerService.searchAllPlayers(input).then(res => {
+        PlayerService.searchAllPlayers(this.competition.id, input).then(res => {
           this.playerNotFound = false
           resolve(res.data)
         }).catch(() => {

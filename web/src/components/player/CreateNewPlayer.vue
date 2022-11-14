@@ -138,7 +138,7 @@ export default {
         clubId: this.club.id,
         dateOfBirth: this.dateOfBirth
       }
-      PlayerService.addPlayer(playerSpec).then(() => {
+      PlayerService.addPlayerInCompetition(this.competition.id, playerSpec).then(() => {
         this.$toasted.success(this.$tc("toasts.player.added")).goAway(3000)
         this.clearPlayer()
       })

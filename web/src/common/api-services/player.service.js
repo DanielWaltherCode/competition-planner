@@ -3,8 +3,8 @@ import Axios from "axios"
 const RESOURCE_NAME = "/player"
 
 const PlayerService = {
-    addPlayer(body) {
-        return Axios.post(RESOURCE_NAME, body, {withCredentials: true})
+    addPlayerInCompetition(competitionId, body,) {
+        return Axios.post(`/player/competition/${competitionId}`, body, {withCredentials: true})
     },
     getRegisteredPlayersInCompetition(searchParam, competitionId) {
         return Axios.get(`/competition/${competitionId}/registration`, {
@@ -14,8 +14,8 @@ const PlayerService = {
            withCredentials: true
         })
     },
-    searchAllPlayers(partOfName) {
-        return Axios.get(`/player/name-search`, {
+    searchAllPlayers(competitionId, partOfName) {
+        return Axios.get(`/player/name-search/with-competition/${competitionId}`, {
             params: {
                 partOfName: partOfName
             },

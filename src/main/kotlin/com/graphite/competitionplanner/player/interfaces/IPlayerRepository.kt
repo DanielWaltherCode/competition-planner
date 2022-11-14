@@ -14,6 +14,15 @@ interface IPlayerRepository {
     fun store(spec: PlayerSpec, rankingSpec: PlayerRankingSpec = PlayerRankingSpec(0, 0)): PlayerDTO
 
     /**
+     * Store a new player as part of a competition together with a ranking. By default, the ranking is set to zero.
+     *
+     * @param spec Player to be stored
+     * @param rankingSpec Ranking information
+     * @return Newly stored player
+     */
+    fun storeInCompetition(competitionId: Int, spec: PlayerSpec, rankingSpec: PlayerRankingSpec = PlayerRankingSpec(0, 0)): PlayerDTO
+
+    /**
      * Return all players for the given club
      */
     fun playersInClub(clubId: Int): List<PlayerWithClubDTO>
@@ -39,12 +48,21 @@ interface IPlayerRepository {
     fun findAllForIds(playerIds: List<Int>): List<PlayerWithClubDTO>
 
     /**
-     * Return a list of players where the first name starts with the given search string
-     *
+     * Return a list of players where the first name starts with the given search string.
+     * @param competitionId
      * @param startOfName: Search string
      * @return List of Players
      */
     fun findByName(startOfName: String): List<PlayerWithClubDTO>
+
+    /**
+     * Return a list of players where the first name starts with the given search string. Returns all general players
+     * not associated with a specific competition or those added specifically in this competition
+     * @param competitionId
+     * @param startOfName: Search string
+     * @return List of Players
+     */
+    fun findByNameWithCompetition(competitionId: Int, startOfName: String): List<PlayerWithClubDTO>
 
     /**
      * Return a list of players where the first name or last name starts with the given search string, and the player

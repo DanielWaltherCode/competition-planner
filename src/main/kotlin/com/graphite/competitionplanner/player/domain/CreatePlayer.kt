@@ -18,4 +18,11 @@ class CreatePlayer(
         val player = playerRepository.store(playerSpec, rankingSpec)
         return PlayerWithClubDTO(player, clubDto)
     }
+
+    fun executeForCompetition(competitionId: Int, playerSpec: PlayerSpec): PlayerWithClubDTO {
+        val clubDto = findClub.byId(playerSpec.clubId)
+        val rankingSpec = PlayerRankingSpec(0, 0)
+        val player = playerRepository.storeInCompetition(competitionId, playerSpec, rankingSpec)
+        return PlayerWithClubDTO(player, clubDto)
+    }
 }
