@@ -14,7 +14,9 @@ class CreateDraw(
     val findCompetitionCategory: FindCompetitionCategory,
     val repository: IRegistrationRepository,
     val drawRepository: ICompetitionDrawRepository,
-    val competitionCategoryRepository: ICompetitionCategoryRepository
+    val competitionCategoryRepository: ICompetitionCategoryRepository,
+    val getCurrentSeeding: GetCurrentSeeding,
+    val approveSeeding: ApproveSeeding
 ) {
 
     /**
@@ -29,14 +31,15 @@ class CreateDraw(
             return drawRepository.get(competitionCategoryId)
         }
 
-        val registrationRankings: List<RegistrationRankingDTO> = repository.getRegistrationRanking(competitionCategory)
+        val registrationsWithSeeds = getCurrentSeeding.execute(competitionCategory)
+        if (competitionCategory.status != CompetitionCategoryStatus.SEEDING_HAS_BEEN_COMMITTED) {
+            approveSeeding.execute(competitionCategory, registrationsWithSeeds)
+        }
 
         val drawPolicy = DrawPolicy.createDrawStrategy(competitionCategory)
-        val registrationsWithSeeds = drawPolicy.createSeed(registrationRankings)
         drawPolicy.throwExceptionIfNotEnoughRegistrations(registrationsWithSeeds)
 
         val spec = drawPolicy.createDraw(registrationsWithSeeds)
-        spec.seeding = registrationsWithSeeds
 
         return drawRepository.store(spec)
     }

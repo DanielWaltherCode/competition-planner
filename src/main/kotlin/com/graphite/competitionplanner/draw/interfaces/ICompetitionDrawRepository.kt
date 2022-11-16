@@ -63,4 +63,6 @@ interface ICompetitionDrawRepository : IRepository {
      * @return List of seeds
      */
     fun getSeeds(competitionCategoryId: Int): List<RegistrationSeedDTO>
+
+    fun storeSeeding(registrationSeeds: List<RegistrationSeedDTO>)
 }

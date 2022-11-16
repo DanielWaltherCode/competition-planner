@@ -43,7 +43,6 @@ class CompetitionDrawRepository(
 
     override fun store(draw: CompetitionCategoryDrawSpec): CompetitionCategoryDrawDTO {
         asTransaction {
-            storeSeeding(draw.seeding)
             competitionCategoryRepository.setStatus(draw.competitionCategoryId, CompetitionCategoryStatus.DRAWN)
             when (draw) {
                 is CupDrawSpec -> storeCupDraw(draw)
@@ -67,7 +66,7 @@ class CompetitionDrawRepository(
         }
     }
 
-    fun storeSeeding(registrationSeeds: List<RegistrationSeedDTO>) {
+    override fun storeSeeding(registrationSeeds: List<RegistrationSeedDTO>) {
         dslContext.batched {
             for (dto in registrationSeeds) {
                 dslContext.update(COMPETITION_CATEGORY_REGISTRATION)

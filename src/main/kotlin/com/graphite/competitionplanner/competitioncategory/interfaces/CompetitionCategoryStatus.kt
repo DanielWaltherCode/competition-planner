@@ -10,6 +10,11 @@ enum class CompetitionCategoryStatus {
     ACTIVE,
 
     /**
+     * Indicates that the seeding has been approved and committed
+     */
+    SEEDING_HAS_BEEN_COMMITTED,
+
+    /**
      * The category has been drawn
      */
     DRAWN,
