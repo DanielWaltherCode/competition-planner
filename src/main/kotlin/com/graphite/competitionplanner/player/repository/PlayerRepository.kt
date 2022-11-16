@@ -96,6 +96,24 @@ class PlayerRepository(
         return record.toDto()
     }
 
+    override fun storeInCompetition(competitionId: Int, spec: PlayerSpec, rankingSpec: PlayerRankingSpec): PlayerDTO {
+        val record = dslContext.newRecord(PLAYER)
+        record.firstName = spec.firstName
+        record.lastName = spec.lastName
+        record.clubId = spec.clubId
+        record.dateOfBirth = spec.dateOfBirth
+        record.fullName = spec.firstName.trim() + ' ' + spec.lastName.trim()
+        record.competitionId = competitionId
+
+        asTransaction {
+            record.store()
+            addPlayerRanking(record.id, rankingSpec.singles, CategoryType.SINGLES.toString())
+            addPlayerRanking(record.id, rankingSpec.doubles, CategoryType.DOUBLES.toString())
+        }
+
+        return record.toDto()
+    }
+
     override fun playersInClub(clubId: Int): List<PlayerWithClubDTO> {
         val records =
             dslContext.select()
@@ -135,7 +153,15 @@ class PlayerRepository(
 
     override fun findByName(startOfName: String): List<PlayerWithClubDTO> {
         val records = dslContext.select().distinctOn(PLAYER.ID).from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID))
-                .where(PLAYER.FULL_NAME.startsWithIgnoreCase(startOfName))
+                .where(PLAYER.FULL_NAME.startsWithIgnoreCase(startOfName).and(PLAYER.COMPETITION_ID.isNull))
+                .limit(4).fetch()
+        return records.map { transformIntoPlayerWithClubDto(it) }
+    }
+
+    override fun findByNameWithCompetition(competitionId: Int, startOfName: String): List<PlayerWithClubDTO> {
+        val records = dslContext.select().distinctOn(PLAYER.ID).from(PLAYER).join(CLUB).on(PLAYER.CLUB_ID.eq(CLUB.ID))
+                .where(PLAYER.FULL_NAME.startsWithIgnoreCase(startOfName).and(PLAYER.COMPETITION_ID.eq(competitionId).or(
+                        PLAYER.COMPETITION_ID.isNull)))
                 .limit(4).fetch()
         return records.map { transformIntoPlayerWithClubDto(it) }
     }

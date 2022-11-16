@@ -25,6 +25,11 @@ class PlayerApi(
         return createPlayer.execute(playerSpec)
     }
 
+    @PostMapping("/competition/{competitionId}")
+    fun addPlayerInCompetition(@PathVariable competitionId: Int, @Valid @RequestBody playerSpec: PlayerSpec): PlayerWithClubDTO {
+        return createPlayer.executeForCompetition(competitionId, playerSpec)
+    }
+
     @PutMapping("/{playerId}")
     fun updatePlayer(@PathVariable playerId: Int, @Valid @RequestBody playerSpec: PlayerSpec): PlayerWithClubDTO {
         return updatePlayer.execute(playerId, playerSpec)
@@ -38,6 +43,11 @@ class PlayerApi(
     @GetMapping("name-search")
     fun searchByPartOfName(@RequestParam partOfName: String): List<PlayerWithClubDTO> {
         return findPlayer.byPartName(partOfName)
+    }
+
+    @GetMapping("name-search/with-competition/{competitionId}")
+    fun searchByPartOfName(@PathVariable competitionId: Int, @RequestParam partOfName: String): List<PlayerWithClubDTO> {
+        return findPlayer.byPartNameWithCompetition(competitionId, partOfName)
     }
 
     @GetMapping("name-search/{competitionId}")
