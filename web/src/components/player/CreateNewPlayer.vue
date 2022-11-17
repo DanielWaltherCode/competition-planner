@@ -47,7 +47,7 @@
             </div>
             <div class="d-flex justify-content-end">
               <button type="button" class="btn btn-primary" @click="addPlayer">
-                {{ $t("player.add.buttonText") }}
+                {{ $t("general.save") }}
               </button>
             </div>
           </div>
