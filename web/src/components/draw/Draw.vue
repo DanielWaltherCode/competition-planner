@@ -191,17 +191,20 @@ export default {
     shouldShowPlayoff(playoff) {
       let shouldShowPlayoff = false;
       if (playoff === null) {
-        return shouldShowPlayoff;
+        return false;
       }
+      let nonPlaceholderPlayers = 0
       playoff[0].matches.forEach(match => {
         const firstPlayerId = match.firstPlayer[0].id
         const secondPlayerId = match.secondPlayer[0].id
-        if ( (firstPlayerId !== 0 && firstPlayerId !== -1)
-        || (secondPlayerId !== 0 && secondPlayerId !== -1)) {
-          shouldShowPlayoff = true;
+        if ( (firstPlayerId !== -1) && (secondPlayerId !== -1)) {
+         nonPlaceholderPlayers += 2
         }
       })
-      return shouldShowPlayoff;
+      console.log("Non placeholders size: " + nonPlaceholderPlayers)
+      console.log("Matches size: " + playoff[0].matches.length*2)
+      return nonPlaceholderPlayers === playoff[0].matches.length*2;
+
     },
     getDraw(categoryId) {
       DrawService.getDraw(this.competition.id, categoryId).then(res => {
