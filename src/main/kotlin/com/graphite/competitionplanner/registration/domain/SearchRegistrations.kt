@@ -47,6 +47,21 @@ class SearchRegistrations(
         return RegisteredPlayersDTO(SearchType.NAME, pairs)
     }
 
+    fun getResultGroupedByLastNameForCategory(categoryId: Int): RegisteredPlayersDTO {
+        val players: List<PlayerWithClubDTO> = registrationRepository.getAllRegisteredPlayersInCompetitionCategory(categoryId)
+                .map { it.second }
+                .filter { it.lastName.uppercase() != Registration.Bye.toString().uppercase() } // Ignore bye players
+                .sortedBy { it.lastName }
+        val numberOfPlayers = players.size
+        val initials: List<String> = players.map { it.lastName.first().uppercase() }.distinct()
+        val pairs: Map<String, Set<PlayerWithClubDTO>> = initials.associateWith { initial ->
+            players.filter { player ->
+                player.lastName.first().uppercase() == initial.uppercase()
+            }.toSet()
+        }
+        return RegisteredPlayersDTO(SearchType.NAME, pairs, numberOfPlayers)
+    }
+
     fun getResultGroupedByCompetitionCategory(competition: CompetitionDTO): RegisteredPlayersDTO {
         val categoriesAndPlayers: List<Pair<CategoryDTO, PlayerWithClubDTO>> =
             registrationRepository.getCategoriesAndPlayersInCompetition(competition.id)

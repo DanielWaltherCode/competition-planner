@@ -30,27 +30,41 @@
 
               <!-- If class is not drawn yet -->
               <div v-if="!isChosenCategoryDrawn " class="pb-4 ms-3 ms-md-0">
-                <div v-if="registeredPlayersLists.length > 0">
+                <div v-if="registeredPlayersDoubles != null && registeredPlayersDoubles.length > 0 ||
+                registeredPlayersSingles != null && registeredPlayersSingles.numberOfPlayers > 0">
                   <p class="text-start text-md-center"> {{ $t("draw.main.notDrawnTitle") }} {{ $t("draw.main.notDrawnBody") }}</p>
                   <button class="btn btn-primary" @click="createDraw">{{ $t("draw.main.drawNow") }}</button>
                 </div>
-                <div v-if="registeredPlayersLists.length === 0">
+                <div v-else>
                   <p>{{ $t("draw.main.notDrawnNoPlayers") }}</p>
                 </div>
               </div>
             </div>
           </div>
-          <!-- List of registered players if there are any -->
-          <div class="pb-5" id="registered-players" v-if="!isChosenCategoryDrawn && registeredPlayersLists.length > 0">
+          <!-- List of registered players if there are any. Doubles case first -->
+          <div v-if="!isChosenCategoryDrawn && registeredPlayersDoubles !== null" class="pb-5" id="registered-players">
             <h3>{{ $t("draw.main.registeredPlayers") }}</h3>
             <!-- The innerPlayerList contains two players in case of doubles -->
-            <div v-for="(innerPlayerList, index) in registeredPlayersLists" class="py-2 justify-content-center"
+            <div v-for="(innerPlayerList, index) in registeredPlayersDoubles" class="py-2 justify-content-center"
                  :key="index">
               <div v-for="player in innerPlayerList" :key="player.id">
                 {{ player.firstName + " " + player.lastName + " " + player.club.name }}
               </div>
             </div>
           </div>
+          <div v-if="!isChosenCategoryDrawn && registeredPlayersSingles !== null" class="pt-4 px-3">
+            <h3 v-if="registeredPlayersSingles.numberOfPlayers > 0">Antal spelare: {{registeredPlayersSingles.numberOfPlayers}}</h3>
+            <div v-for="(players, grouping) in registeredPlayersSingles.groupingsAndPlayers" :key="grouping">
+              <div class="heading">
+                <p class="mb-0"> {{ grouping }} </p>
+              </div>
+              <div v-for="player in players" :key="player.id" class="mt-2 d-flex">
+                <p class="player-name clickable" @click="$router.push('/players/detail/' + player.id)">{{ player.lastName + ", " + player.firstName }}</p>
+              </div>
+            </div>
+          </div>
+
+
 
           <!-- If class is drawn -->
           <div v-if="isChosenCategoryDrawn && draw !== null">
@@ -118,7 +132,8 @@ export default {
       draw: null,
       // Holds a list containing lists of players. They need to be sent as lists since in the case of doubles there
       // are two people for each registration id
-      registeredPlayersLists: []
+      registeredPlayersSingles: null,
+      registeredPlayersDoubles: null
     }
   },
   name: "Draw",
@@ -214,10 +229,19 @@ export default {
       })
     },
     getRegisteredPlayers() {
-      RegistrationService.getRegistrationsInCategory(this.competition.id, this.chosenCategory.id)
-          .then(res => {
-            this.registeredPlayersLists = res.data
-          })
+      if (this.chosenCategory.category.type === "SINGLES") {
+        RegistrationService.getRegisteredPlayersSingles(this.competition.id, this.chosenCategory.id)
+            .then(res => {
+              this.registeredPlayersDoubles = null
+              this.registeredPlayersSingles = res.data
+            })
+      } else {
+        RegistrationService.getRegisteredPlayersDoubles(this.competition.id, this.chosenCategory.id)
+            .then(res => {
+              this.registeredPlayersSingles = null
+              this.registeredPlayersDoubles = res.data
+            })
+      }
     },
     scrollToPlayoff() {
       const playoffElement = document.getElementById("playoff")
@@ -249,6 +273,12 @@ h1 {
 
 #matches {
   margin-left: 20px;
+}
+
+.heading {
+  color: var(--clr-primary-400);
+  border-bottom: 1px solid lightgrey;
+  text-align: left;
 }
 
 </style>

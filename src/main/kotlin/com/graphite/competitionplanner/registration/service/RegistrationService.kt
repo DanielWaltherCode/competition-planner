@@ -77,7 +77,7 @@ class RegistrationService(
     }
 
     fun getPlayersInCompetitionCategory(competitionCategoryId: Int): List<List<PlayerWithClubDTO>> {
-        val players = registrationRepository.getAllRegisteredPlayersInCompetitionCategory(competitionCategoryId)
+        val players: List<Pair<Registration, PlayerWithClubDTO>> = registrationRepository.getAllRegisteredPlayersInCompetitionCategory(competitionCategoryId)
             .filter { it.first is Registration.Real } // Sort out BYEs and Placeholders if any.
         return players
             .groupBy {(registration, _) -> (registration as Registration.Real).id }
@@ -127,7 +127,8 @@ data class CompetitionAndCategoriesDTO(
 
 data class RegisteredPlayersDTO(
     val groupingType: SearchType,
-    val groupingsAndPlayers: Map<String, Set<PlayerWithClubDTO>>
+    val groupingsAndPlayers: Map<String, Set<PlayerWithClubDTO>>,
+    val numberOfPlayers: Int = 0
 )
 
 data class SimpleCompetitionCategoryDTO(

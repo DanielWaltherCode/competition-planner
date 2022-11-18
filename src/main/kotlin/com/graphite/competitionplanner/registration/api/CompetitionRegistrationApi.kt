@@ -1,6 +1,8 @@
 package com.graphite.competitionplanner.registration.api
 
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.registration.domain.SearchRegistrations
 import com.graphite.competitionplanner.registration.domain.Withdraw
 import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
@@ -13,9 +15,10 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/competition/{competitionId}/registration")
 class CompetitionRegistrationApi(
-    val registrationService: RegistrationService,
-    val registrationRepository: RegistrationRepository,
-    val widthDraw: Withdraw
+        val registrationService: RegistrationService,
+        val registrationRepository: RegistrationRepository,
+        val withDraw: Withdraw,
+        val searchRegistrations: SearchRegistrations
 ) {
 
     // Supports search by club, category, name
@@ -28,8 +31,15 @@ class CompetitionRegistrationApi(
         return registrationService.getRegisteredPlayers(competitionId, searchType)
     }
 
-    @GetMapping("/{competitionCategoryId}")
-    fun getPlayersInCategory(@PathVariable competitionCategoryId: Int): List<List<PlayerWithClubDTO>> {
+    // Only called before draw is made
+    @GetMapping("/{competitionCategoryId}/singles")
+    fun getPlayersInCategorySingles(@PathVariable competitionCategoryId: Int): RegisteredPlayersDTO {
+        return searchRegistrations.getResultGroupedByLastNameForCategory(competitionCategoryId)
+    }
+
+    // Only called before draw is made
+    @GetMapping("/{competitionCategoryId}/doubles")
+    fun getPlayersInCategoryDoubles(@PathVariable competitionCategoryId: Int): List<List<PlayerWithClubDTO>> {
         return registrationService.getPlayersInCompetitionCategory(competitionCategoryId)
     }
 
@@ -70,14 +80,14 @@ class CompetitionRegistrationApi(
     fun withdrawFromCategory(@PathVariable competitionId: Int,
                              @PathVariable registrationId: Int,
                              @PathVariable competitionCategoryId: Int) {
-        widthDraw.beforeCompetition(competitionId, competitionCategoryId, registrationId)
+        withDraw.beforeCompetition(competitionId, competitionCategoryId, registrationId)
     }
 
     @PutMapping("/walkover/{competitionCategoryId}/{registrationId}")
     fun reportWalkover(@PathVariable competitionId: Int,
                        @PathVariable registrationId: Int,
                        @PathVariable competitionCategoryId: Int) {
-            widthDraw.walkOver(competitionId, competitionCategoryId, registrationId)
+            withDraw.walkOver(competitionId, competitionCategoryId, registrationId)
         }
 }
 

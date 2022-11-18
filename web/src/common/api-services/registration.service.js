@@ -11,6 +11,12 @@ const RegistrationService = {
     registerPlayerDoubles(competitionId, registrationSpec) {
         return Axios.post(`/competition/${competitionId}/registration/doubles`, registrationSpec, {withCredentials: true})
     },
+    getRegisteredPlayersSingles(competitionId, categoryId){
+        return Axios.get(`/competition/${competitionId}/registration/${categoryId}/singles`, {withCredentials: true})
+    },
+    getRegisteredPlayersDoubles(competitionId, categoryId){
+        return Axios.get(`/competition/${competitionId}/registration/${categoryId}/doubles`, {withCredentials: true})
+    },
     createDraw(competitionId, categoryId) {
         return Axios.put(`/competition/${competitionId}/draw/${categoryId}`, {withCredentials: true})
     },
