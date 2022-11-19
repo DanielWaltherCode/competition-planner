@@ -6,7 +6,6 @@ import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
-import com.graphite.competitionplanner.registration.interfaces.RegistrationRankingDTO
 import org.springframework.stereotype.Component
 
 @Component
@@ -32,8 +31,8 @@ class CreateDraw(
         }
 
         val registrationsWithSeeds = getCurrentSeeding.execute(competitionCategory)
-        if (competitionCategory.status != CompetitionCategoryStatus.SEEDING_HAS_BEEN_COMMITTED) {
-            approveSeeding.execute(competitionCategory, registrationsWithSeeds)
+        if (competitionCategory.status != CompetitionCategoryStatus.CLOSED_FOR_REGISTRATION) {
+            approveSeeding.execute(competitionCategory, ApproveSeedingSpec(registrationsWithSeeds))
         }
 
         val drawPolicy = DrawPolicy.createDrawStrategy(competitionCategory)

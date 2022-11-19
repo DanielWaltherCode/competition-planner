@@ -7,12 +7,17 @@ enum class CompetitionCategoryStatus {
     /**
      * A competition that has just been created is considered active
      */
-    ACTIVE,
+    ACTIVE, // Ta bort, utbytt av OPEN_FOR_REGISTRATIONS
 
     /**
-     * Indicates that the seeding has been approved and committed
+     * The competition category is open for registrations.
      */
-    SEEDING_HAS_BEEN_COMMITTED,
+    OPEN_FOR_REGISTRATION,
+
+    /**
+     * The competition category is closed for registrations.
+     */
+    CLOSED_FOR_REGISTRATION, // TA
 
     /**
      * The category has been drawn
