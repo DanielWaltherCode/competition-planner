@@ -12,20 +12,20 @@ data class ExcelScheduleDTOContainer(
 data class ExcelScheduleDTO(
         val scheduleItemList: List<ExcelScheduleItemDTO>,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    val validStartTimes: Set<LocalDateTime>,
+        val validStartTimes: Set<LocalDateTime>,
         val distinctCategories: Set<CategoryDTO?>,
         @JsonFormat(pattern = "yyyy-MM-dd")
-    val dateOfPlay: LocalDate
+        val dateOfPlay: LocalDate
 )
 
 data class ExcelScheduleItemDTO(
-    val tableNumber: Number,
-    val matchesAtTable: List<ExcelScheduleMatchDTO>
+        val tableNumber: Number,
+        val matchesAtTable: List<ExcelScheduleMatchDTO>
 )
 
 data class ExcelScheduleMatchDTO(
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    val startTime: LocalDateTime,
-    val category: CategoryDTO?,
-    val groupOrRound: String
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+        val startTime: LocalDateTime,
+        val category: CategoryDTO?,
+        val groupOrRound: String
 )
