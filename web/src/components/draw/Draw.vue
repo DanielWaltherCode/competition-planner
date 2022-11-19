@@ -53,7 +53,7 @@
             </div>
           </div>
           <div v-if="!isChosenCategoryDrawn && registeredPlayersSingles !== null" class="pt-4 px-3">
-            <h3 v-if="registeredPlayersSingles.numberOfPlayers > 0">Antal spelare: {{registeredPlayersSingles.numberOfPlayers}}</h3>
+            <h3 v-if="registeredPlayersSingles.numberOfPlayers > 0"> {{$t("draw.main.nrPlayers") + registeredPlayersSingles.numberOfPlayers}}</h3>
             <div v-for="(players, grouping) in registeredPlayersSingles.groupingsAndPlayers" :key="grouping">
               <div class="heading">
                 <p class="mb-0"> {{ grouping }} </p>

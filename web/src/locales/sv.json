@@ -233,7 +233,8 @@
       "drawMade": "Klassen har lottats",
       "deleteDraw": "Ta bort lottning",
       "redraw": "Lotta om",
-      "goToPlayoff": "Gå till slutspelet"
+      "goToPlayoff": "Gå till slutspelet",
+      "nrPlayers": "Antal spelare: "
     },
     "pool": {
       "players": "Spelare i gruppen",
@@ -449,6 +450,7 @@
     "resultRegistered": "Resultatet är sparat",
     "temporaryResultRegistered": "Tillfälligt resultat är sparat",
     "clubAdded": "Klubb tillagd",
+    "scheduleCollision": "Några av tiderna som bokades in var upptagna. Matcherna har ändå bokats in på de önskade borden men senarelagts.",
     "error": {
       "general": {
         "standard": "Något gick fel",
