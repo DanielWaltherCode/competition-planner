@@ -27,7 +27,7 @@ class GetCurrentSeeding(
             drawPolicy.createSeed(registrationRankings)
         } else {
             // Otherwise the seeds should've been stored
-            competitionDrawRepository.getSeeds(competitionCategory.id)
+            competitionDrawRepository.getSeeding(competitionCategory.id)
         }
     }
 }

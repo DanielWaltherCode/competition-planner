@@ -57,12 +57,22 @@ interface ICompetitionDrawRepository : IRepository {
     fun clearPoolTable()
 
     /**
+     * Delete the current stored seeding of the competition category
+     *
+     * @param competitionCategoryId ID of the CompetitionCategory
+     */
+    fun deleteSeeding(competitionCategoryId: Int)
+
+    /**
      * Return a list of the seeded registrations of a given competition category
      *
      * @param competitionCategoryId ID of the competition category
      * @return List of seeds
      */
-    fun getSeeds(competitionCategoryId: Int): List<RegistrationSeedDTO>
+    fun getSeeding(competitionCategoryId: Int): List<RegistrationSeedDTO>
 
+    /**
+     * Store a seeding
+     */
     fun storeSeeding(registrationSeeds: List<RegistrationSeedDTO>)
 }

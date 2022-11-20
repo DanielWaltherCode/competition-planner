@@ -51,7 +51,7 @@ class TestStoreSeeds(
 
         // Act
         repository.store(spec)
-        val seeds = repository.getSeeds(competitionCategory.id)
+        val seeds = repository.getSeeding(competitionCategory.id)
 
         // Assert
         Assertions.assertEquals(2, seeds.size, "Not the expected number of seeds returned")
