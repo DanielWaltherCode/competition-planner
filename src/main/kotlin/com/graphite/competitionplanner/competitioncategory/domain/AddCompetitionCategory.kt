@@ -29,7 +29,7 @@ class AddCompetitionCategory(
         }
 
         val spec = CompetitionCategorySpec(
-            status = CompetitionCategoryStatus.ACTIVE,
+            status = CompetitionCategoryStatus.OPEN_FOR_REGISTRATION,
             category = category,
             settings = getDefaultGeneralSettings(),
             gameSettings = getDefaultGameSettings()

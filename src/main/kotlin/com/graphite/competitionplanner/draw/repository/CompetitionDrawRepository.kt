@@ -60,12 +60,10 @@ class CompetitionDrawRepository(
 
     override fun delete(competitionCategoryId: Int) {
         asTransaction {
-            competitionCategoryRepository.setStatus(competitionCategoryId, CompetitionCategoryStatus.ACTIVE)
             dslContext.deleteFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
             dslContext.deleteFrom(POOL).where(POOL.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
         }
     }
-
 
     private fun storeCupDraw(draw: CupDrawSpec) {
         val records = draw.matches.map { it.toRecord(draw.competitionCategoryId) }

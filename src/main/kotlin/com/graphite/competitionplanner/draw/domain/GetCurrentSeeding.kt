@@ -20,7 +20,7 @@ class GetCurrentSeeding(
      * Return the current seed of the given competition category.
      */
     fun execute(competitionCategory: CompetitionCategoryDTO): List<RegistrationSeedDTO> { // TODO: Append player data to returned result?
-        return if (competitionCategory.status == CompetitionCategoryStatus.ACTIVE) {
+        return if (competitionCategory.status == CompetitionCategoryStatus.OPEN_FOR_REGISTRATION) {
             // While the category is ACTIVE, we re-calculate the seeding based of the registrations
             val drawPolicy = DrawPolicy.createDrawStrategy(competitionCategory)
             val registrationRankings: List<RegistrationRankingDTO> = registrationRepository.getRegistrationRanking(competitionCategory)

@@ -186,7 +186,7 @@ class DataGenerator {
 
     fun newCompetitionCategoryDTO(
         id: Int = 1,
-        status: CompetitionCategoryStatus = CompetitionCategoryStatus.ACTIVE,
+        status: CompetitionCategoryStatus = CompetitionCategoryStatus.OPEN_FOR_REGISTRATION,
         category: CategorySpec = newCategorySpec(),
         settings: GeneralSettingsDTO = newGeneralSettingsDTO(),
         gameSettings: GameSettingsDTO = newGameSettingsDTO()
@@ -231,7 +231,7 @@ class DataGenerator {
     )
 
     fun newCompetitionCategorySpec(
-        status: CompetitionCategoryStatus = CompetitionCategoryStatus.ACTIVE,
+        status: CompetitionCategoryStatus = CompetitionCategoryStatus.OPEN_FOR_REGISTRATION,
         category: CategorySpec = newCategorySpec(),
         settings: GeneralSettingsDTO = newGeneralSettingsDTO(),
         gameSettings: GameSettingsDTO = newGameSettingsDTO()

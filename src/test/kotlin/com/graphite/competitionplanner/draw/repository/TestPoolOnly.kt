@@ -154,7 +154,7 @@ class TestPoolOnly(
         Assertions.assertEquals(0, draw.playOff.size)
 
         val status = competitionCategoryRepository.get(competitionCategory.id).status
-        Assertions.assertEquals(CompetitionCategoryStatus.ACTIVE, status, "Status of category was not reset")
+        Assertions.assertEquals(CompetitionCategoryStatus.OPEN_FOR_REGISTRATION, status, "Status of category was not reset")
     }
 
     @Test

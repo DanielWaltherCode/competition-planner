@@ -2,8 +2,11 @@
   <div>
     <!-- Page heading -->
     <div class="row p-4 blue-section">
-      <h4 class="text-start">{{ $t("player.add.heading") }}</h4>
-      <p class="text-start col-sm-8">{{ $t("player.add.helperText") }}
+      <h4 class="text-start">
+{{ $t("player.add.heading") }}
+</h4>
+      <p class="text-start col-sm-8">
+{{ $t("player.add.helperText") }}
         <span class="clickable text-decoration-underline"
               @click="$router.push('/players/create')">{{ $t("player.sidebar.create") }}
         </span>
@@ -11,21 +14,27 @@
     </div>
     <!-- Add player to singles categories -->
     <div class="row custom-card pb-4">
-      <h2 class="p-3">{{ $t("player.addPlayerSingles") }}</h2>
-      <search-player-component ref="singles-search" class="justify-content-center" v-on:clear-player="singlesPlayer = null"
-                               v-on:player-found="singlesPlayer = $event"></search-player-component>
+      <h2 class="p-3">
+{{ $t("player.addPlayerSingles") }}
+</h2>
+      <search-player-component ref="singles-search" class="justify-content-center" @clear-player="singlesPlayer = null"
+                               @player-found="singlesPlayer = $event" />
       <div v-if="singlesPlayer !== null" class="row px-4">
-        <div class="col-sm-4"></div>
+        <div class="col-sm-4" />
         <div class="form-check col-sm-6 mb-3">
-          <h5 class="text-start">{{$t("player.categories")}}</h5>
+          <h5 class="text-start">
+{{ $t("player.categories") }}
+</h5>
           <div v-for="competitionCategory in singlesCategories" :key="competitionCategory.category.id">
-            <input class="form-check-input ms-1" type="checkbox" :value="competitionCategory.category.name"
-                   :id="competitionCategory.category.id" @change="noCategories = false" v-model="selectedSinglesCategories">
+            <input :id="competitionCategory.category.id" v-model="selectedSinglesCategories" class="form-check-input ms-1"
+                   type="checkbox" :value="competitionCategory.category.name" @change="noCategories = false">
             <label class="form-check-label d-flex ps-2" :for="competitionCategory.category.id">
               {{ tryTranslateCategoryName(competitionCategory.category.name) }}
             </label>
           </div>
-          <p class="fs-6 text-danger text-start" v-if="noCategories">{{ $t("validations.noCategories") }}</p>
+          <p v-if="noCategories" class="fs-6 text-danger text-start">
+{{ $t("validations.noCategories") }}
+</p>
         </div>
         <div class="d-flex justify-content-end">
           <button type="button" class="btn btn-primary" @click="addSinglesPlayerToCompetition">
@@ -36,29 +45,39 @@
     </div>
     <!-- Add players to doubles categories -->
     <div class="row custom-card mt-5">
-      <h2 class="p-3">{{ $t("player.addPlayerDoubles") }}</h2>
+      <h2 class="p-3">
+{{ $t("player.addPlayerDoubles") }}
+</h2>
       <div class="d-flex justify-content-start px-4">
-        <p class="mb-0">{{ $t("player.doublesPlayer1") }}</p>
+        <p class="mb-0">
+{{ $t("player.doublesPlayer1") }}
+</p>
       </div>
-      <search-player-component class="justify-content-center" ref="double1" v-on:clear-player="doublesPlayer1 = null"
-                               v-on:player-found="doublesPlayer1 = $event"></search-player-component>
+      <search-player-component ref="double1" class="justify-content-center" @clear-player="doublesPlayer1 = null"
+                               @player-found="doublesPlayer1 = $event" />
       <div class="d-flex justify-content-start px-4">
-        <p class="mb-0">{{ $t("player.doublesPlayer2") }}</p>
+        <p class="mb-0">
+{{ $t("player.doublesPlayer2") }}
+</p>
       </div>
-      <search-player-component class="justify-content-center" ref="double2" v-on:clear-player="doublesPlayer2 = null"
-                               v-on:player-found="doublesPlayer2 = $event"></search-player-component>
+      <search-player-component ref="double2" class="justify-content-center" @clear-player="doublesPlayer2 = null"
+                               @player-found="doublesPlayer2 = $event" />
       <div v-if="doublesPlayer1 !== null && doublesPlayer2 !== null" class="row px-4 pb-4">
-        <div class="col-sm-4"></div>
+        <div class="col-sm-4" />
         <div class="form-check col-sm-6 mb-3">
-          <h5 class="text-start">{{$t("player.categories")}}</h5>
+          <h5 class="text-start">
+{{ $t("player.categories") }}
+</h5>
           <div v-for="competitionCategory in doublesCategories" :key="competitionCategory.category.id">
-            <input class="form-check-input ms-1" type="checkbox" :value="competitionCategory.category.name"
-                   :id="competitionCategory.category.id" @change="noCategories = false" v-model="selectedDoublesCategories">
+            <input :id="competitionCategory.category.id" v-model="selectedDoublesCategories" class="form-check-input ms-1"
+                   type="checkbox" :value="competitionCategory.category.name" @change="noCategories = false">
             <label class="form-check-label d-flex ps-2" :for="competitionCategory.category.id">
               {{ tryTranslateCategoryName(competitionCategory.category.name) }}
             </label>
           </div>
-          <p class="fs-6 text-danger text-start" v-if="noCategories">{{ $t("validations.noCategories") }}</p>
+          <p v-if="noCategories" class="fs-6 text-danger text-start">
+{{ $t("validations.noCategories") }}
+</p>
         </div>
         <div class="d-flex justify-content-end">
           <button type="button" class="btn btn-primary" @click="registerDoublesPlayers">
@@ -105,7 +124,7 @@ export default {
   mounted() {
     CategoryService.getCompetitionCategories(this.competition.id).then(res => {
       const allCategories = res.data
-      this.competitionCategories = allCategories.filter(category => category.status === "ACTIVE")
+      this.competitionCategories = allCategories.filter(category => category.status === "OPEN_FOR_REGISTRATION")
     })
 
   },
