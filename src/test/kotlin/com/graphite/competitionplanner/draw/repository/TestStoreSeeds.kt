@@ -30,7 +30,7 @@ class TestStoreSeeds(
     registrationRepository) {
 
     @Test
-    fun shouldOnlyReturnSeededRegistrations() {
+    fun canStoreAndGetSeeding() {
         // Setup
         val club = clubRepository.store(dataGenerator.newClubSpec())
         val competition = club.addCompetition()
@@ -50,7 +50,6 @@ class TestStoreSeeds(
         val seeds = repository.getSeeding(competitionCategory.id)
 
         // Assert
-        Assertions.assertEquals(2, seeds.size, "Not the expected number of seeds returned")
-        Assertions.assertTrue(seeds.all { it.seed != null }, "Should only return seeded registrations.")
+        Assertions.assertEquals(4, seeds.size, "Not the expected number of seeds returned")
     }
 }

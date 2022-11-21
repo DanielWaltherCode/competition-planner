@@ -170,9 +170,7 @@ class CompetitionDrawRepository(
         val records = dslContext.select()
             .from(COMPETITION_CATEGORY_REGISTRATION)
             .where(
-                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId).and(
-                    COMPETITION_CATEGORY_REGISTRATION.SEED.isNotNull
-                )
+                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
             )
             .fetchInto(COMPETITION_CATEGORY_REGISTRATION)
         return records.map { RegistrationSeedDTO(Registration.Real(it.registrationId), it.competitionCategoryId, it.seed) }
