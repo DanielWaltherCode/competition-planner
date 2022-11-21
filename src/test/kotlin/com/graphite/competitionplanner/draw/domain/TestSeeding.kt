@@ -1,10 +1,13 @@
 package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
+import com.graphite.competitionplanner.draw.interfaces.ApproveSeedingSpec
 import com.graphite.competitionplanner.util.TestHelper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
 import org.mockito.Mockito
 import org.springframework.boot.test.context.SpringBootTest
 
@@ -18,8 +21,11 @@ class TestSeeding: TestBaseCreateDraw() {
     )
 
 
+    @Captor
+    lateinit var seedingCaptor: ArgumentCaptor<ApproveSeedingSpec>
+
     @TestFactory
-    fun shouldStoreSeeding() = inputTestData
+    fun shouldApproveSeedingAutomaticallyIfCompetitionIsOpenForRegistration() = inputTestData
         .map { drawType ->
             DynamicTest.dynamicTest("Storing seed when draw type is $drawType") {
             val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
@@ -39,14 +45,14 @@ class TestSeeding: TestBaseCreateDraw() {
             // Act
             createDraw.execute(competitionCategory.id)
 
-            // Record the spec sent to the repository for validation
-            Mockito.verify(mockedCompetitionDrawRepository, Mockito.atLeastOnce()).store(TestHelper.MockitoHelper.capture(classCaptor))
-            val result = classCaptor.value as CompetitionCategoryDrawSpec
+            // Record the seeding
+            Mockito.verify(mockedApproveSeeding, Mockito.atLeastOnce()).execute(TestHelper.MockitoHelper.anyObject(), TestHelper.MockitoHelper.capture(seedingCaptor))
+            val result = seedingCaptor.value as ApproveSeedingSpec
 
             // Assert
-            val seeding = result.seeding
-            Assertions.assertEquals(registrationRanks.size, seeding.size)
-            Assertions.assertEquals(registrationRanks.map { it.registration.id }.sorted(), seeding.map { it.registration.id }.sorted())
+            val storedSeeding = result.seeding
+            Assertions.assertEquals(registrationRanks.size, storedSeeding.size)
+            Assertions.assertEquals(registrationRanks.map { it.registration.id }.sorted(), storedSeeding.map { it.registration.id }.sorted())
         }
     }
 }

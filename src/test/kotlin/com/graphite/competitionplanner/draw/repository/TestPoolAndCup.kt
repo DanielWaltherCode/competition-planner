@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 class TestPoolAndCup(
+    @Autowired val deleteDraw: DeleteDraw,
     @Autowired repository: ICompetitionDrawRepository,
     @Autowired clubRepository: IClubRepository,
     @Autowired competitionRepository: ICompetitionRepository,
@@ -155,7 +156,7 @@ class TestPoolAndCup(
         val result = repository.store(spec)
 
         // Act
-        repository.delete(result.competitionCategoryId)
+        deleteDraw.execute(result.competitionCategoryId)
 
         // Assert
         val draw = repository.get(competitionCategory.id)
@@ -163,7 +164,7 @@ class TestPoolAndCup(
         Assertions.assertEquals(0, draw.playOff.size)
 
         val status = competitionCategoryRepository.get(competitionCategory.id).status
-        Assertions.assertEquals(CompetitionCategoryStatus.OPEN_FOR_REGISTRATION, status, "Status of category was not reset")
+        Assertions.assertEquals(CompetitionCategoryStatus.CLOSED_FOR_REGISTRATION, status, "Status of category was not reset")
     }
 
     private fun List<PlayoffRoundDTO>.inRound(round: Round): PlayoffRoundDTO {

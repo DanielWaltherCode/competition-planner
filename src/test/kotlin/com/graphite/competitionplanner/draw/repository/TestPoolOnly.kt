@@ -5,6 +5,7 @@ import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
+import com.graphite.competitionplanner.draw.domain.DeleteDraw
 import com.graphite.competitionplanner.draw.domain.Pool
 import com.graphite.competitionplanner.draw.domain.PoolDrawSpec
 import com.graphite.competitionplanner.draw.domain.PoolMatch
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 class TestPoolOnly(
+    @Autowired val deleteDraw: DeleteDraw,
     @Autowired repository: ICompetitionDrawRepository,
     @Autowired clubRepository: IClubRepository,
     @Autowired competitionRepository: ICompetitionRepository,
@@ -146,7 +148,7 @@ class TestPoolOnly(
         val result = repository.store(spec)
 
         // Act
-        repository.delete(result.competitionCategoryId)
+        deleteDraw.execute(result.competitionCategoryId)
 
         // Assert
         val draw = repository.get(competitionCategory.id)
@@ -154,7 +156,7 @@ class TestPoolOnly(
         Assertions.assertEquals(0, draw.playOff.size)
 
         val status = competitionCategoryRepository.get(competitionCategory.id).status
-        Assertions.assertEquals(CompetitionCategoryStatus.OPEN_FOR_REGISTRATION, status, "Status of category was not reset")
+        Assertions.assertEquals(CompetitionCategoryStatus.CLOSED_FOR_REGISTRATION, status, "Status of category was not reset")
     }
 
     @Test
