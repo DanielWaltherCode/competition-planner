@@ -360,6 +360,7 @@
     "games": "Set",
     "search": "Sök på en spelare eller klubb",
     "hideFinished": "Dölj färdigspelade matcher",
+    "categoryDefaultChoice": "Alla",
     "modal": {
       "header": "Registrera resultat",
       "savePartial": "Spara delresultat",

@@ -11,7 +11,7 @@
         <div id="main" class="p-4">
           <!-- Filters -->
           <div class="row mb-2 d-flex align-items-center p-3 bg-grey">
-            <div class="col-7">
+            <div class="col-12 col-md-6">
               <div class="d-flex align-items-center mb-2">
                 <i class="fas fa-search me-2"></i>
                 <label for="playerSearch" class="form-label d-flex mb-0"> {{ $t("results.search") }}</label>
@@ -22,9 +22,18 @@
                 </button>
               </div>
             </div>
-            <div class="col-3 ms-4 form-check d-flex justify-content-start">
+            <div class="col-5 col-md-2 ms-4 form-check d-flex justify-content-start">
               <input id="hide-finished-matches" v-model="hideFinishedMatches" type="checkbox" class="form-check-input">
               <label class="form-check-label ms-2" for="hide-finished-matches">{{ $t("results.hideFinished") }}</label>
+            </div>
+            <div class="col-5 col-md-2">
+              <label for="category-choice">{{ $t("schedule.main.dropdownPlaceholder") }}</label>
+              <select id="category-choice" class="form-select my-3 mx-auto" v-model="selectedCategory">
+                <option value="">{{$t("results.categoryDefaultChoice")}}</option>
+                <option v-for="category in competitionCategories" :key="category" :value="category">
+                  {{ tryTranslateCategoryName(category) }}
+                </option>
+              </select>
             </div>
           </div>
           <div id="table-container" class="table-responsive" v-if="matches.length > 0">
@@ -105,7 +114,9 @@ export default {
       nrGames: null,
       showModal: false,
       searchString: "",
-      hideFinishedMatches: false
+      hideFinishedMatches: false,
+      competitionCategories: [],
+      selectedCategory: ""
     }
   },
   computed: {
@@ -124,6 +135,10 @@ export default {
         filteredMatches = this.matches
       }
 
+      if (this.selectedCategory !== "") {
+        filteredMatches = filteredMatches.filter(match => match.competitionCategory.name === this.selectedCategory)
+      }
+
       let matchesWithSearchString = []
       if (this.searchString !== "") {
         filteredMatches.forEach(match => {
@@ -134,6 +149,7 @@ export default {
           }
         })
       } else {
+
         return filteredMatches
       }
       return matchesWithSearchString
@@ -156,6 +172,11 @@ export default {
       MatchService.getMatchesInCompetition(this.competition.id).then(res => {
         const matchesWithPlaceholders = res.data
         this.matches = matchesWithPlaceholders.filter(match => match.firstPlayer[0].id !== -1 && match.secondPlayer[0].id !== -1)
+        const allCategories = this.matches.map(match => match.competitionCategory)
+        this.competitionCategories = new Set()
+        allCategories.forEach(category => {
+          this.competitionCategories.add(category.name)
+        })
       })
     },
     getPlayerOne: getPlayerOneWithClub,
