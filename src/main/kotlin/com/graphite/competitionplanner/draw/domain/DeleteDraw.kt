@@ -1,6 +1,6 @@
 package com.graphite.competitionplanner.draw.domain
 
-import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
+import com.graphite.competitionplanner.competitioncategory.domain.CloseForRegistrations
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import org.springframework.stereotype.Component
@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component
 @Component
 class DeleteDraw(
     val drawRepository: ICompetitionDrawRepository,
-    val competitionCategoryRepository: ICompetitionCategoryRepository
+    val competitionCategoryRepository: ICompetitionCategoryRepository,
+    val closeForRegistrations: CloseForRegistrations
 ) {
 
     /**
@@ -21,11 +22,11 @@ class DeleteDraw(
      */
     fun execute(competitionCategoryId: Int) {
         // Validate that competition category exist
-        competitionCategoryRepository.get(competitionCategoryId)
+        val competitionCategory = competitionCategoryRepository.get(competitionCategoryId)
 
         drawRepository.asTransaction {
             drawRepository.delete(competitionCategoryId)
-            competitionCategoryRepository.setStatus(competitionCategoryId, CompetitionCategoryStatus.CLOSED_FOR_REGISTRATION)
+            closeForRegistrations.execute(competitionCategory)
         }
     }
 }

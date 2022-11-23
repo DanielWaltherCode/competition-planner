@@ -1,16 +1,17 @@
 package com.graphite.competitionplanner.draw.domain
 
+import com.graphite.competitionplanner.competitioncategory.domain.CloseForRegistrations
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
-import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
-import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.ApproveSeedingSpec
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
+import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import org.springframework.stereotype.Component
 
 @Component
 class ApproveSeeding(
     val drawRepository: ICompetitionDrawRepository,
-    val competitionCategoryRepository: CompetitionCategoryRepository
+    val registrationRepository: RegistrationRepository,
+    val closeForRegistrations: CloseForRegistrations
 ) {
 
     /**
@@ -18,12 +19,34 @@ class ApproveSeeding(
      * for further registrations as that would affect the seeding.
      */
     fun execute(competitionCategory: CompetitionCategoryDTO, spec: ApproveSeedingSpec) {
-        competitionCategoryRepository.asTransaction {
+        if (spec.seeding.any { it.competitionCategoryId != competitionCategory.id }) {
+            throw IllegalArgumentException("You are trying to submit a seeding that does not belong to the given competition category")
+        }
+
+        val registrationRankings = registrationRepository.getRegistrationRanking(competitionCategory)
+
+        val actualRegistrationsIds = registrationRankings.map { it.registration.id }.sorted()
+        val specRegistrationsIds = spec.seeding.map { it.registration.id }.sorted()
+
+        if (actualRegistrationsIds != specRegistrationsIds) {
+            throw IllegalArgumentException("You are trying to submit a seeding that is not including every registration")
+        }
+
+        val drawPolicy = DrawPolicy.createDrawStrategy(competitionCategory)
+
+        val dummySeeding = drawPolicy.createSeed(registrationRankings)
+
+        val expectedNumberOfSeeded = dummySeeding.filter { it.seed != null }.size
+        val actualNumberOfSeeded = spec.seeding.filter { it.seed != null }.size
+        if (expectedNumberOfSeeded != actualNumberOfSeeded) {
+            throw IllegalArgumentException("We expected $expectedNumberOfSeeded number of seeded registrations, but got $actualNumberOfSeeded")
+        }
+
+        drawPolicy.throwExceptionIfNotEnoughRegistrations(spec.seeding)
+
+        drawRepository.asTransaction {
             drawRepository.storeSeeding(spec.seeding)
-            competitionCategoryRepository.setStatus(
-                competitionCategory.id,
-                CompetitionCategoryStatus.CLOSED_FOR_REGISTRATION
-            )
+            closeForRegistrations.execute(competitionCategory)
         }
     }
 }

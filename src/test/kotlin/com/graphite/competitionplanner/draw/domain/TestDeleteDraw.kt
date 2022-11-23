@@ -1,5 +1,6 @@
 package com.graphite.competitionplanner.draw.domain
 
+import com.graphite.competitionplanner.competitioncategory.domain.CloseForRegistrations
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import org.junit.jupiter.api.Test
@@ -11,8 +12,12 @@ class TestDeleteDraw {
 
     private val mockedDrawRepository = mock(ICompetitionDrawRepository::class.java)
     private val mockedCompetitionCategoryRepository = mock(ICompetitionCategoryRepository::class.java)
+    private val mockedCloseForRegistrations = mock(CloseForRegistrations::class.java)
 
-    private val deleteDraw = DeleteDraw(mockedDrawRepository, mockedCompetitionCategoryRepository)
+    private val deleteDraw = DeleteDraw(
+        mockedDrawRepository,
+        mockedCompetitionCategoryRepository,
+        mockedCloseForRegistrations)
 
     @Test
     fun shouldValidateThatCompetitionCategoryExist() {

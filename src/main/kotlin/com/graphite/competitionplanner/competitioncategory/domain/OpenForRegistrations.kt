@@ -1,10 +1,12 @@
-package com.graphite.competitionplanner.draw.domain
+package com.graphite.competitionplanner.competitioncategory.domain
 
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
+import org.springframework.stereotype.Component
 
+@Component
 class OpenForRegistrations(
     val drawRepository: ICompetitionDrawRepository,
     val competitionCategoryRepository: CompetitionCategoryRepository

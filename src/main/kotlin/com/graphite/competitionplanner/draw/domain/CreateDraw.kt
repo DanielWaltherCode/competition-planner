@@ -21,7 +21,6 @@ class CreateDraw(
     /**
      * Creates a draw for the given competition category
      *
-     * @throws BadRequestException
      */
     fun execute(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
         val competitionCategory: CompetitionCategoryDTO = findCompetitionCategory.byId(competitionCategoryId)
@@ -36,8 +35,6 @@ class CreateDraw(
         }
 
         val drawPolicy = DrawPolicy.createDrawStrategy(competitionCategory)
-        drawPolicy.throwExceptionIfNotEnoughRegistrations(registrationsWithSeeds)
-
         val spec = drawPolicy.createDraw(registrationsWithSeeds)
 
         return drawRepository.store(spec)
