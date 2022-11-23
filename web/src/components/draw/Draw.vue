@@ -1,39 +1,44 @@
 <template>
   <main>
     <h1 class="p-4">
-      <i @click="$router.push('/players')" class="fas fa-arrow-left" style="float: left"></i>
+      <i class="fas fa-arrow-left" style="float: left" @click="$router.push('/players')" />
       {{ $t("draw.main.title") }}
-      <i @click="$router.push('/schedule')" class="fas fa-arrow-right" style="float: right"></i>
+      <i class="fas fa-arrow-right" style="float: right" @click="$router.push('/schedule')" />
     </h1>
     <div>
       <div class="row">
-
-        <!-- Sidebar -->
+<!-- Sidebar -->
         <div class="sidebar col-md-3">
           <div class="sidebar-header">
             <h4> {{ $t("draw.sidebar.title") }}</h4>
           </div>
           <ul class="list-group list-group-flush">
-            <li v-for="category in competitionCategories" class="list-group-item clickable" :key="category.id"
-                @click="makeChoice(category)"
-                :class="category.category.name === chosenCategory.category.name ? 'active' : ''">
+            <li v-for="category in competitionCategories" :key="category.id" class="list-group-item clickable"
+                :class="category.category.name === chosenCategory.category.name ? 'active' : ''"
+                @click="makeChoice(category)">
               {{ tryTranslateCategoryName(category.category.name) }}
             </li>
           </ul>
         </div>
 
         <!-- Main content -->
-        <div class="col-md-9 ps-0" v-if="chosenCategory !== null">
+        <div v-if="chosenCategory !== null" class="col-md-9 ps-0">
           <div class="blue-section row">
             <div class="top-content col-md-10 mx-auto">
-              <h3 class="p-4">{{ tryTranslateCategoryName(chosenCategory.category.name) }}</h3>
+              <h3 class="p-4">
+{{ tryTranslateCategoryName(chosenCategory.category.name) }}
+</h3>
 
               <!-- If class is not drawn yet -->
               <div v-if="!isChosenCategoryDrawn " class="pb-4 ms-3 ms-md-0">
                 <div v-if="registeredPlayersDoubles != null && registeredPlayersDoubles.length > 0 ||
                 registeredPlayersSingles != null && registeredPlayersSingles.numberOfPlayers > 0">
-                  <p class="text-start text-md-center"> {{ $t("draw.main.notDrawnTitle") }} {{ $t("draw.main.notDrawnBody") }}</p>
-                  <button class="btn btn-primary" @click="createDraw">{{ $t("draw.main.drawNow") }}</button>
+                  <p class="text-start text-md-center">
+{{ $t("draw.main.notDrawnTitle") }} {{ $t("draw.main.notDrawnBody") }}
+</p>
+                  <button class="btn btn-primary" @click="createDraw">
+{{ $t("draw.main.drawNow") }}
+</button>
                 </div>
                 <div v-else>
                   <p>{{ $t("draw.main.notDrawnNoPlayers") }}</p>
@@ -42,24 +47,30 @@
             </div>
           </div>
           <!-- List of registered players if there are any. Doubles case first -->
-          <div v-if="!isChosenCategoryDrawn && registeredPlayersDoubles !== null" class="pb-5" id="registered-players">
+          <div v-if="!isChosenCategoryDrawn && registeredPlayersDoubles !== null" id="registered-players" class="pb-5">
             <h3>{{ $t("draw.main.registeredPlayers") }}</h3>
             <!-- The innerPlayerList contains two players in case of doubles -->
-            <div v-for="(innerPlayerList, index) in registeredPlayersDoubles" class="py-2 justify-content-center"
-                 :key="index">
+            <div v-for="(innerPlayerList, index) in registeredPlayersDoubles" :key="index"
+                 class="py-2 justify-content-center">
               <div v-for="player in innerPlayerList" :key="player.id">
                 {{ player.firstName + " " + player.lastName + " " + player.club.name }}
               </div>
             </div>
           </div>
           <div v-if="!isChosenCategoryDrawn && registeredPlayersSingles !== null" class="pt-4 px-3">
-            <h3 v-if="registeredPlayersSingles.numberOfPlayers > 0">Antal spelare: {{registeredPlayersSingles.numberOfPlayers}}</h3>
+            <h3 v-if="registeredPlayersSingles.numberOfPlayers > 0">
+Antal spelare: {{ registeredPlayersSingles.numberOfPlayers }}
+</h3>
             <div v-for="(players, grouping) in registeredPlayersSingles.groupingsAndPlayers" :key="grouping">
               <div class="heading">
-                <p class="mb-0"> {{ grouping }} </p>
+                <p class="mb-0">
+{{ grouping }}
+</p>
               </div>
               <div v-for="player in players" :key="player.id" class="mt-2 d-flex">
-                <p class="player-name clickable" @click="$router.push('/players/detail/' + player.id)">{{ player.lastName + ", " + player.firstName }}</p>
+                <p class="player-name clickable" @click="$router.push('/players/detail/' + player.id)">
+{{ player.lastName + ", " + player.firstName }}
+</p>
               </div>
             </div>
           </div>
@@ -72,39 +83,47 @@
               <div id="main-header">
                 <div class="d-flex justify-content-center p-3">
                   <div class="p-2 custom-card">
-                    <button type="button" class="btn btn-warning me-3" @click="reDraw">{{
+                    <button type="button" class="btn btn-warning me-3" @click="reDraw">
+{{
                         $t("draw.main.redraw")
                       }}
                     </button>
-                    <button type="button" class="btn btn-danger" @click="deleteDraw">{{
+                    <button type="button" class="btn btn-danger" @click="deleteDraw">
+{{
                         $t("draw.main.deleteDraw")
                       }}
                     </button>
                   </div>
                 </div>
-                <div v-if="draw.playOff != null" @click="scrollToPlayoff"
-                     class="clickable px-5 py-3 text-uppercase fs-6 d-flex align-items-center">
-                  <p class="mb-0 me-1">{{$t("draw.main.goToPlayoff")}}</p>
-                  <i class="fas fa-arrow-right"></i>
+                <div v-if="draw.playOff != null" class="clickable px-5 py-3 text-uppercase fs-6 d-flex align-items-center"
+                     @click="scrollToPlayoff">
+                  <p class="mb-0 me-1">
+{{ $t("draw.main.goToPlayoff") }}
+</p>
+                  <i class="fas fa-arrow-right" />
                 </div>
               </div>
               <!-- If there are groups -->
               <div v-for="group in draw.groups" :key="group.name"
                    class="row col-sm-11 mx-auto mt-3 mb-4 d-flex align-items-start p-3 custom-card">
-                <h4 class="text-start mb-3">{{ $t("draw.main.group") }} {{ group.name }}</h4>
+                <h4 class="text-start mb-3">
+{{ $t("draw.main.group") }} {{ group.name }}
+</h4>
                 <div class="col-sm-12">
-                  <PoolDraw :group="group"/>
+                  <PoolDraw :group="group" />
                 </div>
                 <div class="col-sm-12 pt-4">
                   <div id="matches" class="row justify-content-center ms-0">
-                    <h5 class="black text-start fw-bolder"> {{$t("draw.pool.matches")}}</h5>
-                    <match-list-component :matches="group.matches"/>
+                    <h5 class="black text-start fw-bolder">
+{{ $t("draw.pool.matches") }}
+</h5>
+                    <match-list-component :matches="group.matches" />
                   </div>
                 </div>
               </div>
               <!-- If there is a playoff/cup -->
-              <playoff-draw id="playoff" v-if="draw != null && draw.playOff != null && shouldShowPlayoff(draw.playOff)"
-                            :playoff-rounds="draw.playOff"></playoff-draw>
+              <playoff-draw v-if="draw != null && draw.playOff != null && shouldShowPlayoff(draw.playOff)" id="playoff"
+                            :playoff-rounds="draw.playOff" />
             </div>
           </div>
         </div>
@@ -123,6 +142,7 @@ import PlayoffDraw from "@/components/draw/PlayoffDraw";
 import { tryTranslateCategoryName } from "@/common/util"
 
 export default {
+  name: "Draw",
   components: {PlayoffDraw, MatchListComponent, PoolDraw},
   data() {
     return {
@@ -136,7 +156,6 @@ export default {
       registeredPlayersDoubles: null
     }
   },
-  name: "Draw",
   computed: {
     competition: function () {
       return this.$store.getters.competition
@@ -194,7 +213,7 @@ export default {
     },
     deleteDraw() {
       if (confirm(this.$tc("confirm.deleteDraw"))) {
-        DrawService.deleteDraw(this.competition.id, this.chosenCategory.id).then(() => {
+        CategoryService.openCompetitionCategory(this.competition.id, this.chosenCategory.id).then(() => {
           this.$toasted.success(this.$tc("toasts.categoryDrawDeleted")).goAway(3000)
           this.isChosenCategoryDrawn = false
           this.getRegisteredPlayers()
