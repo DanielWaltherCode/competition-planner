@@ -34,9 +34,7 @@ class ApproveSeeding(
 
         val drawPolicy = DrawPolicy.createDrawStrategy(competitionCategory)
 
-        val dummySeeding = drawPolicy.createSeed(registrationRankings)
-
-        val expectedNumberOfSeeded = dummySeeding.filter { it.seed != null }.size
+        val expectedNumberOfSeeded = drawPolicy.calculateNumberOfSeeds(actualRegistrationsIds.size)
         val actualNumberOfSeeded = spec.seeding.filter { it.seed != null }.size
         if (expectedNumberOfSeeded != actualNumberOfSeeded) {
             throw IllegalArgumentException("We expected $expectedNumberOfSeeded number of seeded registrations, but got $actualNumberOfSeeded")
