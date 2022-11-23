@@ -35,9 +35,17 @@ class ApproveSeeding(
         val drawPolicy = DrawPolicy.createDrawStrategy(competitionCategory)
 
         val expectedNumberOfSeeded = drawPolicy.calculateNumberOfSeeds(actualRegistrationsIds.size)
-        val actualNumberOfSeeded = spec.seeding.filter { it.seed != null }.size
-        if (expectedNumberOfSeeded != actualNumberOfSeeded) {
-            throw IllegalArgumentException("We expected $expectedNumberOfSeeded number of seeded registrations, but got $actualNumberOfSeeded")
+        val actualSeeded = spec.seeding.filter { it.seed != null }
+        if (expectedNumberOfSeeded != actualSeeded.size) {
+            throw IllegalArgumentException("We expected $expectedNumberOfSeeded number of seeded registrations, but got ${actualSeeded.size}")
+        }
+
+        val expectedSeeds = (1..expectedNumberOfSeeded).toList()
+        if (expectedSeeds != actualSeeded.map { it.seed!! }.sorted() ){
+            throw IllegalArgumentException(
+                "Each seeded registration must have a unique seed, " +
+                "where the highest seeded registration has value 1, " +
+                "and the lowest seeded registration has value $expectedNumberOfSeeded")
         }
 
         drawPolicy.throwExceptionIfNotEnoughRegistrations(spec.seeding)
