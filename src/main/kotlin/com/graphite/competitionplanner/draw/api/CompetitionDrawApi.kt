@@ -1,9 +1,10 @@
 package com.graphite.competitionplanner.draw.api
 
-import com.graphite.competitionplanner.draw.domain.CreateDraw
-import com.graphite.competitionplanner.draw.domain.DeleteDraw
-import com.graphite.competitionplanner.draw.domain.GetDraw
+import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
+import com.graphite.competitionplanner.draw.domain.*
+import com.graphite.competitionplanner.draw.interfaces.ApproveSeedingSpec
 import com.graphite.competitionplanner.draw.interfaces.CompetitionCategoryDrawDTO
+import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.draw.service.GroupDrawDTO
 import com.graphite.competitionplanner.draw.service.PlayoffDTO
@@ -15,7 +16,10 @@ class CompetitionDrawApi(
     val createDraw: CreateDraw,
     val drawService: DrawService,
     val getDraw: GetDraw,
-    val deleteDraw: DeleteDraw
+    val deleteDraw: DeleteDraw,
+    val getCurrentSeeding: GetCurrentSeeding,
+    val approveSeeding: ApproveSeeding,
+    val findCompetitionCategory: FindCompetitionCategory
 ) {
 
     // Can be used both to create initial draw and to make a new draw if desired
@@ -45,6 +49,21 @@ class CompetitionDrawApi(
     @GetMapping("/is-draw-made")
     fun isDrawMade(@PathVariable competitionCategoryId: Int): Boolean {
         return drawService.isDrawMade(competitionCategoryId)
+    }
+
+    @GetMapping("seeding")
+    fun getCurrentSeeding(@PathVariable competitionCategoryId: Int): List<RegistrationSeedDTO> {
+        val competitionCategory = findCompetitionCategory.byId(competitionCategoryId)
+        return getCurrentSeeding.execute(competitionCategory)
+    }
+
+    @PostMapping("seeding")
+    fun approveSeeding(
+        @PathVariable competitionCategoryId: Int,
+        @RequestBody spec: ApproveSeedingSpec)
+    {
+        val competitionCategory = findCompetitionCategory.byId(competitionCategoryId)
+        approveSeeding.execute(competitionCategory, spec)
     }
 
 }

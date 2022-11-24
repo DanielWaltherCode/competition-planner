@@ -19,6 +19,9 @@ const CategoryService = {
     addCustomCategory(competitionId, category) {
         return Axios.post(`category/${competitionId}`, category, {withCredentials: true})
     },
+    openCompetitionCategoryForRegistration(competitionId, competitionCategoryId) {
+        return Axios.put(`/competition/${competitionId}/category/${competitionCategoryId}/open-for-registration`, {}, {withCredentials: true})
+    },
 
     // Category general settings
     getCategoryMetadata(competitionId, categoryId) {

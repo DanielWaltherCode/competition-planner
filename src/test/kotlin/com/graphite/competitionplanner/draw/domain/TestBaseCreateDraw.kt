@@ -24,6 +24,10 @@ class TestBaseCreateDraw {
     )
     private final val mockedCompetitionCategoryRepository: ICompetitionCategoryRepository =
         Mockito.mock(ICompetitionCategoryRepository::class.java)
+    private final val mockedGetCurrentSeeding: GetCurrentSeeding = GetCurrentSeeding(
+        mockedRegistrationRepository,
+        mockedCompetitionDrawRepository)
+    protected final val mockedApproveSeeding: ApproveSeeding = Mockito.mock(ApproveSeeding::class.java)
 
     protected final val dataGenerator = DataGenerator()
 
@@ -34,7 +38,9 @@ class TestBaseCreateDraw {
         mockedFindCompetitionCategory,
         mockedRegistrationRepository,
         mockedCompetitionDrawRepository,
-        mockedCompetitionCategoryRepository
+        mockedCompetitionCategoryRepository,
+        mockedGetCurrentSeeding,
+        mockedApproveSeeding
     )
 
     protected fun generateRegistrationRanks(

@@ -13,7 +13,9 @@ class CompetitionCategoryApi(
     val getCompetitionCategories: GetCompetitionCategories,
     val updateCompetitionCategory: UpdateCompetitionCategory,
     val addCompetitionCategory: AddCompetitionCategory,
-    val deleteCompetitionCategory: DeleteCompetitionCategory
+    val deleteCompetitionCategory: DeleteCompetitionCategory,
+    val openForRegistrations: OpenForRegistrations,
+    val closeForRegistrations: CloseForRegistrations
 ) {
 
     @PostMapping
@@ -34,6 +36,25 @@ class CompetitionCategoryApi(
     fun cancelCompetitionCategory(@PathVariable competitionId: Int, @PathVariable competitionCategoryId: Int) {
         return cancelCompetitionCategory.execute(competitionCategoryId)
     }
+
+    @PutMapping("/{competitionCategoryId}/open-for-registration")
+    fun openForRegistrations(
+        @PathVariable competitionId: Int,
+        @PathVariable competitionCategoryId: Int,
+        @RequestBody(required = false) empty: Any) {
+        val competitionCategory = findCompetitionCategory.byId(competitionCategoryId)
+        return openForRegistrations.execute(competitionCategory)
+    }
+
+    @PutMapping("/{competitionCategoryId}/close-for-registration")
+    fun closeForRegistrations(
+        @PathVariable competitionId: Int,
+        @PathVariable competitionCategoryId: Int,
+        @RequestBody(required = false) empty: Any) {
+        val competitionCategory = findCompetitionCategory.byId(competitionCategoryId)
+        return closeForRegistrations.execute(competitionCategory)
+    }
+
     @DeleteMapping("/{competitionCategoryId}")
     fun deleteCompetitionCategory(@PathVariable competitionId: Int, @PathVariable competitionCategoryId: Int) {
         return deleteCompetitionCategory.execute(competitionCategoryId)

@@ -6,7 +6,6 @@ import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
-import com.graphite.competitionplanner.registration.interfaces.RegistrationRankingDTO
 import org.springframework.stereotype.Component
 
 @Component
@@ -14,13 +13,14 @@ class CreateDraw(
     val findCompetitionCategory: FindCompetitionCategory,
     val repository: IRegistrationRepository,
     val drawRepository: ICompetitionDrawRepository,
-    val competitionCategoryRepository: ICompetitionCategoryRepository
+    val competitionCategoryRepository: ICompetitionCategoryRepository,
+    val getCurrentSeeding: GetCurrentSeeding,
+    val approveSeeding: ApproveSeeding
 ) {
 
     /**
      * Creates a draw for the given competition category
      *
-     * @throws BadRequestException
      */
     fun execute(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
         val competitionCategory: CompetitionCategoryDTO = findCompetitionCategory.byId(competitionCategoryId)
@@ -29,14 +29,13 @@ class CreateDraw(
             return drawRepository.get(competitionCategoryId)
         }
 
-        val registrationRankings: List<RegistrationRankingDTO> = repository.getRegistrationRanking(competitionCategory)
+        val registrationsWithSeeds = getCurrentSeeding.execute(competitionCategory)
+        if (competitionCategory.status != CompetitionCategoryStatus.CLOSED_FOR_REGISTRATION) {
+            approveSeeding.execute(competitionCategory, ApproveSeedingSpec(registrationsWithSeeds))
+        }
 
         val drawPolicy = DrawPolicy.createDrawStrategy(competitionCategory)
-        val registrationsWithSeeds = drawPolicy.createSeed(registrationRankings)
-        drawPolicy.throwExceptionIfNotEnoughRegistrations(registrationsWithSeeds)
-
         val spec = drawPolicy.createDraw(registrationsWithSeeds)
-        spec.seeding = registrationsWithSeeds
 
         return drawRepository.store(spec)
     }

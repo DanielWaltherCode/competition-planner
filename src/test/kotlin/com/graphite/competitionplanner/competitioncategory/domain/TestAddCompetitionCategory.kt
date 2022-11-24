@@ -125,7 +125,7 @@ class TestAddCompetitionCategory {
         // Assert
         val expected =
             CompetitionCategorySpec(
-                CompetitionCategoryStatus.ACTIVE,
+                CompetitionCategoryStatus.OPEN_FOR_REGISTRATION,
                 CategorySpec(spec.id, spec.name, spec.type),
                 settings,
                 gameSettings

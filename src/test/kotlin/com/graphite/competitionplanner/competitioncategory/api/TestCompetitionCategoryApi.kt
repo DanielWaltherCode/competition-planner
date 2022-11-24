@@ -18,6 +18,8 @@ class TestCompetitionCategoryApi {
     private val updateCompetitionCategory = mock(UpdateCompetitionCategory::class.java)
     private val addCompetitionCategory = mock(AddCompetitionCategory::class.java)
     private val deleteCompetitionCategory = mock(DeleteCompetitionCategory::class.java)
+    private val openForRegistrations = mock(OpenForRegistrations::class.java)
+    private val closeForRegistrations = mock(CloseForRegistrations::class.java)
 
     private val dataGenerator = DataGenerator()
 
@@ -27,7 +29,9 @@ class TestCompetitionCategoryApi {
         getCompetitionCategories,
         updateCompetitionCategory,
         addCompetitionCategory,
-        deleteCompetitionCategory
+        deleteCompetitionCategory,
+        openForRegistrations,
+        closeForRegistrations
     )
 
     @Test

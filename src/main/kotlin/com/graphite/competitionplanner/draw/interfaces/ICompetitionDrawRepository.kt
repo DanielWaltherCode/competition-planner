@@ -24,8 +24,8 @@ interface ICompetitionDrawRepository : IRepository {
     fun get(competitionCategoryId: Int): CompetitionCategoryDrawDTO
 
     /**
-     *  Delete the draw for the given competition category. This will delete any matches and groups, as well as mark
-     *  the competition category as not drawn.
+     *  Delete the draw for the given competition category. This will delete any matches, groups, seeding, as well as
+     *  mark the competition category as not drawn.
      *
      *  @param competitionCategoryId  of the competition category
      */
@@ -57,10 +57,22 @@ interface ICompetitionDrawRepository : IRepository {
     fun clearPoolTable()
 
     /**
+     * Delete the current stored seeding of the competition category
+     *
+     * @param competitionCategoryId ID of the CompetitionCategory
+     */
+    fun deleteSeeding(competitionCategoryId: Int)
+
+    /**
      * Return a list of the seeded registrations of a given competition category
      *
      * @param competitionCategoryId ID of the competition category
      * @return List of seeds
      */
-    fun getSeeds(competitionCategoryId: Int): List<RegistrationSeedDTO>
+    fun getSeeding(competitionCategoryId: Int): List<RegistrationSeedDTO>
+
+    /**
+     * Store a seeding
+     */
+    fun storeSeeding(registrationSeeds: List<RegistrationSeedDTO>)
 }

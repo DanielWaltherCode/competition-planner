@@ -7,6 +7,7 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.Competitio
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.domain.CupDrawSpec
+import com.graphite.competitionplanner.draw.domain.DeleteDraw
 import com.graphite.competitionplanner.draw.domain.PlayOffMatch
 import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.draw.interfaces.CompetitionCategoryDrawDTO
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired
  * A test class to test database operations on a draw for DrawType.CUP_ONLY
  */
 class TestCupOnly(
+    @Autowired val deleteDraw: DeleteDraw,
     @Autowired repository: ICompetitionDrawRepository,
     @Autowired clubRepository: IClubRepository,
     @Autowired competitionRepository: ICompetitionRepository,
@@ -203,7 +205,7 @@ class TestCupOnly(
         val result = repository.store(spec)
 
         // Act
-        repository.delete(result.competitionCategoryId)
+        deleteDraw.execute(result.competitionCategoryId)
 
         // Assert
         val draw = repository.get(competitionCategory.id)
@@ -211,7 +213,7 @@ class TestCupOnly(
         Assertions.assertEquals(0, draw.playOff.size)
 
         val status = competitionCategoryRepository.get(competitionCategory.id).status
-        Assertions.assertEquals(CompetitionCategoryStatus.ACTIVE, status, "Status of category was not reset")
+        Assertions.assertEquals(CompetitionCategoryStatus.CLOSED_FOR_REGISTRATION, status, "Status of category was not reset")
     }
 
     @Test

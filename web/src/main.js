@@ -100,11 +100,11 @@ function logout(error) {
 }
 
 new Vue({
+    el: '#app',
+    components: {App},
     render: h => h(App),
     store,
     i18n,
     router,
-    el: '#app',
-    template: '<App/>',
-    components: {App}
+    template: '<App/>'
 }).$mount('#app')

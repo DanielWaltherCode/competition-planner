@@ -43,7 +43,6 @@ class CompetitionDrawRepository(
 
     override fun store(draw: CompetitionCategoryDrawSpec): CompetitionCategoryDrawDTO {
         asTransaction {
-            storeSeeding(draw.seeding)
             competitionCategoryRepository.setStatus(draw.competitionCategoryId, CompetitionCategoryStatus.DRAWN)
             when (draw) {
                 is CupDrawSpec -> storeCupDraw(draw)
@@ -61,22 +60,8 @@ class CompetitionDrawRepository(
 
     override fun delete(competitionCategoryId: Int) {
         asTransaction {
-            competitionCategoryRepository.setStatus(competitionCategoryId, CompetitionCategoryStatus.ACTIVE)
             dslContext.deleteFrom(MATCH).where(MATCH.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
             dslContext.deleteFrom(POOL).where(POOL.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)).execute()
-        }
-    }
-
-    fun storeSeeding(registrationSeeds: List<RegistrationSeedDTO>) {
-        dslContext.batched {
-            for (dto in registrationSeeds) {
-                dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
-                    .set(COMPETITION_CATEGORY_REGISTRATION.SEED, dto.seed)
-                    .where(
-                        COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(dto.competitionCategoryId)
-                            .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(dto.registration.id))
-                    ).execute()
-            }
         }
     }
 
@@ -174,16 +159,34 @@ class CompetitionDrawRepository(
         dslContext.deleteFrom(POOL).execute()
     }
 
-    override fun getSeeds(competitionCategoryId: Int): List<RegistrationSeedDTO> {
+    override fun deleteSeeding(competitionCategoryId: Int) {
+        dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
+            .setNull(COMPETITION_CATEGORY_REGISTRATION.SEED)
+            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+            .execute()
+    }
+
+    override fun getSeeding(competitionCategoryId: Int): List<RegistrationSeedDTO> {
         val records = dslContext.select()
             .from(COMPETITION_CATEGORY_REGISTRATION)
             .where(
-                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId).and(
-                    COMPETITION_CATEGORY_REGISTRATION.SEED.isNotNull
-                )
+                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
             )
             .fetchInto(COMPETITION_CATEGORY_REGISTRATION)
         return records.map { RegistrationSeedDTO(Registration.Real(it.registrationId), it.competitionCategoryId, it.seed) }
+    }
+
+    override fun storeSeeding(registrationSeeds: List<RegistrationSeedDTO>) {
+        dslContext.batched {
+            for (dto in registrationSeeds) {
+                dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
+                    .set(COMPETITION_CATEGORY_REGISTRATION.SEED, dto.seed)
+                    .where(
+                        COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(dto.competitionCategoryId)
+                            .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(dto.registration.id))
+                    ).execute()
+            }
+        }
     }
 
     private fun Pool.toRecord(competitionCategoryId: Int): PoolRecord {

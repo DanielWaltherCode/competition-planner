@@ -5,9 +5,14 @@ package com.graphite.competitionplanner.competitioncategory.interfaces
  */
 enum class CompetitionCategoryStatus {
     /**
-     * A competition that has just been created is considered active
+     * The competition category is open for registrations.
      */
-    ACTIVE,
+    OPEN_FOR_REGISTRATION,
+
+    /**
+     * The competition category is closed for registrations.
+     */
+    CLOSED_FOR_REGISTRATION,
 
     /**
      * The category has been drawn
