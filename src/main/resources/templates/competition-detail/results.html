@@ -6,6 +6,13 @@
 <head>
     <meta charset="UTF-8">
     <title>CompetitionPlanner</title>
+    <script type="text/javascript" th:src="@{/webjars/htmx.org/dist/htmx.min.js}"></script>
+    <style>
+        th {
+            text-decoration: underline;
+        }
+
+    </style>
 </head>
 <body>
 <section layout:fragment="page-content">
@@ -15,16 +22,32 @@
     <div class="container-fluid">
         <!-- Main content -->
         <h2 th:text="#{results.heading}" class="text-center"></h2>
-        <div id="match-container" class="d-grid mb-4">
-            <div th:each="match : ${matches}">
-                <div th:replace="fragments/match-result :: match-result(match=${match})">
-
-                </div>
+        <div id="filter-matches" class="pb-4 row">
+            <div class="col-10 col-md-4 me-md-3">
+                <label class="form-label" for="results-category" th:text="#{results.chooseCategory}"></label>
+                <select class="form-select" id="results-category" name="categoryId"
+                        th:attr="hx-get='/open/competitions/' + ${competition.id} + '/results/table'"
+                        hx-trigger="change, load"
+                        hx-include="[name='date']"
+                        hx-target="#results-table">
+                    <option value="" th:text="#{results.all}" selected></option>
+                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="#{${'categories.name.' + category.category.name}}"></option>
+                </select>
+            </div>
+            <div class="col-10 col-md-4">
+                <label class="form-label" for="results-date" th:text="#{results.chooseDate}"></label>
+                <select class="form-select" id="results-date" name="date"
+                        th:attr="hx-get='/open/competitions/' + ${competition.id} + '/results/table'"
+                        hx-trigger="change"
+                        hx-target="#results-table"
+                hx-include="[name='categoryId']">
+                    <option value="" th:text="#{results.all}" selected></option>
+                    <option th:each="date: ${dates}" th:value="${date}" th:text="${date}"></option>
+                </select>
             </div>
         </div>
-        <div th:if="${matches.isEmpty()}" class="custom-card fs-5" style="min-height: 100px">
-            <p class="text-center pt-3" th:text="#{results.notDrawn}">
-            </p>
+        <div id="results-table">
+
         </div>
     </div>
 </section>
