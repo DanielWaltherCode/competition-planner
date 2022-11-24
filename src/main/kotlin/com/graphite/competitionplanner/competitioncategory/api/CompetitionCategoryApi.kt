@@ -38,13 +38,19 @@ class CompetitionCategoryApi(
     }
 
     @PutMapping("/{competitionCategoryId}/open-for-registration")
-    fun openForRegistrations(@PathVariable competitionId: Int, @PathVariable competitionCategoryId: Int) {
+    fun openForRegistrations(
+        @PathVariable competitionId: Int,
+        @PathVariable competitionCategoryId: Int,
+        @RequestBody(required = false) empty: Any) {
         val competitionCategory = findCompetitionCategory.byId(competitionCategoryId)
         return openForRegistrations.execute(competitionCategory)
     }
 
     @PutMapping("/{competitionCategoryId}/close-for-registration")
-    fun closeForRegistrations(@PathVariable competitionId: Int, @PathVariable competitionCategoryId: Int) {
+    fun closeForRegistrations(
+        @PathVariable competitionId: Int,
+        @PathVariable competitionCategoryId: Int,
+        @RequestBody(required = false) empty: Any) {
         val competitionCategory = findCompetitionCategory.byId(competitionCategoryId)
         return closeForRegistrations.execute(competitionCategory)
     }
