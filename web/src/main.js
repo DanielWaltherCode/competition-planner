@@ -58,10 +58,10 @@ Axios.interceptors.response.use(
         return response
     },
     error => {
-        console.log(error.response)
         const currentRequest = error.config
         const refreshToken = store.getters.refreshToken
-        if (error.response.status === 401) {
+        if (error.response.status === 401 && !currentRequest._retry) {
+            currentRequest._retry = true;
             if (refreshToken != null) {
                 // If previous request tried to refresh token but failed, abort here
                 console.log("original request: " + currentRequest.url)
@@ -100,11 +100,11 @@ function logout(error) {
 }
 
 new Vue({
+    el: '#app',
+    components: {App},
     render: h => h(App),
     store,
     i18n,
     router,
-    el: '#app',
-    template: '<App/>',
-    components: {App}
+    template: '<App/>'
 }).$mount('#app')
