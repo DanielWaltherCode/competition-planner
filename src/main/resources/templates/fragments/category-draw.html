@@ -1,7 +1,7 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
 <body>
-<div th:fragment="category-draw(category, isCategoryDrawn, registeredPlayers, draw)" class="container-fluid">
+<div th:fragment="category-draw(competitionId, category, isCategoryDrawn, registeredPlayers, draw)" class="container-fluid" th:with="categoryType=${T(com.graphite.competitionplanner.category.domain.CategoryType)}">
     <div class="row gx-md-5">
         <div id="main" class="mx-auto custom-card p-3 p-md-5">
             <h1 th:text="#{${'categories.name.' + category.category.name}}"></h1>
@@ -10,20 +10,34 @@
             <div class="row" th:if="${!isCategoryDrawn}">
 
                 <div class="col-md-6 text-center mx-auto py-4">
-                    <div class="main-upper" th:if="${!registeredPlayers.isEmpty()}">
+                    <div class="main-upper" th:if="${(category.category.type == categoryType.DOUBLES and !registeredPlayers.isEmpty()) or
+                    (category.category.type == categoryType.SINGLES and registeredPlayers.numberOfPlayers > 0)}">
                         <p class="fs-5" th:text="#{draw.notDrawnTitle}"></p>
                     </div>
-                    <div th:if="${registeredPlayers.isEmpty()}">
+                    <div th:if="${(category.category.type == categoryType.DOUBLES and registeredPlayers.isEmpty()) or
+                    (category.category.type == categoryType.SINGLES and registeredPlayers.numberOfPlayers == 0)}">
                         <p th:text="#{draw.notDrawnNoPlayers}"></p>
                     </div>
                 </div>
                 <!-- List of registered players if there are any -->
-                <div class="col-12 bg-grey py-4 rounded" th:if="${!registeredPlayers.isEmpty()}">
+                <div class="col-12 text-start py-4 rounded" th:if="${(category.category.type == categoryType.DOUBLES and !registeredPlayers.isEmpty()) or
+                    (category.category.type == categoryType.SINGLES and registeredPlayers.numberOfPlayers > 0)}">
+
                     <div class="text-center" id="registered-players" >
                         <h3 class="text-center" th:text="#{draw.registeredPlayers}"></h3>
-                        <div id="player-list" th:each="playerList : ${registeredPlayers}">
+
+                        <div th:if="${category.category.type == categoryType.DOUBLES}" id="player-list" th:each="playerList : ${registeredPlayers}">
                             <span th:replace="fragments/player-fragment :: players(playerList=${playerList})">
                             </span>
+                        </div>
+
+                        <div th:if="${category.category.type == categoryType.SINGLES}" th:each="playerGrouping : ${registeredPlayers.groupingsAndPlayers}" class="pb-3">
+                            <div class="category-heading">
+                                <p class="mb-0" th:text="${playerGrouping.key}"></p>
+                            </div>
+                            <div th:each="player : ${playerGrouping.value}" class="mt-2 d-flex">
+                                <a class="player-name clickable text-black text-decoration-none" th:href="'/open/players/' + ${competitionId} + '/' + ${player.id}" th:text="${player.lastName + ', ' + player.firstName }"></a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -31,11 +45,11 @@
             <!-- If class is drawn -->
             <div th:if="${isCategoryDrawn && draw != null}">
                 <div id="group-section">
-                    <div th:each="group : ${draw.groups}" class="row custom-card col-sm-11 mx-auto mt-3 mb-4 d-flex align-items-start p-3">
+                    <div th:each="group : ${draw.groups}" class="row custom-card col-sm-12 mx-auto mt-3 mb-4 d-flex align-items-start p-3">
                         <h3 class="text-start mb-3"
                             th:text="#{draw.group(${group.name})}"></h3>
                         <!-- Group table -->
-                        <div class="col-md-8" th:insert="fragments/group-draw :: group-draw(group=${group})">
+                        <div class="col-md-9" th:insert="fragments/group-draw :: group-draw(group=${group})">
                         </div>
                         <!-- Individual matches in group -->
                         <div class="col-sm-12 pt-4" th:with="matches = ${group.matches}">

@@ -34,7 +34,7 @@
               <a class="nav-link"
                  th:href="'/open/competitions/' + ${competition.id} + '/results'"
                  th:classappend="${#httpServletRequest.requestURI.contains('matches') ? 'active' : ''}"
-                 th:text="#{competition.nav.matches}">
+                 th:text="#{competition.nav.results}">
               </a>
             </li>
             <li class="nav-item">

@@ -113,7 +113,7 @@ h1, h2, h3 {
 
 .clickable:hover {
     cursor: pointer;
-    opacity: 0.8;
+    opacity: 0.6;
 }
 
 .custom-select{
@@ -167,6 +167,12 @@ h1, h2, h3 {
 
 #competition-header #navbar button {
     margin-left: 10px;
+}
+
+.category-heading {
+    color: var(--clr-primary-400);
+    border-bottom: 1px solid lightgrey;
+    text-align: left;
 }
 
 /**

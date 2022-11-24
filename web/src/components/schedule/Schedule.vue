@@ -360,6 +360,7 @@ export default {
       categorySchedule.selectedTables.length < 1) {
         this.$toasted.info(this.$t("validations.allRequired")).goAway(4000)
       } else {
+        this.checkIfTimeAlreadyBooked(categorySchedule)
         const startTime = categorySchedule.selectedDay + 'T' + this.getTime(categorySchedule.selectedStartTime) + 'Z'
         const categorySpec = {
           "mode": "APPEND",
@@ -378,6 +379,33 @@ export default {
               this.errorHandler(err.data)
             })
 
+      }
+    },
+    // Checks if timeslot is booked and if so issues a warning. User can still proceed.
+    checkIfTimeAlreadyBooked(categorySchedule) {
+      for (let i = 0; i < this.generatedScheduleContainer.excelScheduleList.length; i++) {
+        const currentScheduleDay = this.generatedScheduleContainer.excelScheduleList[0]
+        const desiredStartTime = categorySchedule.selectedDay + ' ' + this.getTime(categorySchedule.selectedStartTime)
+
+        let collisionFound = false
+        for (let j = 0; j < currentScheduleDay.scheduleItemList.length; j++) {
+          const scheduleItem = currentScheduleDay.scheduleItemList[j]
+          if (!categorySchedule.selectedTables.includes(scheduleItem.tableNumber)) {
+            continue
+          }
+          for (let k = 0; k < scheduleItem.matchesAtTable.length; k++) {
+            const currentMatch = scheduleItem.matchesAtTable[k]
+            if (currentMatch.startTime === desiredStartTime) {
+              if (currentMatch.category.id !== categorySchedule.categoryDTO.id) {
+                collisionFound = true
+                break
+              }
+            }
+          }
+        }
+        if (collisionFound) {
+          this.$toasted.info(this.$tc("toasts.scheduleCollision")).goAway(8000)
+        }
       }
     },
     resetCompetitionCategory(categorySchedule) {

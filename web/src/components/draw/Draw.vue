@@ -58,9 +58,7 @@
             </div>
           </div>
           <div v-if="!isChosenCategoryDrawn && registeredPlayersSingles !== null" class="pt-4 px-3">
-            <h3 v-if="registeredPlayersSingles.numberOfPlayers > 0">
-Antal spelare: {{ registeredPlayersSingles.numberOfPlayers }}
-</h3>
+            <h3 v-if="registeredPlayersSingles.numberOfPlayers > 0"> {{$t("draw.main.nrPlayers") + registeredPlayersSingles.numberOfPlayers}}</h3>
             <div v-for="(players, grouping) in registeredPlayersSingles.groupingsAndPlayers" :key="grouping">
               <div class="heading">
                 <p class="mb-0">
@@ -223,7 +221,6 @@ export default {
       }
     },
     shouldShowPlayoff(playoff) {
-      let shouldShowPlayoff = false;
       if (playoff === null) {
         return false;
       }
@@ -235,8 +232,6 @@ export default {
          nonPlaceholderPlayers += 2
         }
       })
-      console.log("Non placeholders size: " + nonPlaceholderPlayers)
-      console.log("Matches size: " + playoff[0].matches.length*2)
       return nonPlaceholderPlayers === playoff[0].matches.length*2;
 
     },

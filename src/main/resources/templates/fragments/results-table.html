@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<body>
+<div id="results-table">
+    <div id="table-container" class="table-responsive d-none d-sm-block" th:if="${!matches.isEmpty()}">
+        <table class="table table-borderless table-striped">
+            <thead>
+            <tr>
+                <th scope="col" class="col-1 d-sm-none d-md-table-cell" th:text="#{results.startTime}"></th>
+                <th scope="col" class="col-1" th:text="#{results.category}"></th>
+                <th scope="col" class="col-1" th:text="#{results.round}"></th>
+                <th scope="col" class="col-2"></th>
+                <th scope="col" class="col-2"></th>
+                <th scope="col" class="col-2 text-start" th:text="#{results.result}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="match : ${matches}" class="pb-5">
+                <td class="d-sm-none d-md-table-cell" th:if="${match.startTime != null}" th:text="${match.startTime.toLocalDate() + ' ' + match.startTime.toLocalTime()}"></td>
+                <td class="d-sm-none d-md-table-cell" th:if="${match.startTime == null}" th:text="#{draw.pool.noTime}"></td>
+                <td th:text="#{${'categories.name.' + match.competitionCategory.name}}"></td>
+                <td class="pb-2">
+                    <span th:if="${match.matchType == 'GROUP'}" th:text="#{results.group} + ' ' + ${match.groupOrRound}"> </span>
+                    <span th:if="${match.matchType == 'PLAYOFF'}" th:text="#{${'round.' + match.groupOrRound}}"></span>
+                </td>
+                <td class="text-start" th:classappend="${match.winner == match.firstPlayer ? 'fw-bold' : ''}">
+                    <span th:replace="fragments/player-fragment :: players(playerList=${match.firstPlayer})"></span>
+                </td>
+                <td class="text-start" th:classappend="${match.winner == match.secondPlayer ? 'fw-bold' : ''}">
+                    <span th:replace="fragments/player-fragment :: players(playerList=${match.firstPlayer})"></span>
+                </td>
+                <td class="text-start">
+                    <p th:each="game : ${match.result.gameList}" class="pe-2 pb-0 d-inline">
+                        <span th:text="${game.firstRegistrationResult} + ' - ' + ${game.secondRegistrationResult}"></span>
+                    </p>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="match-container" class="d-grid mb-4 d-sm-none">
+        <div th:each="match : ${matches}">
+            <div th:replace="fragments/match-result :: match-result(match=${match})"></div>
+        </div>
+    </div>
+    <div th:if="${matches.isEmpty()}" class="custom-card fs-5" style="min-height: 100px">
+        <p class="text-center pt-3" th:text="#{results.notDrawn}">
+        </p>
+    </div>
+</div>
+</body>
+</html>
