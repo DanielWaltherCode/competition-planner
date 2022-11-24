@@ -204,7 +204,6 @@ export default {
       }
     },
     shouldShowPlayoff(playoff) {
-      let shouldShowPlayoff = false;
       if (playoff === null) {
         return false;
       }
@@ -216,8 +215,6 @@ export default {
          nonPlaceholderPlayers += 2
         }
       })
-      console.log("Non placeholders size: " + nonPlaceholderPlayers)
-      console.log("Matches size: " + playoff[0].matches.length*2)
       return nonPlaceholderPlayers === playoff[0].matches.length*2;
 
     },

@@ -1,14 +1,19 @@
 package com.graphite.competitionplanner.open.controllers
 
+import com.graphite.competitionplanner.category.domain.CategoryType
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
+import com.graphite.competitionplanner.competition.domain.GetDaysOfCompetition
 import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.draw.domain.GetDraw
 import com.graphite.competitionplanner.draw.service.DrawService
+import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService
+import com.graphite.competitionplanner.registration.domain.SearchRegistrations
 import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import io.swagger.annotations.ApiModelProperty
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,9 +32,12 @@ class CompetitionController(
         val drawService: DrawService,
         val getDraw: GetDraw,
         val registrationService: RegistrationService,
-        val matchService: MatchService
+        val matchService: MatchService,
+        val searchRegistrations: SearchRegistrations,
+        val getDaysOfCompetition: GetDaysOfCompetition
 ) {
 
+    private val LOGGER = LoggerFactory.getLogger(CompetitionController::class.java)
 
     @GetMapping("/search")
     fun searchCompetitions(model: Model,
@@ -77,17 +85,65 @@ class CompetitionController(
         else {
             model.addAttribute("draw", null)
         }
-        model.addAttribute("registeredPlayers", registrationService.getPlayersInCompetitionCategory(chosenCategory.id))
+        if (chosenCategory.category.type == CategoryType.SINGLES) {
+            model.addAttribute("registeredPlayers",
+                    searchRegistrations.getResultGroupedByLastNameForCategory(chosenCategory.id))
+        }
+        else {
+            model.addAttribute("registeredPlayers",
+                    registrationService.getPlayersInCompetitionCategory(chosenCategory.id))
+        }
+
         return "competition-detail/categories"
     }
 
     @GetMapping("/{competitionId}/results")
     fun getResults(model: Model, @PathVariable competitionId: Int): String {
         val competition = findCompetitions.byId(competitionId)
-        val matches = matchService.getMatchesInCompetition(competitionId)
+        val categories = getCompetitionCategories.execute(competitionId)
+        val dates = getDaysOfCompetition.execute(competition)
         model.addAttribute("competition", competition)
-        model.addAttribute("matches", matches)
+        model.addAttribute("categories", categories)
+        model.addAttribute("dates", dates)
         return "competition-detail/results"
+    }
+
+    @GetMapping("/{competitionId}/results/table")
+    fun getResultsTable(model: Model, @PathVariable competitionId: Int,
+                        @RequestParam(defaultValue = "") date: String,
+                        @RequestParam(defaultValue = "") categoryId: String): String {
+        val competition = findCompetitions.byId(competitionId)
+        val matches = matchService.getMatchesInCompetition(competitionId)
+        var filteredMatches = mutableListOf<MatchAndResultDTO>()
+
+        if(date == "") {
+            filteredMatches.addAll(matches)
+        }
+        else {
+            try {
+                val parsedDate: LocalDate = LocalDate.parse(date)
+                for (match in matches) {
+                    if (match.startTime != null && match.startTime.toLocalDate().equals(parsedDate)) {
+                        filteredMatches.add(match)
+                    }
+                }
+            }
+            catch (ex: Exception) {
+                LOGGER.error("Couldn't parse date {}", date)
+                filteredMatches.addAll(matches)
+            }
+        }
+
+        if (categoryId != "") {
+            val parsedCategoryId = categoryId.toInt()
+            filteredMatches = filteredMatches.filter { it.competitionCategory.id == parsedCategoryId }.toMutableList()
+        }
+
+        filteredMatches = filteredMatches.sortedWith( compareBy<MatchAndResultDTO>{it.startTime }.thenBy { it.competitionCategory.id}).toMutableList()
+
+        model.addAttribute("competition", competition)
+        model.addAttribute("matches", filteredMatches)
+        return "fragments/results-table"
     }
 
     @GetMapping("/{competitionId}/players")

@@ -42,7 +42,9 @@
             <div class="col-md-9" th:if="${categories.isEmpty()}">
                 <p class="h-25 custom-card d-flex align-items-center ps-5" th:text="#{categories.empty}"></p>
             </div>
-            <div class="col-md-9" th:if="${!categories.isEmpty()}" th:insert="fragments/category-draw :: category-draw(category=${selectedCategory},
+            <div class="col-md-9" th:if="${!categories.isEmpty()}" th:insert="fragments/category-draw :: category-draw(
+            competitionId=${competition.id},
+             category=${selectedCategory},
              isCategoryDrawn=${isCategoryDrawn},
              registeredPlayers=${registeredPlayers},
              draw=${draw})"></div>

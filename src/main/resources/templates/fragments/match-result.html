@@ -15,7 +15,7 @@
     </div>
     <div class="p-2">
         <div class="row">
-            <p class="col-5 text-start">
+            <p class="col-5 text-start" th:classappend="${match.winner == match.firstPlayer ? 'fw-bold' : ''}">
                 <span th:replace="fragments/player-fragment :: players(playerList=${match.firstPlayer})"></span>
             </p>
             <p class="col-1 p-0" th:each="game : ${match.result.gameList}">
@@ -23,7 +23,7 @@
             </p>
         </div>
         <div class="row">
-            <p class="col-5 text-start">
+            <p class="col-5 text-start" th:classappend="${match.winner == match.secondPlayer ? 'fw-bold' : ''}">
                 <span th:replace="fragments/player-fragment :: players(playerList=${match.secondPlayer})"></span>
             </p>
             <p class="col-1 p-0" th:each="game : ${match.result.gameList}">
