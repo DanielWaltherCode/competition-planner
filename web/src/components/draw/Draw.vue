@@ -213,7 +213,7 @@ export default {
     },
     deleteDraw() {
       if (confirm(this.$tc("confirm.deleteDraw"))) {
-        CategoryService.openCompetitionCategory(this.competition.id, this.chosenCategory.id).then(() => {
+        CategoryService.openCompetitionCategoryForRegistration(this.competition.id, this.chosenCategory.id).then(() => {
           this.$toasted.success(this.$tc("toasts.categoryDrawDeleted")).goAway(3000)
           this.isChosenCategoryDrawn = false
           this.getRegisteredPlayers()
