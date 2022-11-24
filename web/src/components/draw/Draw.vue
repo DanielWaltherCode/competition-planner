@@ -139,7 +139,7 @@ import PoolDraw from "@/components/draw/PoolDraw";
 import CategoryService from "@/common/api-services/category.service";
 import MatchListComponent from "@/components/general/MatchListComponent";
 import PlayoffDraw from "@/components/draw/PlayoffDraw";
-import { tryTranslateCategoryName } from "@/common/util"
+import {generalErrorHandler, tryTranslateCategoryName} from "@/common/util"
 
 export default {
   name: "Draw",
@@ -206,7 +206,7 @@ export default {
           }).catch(() => {
             this.$toasted.error(this.$tc("toasts.error.general.update")).goAway(7000)
           })
-        }).catch(() => {
+        }).catch(err => {
           this.errorHandler(err.data)
         })
       }
@@ -266,7 +266,8 @@ export default {
       const playoffElement = document.getElementById("playoff")
       playoffElement.scrollIntoView({behavior : "smooth"})
     },
-    tryTranslateCategoryName: tryTranslateCategoryName
+    tryTranslateCategoryName: tryTranslateCategoryName,
+    errorHandler: generalErrorHandler
   }
 }
 </script>
