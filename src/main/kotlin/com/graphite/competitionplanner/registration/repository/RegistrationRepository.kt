@@ -52,7 +52,6 @@ class RegistrationRepository(
         return record
     }
 
-
     fun clearPlayerRegistration() = dslContext.deleteFrom(PLAYER_REGISTRATION).execute()
 
     fun getRegistreredPlayersInCompetition(competitionId: Int): List<PlayerRecord> {

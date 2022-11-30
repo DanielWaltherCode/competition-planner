@@ -54,7 +54,7 @@ class AddCompetitionCategory(
             11,
             2,
             Round.UNKNOWN,
-            7,
+            5,
             11,
             2,
             false,

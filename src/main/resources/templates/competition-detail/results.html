@@ -31,7 +31,7 @@
                         hx-include="[name='date']"
                         hx-target="#results-table">
                     <option value="" th:text="#{results.all}" selected></option>
-                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="#{${'categories.name.' + category.category.name}}"></option>
+                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${#strings.defaultString(#messages.msgOrNull('categories.name.' + category.category.name), category.category.name)}"></option>
                 </select>
             </div>
             <div class="col-10 col-md-4">

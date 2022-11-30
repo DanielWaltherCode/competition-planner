@@ -74,9 +74,9 @@ class TestResultService(
                 original.gameSettings.winScore,
                 original.gameSettings.winMargin,
                 original.gameSettings.differentNumberOfGamesFromRound,
-                original.gameSettings.numberOfSetsFinal,
-                original.gameSettings.winScoreFinal,
-                original.gameSettings.winMarginFinal,
+                original.gameSettings.numberOfSetsInPlayoff,
+                original.gameSettings.winScoreInPlayoff,
+                original.gameSettings.winMarginInPlayoff,
                 original.gameSettings.tiebreakInFinalGame,
                 original.gameSettings.winScoreTiebreak,
                 original.gameSettings.winMarginTieBreak

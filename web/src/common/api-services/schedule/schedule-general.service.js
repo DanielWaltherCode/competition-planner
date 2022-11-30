@@ -22,6 +22,9 @@ const ScheduleGeneralService = {
     },
     clearCategory(competitionId, categoryId, stage) {
         return Axios.delete(`/schedule/${competitionId}/category/${categoryId}/${stage}`, {withCredentials: true})
+    },
+    updateMatchTime(competitionId, matchId, requestBody) {
+        return Axios.put(`/schedule/${competitionId}/match/${matchId}`, requestBody, {withCredentials: true})
     }
 }
 

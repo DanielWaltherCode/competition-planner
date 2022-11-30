@@ -254,9 +254,9 @@ class CompetitionCategoryRepository(
             it.winScore = this.winScore
             it.winMargin = this.winMargin
             it.differentNumberOfGamesFromRound = this.differentNumberOfGamesFromRound.name
-            it.nrSetsFinal = this.numberOfSetsFinal
-            it.winScoreFinal = this.winScoreFinal
-            it.winMarginFinal = this.winMarginFinal
+            it.nrSetsFinal = this.numberOfSetsInPlayoff
+            it.winScoreFinal = this.winScoreInPlayoff
+            it.winMarginFinal = this.winMarginInPlayoff
             it.tieBreakInFinalGame = this.tiebreakInFinalGame
             it.winScoreTiebreak = this.winScoreTiebreak
             it.winMarginTieBreak = this.winMarginTieBreak
