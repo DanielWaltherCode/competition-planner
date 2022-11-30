@@ -95,7 +95,7 @@ class TestAddCompetitionCategory {
             winScore = 11,
             winMargin = 2,
             differentNumberOfGamesFromRound = Round.UNKNOWN,
-            numberOfSetsFinal = 7,
+            numberOfSetsFinal = 5,
             winScoreFinal = 11,
             winMarginFinal = 2,
             tiebreakInFinalGame = false,
