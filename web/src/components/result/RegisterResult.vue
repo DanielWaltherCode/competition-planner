@@ -107,7 +107,8 @@ export default {
       matchRules: {},
       setList: [],
       showInfo: false,
-      error: null
+      error: null,
+      rounds: {ROUND_OF_32: 1, ROUND_OF_16: 2, QUARTER_FINAL: 3, SEMI_FINAL: 4, FINAL: 5}
     }
   },
   computed: {
@@ -141,11 +142,33 @@ export default {
         if (counter === undefined) {
           counter = 0
         }
-        while (counter < this.matchRules.numberOfSets) {
+        let numberOfSets
+        if (this.shouldUseSpecialPlayoffRules(this.selectedMatch, this.matchRules)) {
+          numberOfSets = this.matchRules.numberOfSetsInPlayoff
+        }
+        else {
+          numberOfSets = this.matchRules.numberOfSets
+        }
+        while (counter < numberOfSets) {
           this.addGame()
           counter++
         }
       })
+    },
+    shouldUseSpecialPlayoffRules(selectedMatch, matchRules) {
+      if (!matchRules.useDifferentRulesInEndGame || selectedMatch.match_type === 'GROUP') {
+        return false
+      }
+
+      if (Object.keys(this.rounds).includes(selectedMatch.groupOrRound) &&
+      Object.keys(this.rounds).includes(matchRules.differentNumberOfGamesFromRound)) {
+        const differentRulesFromRound = this.rounds[matchRules.differentNumberOfGamesFromRound]
+        const currentRound = this.rounds[selectedMatch.groupOrRound]
+        if (currentRound >= differentRulesFromRound) {
+          return true
+        }
+      }
+      return false
     },
     resetVariables() {
       this.showInfo = false

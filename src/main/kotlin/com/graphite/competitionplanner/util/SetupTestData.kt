@@ -36,6 +36,7 @@ import com.graphite.competitionplanner.schedule.repository.ScheduleRepository
 import com.graphite.competitionplanner.user.api.UserSpec
 import com.graphite.competitionplanner.user.repository.UserRepository
 import com.graphite.competitionplanner.user.service.UserService
+import org.springframework.context.annotation.Profile
 import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.event.EventListener
 import org.springframework.dao.DuplicateKeyException
@@ -46,6 +47,7 @@ import kotlin.random.Random
 
 
 @Component
+@Profile("!production")
 class SetupTestData(
     val playerRepository: PlayerRepository,
     val competitionRepository: CompetitionRepository,

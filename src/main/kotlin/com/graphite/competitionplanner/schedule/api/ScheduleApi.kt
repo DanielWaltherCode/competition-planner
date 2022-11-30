@@ -3,6 +3,7 @@ package com.graphite.competitionplanner.schedule.api
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.match.domain.MatchType
+import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.schedule.domain.CompetitionScheduler
 import com.graphite.competitionplanner.schedule.domain.MatchSchedulerSpec
 import com.graphite.competitionplanner.schedule.interfaces.*
@@ -18,6 +19,7 @@ import java.time.LocalTime
 class ScheduleApi(
         val competitionScheduler: CompetitionScheduler,
         val scheduleMetadataService: ScheduleMetadataService,
+        val matchRepository: MatchRepository
 ) {
 
     @PutMapping("publish")
@@ -69,6 +71,7 @@ class ScheduleApi(
                                    @PathVariable stage: String) {
         val matchType = if (stage.lowercase() == "group") MatchType.GROUP else MatchType.PLAYOFF
         competitionScheduler.removeTimeSlotCategory(competitionCategoryId, matchType)
+        matchRepository.removeMatchTimeForCategory(competitionCategoryId, matchType)
     }
 
     /**
@@ -78,6 +81,16 @@ class ScheduleApi(
     fun clearSchedule(@PathVariable competitionId: Int) {
         competitionScheduler.clearSchedule(competitionId)
     }
+
+    @PutMapping("match/{matchId}")
+    fun setMatchTime(@PathVariable matchId: Int, @RequestBody matchTimeSpec: MatchTimeSpec) {
+        matchRepository.updateMatchTime(matchId, matchTimeSpec.matchTime)
+    }
+
+    data class MatchTimeSpec(
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+            val matchTime: LocalDateTime
+    )
 
     data class ScheduleCategorySpec(
             /**

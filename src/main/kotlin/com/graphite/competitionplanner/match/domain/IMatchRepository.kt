@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.match.domain
 
 import com.graphite.competitionplanner.draw.service.MatchSpec
+import java.time.LocalDateTime
 
 interface IMatchRepository {
 
@@ -26,5 +27,9 @@ interface IMatchRepository {
      * @param match Match to be saved
      */
     fun save(match: Match)
+
+    fun updateMatchTime(matchId: Int, matchTime: LocalDateTime)
+
+    fun removeMatchTimeForCategory(categoryId: Int, stage: MatchType)
 
 }

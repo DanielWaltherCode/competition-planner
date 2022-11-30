@@ -55,6 +55,22 @@ class MatchRepository(
         }
     }
 
+    override fun updateMatchTime(matchId: Int, matchTime: LocalDateTime) {
+        dslContext
+                .update(MATCH)
+                .set(MATCH.START_TIME, matchTime)
+                .where(MATCH.ID.eq(matchId))
+                .execute()
+    }
+
+    override fun removeMatchTimeForCategory(categoryId: Int, stage: MatchType) {
+        dslContext
+                .update(MATCH)
+                .setNull(MATCH.START_TIME)
+                .where(MATCH.COMPETITION_CATEGORY_ID.eq(categoryId).and(MATCH.MATCH_TYPE.eq(stage.name)))
+                .execute()
+    }
+
     fun Match.toRecord(): MatchRecord {
         val record = dslContext.newRecord(MATCH)
         record.id = this.id

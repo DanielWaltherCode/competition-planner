@@ -4,12 +4,8 @@
 <body>
 <section id="registered-players" class="col-sm-8 mx-auto">
     <div th:each="element : ${groupingsAndPlayers}" class="mb-3">
-        <div th:if="${sortingChoice.name.equalsIgnoreCase('category')}" class="heading" th:with="namekey=${'categories.name.' + element.key}">
-            <p class="mb-0" th:if="${#messages.msgOrNull(namekey)} == null">
-                <span class="mb-0 fw-bolder text-uppercase" th:text="${element.key}"></span>
-            </p>
-            <p class="mb-0" th:if="${#messages.msgOrNull(namekey)} != null">
-                <span class="mb-0 fw-bolder text-uppercase" th:text="#{${namekey}}  "></span>
+        <div th:if="${sortingChoice.name.equalsIgnoreCase('category')}" class="heading">
+            <p class="mb-0 fw-bolder text-uppercase" th:text="${#strings.defaultString(#messages.msgOrNull('categories.name.' + element.key), element.key)}">
             </p>
             <hr class="bg-black mt-0">
         </div>

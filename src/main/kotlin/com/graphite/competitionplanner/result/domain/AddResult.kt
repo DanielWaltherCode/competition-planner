@@ -41,7 +41,7 @@ class AddResult(
             gameSettings.useDifferentRulesInEndGame &&
             match.round <= gameSettings.differentNumberOfGamesFromRound)
         {
-            ResultValidationSpecification(gameSettings.numberOfSetsFinal, gameSettings.winMarginFinal, gameSettings.winScoreFinal)
+            ResultValidationSpecification(gameSettings.numberOfSetsInPlayoff, gameSettings.winMarginInPlayoff, gameSettings.winScoreInPlayoff)
         } else {
             ResultValidationSpecification(gameSettings.numberOfSets, gameSettings.winMargin, gameSettings.winScore)
         }

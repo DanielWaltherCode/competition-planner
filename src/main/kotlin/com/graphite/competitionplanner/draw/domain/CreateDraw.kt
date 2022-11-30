@@ -7,6 +7,7 @@ import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
 
 @Component
 class CreateDraw(

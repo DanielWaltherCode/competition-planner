@@ -8,6 +8,8 @@ import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
 import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.draw.service.GroupDrawDTO
 import com.graphite.competitionplanner.draw.service.PlayoffDTO
+import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
+import com.graphite.competitionplanner.registration.service.RegistrationService
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -19,7 +21,8 @@ class CompetitionDrawApi(
     val deleteDraw: DeleteDraw,
     val getCurrentSeeding: GetCurrentSeeding,
     val approveSeeding: ApproveSeeding,
-    val findCompetitionCategory: FindCompetitionCategory
+    val findCompetitionCategory: FindCompetitionCategory,
+    val registrationService: RegistrationService
 ) {
 
     // Can be used both to create initial draw and to make a new draw if desired
@@ -52,9 +55,10 @@ class CompetitionDrawApi(
     }
 
     @GetMapping("seeding")
-    fun getCurrentSeeding(@PathVariable competitionCategoryId: Int): List<RegistrationSeedDTO> {
+    fun getCurrentSeeding(@PathVariable competitionCategoryId: Int): List<CurrentSeedDTO> {
         val competitionCategory = findCompetitionCategory.byId(competitionCategoryId)
-        return getCurrentSeeding.execute(competitionCategory)
+        val currentSeeding = getCurrentSeeding.execute(competitionCategory)
+        return currentSeeding.map { CurrentSeedDTO(registrationService.getPlayersWithClubFromRegistrationId(it.registration.id), it) }
     }
 
     @PostMapping("seeding")
@@ -67,6 +71,11 @@ class CompetitionDrawApi(
     }
 
 }
+
+data class CurrentSeedDTO(
+        val playerWithClubDTOs: List<PlayerWithClubDTO>,
+        val registrationSeedDTO: RegistrationSeedDTO
+)
 
 data class DrawDTO(
     val groupDraw: GroupDrawDTO,

@@ -34,7 +34,7 @@
                         <a th:href="'/open/competitions/' + ${competition.id} + '/categories/' + ${category.id}"
                         class="text-black text-decoration-none"
                         th:classappend="${selectedCategory.id == category.id} ? 'fw-bold' : ''"
-                        th:text="#{${'categories.name.' + category.category.name}}">
+                        th:text="${#strings.defaultString(#messages.msgOrNull('categories.name.' + category.category.name), category.category.name)}">
                         </a>
                     </li>
                 </ul>

@@ -233,6 +233,7 @@
       "drawMade": "Klassen har lottats",
       "deleteDraw": "Ta bort lottning",
       "redraw": "Lotta om",
+      "setStartTime": "Välj starttid",
       "goToPlayoff": "Gå till slutspelet",
       "nrPlayers": "Antal spelare: "
     },

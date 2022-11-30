@@ -40,7 +40,7 @@
       </div>
       <div class="col-sm-12 col-md-6 mb-3 d-flex flex-column justify-content-end">
         <label class="h5 form-label" for="inputEndGameNumberOfSets">{{ $t("categoryGameRules.nrSetsEndgame") }}</label>
-        <input id="inputEndGameNumberOfSets" v-model.number="category.gameSettings.numberOfSetsFinal"
+        <input id="inputEndGameNumberOfSets" v-model.number="category.gameSettings.numberOfSetsInPlayoff"
                class="form-control" type="number" min="1" step="2">
         <small v-if="isNumberOfSetsInFinalValid" id="numberOfSetsInFinalHelp" class="form-text text-muted">
           {{ $t("categoryGameRules.errors.numberOfSetsHasToBeAnOddNumber") }}
@@ -48,7 +48,7 @@
       </div>
       <div class="col-sm-12 mb-5">
         <label class="h5 form-label" for="inputEndGameWinMargin">{{ $t("categoryGameRules.winMarginFinals") }}</label>
-        <input v-model="category.gameSettings.winMarginFinal" type="text" class="form-control"
+        <input v-model="category.gameSettings.winMarginInPlayoff" type="text" class="form-control"
                id="inputEndGameWinMargin">
       </div>
     </div>

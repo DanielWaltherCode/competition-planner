@@ -4,7 +4,7 @@
 <div th:fragment="category-draw(competitionId, category, isCategoryDrawn, registeredPlayers, draw)" class="container-fluid" th:with="categoryType=${T(com.graphite.competitionplanner.category.domain.CategoryType)}">
     <div class="row gx-md-5">
         <div id="main" class="mx-auto custom-card p-3 p-md-5">
-            <h1 th:text="#{${'categories.name.' + category.category.name}}"></h1>
+            <h1 th:text="${#strings.defaultString(#messages.msgOrNull('categories.name.' + category.category.name), category.category.name)}"></h1>
 
             <!-- If class is not drawn yet -->
             <div class="row" th:if="${!isCategoryDrawn}">
@@ -68,7 +68,7 @@
                                         <tbody>
                                         <tr class="group-matches" th:each="match : ${matches}" th:with="playerOneList=${match.firstPlayer}, playerTwoList=${match.secondPlayer}">
                                             <td>
-                                                <span th:if="${match.startTime != null}" th:text="${match.startTime}"></span>
+                                                <span th:if="${match.startTime != null}" th:text="${#temporals.format(match.startTime, 'yyyy-MM-dd HH:mm')}"></span>
                                                 <span th:if="${match.startTime == null}" th:text="#{draw.pool.noTime}"></span>
                                             <td>
                                                 <span th:replace="fragments/player-fragment :: players(playerList=${playerOneList})"></span>

@@ -17,6 +17,13 @@ const DrawService = {
     },
     getPlayoffDraw() {
         return Axios.get(`/competition/1/draw/1/mock`, {withCredentials: true})
+    },
+    getCurrentSeed(competitionId, categoryId) {
+       return Axios.get(`/competition/${competitionId}/draw/${categoryId}/seeding`, {withCredentials: true})
+    },
+    approveSeeding(competitionId, categoryId, seedingObject) {
+        return Axios.post(`/competition/${competitionId}/draw/${categoryId}/seeding`,
+            seedingObject,{withCredentials: true})
     }
 }
 

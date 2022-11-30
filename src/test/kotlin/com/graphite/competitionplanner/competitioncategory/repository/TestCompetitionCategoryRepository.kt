@@ -169,18 +169,18 @@ class TestCompetitionCategoryRepository(
             "Different number of games from round was not updated."
         )
         Assertions.assertEquals(
-            updateSpec.gameSettings.numberOfSetsFinal,
-            updated.gameSettings.numberOfSetsFinal,
+            updateSpec.gameSettings.numberOfSetsInPlayoff,
+            updated.gameSettings.numberOfSetsInPlayoff,
             "Number of sets in final was not updated."
         )
         Assertions.assertEquals(
-            updateSpec.gameSettings.winScoreFinal,
-            updated.gameSettings.winScoreFinal,
+            updateSpec.gameSettings.winScoreInPlayoff,
+            updated.gameSettings.winScoreInPlayoff,
             "Win score in final was not updated."
         )
         Assertions.assertEquals(
-            updateSpec.gameSettings.winMarginFinal,
-            updated.gameSettings.winMarginFinal,
+            updateSpec.gameSettings.winMarginInPlayoff,
+            updated.gameSettings.winMarginInPlayoff,
             "Win margin in final was not updated."
         )
         Assertions.assertEquals(

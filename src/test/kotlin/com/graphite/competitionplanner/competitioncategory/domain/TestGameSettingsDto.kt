@@ -20,18 +20,6 @@ class TestGameSettingsDto {
     }
 
     @Test
-    fun whenDifferentRulesInEndGameIsEnabledThenNumberOfSetsInFinalMustBeOdd() {
-        // Act & Assert
-        Assertions.assertThrows(IllegalArgumentException::class.java) {
-            dataGenerator.newGameSettingsDTO(
-                numberOfSets = 5,
-                numberOfSetsFinal = 2,
-                useDifferentRulesInEndGame = true
-            )
-        }
-    }
-
-    @Test
     fun whenDifferentRulesInEndGameIsDisabledThenNumberOfSetsInFinalDoesNotMatter() {
         // Act & Assert
         Assertions.assertDoesNotThrow {
