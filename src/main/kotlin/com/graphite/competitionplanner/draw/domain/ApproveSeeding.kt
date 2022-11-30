@@ -1,5 +1,7 @@
 package com.graphite.competitionplanner.draw.domain
 
+import com.graphite.competitionplanner.common.exception.BadRequestException
+import com.graphite.competitionplanner.common.exception.BadRequestType
 import com.graphite.competitionplanner.competitioncategory.domain.CloseForRegistrations
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.draw.interfaces.ApproveSeedingSpec
@@ -18,6 +20,7 @@ class ApproveSeeding(
      * Approve and commit the given seeding. When a seeding is approved, the competition category will be closed
      * for further registrations as that would affect the seeding.
      */
+    @Throws(BadRequestException::class)
     fun execute(competitionCategory: CompetitionCategoryDTO, spec: ApproveSeedingSpec) {
         if (spec.seeding.any { it.competitionCategoryId != competitionCategory.id }) {
             throw IllegalArgumentException("You are trying to submit a seeding that does not belong to the given competition category")
@@ -37,7 +40,12 @@ class ApproveSeeding(
         val expectedNumberOfSeeded = drawPolicy.calculateNumberOfSeeds(actualRegistrationsIds.size)
         val actualSeeded = spec.seeding.filter { it.seed != null }
         if (expectedNumberOfSeeded != actualSeeded.size) {
-            throw IllegalArgumentException("We expected $expectedNumberOfSeeded number of seeded registrations, but got ${actualSeeded.size}")
+            val errorString = "We expected $expectedNumberOfSeeded number of seeded registrations, but got ${actualSeeded.size}"
+            if (expectedNumberOfSeeded < actualSeeded.size) {
+                throw BadRequestException(BadRequestType.DRAW_TOO_MANY_SEEDED, errorString)
+            } else {
+                throw BadRequestException(BadRequestType.DRAW_TOO_FEW_SEEDED, errorString)
+            }
         }
 
         val expectedSeeds = (1..expectedNumberOfSeeded).toList()

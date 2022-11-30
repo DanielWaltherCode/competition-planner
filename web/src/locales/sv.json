@@ -453,6 +453,7 @@
     "temporaryResultRegistered": "Tillfälligt resultat är sparat",
     "clubAdded": "Klubb tillagd",
     "scheduleCollision": "Några av tiderna som bokades in var upptagna. Matcherna har ändå bokats in på de önskade borden men senarelagts.",
+    "seedingSaved": "Seedningen är sparad",
     "error": {
       "general": {
         "standard": "Något gick fel",
@@ -475,6 +476,8 @@
     "CATEGORY_ALREADY_ADDED": "Klassen är redan tillagd",
     "CATEGORY_CANNOT_UPDATE_AFTER_DRAW": "Klassen kan inte uppdateras efter att lottningen är gjord. Ta först bort lottningen om du vill göra ändringar",
     "DRAW_NOT_ENOUGH_REGISTRATIONS": "Det finns inte tillräckligt med anmälda spelare för att göra en lottning",
+    "DRAW_TOO_FEW_SEEDED": "För få antal seedade givet antalet registrerade i tävlingen",
+    "DRAW_TOO_MANY_SEEDED": "För många antal seedade givet antalet registrerade i tävlingen",
     "PLAYER_ALREADY_REGISTERED": "Spelaren är redan registrerad i klassen",
     "REGISTRATION_WRONG_CATEGORY_TYPE": "Fel klasstyp. Var god kolla om det ska vara en singel- eller dubbelklass",
     "GAME_TOO_FEW_SETS_REPORTED": "För få set inrapporterade. Dubbelkolla gärna inställningarna för klassen för att se vilka regler som är uppsatta",
