@@ -4,16 +4,17 @@
       <thead class="thead-dark">
       <tr>
         <th>{{ $t("draw.pool.time") }}</th>
-        <th></th>
-        <th></th>
+        <th />
+        <th />
         <th>{{ $t("draw.pool.result") }}</th>
       </tr>
       </thead>
       <tbody>
-      <tr class="group-matches" v-for="match in matches" :key="match.id">
-        <td>{{ getTime(match) }}
+      <tr v-for="match in matches" :key="match.id" class="group-matches">
+        <td>
+{{ getTime(match) }}
           <span v-if="match.startTime === null">
-          <i class="ms-2 fas fa-pen-square clickable" @click="showSetTimeModal = true; selectedMatch = match"></i>
+          <i class="ms-2 fas fa-pen-square clickable" @click="showSetTimeModal = true; selectedMatch = match" />
         </span>
         </td>
         <td :class="isPlayerOneWinner(match) ? 'fw-bolder' : ''">
@@ -24,7 +25,7 @@
           <span v-if="didPlayerTwoGiveWO(match)"> (W.O)</span>
         </td>
         <td>
-          <p class="pe-2 d-inline" v-for="game in match.result.gameList" :key="game.id">
+          <p v-for="game in match.result.gameList" :key="game.id" class="pe-2 d-inline">
             {{ game.firstRegistrationResult }}-{{ game.secondRegistrationResult }}
           </p>
         </td>
@@ -33,11 +34,11 @@
     </table>
     <vue-final-modal v-model="showSetTimeModal" classes="modal-container" content-class="modal-content">
       <div class="modal__content" style="min-height: 400px">
-        <i class="modal__close fas fa-times clickable" @click="resetStartTime"></i>
+        <i class="modal__close fas fa-times clickable" @click="resetStartTime" />
         <div class="w-50 m-auto">
           <h2>{{ $t("draw.main.setStartTime") }}</h2>
-          <datetime v-if="showSetTimeModal" format="YYYY-MM-DD H:i" first-day-of-week="1"
-                    width="300px" v-model="selectedStartTime"></datetime>
+          <datetime v-if="showSetTimeModal" v-model="selectedStartTime" format="YYYY-MM-DD H:i"
+                    first-day-of-week="1" width="300px" />
         </div>
       </div>
       <div class="w-50 m-auto mt-3">
@@ -91,10 +92,12 @@ export default {
       return match.startTime
     },
     setStartTime() {
-      ScheduleGeneralService.updateMatchTime(this.competition.id,
-          this.selectedMatch.id, {matchTime: this.selectedStartTime}).then(() => {
+      ScheduleGeneralService.updateMatchTime(
+          this.competition.id, this.selectedMatch.id, {matchTime: this.selectedStartTime})
+          .then(() => {
+            this.matches.find(match => match.id === this.selectedMatch.id).startTime = this.selectedStartTime
             this.resetStartTime()
-      })
+          })
     },
     resetStartTime() {
       this.showSetTimeModal = false;
