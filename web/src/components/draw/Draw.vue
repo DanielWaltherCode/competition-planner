@@ -1,9 +1,9 @@
 <template>
   <main>
     <h1 class="p-4">
-      <i class="fas fa-arrow-left" style="float: left" @click="$router.push('/players')"/>
+      <i class="fas fa-arrow-left" style="float: left" @click="$router.push('/players')" />
       {{ $t("draw.main.title") }}
-      <i class="fas fa-arrow-right" style="float: right" @click="$router.push('/schedule')"/>
+      <i class="fas fa-arrow-right" style="float: right" @click="$router.push('/schedule')" />
     </h1>
     <div>
       <div class="row">
@@ -52,7 +52,7 @@
           <!-- List of registered players if there are any. Doubles case first -->
           <div v-if="!isChosenCategoryDrawn && showSeedModal" class="custom-card p-4 col-7 mx-auto">
             <div v-for="seed in currentSeed" :key="seed.registrationSeedDTO.registration.id" class="d-flex">
-              <input type="text" v-model="seed.registrationSeedDTO.seed"
+              <input v-model="seed.registrationSeedDTO.seed" type="text"
                      style="width: 30px" class="me-4 mb-1">
               <div>
                 <p v-for="player in seed.playerWithClubDTOs" :key="player.id">
@@ -67,8 +67,7 @@
             </div>
           </div>
           <div v-if="!isChosenCategoryDrawn && registeredPlayersDoubles !== null" id="registered-players" class="pb-5">
-
-            <h3>{{ $t("draw.main.registeredPlayers") }}</h3>
+<h3>{{ $t("draw.main.registeredPlayers") }}</h3>
             <!-- The innerPlayerList contains two players in case of doubles -->
             <div v-for="(innerPlayerList, index) in registeredPlayersDoubles" :key="index"
                  class="py-2 justify-content-center">
@@ -79,7 +78,8 @@
           </div>
           <div v-if="!isChosenCategoryDrawn && registeredPlayersSingles !== null" class="pt-4 px-3">
             <h3 v-if="registeredPlayersSingles.numberOfPlayers > 0">
-              {{ $t("draw.main.nrPlayers") + registeredPlayersSingles.numberOfPlayers }}</h3>
+              {{ $t("draw.main.nrPlayers") + registeredPlayersSingles.numberOfPlayers }}
+</h3>
             <div v-for="(players, grouping) in registeredPlayersSingles.groupingsAndPlayers" :key="grouping">
               <div class="heading">
                 <p class="mb-0">
@@ -118,7 +118,7 @@
                   <p class="mb-0 me-1">
                     {{ $t("draw.main.goToPlayoff") }}
                   </p>
-                  <i class="fas fa-arrow-right"/>
+                  <i class="fas fa-arrow-right" />
                 </div>
               </div>
               <!-- If there are groups -->
@@ -128,20 +128,20 @@
                   {{ $t("draw.main.group") }} {{ group.name }}
                 </h4>
                 <div class="col-sm-12">
-                  <PoolDraw :group="group"/>
+                  <PoolDraw :group="group" />
                 </div>
                 <div class="col-sm-12 pt-4">
                   <div id="matches" class="row justify-content-center ms-0">
                     <h5 class="black text-start fw-bolder">
                       {{ $t("draw.pool.matches") }}
                     </h5>
-                    <match-list-component :matches="group.matches"/>
+                    <match-list-component :matches="group.matches" />
                   </div>
                 </div>
               </div>
               <!-- If there is a playoff/cup -->
               <playoff-draw v-if="draw != null && draw.playOff != null && shouldShowPlayoff(draw.playOff)" id="playoff"
-                            :playoff-rounds="draw.playOff"/>
+                            :playoff-rounds="draw.playOff" />
             </div>
           </div>
         </div>
@@ -301,6 +301,10 @@ export default {
             DrawService.getCurrentSeed(this.competition.id, this.chosenCategory.id).then(res => {
               this.currentSeed = res.data
             })
+            this.$toasted.success(this.$tc("toasts.seedingSaved")).goAway(3000)
+          })
+          .catch(err => {
+            this.errorHandler(err.data)
           })
     },
     tryTranslateCategoryName: tryTranslateCategoryName,
