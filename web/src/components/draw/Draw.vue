@@ -253,7 +253,7 @@ export default {
       }
     },
     shouldShowPlayoff(playoff) {
-      if (playoff === null) {
+      if (playoff === null || playoff.length === 0) {
         return false;
       }
       let nonPlaceholderPlayers = 0
