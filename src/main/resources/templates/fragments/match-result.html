@@ -7,10 +7,10 @@
     <div class="bg-grey p-1 d-flex justify-content-center">
         <h2 class="fs-6 text-uppercase"
             th:if="${match.matchType.equalsIgnoreCase('group')}"
-            th:text="#{'categories.name.' + ${match.competitionCategory.name}} + ' | ' + #{results.group} + ' ' + ${match.groupOrRound}"> </h2>
+            th:text="${#strings.defaultString(#messages.msgOrNull('categories.name.' + match.competitionCategory.name), match.competitionCategory.name)} + ' | ' + #{results.group} + ' ' + ${match.groupOrRound}"> </h2>
         <h2 class="fs-6 text-uppercase"
             th:if="!${match.matchType.equalsIgnoreCase('group')}"
-            th:text="#{'categories.name.' + ${match.competitionCategory.name}} + ' | ' + #{'round.' + ${match.groupOrRound}}">
+            th:text="${#strings.defaultString(#messages.msgOrNull('categories.name.' + match.competitionCategory.name), match.competitionCategory.name)} + ' | ' + #{'round.' + ${match.groupOrRound}}">
         </h2>
     </div>
     <div class="p-2">
