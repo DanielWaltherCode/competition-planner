@@ -72,7 +72,7 @@ class SetupTestData(
     val scheduleRepository: ScheduleRepository
 ) {
 
-    @EventListener
+    // @EventListener
     fun onApplicationEvent(event: ContextRefreshedEvent) {
         clearTables()
         setUpData()
