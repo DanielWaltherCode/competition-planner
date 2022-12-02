@@ -28,7 +28,7 @@
                     <span th:replace="fragments/player-fragment :: players(playerList=${match.firstPlayer})"></span>
                 </td>
                 <td class="text-start" th:classappend="${match.winner == match.secondPlayer ? 'fw-bold' : ''}">
-                    <span th:replace="fragments/player-fragment :: players(playerList=${match.firstPlayer})"></span>
+                    <span th:replace="fragments/player-fragment :: players(playerList=${match.secondPlayer})"></span>
                 </td>
                 <td class="text-start">
                     <p th:each="game : ${match.result.gameList}" class="pe-2 pb-0 d-inline">
