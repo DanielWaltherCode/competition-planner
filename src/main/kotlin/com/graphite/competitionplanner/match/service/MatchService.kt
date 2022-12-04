@@ -59,7 +59,7 @@ class MatchService(
     fun transformToMatchAndResultDTO(matches: List<MatchRecord>): List<MatchAndResultDTO> {
         val results: MutableMap<Int, ResultDTO> = resultsRepository.getResults(matches.map { it.id })
         val resultList = mutableListOf<MatchAndResultDTO>()
-        for (match in matches.sortedBy { it.id }) {
+        for (match in matches) {
             resultList.add(
                 MatchAndResultDTO(
                     match.id,

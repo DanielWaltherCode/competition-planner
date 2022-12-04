@@ -214,7 +214,7 @@ export default {
           {
             firstRegistrationResult: 0,
             secondRegistrationResult: 0,
-            gameNumber: (this.setList.length + this.selectedMatch.result.gameList.length) + 1
+            gameNumber: this.setList.length + 1
           })
     },
     deleteResults() {
