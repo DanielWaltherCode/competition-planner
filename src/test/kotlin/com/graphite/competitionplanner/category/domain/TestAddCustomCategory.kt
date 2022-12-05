@@ -2,17 +2,20 @@ package com.graphite.competitionplanner.category.domain
 
 import com.graphite.competitionplanner.category.interfaces.CustomCategorySpec
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
+import com.graphite.competitionplanner.util.SetupTestData
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.event.annotation.BeforeTestClass
 import java.time.LocalDate
 
 @SpringBootTest
 class TestAddCustomCategory(
         @Autowired val findCompetitions: FindCompetitions,
         @Autowired val getCategories: GetCategories,
-        @Autowired val addCustomCategory: AddCustomCategory
+        @Autowired val addCustomCategory: AddCustomCategory,
 ) {
 
     @Test
@@ -31,6 +34,14 @@ class TestAddCustomCategory(
 
         // Should not be fetchable for other competitions
         Assertions.assertEquals(originalSizeNoCompetitionId.size, newSizeNoCompetitionId.size)
+    }
+
+    companion object {
+        @JvmStatic
+        @BeforeAll
+        fun setUpTestData(@Autowired setupTestData: SetupTestData) {
+            setupTestData.resetTestData()
+        }
     }
 
 }

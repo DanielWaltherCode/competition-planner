@@ -2,7 +2,9 @@ package com.graphite.competitionplanner.club.repository
 
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.util.DataGenerator
+import com.graphite.competitionplanner.util.SetupTestData
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -109,4 +111,5 @@ class TestClubRepository(
             clubRepository.delete(club.id)
         }
     }
+
 }

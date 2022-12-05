@@ -10,9 +10,8 @@ import com.graphite.competitionplanner.draw.service.DrawService
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.registration.domain.SearchRegistrations
-import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
-import io.swagger.annotations.ApiModelProperty
+import io.swagger.v3.oas.annotations.Operation
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -145,7 +144,7 @@ class CompetitionController(
     }
 
     @GetMapping("/{competitionId}/players")
-    @ApiModelProperty(value = "Allowed values", allowableValues = "club, category, name", required = false)
+    @Operation(summary = "Allowed values: club, category, name")
     fun getPlayersInCompetition(
             model: Model,
             @PathVariable competitionId: Int,
@@ -157,7 +156,7 @@ class CompetitionController(
     }
 
     @GetMapping("/{competitionId}/players/htmx")
-    @ApiModelProperty(value = "Allowed values", allowableValues = "club, category, name", required = false)
+    @Operation(summary = "Allowed values: club, category, name")
     fun getPlayersInCompetitionHtmx(
             model: Model,
             @PathVariable competitionId: Int,

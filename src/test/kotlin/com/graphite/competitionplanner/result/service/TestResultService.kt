@@ -19,6 +19,7 @@ import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.domain.AddPartialResult
 import com.graphite.competitionplanner.result.repository.ResultRepository
 import com.graphite.competitionplanner.util.DataGenerator
+import com.graphite.competitionplanner.util.SetupTestData
 import com.graphite.competitionplanner.util.TestUtil
 import com.graphite.competitionplanner.util.Util
 import org.junit.jupiter.api.*
@@ -52,7 +53,8 @@ class TestResultService(
     val dataGenerator = DataGenerator()
 
     @BeforeAll
-    fun setUpClassData() {
+    fun setUpClassData(@Autowired setupTestData: SetupTestData) {
+        setupTestData.resetTestData()
         competitionCategoryId = testUtil.addCompetitionCategory(DefaultCategory.MEN_3)
     }
 
