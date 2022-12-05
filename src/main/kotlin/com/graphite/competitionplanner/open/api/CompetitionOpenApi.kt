@@ -16,7 +16,7 @@ import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.interfaces.PlayerRegistrationDTO
 import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
-import io.swagger.annotations.ApiModelProperty
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
@@ -66,7 +66,7 @@ class CompetitionOpenApi(
     }
 
     @GetMapping("/{competitionId}/registration")
-    @ApiModelProperty(value = "Allowed values", allowableValues = "club, category, name", required = false)
+    @Operation(summary = "Allowed values: club, category, name")
     fun getPlayersInCompetition(
         @PathVariable competitionId: Int,
         @RequestParam searchType: String

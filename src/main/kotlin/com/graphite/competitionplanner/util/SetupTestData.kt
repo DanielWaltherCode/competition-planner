@@ -47,7 +47,7 @@ import kotlin.random.Random
 
 
 @Component
-@Profile("!production")
+@Profile("local", "test")
 class SetupTestData(
     val playerRepository: PlayerRepository,
     val competitionRepository: CompetitionRepository,
@@ -72,8 +72,7 @@ class SetupTestData(
     val scheduleRepository: ScheduleRepository
 ) {
 
-    // @EventListener
-    fun onApplicationEvent(event: ContextRefreshedEvent) {
+    fun resetTestData() {
         clearTables()
         setUpData()
     }

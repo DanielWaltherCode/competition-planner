@@ -1,6 +1,5 @@
 package com.graphite.competitionplanner.registration.api
 
-import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.domain.SearchRegistrations
 import com.graphite.competitionplanner.registration.domain.Withdraw
@@ -8,7 +7,7 @@ import com.graphite.competitionplanner.registration.interfaces.*
 import com.graphite.competitionplanner.registration.repository.RegistrationRepository
 import com.graphite.competitionplanner.registration.service.RegisteredPlayersDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
-import io.swagger.annotations.ApiModelProperty
+import io.swagger.v3.oas.annotations.Operation
 import org.springframework.web.bind.annotation.*
 
 
@@ -23,7 +22,7 @@ class CompetitionRegistrationApi(
 
     // Supports search by club, category, name
     @GetMapping
-    @ApiModelProperty(value = "Allowed values", allowableValues = "club, category, name", required = false)
+    @Operation(summary = "Allowed values: club, category, name")
     fun getPlayersInCompetition(
         @PathVariable competitionId: Int,
         @RequestParam searchType: String
