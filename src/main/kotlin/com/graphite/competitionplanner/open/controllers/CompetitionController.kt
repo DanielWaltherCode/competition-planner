@@ -139,8 +139,6 @@ class CompetitionController(
             filteredMatches = filteredMatches.filter { it.competitionCategory.id == parsedCategoryId }.toMutableList()
         }
 
-        filteredMatches = filteredMatches.sortedWith( compareBy<MatchAndResultDTO>{it.startTime }.thenBy { it.competitionCategory.id}).toMutableList()
-
         model.addAttribute("competition", competition)
         model.addAttribute("matches", filteredMatches)
         return "fragments/results-table"
