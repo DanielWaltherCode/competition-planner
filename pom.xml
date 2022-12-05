@@ -15,7 +15,7 @@
     <description>Competition planner</description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <kotlin.version>1.7.10</kotlin.version>
         <jooq.version>3.17.4</jooq.version>
     </properties>
