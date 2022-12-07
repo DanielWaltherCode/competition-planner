@@ -26,6 +26,6 @@ class TestClubPaymentRepository(
         val newCount = paymentRepository.getCount()
 
         // Assert
-        Assertions.assertTrue(newCount > 1)
+        Assertions.assertTrue(newCount > 0)
     }
 }
