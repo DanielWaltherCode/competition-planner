@@ -16,6 +16,7 @@ class CreateClub(
     fun execute(spec: ClubSpec): ClubDTO {
         val nameIsAvailable: Boolean = clubRepository.getAll().none { it.name == spec.name }
         if (nameIsAvailable) {
+            // TODO: Has to be transaction so we do not create a club without payment info
             val club: ClubDTO = clubRepository.store(spec)
             // Set up empty paymentinfo for each club
             clubPaymentRepository.add(club.id, getEmptyPaymentInfo())
