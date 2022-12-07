@@ -17,13 +17,16 @@ import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepo
 import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.interfaces.IResultRepository
 import com.graphite.competitionplanner.util.BaseRepositoryTest
+import com.graphite.competitionplanner.util.SetupTestData
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 class TestRemoveResult(
+    @Autowired val setupTestData: SetupTestData,
     @Autowired val createDraw: CreateDraw,
     @Autowired val service: ResultService,
     @Autowired val getDraw: GetDraw,
@@ -45,6 +48,12 @@ class TestRemoveResult(
     matchRepository,
     resultRepository
 ) {
+
+    @BeforeEach
+    fun setupByeAndPlaceholderRegistrations() {
+        setupTestData.trySetupByeAndPlaceHolder()
+    }
+
     /**
      * This test works by playing all the matches except one in the pool stage. Then we record the state of the
      * draw at that moment. Followed by playing last game and immediately removing that game's result. Then
