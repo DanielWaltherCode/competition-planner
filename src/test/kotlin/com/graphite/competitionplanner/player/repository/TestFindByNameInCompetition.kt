@@ -1,6 +1,8 @@
 package com.graphite.competitionplanner.player.repository
 
+import com.graphite.competitionplanner.category.domain.CategoryType
 import com.graphite.competitionplanner.category.domain.DefaultCategory
+import com.graphite.competitionplanner.category.interfaces.CustomCategorySpec
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
@@ -94,7 +96,7 @@ class TestFindByNameInCompetition(
     }
 
     private fun CompetitionDTO.addCategory(name: String): CompetitionCategoryDTO {
-        val category = categoryRepository.getAvailableCategories().find { it.name == name }!!
+        val category = categoryRepository.addCustomCategory(this.id, CustomCategorySpec(name, CategoryType.SINGLES))
         return competitionCategoryRepository.store(
             this.id,
             dataGenerator.newCompetitionCategorySpec(
@@ -118,7 +120,7 @@ class TestFindByNameInCompetition(
 
     private fun ClubDTO.createCompetitionAndRegister(players: List<PlayerDTO>): CompetitionDTO {
         val competition = this.addCompetition()
-        val competitionCategory = competition.addCategory(categoryRepository.getAvailableCategories().first().name)
+        val competitionCategory = competition.addCategory("MY-CATEGORY-123")
         for (p in players) {
             competitionCategory.register(p)
         }
