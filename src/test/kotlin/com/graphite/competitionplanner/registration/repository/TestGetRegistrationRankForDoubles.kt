@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.registration.repository
 
 import com.graphite.competitionplanner.category.domain.CategoryType
+import com.graphite.competitionplanner.category.interfaces.CustomCategorySpec
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.repository.ClubRepository
 import com.graphite.competitionplanner.competition.repository.CompetitionRepository
@@ -31,7 +32,10 @@ class TestGetRegistrationRankForDoubles(
 
     override fun setupCompetitionCategory() {
         // Override this so,we set up competition category as a doubles
-        category = categoryRepository.getAvailableCategories().first { it.type == CategoryType.DOUBLES }
+        category = categoryRepository.addCustomCategory(
+            competition.id,
+            CustomCategorySpec("CATEGORY-FOR-TestGetRegistrationRankForDoubles", CategoryType.DOUBLES)
+        )
         competitionCategory = competitionCategoryRepository.store(
             competitionId = competition.id,
             spec = dataGenerator.newCompetitionCategorySpec(
