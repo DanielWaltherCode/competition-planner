@@ -98,6 +98,14 @@ class SetupTestData(
         }
     }
 
+    fun trySetupOverigtClub() {
+        try {
+            createClub.execute(ClubSpec("Övriga", "Empty"))
+        } catch (ex: IllegalArgumentException) {
+            // Nothing, club already exist
+        }
+    }
+
     fun registerUsers() {
         userService.addUser(
             UserSpec(

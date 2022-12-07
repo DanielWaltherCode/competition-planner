@@ -51,6 +51,7 @@ class TestRemoveResult(
 
     @BeforeEach
     fun setupByeAndPlaceholderRegistrations() {
+        setupTestData.trySetupOverigtClub()
         setupTestData.trySetupByeAndPlaceHolder()
     }
 

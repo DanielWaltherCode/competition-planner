@@ -44,6 +44,7 @@ class TestCupOnly(
 
     @BeforeEach
     fun setupByeAndPlaceholderRegistrations() {
+        setupTestData.trySetupOverigtClub()
         setupTestData.trySetupByeAndPlaceHolder()
     }
 
