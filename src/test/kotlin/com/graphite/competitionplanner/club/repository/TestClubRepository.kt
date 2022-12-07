@@ -2,9 +2,7 @@ package com.graphite.competitionplanner.club.repository
 
 import com.graphite.competitionplanner.common.exception.NotFoundException
 import com.graphite.competitionplanner.util.DataGenerator
-import com.graphite.competitionplanner.util.SetupTestData
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -74,7 +72,7 @@ class TestClubRepository(
     @Test
     fun shouldReturnDtoWhenSearchingForClubWithGiven() {
         // Setup
-        val spec = dataGenerator.newClubSpec("Svalnäs IK", "Address 123")
+        val spec = dataGenerator.newClubSpec()
         val dto = clubRepository.store(spec)
 
         // Act
@@ -87,10 +85,10 @@ class TestClubRepository(
     @Test
     fun shouldGetAllClubs() {
         // Setup
-        val club1 = dataGenerator.newClubSpec("ClubA", "AddressA")
-        val club2 = dataGenerator.newClubSpec("ClubB", "AddressB")
-        val club3 = dataGenerator.newClubSpec("ClubC", "AddressC")
-        val club4 = dataGenerator.newClubSpec("ClubD", "AddressD")
+        val club1 = dataGenerator.newClubSpec()
+        val club2 = dataGenerator.newClubSpec()
+        val club3 = dataGenerator.newClubSpec()
+        val club4 = dataGenerator.newClubSpec()
         val clubs = listOf(club1, club2, club3, club4)
         for (club in clubs) {
             clubRepository.store(club)
@@ -103,12 +101,6 @@ class TestClubRepository(
         val foundClubNames = foundClubs.map { it.name }
         for (club in clubs) {
             Assertions.assertTrue(foundClubNames.contains(club.name))
-        }
-
-        // Clean up
-        val createdClubs = foundClubs.filter { clubs.map { c -> c.name }.contains(it.name) }
-        for (club in createdClubs) {
-            clubRepository.delete(club.id)
         }
     }
 
