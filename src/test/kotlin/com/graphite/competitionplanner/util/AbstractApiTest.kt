@@ -33,7 +33,7 @@ abstract class AbstractApiTest(
         return "http://localhost:$port"
     }
 
-    private fun login(): LoginDTO {
+    protected fun login(): LoginDTO {
         // This user is created in SetupTestData.kt
         val loginDetails = UserLogin("abraham", "anders")
         val valueToSend = objectMapper.writeValueAsString(loginDetails)
