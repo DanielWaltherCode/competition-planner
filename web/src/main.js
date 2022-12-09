@@ -14,7 +14,10 @@ import 'vue2-timepicker/dist/VueTimepicker.css'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import Toasted from 'vue-toasted';
 import {vfmPlugin} from 'vue-final-modal'
+import {Datetime} from 'vue-datetime'
+import 'vue-datetime/dist/vue-datetime.css'
 
+Vue.use(Datetime)
 Vue.use(vfmPlugin)
 import VModal from 'vue-js-modal'
 import UserService from "@/common/api-services/user.service";

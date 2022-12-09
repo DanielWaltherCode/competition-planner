@@ -158,7 +158,6 @@ import CategoryService from "@/common/api-services/category.service";
 import MatchListComponent from "@/components/general/MatchListComponent";
 import PlayoffDraw from "@/components/draw/PlayoffDraw";
 import {generalErrorHandler, getFormattedPlayerName, tryTranslateCategoryName} from "@/common/util"
-import SearchPlayerComponent from "@/components/player/SearchPlayerComponent";
 
 export default {
   name: "Draw",

@@ -41,21 +41,25 @@
               <thead>
               <tr>
                 <th scope="col" class="col-1">{{ $t("results.startTime") }}</th>
-                <th scope="col" class="col-1" v-if="!isMobile">{{ $t("results.category") }}</th>
-                <th scope="col" class="col-1" v-if="!isMobile">
+                <th scope="col" class="col-1 d-none d-md-table-cell">{{ $t("results.category") }}</th>
+                <th scope="col" class="col-1 d-none d-md-table-cell">
                   {{ $t("results.round") }}
                 </th>
                 <th scope="col" class="col-2"></th>
                 <th scope="col" class="col-2"></th>
                 <th scope="col" class="col-2 text-start">{{ $t("results.result") }}</th>
-                <th scope="col" class="col-1"></th>
+                <th scope="col" class="col-1"> {{$t("results.report")}}</th>
               </tr>
               </thead>
               <tbody>
               <tr v-for="match in filterMatches" :key="match.id">
-                <td>{{ getTime(match) }}</td>
-                <td v-if="!isMobile">{{ tryTranslateCategoryName(match.competitionCategory.name) }}</td>
-                <td v-if="!isMobile">
+                <td v-if="match.startTime !== null && match.startTime !== ''">{{ getTime(match) }}
+                </td>
+                <td v-else>
+                  <datetime v-model="match.startTime" type="datetime" @close="setStartTime(match)"></datetime>
+                </td>
+                <td class="d-none d-md-table-cell">{{ tryTranslateCategoryName(match.competitionCategory.name) }}</td>
+                <td class="d-none d-md-table-cell">
                   <span v-if="match.matchType === 'GROUP'"> {{ $t("results.group") + ' ' + match.groupOrRound }}</span>
                   <span v-else>{{ $t("round." + match.groupOrRound) }}</span>
                 </td>
@@ -98,13 +102,21 @@
 
 <script>
 import MatchService from "@/common/api-services/match.service";
-import {getPlayerOneWithClub, getPlayerTwoWithClub, isPlayerOneWinner, isPlayerTwoWinner} from "@/common/util";
+import {
+  getFormattedDate, getHoursMinutes,
+  getPlayerOneWithClub,
+  getPlayerTwoWithClub,
+  isPlayerOneWinner,
+  isPlayerTwoWinner
+} from "@/common/util";
 import RegisterResult from "@/components/result/RegisterResult";
 import {tryTranslateCategoryName} from "@/common/util"
+import ScheduleGeneralService from "@/common/api-services/schedule/schedule-general.service";
+import {Datetime} from 'vue-datetime';
 
 export default {
   name: "ResultComponent",
-  components: {RegisterResult},
+  components: {RegisterResult, Datetime},
   data() {
     return {
       activeResultsReporting: false,
@@ -116,7 +128,9 @@ export default {
       searchString: "",
       hideFinishedMatches: false,
       competitionCategories: [],
-      selectedCategory: ""
+      selectedCategory: "",
+      matchForTimeSetting: null,
+      selectedStartTime: null
     }
   },
   computed: {
@@ -154,17 +168,10 @@ export default {
       }
       return matchesWithSearchString
     },
-    isMobile: function () {
-      const width = window.innerWidth
-          || document.documentElement.clientWidth
-          || document.body.clientWidth;
-      console.log("width: " + width)
-      console.log(width < 700)
-      return width < 700;
-    }
   },
   mounted() {
     this.getMatches()
+    this.reset()
   },
   methods: {
     // TODO -- Don't call getMatches() all the time, process changes locally and only reload all on hard refresh
@@ -178,6 +185,11 @@ export default {
           this.competitionCategories.add(category.name)
         })
       })
+    },
+    reset() {
+      this.selectedMatch = null
+      this.matchForTimeSetting = null
+      this.showModal = false
     },
     getPlayerOne: getPlayerOneWithClub,
     getPlayerTwo: getPlayerTwoWithClub,
@@ -213,7 +225,28 @@ export default {
     hideModal() {
       this.showModal = false
     },
-    tryTranslateCategoryName: tryTranslateCategoryName
+    setStartTime(match) {
+      if (match.startTime !== null && match.startTime !== "") {
+        const date = new Date(match.startTime)
+        const formattedTime = `${getFormattedDate(date)} ${getHoursMinutes(date)}`
+        if (formattedTime.length > 6) {
+          ScheduleGeneralService.updateMatchTime(
+              this.competition.id, match.id, {matchTime: formattedTime})
+              .then(() => {
+                match.startTime = formattedTime
+                this.resetStartTime()
+              })
+        }
+      }
+    },
+    resetStartTime() {
+      this.showSetTimeModal = false;
+      this.selectedStartTime = null;
+      this.matchForTimeSetting = null
+    },
+    tryTranslateCategoryName: tryTranslateCategoryName,
+    getFormattedDate: getFormattedDate,
+    getHoursMinutes: getHoursMinutes
   }
 }
 </script>

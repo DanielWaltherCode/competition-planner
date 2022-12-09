@@ -1,5 +1,5 @@
 export function getFormattedDate(date) {
-    if (date === null ||date === undefined) {return ""}
+    if (date === null || date === undefined || date === "") {return ""}
     const dateObject = new Date(date)
     const year = dateObject.getUTCFullYear();
     let month = dateObject.getUTCMonth() + 1;
@@ -9,7 +9,7 @@ export function getFormattedDate(date) {
 }
 
 export function getHoursMinutes(date) {
-    if (date === null) {return ""}
+    if (date === null || date === undefined || date === "") {return ""}
     const dateObject = new Date(date)
     return getDisplayTime(dateObject.getHours()) + ":" + getDisplayTime(dateObject.getMinutes())
 }
