@@ -1,5 +1,7 @@
 package com.graphite.competitionplanner.util
 
+import com.graphite.competitionplanner.category.domain.CategoryType
+import com.graphite.competitionplanner.category.interfaces.CustomCategorySpec
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
@@ -43,7 +45,7 @@ class BaseRepositoryTest(
     }
 
     fun CompetitionDTO.addCompetitionCategory(): CompetitionCategoryDTO {
-        val category = categoryRepository.getAvailableCategories().first()
+        val category = categoryRepository.addCustomCategory(this.id, CustomCategorySpec("MY-TEST-CATEGORY", CategoryType.SINGLES))
         return competitionCategoryRepository.store(
             this.id,
             dataGenerator.newCompetitionCategorySpec(
@@ -60,7 +62,7 @@ class BaseRepositoryTest(
         categoryName: String,
         drawType: DrawType = DrawType.POOL_ONLY
     ): CompetitionCategoryDTO {
-        val category = categoryRepository.getAvailableCategories().first { c -> c.name == categoryName }
+        val category = categoryRepository.addCustomCategory(this.id, CustomCategorySpec(categoryName, CategoryType.SINGLES))
         return competitionCategoryRepository.store(
             this.id,
             dataGenerator.newCompetitionCategorySpec(

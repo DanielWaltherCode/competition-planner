@@ -5,7 +5,7 @@ import com.graphite.competitionplanner.user.api.LoginDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -33,7 +33,7 @@ abstract class AbstractApiTest(
         return "http://localhost:$port"
     }
 
-    private fun login(): LoginDTO {
+    protected fun login(): LoginDTO {
         // This user is created in SetupTestData.kt
         val loginDetails = UserLogin("abraham", "anders")
         val valueToSend = objectMapper.writeValueAsString(loginDetails)

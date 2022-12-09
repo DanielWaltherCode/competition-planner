@@ -5,17 +5,19 @@ import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
-import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.draw.domain.CupDrawSpec
 import com.graphite.competitionplanner.draw.domain.DeleteDraw
 import com.graphite.competitionplanner.draw.domain.PlayOffMatch
-import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.draw.interfaces.CompetitionCategoryDrawDTO
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
+import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.player.repository.PlayerRepository
+import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
+import com.graphite.competitionplanner.util.SetupTestData
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -23,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired
  * A test class to test database operations on a draw for DrawType.CUP_ONLY
  */
 class TestCupOnly(
+    @Autowired val setupTestData: SetupTestData,
     @Autowired val deleteDraw: DeleteDraw,
     @Autowired repository: ICompetitionDrawRepository,
     @Autowired clubRepository: IClubRepository,
@@ -38,6 +41,12 @@ class TestCupOnly(
     categoryRepository,
     playerRepository,
     registrationRepository) {
+
+    @BeforeEach
+    fun setupByeAndPlaceholderRegistrations() {
+        setupTestData.trySetupOverigtClub()
+        setupTestData.trySetupByeAndPlaceHolder()
+    }
 
     @Test
     fun canStoreSinglesPlayOffWithRealPlayers() {

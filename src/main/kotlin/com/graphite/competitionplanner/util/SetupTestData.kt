@@ -1,9 +1,9 @@
 package com.graphite.competitionplanner.util
 
-import com.graphite.competitionplanner.category.interfaces.CategoryDTO
-import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.domain.CategoryType
 import com.graphite.competitionplanner.category.domain.DefaultCategory
+import com.graphite.competitionplanner.category.interfaces.CategoryDTO
+import com.graphite.competitionplanner.category.interfaces.CategorySpec
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.domain.CreateClub
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
@@ -18,12 +18,12 @@ import com.graphite.competitionplanner.competitioncategory.domain.AddCompetition
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.competitioncategory.repository.CompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.CreateDraw
-import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.draw.repository.CompetitionDrawRepository
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.player.domain.ListAllPlayersInClub
 import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.repository.PlayerRepository
+import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.registration.domain.asInt
 import com.graphite.competitionplanner.registration.interfaces.RegistrationDoublesSpec
 import com.graphite.competitionplanner.registration.interfaces.RegistrationSinglesSpec
@@ -37,8 +37,6 @@ import com.graphite.competitionplanner.user.api.UserSpec
 import com.graphite.competitionplanner.user.repository.UserRepository
 import com.graphite.competitionplanner.user.service.UserService
 import org.springframework.context.annotation.Profile
-import org.springframework.context.event.ContextRefreshedEvent
-import org.springframework.context.event.EventListener
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Component
 import java.time.LocalDate
@@ -80,12 +78,7 @@ class SetupTestData(
     fun setUpData() {
         setUpClub()
         competitionSetup()
-        try {
-            setUpBYEPlayer()
-            setUpPlaceHolderRegistration()
-        } catch (ex: DuplicateKeyException) {
-            // Nothing
-        }
+        trySetupByeAndPlaceHolder()
         registerUsers()
         playerSetup()
         addPlayerRankings()
@@ -94,6 +87,23 @@ class SetupTestData(
         registerPlayersSingles()
         registerResults()
         registerPlayersDoubles()
+    }
+
+    fun trySetupByeAndPlaceHolder() {
+        try {
+            setUpBYEPlayer()
+            setUpPlaceHolderRegistration()
+        } catch (ex: DuplicateKeyException) {
+            // Nothing
+        }
+    }
+
+    fun trySetupOverigtClub() {
+        try {
+            createClub.execute(ClubSpec("Övriga", "Empty"))
+        } catch (ex: IllegalArgumentException) {
+            // Nothing, club already exist
+        }
     }
 
     fun registerUsers() {

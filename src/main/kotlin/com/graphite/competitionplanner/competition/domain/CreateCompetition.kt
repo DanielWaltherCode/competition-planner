@@ -22,6 +22,7 @@ class CreateCompetition(
         findClub.byId(spec.organizingClubId)
         val competition = repository.store(spec)
 
+        // TODO: This has to be a transaction to ensure we have a correct competition
         // Add default competition schedule metadata
         scheduleMetadataService.addDefaultScheduleMetadata(competition.id)
         dailyStartEndService.addDailyStartAndEndForWholeCompetition(competition.id)

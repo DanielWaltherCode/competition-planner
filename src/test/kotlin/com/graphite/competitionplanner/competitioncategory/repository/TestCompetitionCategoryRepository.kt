@@ -1,7 +1,8 @@
 package com.graphite.competitionplanner.competitioncategory.repository
 
-import com.graphite.competitionplanner.category.domain.DefaultCategory
+import com.graphite.competitionplanner.category.domain.CategoryType
 import com.graphite.competitionplanner.category.interfaces.CategorySpec
+import com.graphite.competitionplanner.category.interfaces.CustomCategorySpec
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
@@ -46,9 +47,12 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldBeAbleToStoreCompetitionCategory() {
         // Setup
-        val category = categoryRepository.getAvailableCategories().find { it.name == DefaultCategory.MEN_1.name }!!
-        val dto =
-            dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, category.type))
+        val category = categoryRepository.addCustomCategory(
+            competition.id,
+            CustomCategorySpec("CATEGORY-FOR-shouldBeAbleToStoreCompetitionCategory", CategoryType.SINGLES)
+        )
+        val dto = dataGenerator.newCompetitionCategorySpec(
+            category = CategorySpec(category.id, category.name, category.type))
         val addedCompetitionCategory = repository.store(competition.id, dto)
 
         // Act
@@ -62,9 +66,12 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldReturnNewlyStoredCompetitionCategory() {
         // Setup
-        val category = categoryRepository.getAvailableCategories().find { it.name == DefaultCategory.MEN_1.name }!!
-        val spec =
-            dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, category.type))
+        val category = categoryRepository.addCustomCategory(
+            competition.id,
+            CustomCategorySpec("CATEGORY-FOR-shouldReturnNewlyStoredCompetitionCategory", CategoryType.SINGLES)
+        )
+        val spec = dataGenerator.newCompetitionCategorySpec(
+            category = CategorySpec(category.id, category.name, category.type))
 
         // Act
         val competitionCategory = repository.store(competition.id, spec)
@@ -79,9 +86,12 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldNotBeAbleToFindDeletedCompetitionCategory() {
         // Setup
-        val category = categoryRepository.getAvailableCategories().find { it.name == DefaultCategory.MEN_1.name }!!
-        val spec =
-            dataGenerator.newCompetitionCategorySpec(category = CategorySpec(category.id, category.name, category.type))
+        val category = categoryRepository.addCustomCategory(
+            competition.id,
+            CustomCategorySpec("CATEGORY-FOR-shouldNotBeAbleToFindDeletedCompetitionCategory", CategoryType.SINGLES)
+        )
+        val spec = dataGenerator.newCompetitionCategorySpec(
+            category = CategorySpec(category.id, category.name, category.type))
         val competitionCategory = repository.store(competition.id, spec)
 
         // Act
@@ -103,7 +113,10 @@ class TestCompetitionCategoryRepository(
     @Test
     fun shouldBeAbleToUpdateCompetitionCategory() {
         // Setup
-        val category = categoryRepository.getAvailableCategories().find { it.name == DefaultCategory.MEN_1.name }!!
+        val category = categoryRepository.addCustomCategory(
+            competition.id,
+            CustomCategorySpec("CATEGORY-FOR-shouldBeAbleToUpdateCompetitionCategory", CategoryType.SINGLES)
+        )
         val spec =
             dataGenerator.newCompetitionCategorySpec(
                 category = CategorySpec(category.id, category.name, category.type),

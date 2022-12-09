@@ -1,6 +1,8 @@
 package com.graphite.competitionplanner.registration.repository
 
+import com.graphite.competitionplanner.category.domain.CategoryType
 import com.graphite.competitionplanner.category.interfaces.CategoryDTO
+import com.graphite.competitionplanner.category.interfaces.CustomCategorySpec
 import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.repository.ClubRepository
@@ -39,7 +41,7 @@ open class BaseTestRegistration(
     }
 
     open fun setupCompetitionCategory() {
-        category = categoryRepository.getAvailableCategories().first()
+        category = categoryRepository.addCustomCategory(competition.id, CustomCategorySpec("MY-TEST-CATEGORY", CategoryType.SINGLES))
         competitionCategory = competitionCategoryRepository.store(
             competitionId = competition.id,
             spec = dataGenerator.newCompetitionCategorySpec(category = dataGenerator.newCategorySpec(id = category.id)))

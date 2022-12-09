@@ -1,7 +1,5 @@
 package com.graphite.competitionplanner.schedule.domain
 
-import com.graphite.competitionplanner.common.exception.GeneralException
-import com.graphite.competitionplanner.common.exception.GeneralExceptionType
 import com.graphite.competitionplanner.common.plusDuration
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
@@ -14,6 +12,7 @@ import com.graphite.competitionplanner.schedule.service.ScheduleMetadataService
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 
 /**
@@ -47,7 +46,7 @@ class TimeTableSlotHandler(
             val validStartTimes = generateStartTimes(
                 LocalDateTime.of(dailyStartEndDTO.day, dailyStartEndDTO.startTime),
                 LocalDateTime.of(dailyStartEndDTO.day, dailyStartEndDTO.endTime),
-                Duration.minutes(matchDuration)
+                matchDuration.minutes
             )
             val dailyNrTables = nrTables.first { it.day == dailyStartEndDTO.day }
 

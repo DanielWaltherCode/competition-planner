@@ -4,19 +4,22 @@ import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
-import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.*
 import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
 import com.graphite.competitionplanner.draw.interfaces.PlayoffRoundDTO
+import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.player.repository.PlayerRepository
 import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
+import com.graphite.competitionplanner.util.SetupTestData
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 class TestPoolAndCup(
+    @Autowired val setupTestData: SetupTestData,
     @Autowired val deleteDraw: DeleteDraw,
     @Autowired repository: ICompetitionDrawRepository,
     @Autowired clubRepository: IClubRepository,
@@ -32,6 +35,12 @@ class TestPoolAndCup(
     categoryRepository,
     playerRepository,
     registrationRepository) {
+
+    @BeforeEach
+    fun setupByeAndPlaceholderRegistrations() {
+        setupTestData.trySetupOverigtClub()
+        setupTestData.trySetupByeAndPlaceHolder()
+    }
 
     @Test
     fun canStorePlaceholderMappings() {
