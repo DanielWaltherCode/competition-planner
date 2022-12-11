@@ -18,17 +18,17 @@ import org.springframework.context.annotation.Lazy
 
 @Repository
 class CompetitionDrawRepository(
-    dslContext: DSLContext,
-    val competitionCategoryRepository: ICompetitionCategoryRepository,
-    @Lazy val getDraw: GetDraw
+        dslContext: DSLContext,
+        val competitionCategoryRepository: ICompetitionCategoryRepository,
+        @Lazy val getDraw: GetDraw
 ) : BaseRepository(dslContext),
     ICompetitionDrawRepository {
 
     fun getPoolDraw(competitionCategoryId: Int, groupName: String): List<PoolDrawRecord> {
         return dslContext
-            .selectFrom(POOL_DRAW)
-            .where(POOL_DRAW.COMPETITION_CATEGORY_ID.eq(competitionCategoryId).and(POOL_DRAW.GROUP_NAME.eq(groupName)))
-            .fetchInto(POOL_DRAW)
+                .selectFrom(POOL_DRAW)
+                .where(POOL_DRAW.COMPETITION_CATEGORY_ID.eq(competitionCategoryId).and(POOL_DRAW.GROUP_NAME.eq(groupName)))
+                .fetchInto(POOL_DRAW)
     }
 
     fun deleteGroupsInCategory(competitionCategoryId: Int) {
@@ -75,7 +75,7 @@ class CompetitionDrawRepository(
         dslContext.batchInsert(poolRecords).execute()
 
         val records: List<MatchRecord> =
-            draw.pools.flatMap { group -> group.matches.map { it.toRecord(draw.competitionCategoryId, group.name) } }
+                draw.pools.flatMap { group -> group.matches.map { it.toRecord(draw.competitionCategoryId, group.name) } }
         dslContext.batchInsert(records).execute()
     }
 
@@ -85,7 +85,7 @@ class CompetitionDrawRepository(
 
         val playerOffMatchRecords: List<MatchRecord> = draw.matches.map { it.toRecord(draw.competitionCategoryId) }
         val groupMatchRecords: List<MatchRecord> =
-            draw.pools.flatMap { group -> group.matches.map { it.toRecord(draw.competitionCategoryId, group.name) } }
+                draw.pools.flatMap { group -> group.matches.map { it.toRecord(draw.competitionCategoryId, group.name) } }
         dslContext.batchInsert(playerOffMatchRecords + groupMatchRecords).execute()
 
         val poolToPlayoffMapRecords: List<PoolToPlayoffMapRecord> = createPoolToPlayoffMapRecords(draw)
@@ -94,56 +94,58 @@ class CompetitionDrawRepository(
 
     private fun createPoolToPlayoffMapRecords(draw: PoolAndCupDrawSpec): List<PoolToPlayoffMapRecord> {
         val poolRecords =
-            dslContext.selectFrom(POOL).where(POOL.COMPETITION_CATEGORY_ID.eq(draw.competitionCategoryId)).fetch()
+                dslContext.selectFrom(POOL).where(POOL.COMPETITION_CATEGORY_ID.eq(draw.competitionCategoryId)).fetch()
         val firstRound = draw.matches.maxByOrNull { it.round }!!.round
         val matchesFirstRound = dslContext.selectFrom(MATCH).where(
-            MATCH.COMPETITION_CATEGORY_ID.eq(draw.competitionCategoryId).and(MATCH.GROUP_OR_ROUND.eq(firstRound.name))
+                MATCH.COMPETITION_CATEGORY_ID.eq(draw.competitionCategoryId).and(MATCH.GROUP_OR_ROUND.eq(firstRound.name))
         ).fetch()
 
         val poc1: List<PoolToPlayoffMapRecord> =
-            draw.matches.filter { it.round == firstRound }.filterNot { it.registrationOneId is Registration.Bye }
-                .map { playOffMatch ->
-                    dslContext.newRecord(POOL_TO_PLAYOFF_MAP).apply<@NotNull PoolToPlayoffMapRecord> {
-                        competitionCategoryId = draw.competitionCategoryId
-                        poolId =
-                            poolRecords.first {
-                                playOffMatch.registrationOneId.toString().dropLast(1) == it.name // Drop group position number
-                            }.id
-                        poolPosition = playOffMatch.registrationOneId.toString().last().digitToInt()
-                        matchId = matchesFirstRound.first { it.matchOrderNumber == playOffMatch.order }.id
-                        matchRegistrationPosition = 1 // registrationOneId
-                    }
-                }
+                draw.matches.filter { it.round == firstRound }.filterNot { it.registrationOneId is Registration.Bye }
+                        .map { playOffMatch ->
+                            dslContext.newRecord(POOL_TO_PLAYOFF_MAP).apply<@NotNull PoolToPlayoffMapRecord> {
+                                competitionCategoryId = draw.competitionCategoryId
+                                poolId =
+                                        poolRecords.first {
+                                            playOffMatch.registrationOneId.toString()
+                                                    .dropLast(1) == it.name // Drop group position number
+                                        }.id
+                                poolPosition = playOffMatch.registrationOneId.toString().last().digitToInt()
+                                matchId = matchesFirstRound.first { it.matchOrderNumber == playOffMatch.order }.id
+                                matchRegistrationPosition = 1 // registrationOneId
+                            }
+                        }
         val poc2: List<PoolToPlayoffMapRecord> =
-            draw.matches.filter { it.round == firstRound }.filterNot { it.registrationTwoId is Registration.Bye }
-                .map { playOffMatch ->
-                    dslContext.newRecord(POOL_TO_PLAYOFF_MAP).apply<@NotNull PoolToPlayoffMapRecord> {
-                        competitionCategoryId = draw.competitionCategoryId
-                        poolId =
-                            poolRecords.first {
-                                playOffMatch.registrationTwoId.toString().dropLast(1) == it.name // Drop group position number
-                            }.id
-                        poolPosition = playOffMatch.registrationTwoId.toString().last().digitToInt()
-                        matchId = matchesFirstRound.first { it.matchOrderNumber == playOffMatch.order }.id
-                        matchRegistrationPosition = 2 // registrationTwoId
-                    }
-                }
+                draw.matches.filter { it.round == firstRound }.filterNot { it.registrationTwoId is Registration.Bye }
+                        .map { playOffMatch ->
+                            dslContext.newRecord(POOL_TO_PLAYOFF_MAP).apply<@NotNull PoolToPlayoffMapRecord> {
+                                competitionCategoryId = draw.competitionCategoryId
+                                poolId =
+                                        poolRecords.first {
+                                            playOffMatch.registrationTwoId.toString()
+                                                    .dropLast(1) == it.name // Drop group position number
+                                        }.id
+                                poolPosition = playOffMatch.registrationTwoId.toString().last().digitToInt()
+                                matchId = matchesFirstRound.first { it.matchOrderNumber == playOffMatch.order }.id
+                                matchRegistrationPosition = 2 // registrationTwoId
+                            }
+                        }
 
         return poc1 + poc2
     }
 
     override fun getPool(competitionCategoryId: Int, poolName: String): PoolRecord {
         return dslContext
-            .selectFrom(POOL)
-            .where(POOL.COMPETITION_CATEGORY_ID.eq(competitionCategoryId).and(POOL.NAME.eq(poolName)))
-            .fetchOneInto(POOL)
-            ?: throw NotFoundException("Pool $poolName in category $competitionCategoryId not found.")
+                .selectFrom(POOL)
+                .where(POOL.COMPETITION_CATEGORY_ID.eq(competitionCategoryId).and(POOL.NAME.eq(poolName)))
+                .fetchOneInto(POOL)
+                ?: throw NotFoundException("Pool $poolName in category $competitionCategoryId not found.")
 
     }
 
     override fun isPoolFinished(poolId: Int): Boolean {
         return dslContext.fetchExists(
-            dslContext.selectFrom(POOL_RESULT).where(POOL_RESULT.POOL_ID.eq(poolId))
+                dslContext.selectFrom(POOL_RESULT).where(POOL_RESULT.POOL_ID.eq(poolId))
         )
     }
 
@@ -161,18 +163,17 @@ class CompetitionDrawRepository(
 
     override fun deleteSeeding(competitionCategoryId: Int) {
         dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
-            .setNull(COMPETITION_CATEGORY_REGISTRATION.SEED)
-            .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
-            .execute()
+                .setNull(COMPETITION_CATEGORY_REGISTRATION.SEED)
+                .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+                .execute()
     }
 
     override fun getSeeding(competitionCategoryId: Int): List<RegistrationSeedDTO> {
         val records = dslContext.select()
-            .from(COMPETITION_CATEGORY_REGISTRATION)
-            .where(
-                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId)
-            )
-            .fetchInto(COMPETITION_CATEGORY_REGISTRATION)
+                .from(COMPETITION_CATEGORY_REGISTRATION)
+                .where(COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(competitionCategoryId))
+                .orderBy(COMPETITION_CATEGORY_REGISTRATION.SEED.asc().nullsLast())
+                .fetchInto(COMPETITION_CATEGORY_REGISTRATION)
         return records.map { RegistrationSeedDTO(Registration.Real(it.registrationId), it.competitionCategoryId, it.seed) }
     }
 
@@ -180,11 +181,11 @@ class CompetitionDrawRepository(
         dslContext.batched {
             for (dto in registrationSeeds) {
                 dslContext.update(COMPETITION_CATEGORY_REGISTRATION)
-                    .set(COMPETITION_CATEGORY_REGISTRATION.SEED, dto.seed)
-                    .where(
-                        COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(dto.competitionCategoryId)
-                            .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(dto.registration.id))
-                    ).execute()
+                        .set(COMPETITION_CATEGORY_REGISTRATION.SEED, dto.seed)
+                        .where(
+                                COMPETITION_CATEGORY_REGISTRATION.COMPETITION_CATEGORY_ID.eq(dto.competitionCategoryId)
+                                        .and(COMPETITION_CATEGORY_REGISTRATION.REGISTRATION_ID.eq(dto.registration.id))
+                        ).execute()
             }
         }
     }

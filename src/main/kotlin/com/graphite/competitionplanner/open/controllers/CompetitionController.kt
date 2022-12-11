@@ -6,7 +6,9 @@ import com.graphite.competitionplanner.competition.domain.GetDaysOfCompetition
 import com.graphite.competitionplanner.competition.interfaces.CompetitionWithClubDTO
 import com.graphite.competitionplanner.competitioncategory.domain.GetCompetitionCategories
 import com.graphite.competitionplanner.draw.domain.GetDraw
+import com.graphite.competitionplanner.draw.interfaces.PlayoffRoundDTO
 import com.graphite.competitionplanner.draw.service.DrawService
+import com.graphite.competitionplanner.draw.service.PlayoffDTO
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.registration.domain.SearchRegistrations
@@ -79,7 +81,9 @@ class CompetitionController(
         val isDrawMade = drawService.isDrawMade(chosenCategory.id)
         model.addAttribute("isCategoryDrawn", isDrawMade)
         if (isDrawMade) {
-            model.addAttribute("draw", getDraw.execute(chosenCategory.id))
+            val draw = getDraw.execute(chosenCategory.id)
+            model.addAttribute("draw", draw)
+            model.addAttribute("shouldShowPlayoff", shouldShowPlayoff(draw.playOff))
         }
         else {
             model.addAttribute("draw", null)
@@ -94,6 +98,19 @@ class CompetitionController(
         }
 
         return "competition-detail/categories"
+    }
+
+    private fun shouldShowPlayoff(playoff: List<PlayoffRoundDTO>?): Boolean {
+        if (playoff.isNullOrEmpty()) {
+            return false
+        }
+        var nonPlaceholderPlayers = 0
+        for (match in playoff[0].matches) {
+            if (match.firstPlayer[0].id != -1 && match.secondPlayer[0].id != -1) {
+                nonPlaceholderPlayers += 2
+            }
+        }
+        return nonPlaceholderPlayers == playoff[0].matches.size * 2
     }
 
     @GetMapping("/{competitionId}/results")

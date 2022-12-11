@@ -39,8 +39,8 @@
                   <button class="btn btn-primary" @click="createDraw">
                     {{ $t("draw.main.drawNow") }}
                   </button>
-                  <button type="button" class="btn btn-outline-primary" @click="showSeedModal = !showSeedModal">
-                    Seeda manuellt
+                  <button type="button" class="btn btn-outline-primary ms-2" @click="showSeedModal = !showSeedModal">
+                    {{ $t("draw.main.manualSeed")}}
                   </button>
                 </div>
                 <div v-else>
@@ -50,10 +50,15 @@
             </div>
           </div>
           <!-- List of registered players if there are any. Doubles case first -->
-          <div v-if="!isChosenCategoryDrawn && showSeedModal" class="custom-card p-4 col-7 mx-auto">
-            <div v-for="seed in currentSeed" :key="seed.registrationSeedDTO.registration.id" class="d-flex">
-              <input v-model="seed.registrationSeedDTO.seed" type="text"
-                     style="width: 30px" class="me-4 mb-1">
+          <div v-if="!isChosenCategoryDrawn && showSeedModal" class="custom-card p-4 my-1 col-7 mx-auto">
+            <div v-for="seed in currentSeeding" :key="seed.registrationSeedDTO.registration.id" class="d-flex">
+              <select class="form-select mb-1 me-2" id="setSeed" style="width: 100px"
+                      name="setSeed" v-model="seed.registrationSeedDTO.seed" @change="setSeed($event)">
+                <option value=null ></option>
+                <option v-for="nr in nrSeeds" :value="nr" :key="nr">
+                  {{ nr }}
+                </option>
+              </select>
               <div>
                 <p v-for="player in seed.playerWithClubDTOs" :key="player.id">
                   {{ getFormattedPlayerName(player) }}
@@ -62,7 +67,7 @@
             </div>
             <div class="d-flex justify-content-end p-3">
               <button class="btn btn-primary" type="button" @click="approveSeeding">
-                Spara seedning
+                {{ $t("draw.main.approveSeeding")}}
               </button>
             </div>
           </div>
@@ -173,13 +178,14 @@ export default {
       registeredPlayersSingles: null,
       registeredPlayersDoubles: null,
       showSeedModal: false,
-      currentSeed: []
+      currentSeeding: [],
+      nrSeeds: 0
     }
   },
   computed: {
     competition: function () {
       return this.$store.getters.competition
-    }
+    },
   },
   mounted() {
     CategoryService.getCompetitionCategories(this.competition.id).then(res => {
@@ -187,7 +193,8 @@ export default {
       if (this.competitionCategories.length > 0) {
         this.makeChoice(this.competitionCategories[0])
         DrawService.getCurrentSeed(this.competition.id, this.chosenCategory.id).then(res => {
-          this.currentSeed = res.data
+          this.currentSeeding = res.data
+          this.nrSeeds = this.currentSeeding.filter(it => it.registrationSeedDTO.seed !== null).length
         })
       }
     })
@@ -200,7 +207,7 @@ export default {
     makeChoice(category) {
       this.showSeedModal = false
       this.chosenCategory = category
-      this.currentSeed = []
+      this.currentSeeding = []
       DrawService.isDrawMade(this.competition.id, category.id).then(res => {
         if (res.data === true) {
           this.isChosenCategoryDrawn = true
@@ -209,7 +216,8 @@ export default {
           this.isChosenCategoryDrawn = false
           this.getRegisteredPlayers()
           DrawService.getCurrentSeed(this.competition.id, this.chosenCategory.id).then(res => {
-            this.currentSeed = res.data
+            this.currentSeeding = res.data
+            this.nrSeeds = this.currentSeeding.filter(it => it.registrationSeedDTO.seed !== null).length
           })
         }
       })
@@ -293,12 +301,12 @@ export default {
       playoffElement.scrollIntoView({behavior: "smooth"})
     },
     approveSeeding() {
-      const desiredSeeding = {seeding: this.currentSeed.map(it => it.registrationSeedDTO)}
+      const desiredSeeding = {seeding: this.currentSeeding.map(it => it.registrationSeedDTO)}
       DrawService.approveSeeding(this.competition.id, this.chosenCategory.id, desiredSeeding)
           .then(() => {
             this.showSeedModal = false
             DrawService.getCurrentSeed(this.competition.id, this.chosenCategory.id).then(res => {
-              this.currentSeed = res.data
+              this.currentSeeding = res.data
             })
             this.$toasted.success(this.$tc("toasts.seedingSaved")).goAway(3000)
           })

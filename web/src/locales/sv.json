@@ -235,7 +235,9 @@
       "redraw": "Lotta om",
       "setStartTime": "Välj starttid",
       "goToPlayoff": "Gå till slutspelet",
-      "nrPlayers": "Antal spelare: "
+      "nrPlayers": "Antal spelare: ",
+      "manualSeed": "Seeda manuellt",
+      "approveSeeding": "Spara seedning"
     },
     "pool": {
       "players": "Spelare i gruppen",

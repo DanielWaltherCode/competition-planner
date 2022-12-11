@@ -1,7 +1,7 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
 <body>
-<div th:fragment="category-draw(competitionId, category, isCategoryDrawn, registeredPlayers, draw)" class="container-fluid" th:with="categoryType=${T(com.graphite.competitionplanner.category.domain.CategoryType)}">
+<div th:fragment="category-draw(competitionId, category, isCategoryDrawn, registeredPlayers, draw, shouldShowPlayoff)" class="container-fluid" th:with="categoryType=${T(com.graphite.competitionplanner.category.domain.CategoryType)}">
     <div class="row gx-md-5">
         <div id="main" class="mx-auto custom-card p-3 p-md-5">
             <h1 th:text="${#strings.defaultString(#messages.msgOrNull('categories.name.' + category.category.name), category.category.name)}"></h1>
@@ -89,7 +89,9 @@
                             </div>
                         </div>
                     </div>
-                    <section th:if="${draw.playOff != null}" th:replace="fragments/playoff-draw :: playoff(playoffRounds=${draw.playOff})"></section>
+                    <div th:if="${shouldShowPlayoff}">
+                        <section th:replace="fragments/playoff-draw :: playoff(playoffRounds=${draw.playOff})"></section>
+                    </div>
                 </div>
             </div>
         </div>
