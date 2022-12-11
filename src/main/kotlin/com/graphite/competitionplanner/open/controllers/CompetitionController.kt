@@ -8,13 +8,13 @@ import com.graphite.competitionplanner.competitioncategory.domain.GetCompetition
 import com.graphite.competitionplanner.draw.domain.GetDraw
 import com.graphite.competitionplanner.draw.interfaces.PlayoffRoundDTO
 import com.graphite.competitionplanner.draw.service.DrawService
-import com.graphite.competitionplanner.draw.service.PlayoffDTO
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.registration.domain.SearchRegistrations
 import com.graphite.competitionplanner.registration.service.RegistrationService
 import io.swagger.v3.oas.annotations.Operation
 import org.slf4j.LoggerFactory
+import org.springframework.boot.context.properties.bind.Bindable
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
+
 
 @Controller
 @RequestMapping("open/competitions")
@@ -104,13 +105,7 @@ class CompetitionController(
         if (playoff.isNullOrEmpty()) {
             return false
         }
-        var nonPlaceholderPlayers = 0
-        for (match in playoff[0].matches) {
-            if (match.firstPlayer[0].id != -1 && match.secondPlayer[0].id != -1) {
-                nonPlaceholderPlayers += 2
-            }
-        }
-        return nonPlaceholderPlayers == playoff[0].matches.size * 2
+        return !playoff[0].matches.flatMap { m -> listOf(m.firstPlayer[0], m.secondPlayer[0])}.any { r -> r.id == -1 }
     }
 
     @GetMapping("/{competitionId}/results")

@@ -1,13 +1,496 @@
 {
-  "landing": {
-    "header": {
-      "overview": "Översikt",
-      "classes": "Klasser",
-      "players": "Spelare",
-      "lottningar": "Lottningar",
-      "schedule": "Schema",
-      "results": "Resultat",
-      "Billing": "Fakturor"
+  "header": {
+    "overview": "Overview",
+    "classes": "Categories",
+    "players": "Players",
+    "draws": "Draws",
+    "schedule": "Schedule",
+    "results": "Results",
+    "billing": "Billing",
+    "logout": "Logout",
+    "chosenCompetition": "You are managing ",
+    "handle": {
+      "title": "Manage",
+      "newCompetition": "Create a new competition",
+      "administerCompetition": "Manage existing competition"
     }
+  },
+  "landing": {
+    "heading": {
+      "part1": "Welcome to CompetitionPlanner",
+      "part2": "Here you can quickly and easily set up a competition, make schedules and draws, and report results",
+      "loggedInHelper": "Select a competition to administer. Or create a new one.",
+      "username": "Username",
+      "password": "Password",
+      "login": "Login",
+      "loginFailed": "Login failed",
+      "greeting": "Welcome {username}",
+      "competitionChoice": "Select an existing competition to administer",
+      "noCompetitionSelected": "No competition selected",
+      "newCompetition": "Or set up a new competition",
+      "handleSelected": "Manage selected competition"
+    },
+    "middle": {
+      "title": "What we offer",
+      "subtitle": "Important functionality",
+      "organize": {
+        "title": "Plan",
+        "text": "Set up and plan competitions"
+      },
+      "host": {
+        "title": "Organize",
+        "text": "Make draws and schedules"
+      },
+      "report": {
+        "title": "Display results",
+        "text": "Report and present results easily"
+      }
+    },
+    "bottom": {
+      "section1": "CompetitionPlanner focuses on several different steps in the competition organization process. It is possible to: ",
+      "bullit1": "Create new competitions with categories, draws and schedules",
+      "bullit2": "Administer a competition while it is ongoing, report results and manage times and tables",
+      "bullit3": "View results, playing times and draws online. All in smooth real-time updating"
+    }
+  },
+  "newCompetition": {
+    "title": "Competition overview",
+    "name": "Name",
+    "info": "Competition information",
+    "level": "Competition level",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "location": "Location",
+    "tooltip": "Both start and end dates must be in the future and the end date must be either the same day as the start date or later"
+  },
+  "categories": {
+    "title": "Categories",
+    "overview": "Overview",
+    "gameRules": "Match rules",
+    "register": "Register players",
+    "noCategories": "No categories have been created yet",
+    "createNew": "Add new category to competition",
+    "addClass": "Add category",
+    "class": "Category",
+    "delete": "Delete category",
+    "alreadyAddedCategories": "Added categories",
+    "chooseClass": "Choose category",
+    "cannotUpdate": "These settings cannot be changed after a draw has been made",
+    "standardCategory": {
+      "buttonText": "Standard category"
+    },
+    "customCategory": {
+      "buttonText": "Create custom category",
+      "helper": "Add a custom-made category",
+      "name": "Name",
+      "type": "Type"
+    },
+    "SINGLES": "Single",
+    "DOUBLES": "Double",
+    "default": {
+      "MEN_1": "Men 1",
+      "MEN_2": "Men 2",
+      "MEN_3": "Men 3",
+      "MEN_4": "Men 4",
+      "MEN_5": "Men 5",
+      "MEN_6": "Men 6",
+      "WOMEN_1": "Women 1",
+      "WOMEN_2": "Women 2",
+      "WOMEN_3": "Women 3",
+      "WOMEN_4": "Women 4",
+      "WOMEN_JUNIOR_17": "Women Juniors 17",
+      "GIRLS_15": "Girls 15",
+      "GIRLS_14": "Girls 14",
+      "GIRLS_13": "Girls 13",
+      "GIRLS_12": "Girls 12",
+      "GIRLS_11": "Girls 11",
+      "GIRLS_10": "Girls 10",
+      "GIRLS_9": "Girls 9",
+      "GIRLS_8": "Girls 8",
+      "MEN_JUNIOR_17": "Men Juniors 17",
+      "BOYS_15": "Boys 15",
+      "BOYS_14": "Boys 14",
+      "BOYS_13": "Boys 13",
+      "BOYS_12": "Boys 12",
+      "BOYS_11": "Boys 11",
+      "BOYS_10": "Boys 10",
+      "BOYS_9": "Boys 9",
+      "BOYS_8": "Boys 8",
+      "MEN_TEAMS": "Men's doubles",
+      "WOMEN_TEAMS": "Women's doubles"
+    }
+  },
+  "categoryGameRules": {
+    "nrSets": "Number of sets",
+    "winScore": "Play to",
+    "winMargin": "Win margin",
+    "differentEndgame": "Apply different game rules in endgame",
+    "differentEndgameFrom": "Different number of sets in endgame from round",
+    "winMarginFinals": "Win margin in finals",
+    "nrSetsEndgame": "Number of sets in endgame",
+    "useTiebreak": "Tiebreak is used in last set",
+    "winScoreTiebreak": "In tiebreak, play to",
+    "winMarginTiebreak": "Win margin in tiebreak",
+    "errors": {
+      "numberOfSetsHasToBeAnOddNumber": "The number of sets must be odd."
+    }
+  },
+  "categorySettings": {
+    "cost": "Cost of the category",
+    "playersPerGroup": "Number of players per group",
+    "playersToPlayoff": "Number of players to playoffs from each group",
+    "drawType": "Draw type",
+    "drawTypes": {
+      "POOL_ONLY": "Pool play only",
+      "CUP_ONLY": "Cup play only",
+      "POOL_AND_CUP": "Groups with cup playoffs"
+    },
+    "drawStrategy": "Drawing strategy",
+    "drawStrategies": {
+      "NORMAL": "Normal drawing",
+      "SNAKE": "Snake drawing"
+    }
+  },
+  "round": {
+    "UNKNOWN": "Do not apply",
+    "FINAL": "Final",
+    "SEMI_FINAL": "Semifinal",
+    "QUARTER_FINAL": "Quarterfinal",
+    "ROUND_OF_16": "Round of 16",
+    "ROUND_OF_32": "Round of 32",
+    "ROUND_OF_64": "Round of 64",
+    "ROUND_OF_128": "Round of 128"
+  },
+  "general": {
+    "save": "Save",
+    "saveChanges": "Save changes",
+    "next": "Next",
+    "close": "Cancel",
+    "clear": "Clear"
+  },
+  "club": {
+    "title": "Add new club",
+    "name": "Name",
+    "address": "Address"
+  },
+  "player": {
+    "sidebar": {
+      "title": "Player options",
+      "overview": "Registered players",
+      "addNew": "Register player for competition category",
+      "detail": "Manage player",
+      "create": "Create player"
+    },
+    "create": {
+      "heading": "Create player",
+      "text": "If a player does not have a valid Swedish license (and therefore does not exist in our database), they can be added manually here. They can then be registered for categories in the competition. Note however that they do not have any ranking or seeding."
+    },
+    "search": "Search for player",
+    "searchRegistered": "Search for player registered in the competition",
+    "title": "Player",
+    "headingHelper": "Here you can see players who are registered for the competition. You can also manually add new players. In most cases, however, clubs register their own players online and they will then automatically appear here.",
+    "registeredPlayers": "Registered players",
+    "name": "Name",
+    "club": "Club",
+    "categories": "Categories",
+    "sortBy": "Sort by",
+    "notFound": "No player with that name found",
+    "addPlayerSingles": "Registration single category",
+    "addPlayerDoubles": "Registration doubles category",
+    "doublesPlayer1": "Doubles player 1",
+    "doublesPlayer2": "Doubles player 2",
+    "add": {
+      "heading": "Register a player in the competition",
+      "helperText": "Here you can add a player manually if he or she has not been registered by their club online previously. If the player is not in the database, it must first be added under ",
+      "search": "Search for a player to add",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "club": "Club",
+      "dateOfBirth": "Date of birth",
+      "buttonText": "Sign up player",
+      "clear": "Clear player"
+    },
+    "info": "Player info",
+    "playingWith": "Playing with ",
+    "giveWalkover": "Give WO in the category",
+    "hasGivenWalkover": "Has given WO",
+    "withdraw": "Withdraw",
+    "hasWithdrawn": "Has withdrawn",
+    "walkoverWarningText": "Are you sure {player} should give WO in the category? The player will lose all remaining matches in the category",
+    "withdrawWarningText": "Are you sure {player} should withdraw?"
+  },
+  "draw": {
+    "sidebar": {
+      "title": "categories"
+    },
+    "main": {
+      "title": "Draw",
+      "notDrawnTitle": "The category has not been drawn yet.",
+      "notDrawnNoPlayers": "The category has not been drawn yet and there are currently no registered players",
+      "notDrawnBody": "To draw now with the drawing rules that have been set up under category information, click the button below.",
+      "drawNow": "Draw now",
+      "registeredPlayers": "Registered players",
+      "group": "Group",
+      "drawMade": "The category has been drawn",
+      "deleteDraw": "Delete draw",
+      "redraw": "Redraw",
+      "setStartTime": "Set start time",
+      "goToPlayoff": "Go to playoff",
+      "nrPlayers": "Number of players: ",
+      "manualSeed": "Manual seeding",
+      "approveSeeding": "Save seeding"
+    },
+    "pool": {
+      "players": "Players in the group",
+      "standing": "Standing",
+      "club": "Club",
+      "groups": "Group draw",
+      "playoff": "Playoff draw",
+      "matches": "Matches",
+      "time": "Time",
+      "result": "Result",
+      "noTime": "Time not set",
+      "won": "Won",
+      "nrMatches": "Number of matches",
+      "games": "Set",
+      "points": "Points",
+      "groupPoints": "Group points",
+      "place": "Placement",
+      "subgroupStanding": {
+        "matchesInSubGroup": "Matches (in Subgroup)",
+        "explanation": "Explanation of placements",
+        "heading": "Subgroups (players with the same group score)",
+        "introText": "In order to rank those who end up on the same group score, a new subgroup is created with only the players who got the same score. Here, the head-to-head ranking is determined via head-to-head, set ratio, ball ratio, or - if nothing else can separate them - lottery.",
+        "reasonForPosition": "Position was determined by:",
+        "ORIGINAL": "Original ranking",
+        "MATCH_SCORE": "Match score/head-to-head",
+        "GAME_QUOTIENT": "Set Quotient",
+        "POINT_QUOTIENT": "Ball Quotient",
+        "DRAW": "Draw"
+      }
+    }
+  },
+  "schedule": {
+    "sidebar": {
+      "alternatives": "Alternatives",
+      "overview": "Overview",
+      "advanced": "Advanced"
+    },
+    "toasts": {
+      "schedulePublishedSuccess": "Schedule published",
+      "schedulePublishedError": "Could not save schedule",
+      "scheduleDeletedSuccess": "Schedule deleted",
+      "scheduleDeletedError": "The schedule could not be deleted. Try resetting the categories manually"
+    },
+    "main": {
+      "heading": "Schedule",
+      "helperText": "If a category has been drawn, you can specify here when it will be played. First fill in the fields above for the number of available tables and match time. When all fields are filled in, you can click 'Schedule'. Then the generated schedule below will be updated so that you can see when the matches in the category are played.",
+      "categoryStartTimes": "Category scheduling",
+      "needSaving": "Changes need to be saved (or removed) before proceeding",
+      "category": "Category",
+      "stage": "Round",
+      "day": "Game day",
+      "GROUP": "Pool",
+      "PLAYOFF": "Playoff",
+      "notSelected": "Not selected",
+      "startTime": "Desired start time",
+      "helpMe": "Choose something for me",
+      "addCategory": "Add new category this day",
+      "dropdownPlaceholder": "Select a category",
+      "generatedSchedule": "The schedule as it looks now",
+      "resetCategory": "Remove the category's scheduling",
+      "abbreviated": {
+        "GROUP": "G",
+        "PLAYOFF": "P"
+      },
+      "makeSchedule": "Make Schedule",
+      "publish": "Publish the schedule",
+      "delete": "Delete schedule",
+      "deleteConfirm": "Are you sure you want to delete the schedule?",
+      "intervals": {
+        "NOT_SELECTED": "Not selected",
+        "MORNING": "Early morning (09.00-13.00)",
+        "AFTERNOON": "Afternoon (13.00-17.00)",
+        "EVENING": "Evening (17.00-21.00)"
+      },
+      "table": "Table number",
+      "tables": "Table",
+      "chooseTables": "Choose Tables",
+      "noTablesAdded": "Select number of tables above"
+    },
+    "generalInfo": {
+      "heading": "Schedule Management",
+      "startEnd": "The hall's opening hours and number of tables",
+      "startEndHelper": "If there are too few or too many competition days here, you can change it",
+      "startEndHelperHere": "here",
+      "nrTables": "Number of tables",
+      "matchTime": "Playing time per match (in minutes)",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "cannotChangeTables": "The table settings for this day have been changed under 'Advanced'. To update, go to that tab.",
+      "availableTablesHeading": "Number of tables the tournament is played on",
+      "availableTablesHelper": "Here the number of available tables for each game day is set as a whole. If it varies by the hour, this can be set ",
+      "availableTablesHelperHere": "here",
+      "availableTablesNotSet": "Not selected, needs to be selected",
+      "averageMatchTimeHeading": "Match Time",
+      "averageMatchTimeHelper": "Set the time each individual match should be allocated in the schedule",
+      "minutes": "minutes"
+    },
+    "advanced": {
+      "heading": "Advanced schedule settings",
+      "pauseHeading": "Pauses in a category",
+      "pauseHelper": "Here you can ensure that matches within a category are not played too close together.",
+      "pauseGroup": "Pause between group matches",
+      "pausePlayoff": "Pause between playoff games",
+      "pauseBetweenGroupAndPlayoff": "Pause between group stage and playoff",
+      "availableTables": {
+        "heading": "Available tables per day and hour",
+        "infoText": "Here you can set how many tables are available per hour if the number of available tables varies during the day.",
+        "daySelection": "Select a day",
+        "hour": "Hour",
+        "nrTables": "Number of tables"
+      }
+    }
+  },
+  "results": {
+    "title": "Result",
+    "startTime": "Start Time",
+    "category": "category",
+    "result": "Result",
+    "register": "Register",
+    "update": "Update",
+    "round": "Group/Round",
+    "group": "Pool",
+    "games": "Set",
+    "report": "Enter results",
+    "search": "Search for a player or club",
+    "hideFinished": "Hide finished matches",
+    "categoryDefaultChoice": "All",
+    "modal": {
+      "header": "Register Results",
+      "savePartial": "Save Partial Results",
+      "savePartialExplanation": "Used to report partial results continuously during a match. These are not validated and no winner is registered.",
+      "registerFinishedMatch": "Save final result",
+      "helperTexts": "Help",
+      "registerFinishedMatchExplanation": "Used when the match is finished and the results are to be saved permanently. Validation is in progress.",
+      "info": "The settings for how many sets the match contains and how many points are required to win are set for the category as a whole. You can change the settings under ",
+      "linkToCategorySettings": "category settings",
+      "add": "Add Set",
+      "remove": "Remove set",
+      "delete": "Delete result",
+      "walkover": "Leave WO"
+    },
+    "noMatches": "No draw has been made yet so no matches are set"
+  },
+  "billing": {
+    "title": "Invoice Management",
+    "sidebarTitle": "Clubs",
+    "firstHeading": "Cost Summary",
+    "firstHelperText": "The table below shows which categories a club had players in and what the participation cost. This is the basis for the invoice that is generated. Each player in a double category is responsible for half of the registration fees, so if players from different clubs play together each club receives 50% of the cost",
+    "firstTableHeading": "Cost summary for ",
+    "secondHeading": "Player Level Cost",
+    "createPdf": "Create Invoice",
+    "updatePaymentInfo": "Enter payment information",
+    "table1": {
+      "category": "category",
+      "nrStarts": "Number of starts",
+      "price": "Cost (per player)",
+      "total": "Total"
+    },
+    "table2": {
+      "player": "Player",
+      "category": "category",
+      "price": "Cost (per player)"
+    },
+    "toasts": {
+      "club-error": "Could not retrieve participating clubs",
+      "summary-error": "Could not retrieve cost summary",
+      "player-error": "Could not retrieve cost summary for player"
+    },
+    "pdf": {
+      "title": "Invoice",
+      "to": "To: ",
+      "helperText": "For participation in ",
+      "addendum": "Appendix 1",
+      "addendumHelper": "Cost per player from ",
+      "billDate": "Bill Date",
+      "paymentDate": "Last payment date",
+      "address": "Address"
+    },
+    "paymentInfo": {
+      "title": "Payment Information",
+      "helperText": "Here you can enter the payment information that clubs that have participated in the competition must pay to. This information is printed in the footer of all generated invoices. Note that all fields are optional - if you only use bank giro do not fill in anything for plusgiro or bank account number.",
+      "recipient": "Payment recipient",
+      "street": "Street",
+      "postcode": "Postcode",
+      "city": "Postal city",
+      "plusgiro": "Plusgiro",
+      "bankgiro": "Bankgiro",
+      "bankAccountNr": "Bank account number",
+      "toastErrorFetch": "Failed to fetch current payment information",
+      "toastErrorUpdate": "Could not update payment information",
+      "toastSaveSuccess": "Payment details saved"
+    }
+  },
+  "validations": {
+    "required": "The field must be filled in",
+    "noCategories": "No categories to add the player to have been selected",
+    "allRequired": "All fields are required"
+  },
+  "toasts": {
+    "player": {
+      "added": "Player added",
+      "couldNotBeAddedToCompetition": "The player you tried to add was not found. The player is not in the database, it needs to be added first",
+      "doubleRegistrationError": "Either player 1 or player 2 does not appear to be filled in correctly. Please check the details or try again later."
+    },
+    "competitionAdded": "The competition has been created. You can now proceed to the next step.",
+    "competitionUpdated": "The competition was updated",
+    "categoryUpdated": "The category is updated",
+    "categoryDrawn": "The category is now drawn",
+    "categoryDeleted": "The category has been deleted",
+    "categoryAdded": "The category is added",
+    "categoryNotAdded": "Could not add category",
+    "categoryDrawDeleted": "The draw has been deleted",
+    "customCategoryIncomplete": "Both name and type need to be selected",
+    "startTimesSet": "Start Times Set",
+    "resultRegistered": "The result is saved",
+    "temporaryResultRegistered": "Temporary result is saved",
+    "clubAdded": "Club Added",
+    "scheduleCollision": "Some of the times booked were busy. The matches have still been booked on the desired tables but postponed.",
+    "seedingSaved": "The seeding is saved",
+    "error": {
+      "general": {
+        "default": "Something went wrong",
+        "get": "Something went wrong retrieving data",
+        "update": "The data could not be saved. Please double check the entered data or try again later"
+      },
+      "WO": "Could not leave WO for player"
+    }
+  },
+  "confirm": {
+    "redraw": "Are you sure you want to redraw the category?",
+    "deleteDraw": "Are you sure you want to delete the draw for the category?",
+    "deleteCategory": "Are you sure you want to delete the category?",
+    "deleteResult": "Are you sure you want to delete the result?",
+    "scheduleChange": "Changes here will remove all existing scheduling. Are you sure you want to make changes?"
+  },
+  "errors": {
+    "CATEGORY_CANNOT_DELETE_WITH_PLAYERS": "Cannot delete a category that has registered players",
+    "CATEGORY_NOT_VALID": "Invalid category",
+    "CATEGORY_ALREADY_ADDED": "The category is already added",
+    "CATEGORY_CANNOT_UPDATE_AFTER_DRAW": "The category cannot be updated after the draw is done. Please remove the draw first if you want to make changes",
+    "DRAW_NOT_ENOUGH_REGISTRATIONS": "There are not enough registered players to make a draw",
+    "DRAW_TOO_FEW_SEEDED": "Too few seeded given the number of registrants in the competition",
+    "DRAW_TOO_MANY_SEEDED": "Too many seeded numbers given the number of registrants in the competition",
+    "PLAYER_ALREADY_REGISTERED": "The player is already registered in the category",
+    "REGISTRATION_WRONG_CATEGORY_TYPE": "Wrong category type. Please check if it should be a single or double category",
+    "GAME_TOO_FEW_SETS_REPORTED": "Too few sets reported. Please double check the category settings to see what rules are set",
+    "GAME_TOO_FEW_POINTS_IN_SET": "In at least one of the sets, both players appear to have lower scores than required to win. Please double check the category settings to see what rules are set",
+    "GAME_COULD_NOT_DECIDE_WINNER": "Could not decide who won the game. Double check the entered result or try again later",
+    "GAME_TOO_MANY_SETS_REPORTED": "Too many sets appear to have been reported. Double check the entered result or try again later",
+    "GAME_NOT_ENOUGH_WIN_MARGIN": "In at least one of the sets, there is no winner because the winning margin is too small. Double check the entered result and try again",
+    "GAME_TOO_MANY_POINTS_IN_SET": "In at least one of the sets, the winning margin appears to be too large. Double check the entered result and try again",
+    "SCHEDULE_TOO_FEW_TIMESLOTS": "Too many matches per time slot. You probably need to increase the number",
+    "SCHEDULE_COULD_NOT_STORE_TIME_TABLE": "Sch"
   }
 }

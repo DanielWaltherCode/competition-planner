@@ -7,7 +7,7 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <router-link to="landing" :key="$route.fullPath" class="navbar-brand">
-          <h2 id="brand">LET'S COMPETE</h2>
+          <h2 id="brand">CompetitionPlanner</h2>
         </router-link>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
             <div v-if="!!competition" class="text-dark">

@@ -17,7 +17,7 @@
   },
   "landing": {
     "heading": {
-      "part1": "Välkommen till Let's Compete!",
+      "part1": "Välkommen till CompetitionPlanner!",
       "part2": "Här kan du snabbt och smidigt sätta upp en tävling, göra scheman och lottningar, och rapportera resultat",
       "loggedInHelper": "Välj en tävling att administrera. Eller skapa en ny.",
       "username": "Användarnam",
@@ -47,9 +47,9 @@
       }
     },
     "bottom": {
-      "section1": "Let's Compete riktar in sig på flera olika steg i tävlingsorganiseringsprocessen. Man kan: ",
+      "section1": "CompetitionPlanner riktar in sig på flera olika steg i tävlingsorganiseringsprocessen. Man kan: ",
       "bullit1": "Skapa nya tävlingar med klasser, lottningar och scheman",
-      "bullit2": "Administrera en tävling medan den pågår, rapportera resultat och hantera tider och banor",
+      "bullit2": "Administrera en tävling medan den pågår, rapportera resultat och hantera tider och bord",
       "bullit3": "Se resultat, speltider och lottningar online. Allt i smidig realtidsuppdatering"
     }
   },
@@ -490,6 +490,6 @@
     "GAME_NOT_ENOUGH_WIN_MARGIN": "I minst ett av seten så finns ingen vinnare på grund av att vinstmarginalen är för liten. Dubbelkolla det inmatade resultatet och prova igen",
     "GAME_TOO_MANY_POINTS_IN_SET": "I minst ett av seten verkar vinstmarginalen vara för stor. Dubbelkolla det inmatade resultatet och prova igen",
     "SCHEDULE_TOO_FEW_TIMESLOTS": "För många matcher per tidsintervall. Du behöver nog öka antalet",
-    "SCHEDULE_COULD_NOT_STORE_TIME_TABLE": "Sch"
+    "SCHEDULE_COULD_NOT_STORE_TIME_TABLE": "Kunde inte spara tidtabellen"
   }
 }

@@ -30,13 +30,14 @@
                             <span th:replace="fragments/player-fragment :: players(playerList=${playerList})">
                             </span>
                         </div>
-
-                        <div th:if="${category.category.type == categoryType.SINGLES}" th:each="playerGrouping : ${registeredPlayers.groupingsAndPlayers}" class="pb-3">
-                            <div class="category-heading">
-                                <p class="mb-0" th:text="${playerGrouping.key}"></p>
-                            </div>
-                            <div th:each="player : ${playerGrouping.value}" class="mt-2 d-flex">
-                                <a class="player-name clickable text-black text-decoration-none" th:href="'/open/players/' + ${competitionId} + '/' + ${player.id}" th:text="${player.lastName + ', ' + player.firstName }"></a>
+                        <div th:if="${category.category.type == categoryType.SINGLES}">
+                            <div th:each="playerGrouping : ${registeredPlayers.groupingsAndPlayers}" class="pb-3">
+                                <div class="category-heading">
+                                    <p class="mb-0" th:text="${playerGrouping.key}"></p>
+                                </div>
+                                <div th:each="player : ${playerGrouping.value}" class="mt-2 d-flex">
+                                    <a class="player-name clickable text-black text-decoration-none" th:href="'/open/players/' + ${competitionId} + '/' + ${player.id}" th:text="${player.lastName + ', ' + player.firstName }"></a>
+                                </div>
                             </div>
                         </div>
                     </div>
