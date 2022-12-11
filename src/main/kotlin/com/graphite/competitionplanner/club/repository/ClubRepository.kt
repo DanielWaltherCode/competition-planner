@@ -5,13 +5,15 @@ import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.common.repository.BaseRepository
 import com.graphite.competitionplanner.tables.Club.CLUB
 import com.graphite.competitionplanner.tables.records.ClubRecord
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
 
 @Repository
-class ClubRepository(val dslContext: DSLContext) : IClubRepository {
+class ClubRepository(dslContext: DSLContext) : BaseRepository(dslContext), IClubRepository
+{
 
     override fun getAll(): List<ClubDTO> {
         val records = dslContext.select().from(CLUB).fetchInto(CLUB)

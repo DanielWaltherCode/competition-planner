@@ -5,6 +5,9 @@ import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
 import com.graphite.competitionplanner.club.interfaces.PaymentInfoSpec
 import com.graphite.competitionplanner.club.repository.ClubPaymentRepository
+import com.graphite.competitionplanner.common.exception.BadRequestException
+import com.graphite.competitionplanner.common.exception.BadRequestType
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Component
 
 @Component
@@ -14,31 +17,36 @@ class CreateClub(
 ) {
 
     fun execute(spec: ClubSpec): ClubDTO {
-        val nameIsAvailable: Boolean = clubRepository.getAll().none { it.name == spec.name }
-        if (nameIsAvailable) {
-            // TODO: Has to be transaction so we do not create a club without payment info
-            val club: ClubDTO = clubRepository.store(spec)
-            // Set up empty paymentinfo for each club
-            clubPaymentRepository.add(club.id, getEmptyPaymentInfo())
-            return club
-        } else {
-            throw IllegalArgumentException("Cannot add club. Club with name ${spec.name} already exist ")
+        lateinit var club: ClubDTO
+        clubRepository.asTransaction {
+            try {
+                club = clubRepository.store(spec)
+                clubPaymentRepository.add(club.id, getEmptyPaymentInfo())
+            } catch (ex: DuplicateKeyException) {
+                throw BadRequestException(
+                    BadRequestType.CLUB_NAME_NOT_UNIQUE,
+                    "There is already a club registered with this name: ${spec.name}")
+            }
         }
+        return club
     }
 
     fun executeForCompetition(competitionId: Int, spec: ClubSpec): ClubDTO {
-        val nameIsAvailable: Boolean = clubRepository.getAllClubsForCompetition(competitionId).none { it.name == spec.name }
-        if (nameIsAvailable) {
-            val club: ClubDTO = clubRepository.storeForCompetition(competitionId, spec)
-            // Set up empty paymentinfo for each club
-            clubPaymentRepository.add(club.id, getEmptyPaymentInfo())
-            return club
-        } else {
-            throw IllegalArgumentException("Cannot add club. Club with name ${spec.name} already exist ")
+        lateinit var club: ClubDTO
+        clubRepository.asTransaction {
+            try {
+                club = clubRepository.storeForCompetition(competitionId, spec)
+                clubPaymentRepository.add(club.id, getEmptyPaymentInfo())
+            } catch (ex: DuplicateKeyException) {
+                throw BadRequestException(
+                    BadRequestType.CLUB_NAME_NOT_UNIQUE,
+                    "There is already a club registered to this competition with this name: ${spec.name}")
+            }
         }
+        return club
     }
 
-    fun getEmptyPaymentInfo(): PaymentInfoSpec {
+    private fun getEmptyPaymentInfo(): PaymentInfoSpec {
         return PaymentInfoSpec(
             "", "", "", "", "", "", "",
         )
