@@ -1,4 +1,4 @@
-alter table public.club
+alter table club
     drop constraint if exists club_competition_name_key cascade;
 
 CREATE UNIQUE INDEX club_competition_unique_idx ON club (name, competition_id)

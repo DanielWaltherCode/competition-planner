@@ -8,6 +8,7 @@ import com.graphite.competitionplanner.category.repository.CategoryRepository
 import com.graphite.competitionplanner.club.domain.CreateClub
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.club.repository.ClubRepository
+import com.graphite.competitionplanner.common.exception.BadRequestException
 import com.graphite.competitionplanner.competition.domain.CreateCompetition
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.interfaces.CompetitionLevel
@@ -101,7 +102,7 @@ class SetupTestData(
     fun trySetupOverigtClub() {
         try {
             createClub.execute(ClubSpec("Övriga", "Empty"))
-        } catch (ex: IllegalArgumentException) {
+        } catch (ex: BadRequestException) {
             // Nothing, club already exist
         }
     }
