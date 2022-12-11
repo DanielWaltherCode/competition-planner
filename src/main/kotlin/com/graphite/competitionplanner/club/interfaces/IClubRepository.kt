@@ -1,8 +1,9 @@
 package com.graphite.competitionplanner.club.interfaces
 
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.common.repository.IRepository
 
-interface IClubRepository {
+interface IClubRepository : IRepository{
 
     /**
      * Stores the Club
