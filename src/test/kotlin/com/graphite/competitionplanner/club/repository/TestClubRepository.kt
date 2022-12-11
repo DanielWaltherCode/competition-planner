@@ -1,15 +1,18 @@
 package com.graphite.competitionplanner.club.repository
 
 import com.graphite.competitionplanner.common.exception.NotFoundException
+import com.graphite.competitionplanner.competition.repository.CompetitionRepository
 import com.graphite.competitionplanner.util.DataGenerator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.dao.DuplicateKeyException
 
 @SpringBootTest
 class TestClubRepository(
-    @Autowired val clubRepository: ClubRepository
+    @Autowired val clubRepository: ClubRepository,
+    @Autowired val competitionRepository: CompetitionRepository
 ) {
 
     val dataGenerator = DataGenerator()
@@ -80,6 +83,53 @@ class TestClubRepository(
 
         // Assert
         Assertions.assertEquals(dto, found)
+    }
+
+    @Test
+    fun shouldNotBeAbleToStoreClubsWithIdenticalNames() {
+        // Setup
+        val club = dataGenerator.newClubSpec()
+
+        // Act
+        clubRepository.store(club)
+
+        // Assert
+        Assertions.assertThrows(DuplicateKeyException::class.java) {
+            clubRepository.store(club)
+        }
+    }
+
+    @Test
+    fun shouldNotBeAbleToStoreCompetitionSpecificClubsWithIdenticalName() {
+        // Setup
+        val organizingClub = clubRepository.store(dataGenerator.newClubSpec())
+        val competition = competitionRepository.store(
+            dataGenerator.newCompetitionSpec(organizingClubId = organizingClub.id))
+
+        val club = dataGenerator.newClubSpec()
+
+        // Act
+        clubRepository.storeForCompetition(competition.id, club)
+
+        // Assert
+        Assertions.assertThrows(DuplicateKeyException::class.java) {
+            clubRepository.storeForCompetition(competition.id, club)
+        }
+    }
+
+    @Test
+    fun shouldBeAbleToStoreCompetitionSpecificAndGlobalClubsWithIdenticalName() {
+        // Setup
+        val organizingClub = clubRepository.store(dataGenerator.newClubSpec())
+        val competition = competitionRepository.store(
+            dataGenerator.newCompetitionSpec(organizingClubId = organizingClub.id))
+
+        val club = dataGenerator.newClubSpec(name = organizingClub.name)
+
+        // Act & Assert
+        Assertions.assertDoesNotThrow {
+            clubRepository.storeForCompetition(competition.id, club)
+        }
     }
 
     @Test
