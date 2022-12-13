@@ -48,7 +48,7 @@
     </div>
     <div class="row mx-auto">
       <div class="modal-footer p-2">
-        <button type="button" class="btn btn-secondary" @click="$emit('close')">
+        <button type="button" class="btn btn-secondary" @click="$emit('closeAndUpdate', selectedMatch.id)">
           {{ $t("general.close") }}
         </button>
         <button type="button" class="btn btn-primary" @click="saveResults">{{
@@ -182,10 +182,9 @@ export default {
         }
       })
       ResultService.addPartialResult(this.competition.id, this.selectedMatch.id, {gameList: resultsToSubmit}).then(() => {
-        this.$emit("closeAndUpdate", this.selectedMatch.id)
         this.$toasted.success(this.$tc("toasts.temporaryResultRegistered")).goAway(3000)
       }).catch(() => {
-        this.$toasted.error(this.$tc("toasts.error.general.save")).goAway(7000)
+        this.$toasted.error(this.$tc("toasts.error.general.save")).goAway(5000)
       })
     },
     validateSubmission() {
@@ -204,7 +203,7 @@ export default {
       ResultService.updateFullMatchResult(this.competition.id, this.selectedMatch.id, {gameList: resultsToSubmit})
           .then(() => {
             this.$emit("closeAndUpdate", this.selectedMatch.id)
-            this.$toasted.success(this.$tc("toasts.resultRegistered")).goAway(3000)
+            this.$toasted.success(this.$tc("toasts.resultRegistered")).goAway(5000)
           }).catch(err => {
         this.errorHandler(err.data)
       })
