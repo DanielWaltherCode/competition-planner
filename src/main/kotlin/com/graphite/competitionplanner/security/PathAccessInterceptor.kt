@@ -4,6 +4,7 @@ import com.graphite.competitionplanner.competition.domain.FindCompetitions
 import com.graphite.competitionplanner.competition.interfaces.CompetitionDTO
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ResponseStatusException
@@ -28,8 +29,11 @@ class PathAccessInterceptor(val findCompetitions: FindCompetitions) : HandlerInt
                 return true
             }
 
-            val competitionIdAsInt = competitionId.toInt()
+            // If it is an admin user, return true
             val authentication: Authentication = SecurityContextHolder.getContext().authentication
+            if (authentication.authorities.contains(SimpleGrantedAuthority("ROLE_ADMIN"))) return true
+
+            val competitionIdAsInt = competitionId.toInt()
             val clubId: Int = SecurityHelper.getClubIdFromToken(authentication.credentials as String)
             val competitionsForClub: List<CompetitionDTO> = findCompetitions.thatBelongTo(clubId)
             val competitionIds: List<Int> = competitionsForClub.map { c -> c.id }

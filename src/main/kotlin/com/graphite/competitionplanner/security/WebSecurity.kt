@@ -32,6 +32,8 @@ class WebSecurity(
                 .and() // These urls don't need authentication
                 .authorizeRequests().requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .and()
+                .authorizeRequests().antMatchers("/admin/**").hasRole("ADMIN")
+                .and()
                 .authorizeRequests().antMatchers(
                         "/v2/api-docs",
                         "/swagger-resources/configuration/ui",
@@ -49,8 +51,8 @@ class WebSecurity(
                         "/user"
                 ).permitAll()
                 .and().authorizeRequests().anyRequest()
-                .authenticated() // by default uses a Bean by the type CorsConfigurationSource (defined below)
-                .and().cors()
+                .authenticated()
+                .and().cors() // by default uses a Bean by the type CorsConfigurationSource (defined below)
                 .and()
                 .addFilter(AuthenticationFilter(authenticationManager()))
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter::class.java)

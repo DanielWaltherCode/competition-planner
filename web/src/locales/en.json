@@ -9,6 +9,7 @@
     "billing": "Billing",
     "logout": "Logout",
     "chosenCompetition": "You are managing ",
+    "admin": "Admin",
     "handle": {
       "title": "Manage",
       "newCompetition": "Create a new competition",

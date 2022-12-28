@@ -19,11 +19,6 @@ class ClubApi(
     val findClub: FindClub
 ) {
 
-    @PostMapping
-    fun addClub(@RequestBody clubSpec: ClubSpec): ClubDTO {
-        return createClub.execute(clubSpec)
-    }
-
     @PostMapping("/competition/{competitionId}")
     fun addClubForCompetition(@PathVariable competitionId: Int, @RequestBody clubSpec: ClubSpec): ClubDTO {
         return createClub.executeForCompetition(competitionId, clubSpec)

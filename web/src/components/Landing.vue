@@ -167,6 +167,7 @@
 <script>
 import UserService from "@/common/api-services/user.service";
 import CompetitionService from "@/common/api-services/competition.service";
+import AdminService from "@/common/api-services/admin.service";
 
 export default {
   name: "Landing",
@@ -189,6 +190,9 @@ export default {
     competition: function () {
       return this.$store.getters.competition
     },
+    isAdmin: function() {
+      return this.$store.getters.isAdmin
+    }
   },
   mounted() {
     if (this.isLoggedIn) {
@@ -203,8 +207,13 @@ export default {
     }
   },
   created() {
-    if (this.isLoggedIn) {
+    if (this.isLoggedIn && !this.isAdmin) {
       CompetitionService.getCompetitions().then(res => {
+        this.competitions = res.data
+      })
+    }
+    if (this.isLoggedIn && this.isAdmin) {
+      AdminService.getCompetitions().then(res => {
         this.competitions = res.data
       })
     }
@@ -222,20 +231,16 @@ export default {
       this.username = "abraham"
       this.password = "anders"
       UserService.login(this.username, this.password).then(res => {
-        console.log("login successful", res)
         this.loginFailed = false
         this.$store.commit("auth_success", res.data)
         UserService.getUser().then(res => {
           this.$store.commit("set_user", res.data)
         })
-        // Fetch available competitions
-        // TODO: ensure only competitions for the logged in user are sent back
         CompetitionService.getCompetitions().then(res => {
           this.competitions = res.data
         })
       })
           .catch(err => {
-            console.log("Login failed", err)
             this.loginFailed = true
           })
     },

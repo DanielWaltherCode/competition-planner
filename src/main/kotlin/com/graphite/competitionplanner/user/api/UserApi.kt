@@ -12,11 +12,6 @@ import org.springframework.web.server.ResponseStatusException
 @RequestMapping("/user")
 class UserApi(val userService: UserService) {
 
-    @PostMapping
-    fun register(@RequestBody userSpec: UserSpec): UserDTO {
-        return userService.addUser(userSpec)
-    }
-
     @GetMapping
     fun getLoggedInUser(): UserDTO {
         return userService.getLoggedInUser()
