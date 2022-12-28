@@ -433,6 +433,19 @@
       "toastSaveSuccess": "Payment details saved"
     }
   },
+  "admin": {
+    "preamble": "You need to login as admin to view this page",
+    "sidebarTitle": "Handle",
+    "addClub": "Add a club",
+    "addUser": "Add a user",
+    "handleCompetition": "Handle competition",
+    "clubName": "Name",
+    "clubAddress": "Address",
+    "username": "Email address",
+    "password": "Password",
+    "club": "Club",
+    "chooseCompetition": "Choose a competition to handle"
+  },
   "validations": {
     "required": "The field must be filled in",
     "noCategories": "No categories to add the player to have been selected",
