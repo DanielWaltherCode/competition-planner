@@ -195,49 +195,48 @@ export default {
     }
   },
   mounted() {
-    if (this.isLoggedIn) {
-      CompetitionService.getCompetitions().then(res => {
-        this.competitions = res.data
-      })
-    }
-    if (this.competition === null) {
-      this.selectedCompetition = "none"
-    } else {
-      this.selectedCompetition = this.competition
-    }
+    this.setUp()
   },
   created() {
-    if (this.isLoggedIn && !this.isAdmin) {
-      CompetitionService.getCompetitions().then(res => {
-        this.competitions = res.data
-      })
-    }
-    if (this.isLoggedIn && this.isAdmin) {
-      AdminService.getCompetitions().then(res => {
-        this.competitions = res.data
-      })
-    }
-    if (this.competition === null) {
-      this.selectedCompetition = "none"
-    } else {
-      this.selectedCompetition = this.competition
-    }
+   this.setUp()
   },
   methods: {
     getString(string) {
       return this.$t(string)
     },
+    setUp() {
+      if (this.isLoggedIn && !this.isAdmin) {
+        CompetitionService.getCompetitions().then(res => {
+          this.competitions = res.data
+        })
+      }
+      if (this.isLoggedIn && this.isAdmin) {
+        AdminService.getCompetitions().then(res => {
+          this.competitions = res.data
+        })
+      }
+      if (this.competition === null) {
+        this.selectedCompetition = "none"
+      } else {
+        this.selectedCompetition = this.competition
+      }
+    },
     login() {
-      this.username = "abraham"
-      this.password = "anders"
       UserService.login(this.username, this.password).then(res => {
         this.loginFailed = false
         this.$store.commit("auth_success", res.data)
         UserService.getUser().then(res => {
           this.$store.commit("set_user", res.data)
-        })
-        CompetitionService.getCompetitions().then(res => {
-          this.competitions = res.data
+          if (this.isAdmin) {
+           AdminService.getCompetitions().then(res => {
+             this.competitions = res.data
+           })
+          }
+          else {
+            CompetitionService.getCompetitions().then(res => {
+              this.competitions = res.data
+            })
+          }
         })
       })
           .catch(err => {

@@ -1,6 +1,8 @@
 package com.graphite.competitionplanner.admin
 
 import com.graphite.competitionplanner.club.domain.CreateClub
+import com.graphite.competitionplanner.club.domain.DeleteClub
+import com.graphite.competitionplanner.club.domain.UpdateClub
 import com.graphite.competitionplanner.club.interfaces.ClubDTO
 import com.graphite.competitionplanner.club.interfaces.ClubSpec
 import com.graphite.competitionplanner.competition.domain.FindCompetitions
@@ -16,13 +18,25 @@ import javax.validation.Valid
 @RequestMapping("admin")
 class AdminController(
         val createClub: CreateClub,
+        val updateClub: UpdateClub,
         val userService: UserService,
+        val deleteClub: DeleteClub,
         val findCompetitions: FindCompetitions
 ) {
 
     @PostMapping("/club")
     fun addClub(@RequestBody @Valid clubSpec: ClubSpec): ClubDTO {
         return createClub.execute(clubSpec)
+    }
+
+    @PutMapping("club/{clubId}")
+    fun updateClub(@PathVariable clubId: Int, @RequestBody clubSpec: ClubSpec): ClubDTO {
+        return updateClub.execute(clubId, clubSpec)
+    }
+
+    @DeleteMapping("club/{clubId}")
+    fun deleteClub(@PathVariable clubId: Int): Boolean {
+        return deleteClub.execute(clubId)
     }
 
     @PostMapping("/user")

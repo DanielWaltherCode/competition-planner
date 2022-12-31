@@ -59,7 +59,7 @@
                   </router-link>
                 </li>
                 <li class="nav-item">
-                  <router-link class="nav-link" to="/admin" v-if="(isLoggedIn && isAdmin) || !isLoggedIn"
+                  <router-link class="nav-link" to="/admin" v-if="(isLoggedIn && isAdmin)"
                                :class="$route.path === '/admin' ? 'active ' : ''">
                     {{ $t("header.admin") }}
                   </router-link>
