@@ -1,7 +1,11 @@
 package com.graphite.competitionplanner.security
 
+import com.graphite.competitionplanner.SpringApplicationContext
+import com.graphite.competitionplanner.user.service.UserService
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
@@ -42,8 +46,15 @@ class JWTAuthorizationFilter : OncePerRequestFilter() {
         if (token != null) {
             token = token.replace(SecurityConstants.TOKEN_PREFIX, "")
             if (SecurityHelper.validateToken(token)) {
-                val user = SecurityHelper.getEmailFromToken(token)
-                return UsernamePasswordAuthenticationToken(user, token, ArrayList())
+                val username = SecurityHelper.getEmailFromToken(token)
+                val userService: UserService = SpringApplicationContext.getBean("userService") as UserService
+                val user = userService.getUserByEmail(username)
+                val grantedAuthorities: List<GrantedAuthority> = if (user.role == null) {
+                    emptyList()
+                } else {
+                    listOf(SimpleGrantedAuthority(user.role))
+                }
+                return UsernamePasswordAuthenticationToken(user, token, grantedAuthorities)
             }
             return null
         }

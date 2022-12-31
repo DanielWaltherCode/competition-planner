@@ -8,6 +8,8 @@ import com.graphite.competitionplanner.user.api.LoginDTO
 import com.graphite.competitionplanner.user.api.UserSpec
 import com.graphite.competitionplanner.user.repository.UserRepository
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
@@ -18,17 +20,17 @@ import org.springframework.web.server.ResponseStatusException
 
 @Service
 class UserService(
-    val userRepository: UserRepository,
-    val bCryptPasswordEncoder: BCryptPasswordEncoder,
-    val findClub: FindClub
+        val userRepository: UserRepository,
+        val bCryptPasswordEncoder: BCryptPasswordEncoder,
+        val findClub: FindClub
 ) : UserDetailsService {
 
     fun addUser(userSpec: UserSpec): UserDTO {
         //TODO check if username is free, check if club id is correct
         val user = UserWithEncryptedPassword(
-            userSpec.username,
-            bCryptPasswordEncoder.encode(userSpec.password),
-            userSpec.clubId
+                userSpec.username,
+                bCryptPasswordEncoder.encode(userSpec.password),
+                userSpec.clubId
         )
         val addedUser = userRepository.addUser(user)
         return recordToDTO(addedUser)
@@ -36,24 +38,23 @@ class UserService(
 
     fun getUserByEmail(email: String): UserDTO {
         val userRecord = userRepository.getUserByEmail(email)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No user with that username found")
+                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No user with that username found")
 
         return recordToDTO(userRecord)
     }
 
     fun getUserById(id: Int): UserDTO {
         val userRecord = userRepository.getUserById(id)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No user with that username found")
+                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No user with that username found")
 
         return recordToDTO(userRecord)
     }
 
     fun getLoggedInUser(): UserDTO {
         val authentication = SecurityContextHolder.getContext().authentication
-            ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+                ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
 
-        val username = authentication.principal as String
-        return getUserByEmail(username)
+        return authentication.principal as UserDTO
     }
 
     // Will either update existing or add new one
@@ -62,15 +63,14 @@ class UserService(
         val existingRecord = userRepository.getRefreshTokenByUser(user.id)
         if (existingRecord == null) {
             userRepository.saveRefreshToken(refreshToken, user.id)
-        }
-        else {
-           userRepository.updateRefreshToken(existingRecord.id, refreshToken, existingRecord.userId)
+        } else {
+            userRepository.updateRefreshToken(existingRecord.id, refreshToken, existingRecord.userId)
         }
     }
 
     fun getNewAccessToken(refreshToken: String): LoginDTO {
         val tokenRecord = userRepository.getRefreshToken(refreshToken)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No such refresh token found")
+                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No such refresh token found")
 
         try {
             SecurityHelper.validateToken(tokenRecord.refreshToken)
@@ -79,8 +79,7 @@ class UserService(
             val newRefreshToken = SecurityHelper.generateRefreshToken(user)
             storeRefreshToken(newRefreshToken, user.email)
             return LoginDTO(accessToken, newRefreshToken)
-        }
-        catch (ex: Exception) {
+        } catch (ex: Exception) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Refresh token expired")
         }
     }
@@ -88,30 +87,38 @@ class UserService(
     /*Override necessary method from UserDetailsService */
     override fun loadUserByUsername(username: String): UserDetails {
         val userRecord = userRepository.getUserByEmail(username)
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No user with that username found")
+                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "No user with that username found")
 
-        return User(userRecord.email, userRecord.password, mutableListOf())
+        val grantedAuthorities: List<GrantedAuthority> = if (userRecord.userRole == null) {
+            emptyList()
+        } else {
+            listOf(SimpleGrantedAuthority(userRecord.userRole))
+        }
+        return User(userRecord.email, userRecord.password, grantedAuthorities)
     }
+
 
     fun recordToDTO(userRecord: UserTableRecord): UserDTO {
         val club = findClub.byId(userRecord.clubid)
         return UserDTO(
-            userRecord.id,
-            userRecord.email,
-            ClubNoAddressDTO(club.id, club.name)
+                userRecord.id,
+                userRecord.email,
+                ClubNoAddressDTO(club.id, club.name),
+                userRecord.userRole
         )
     }
 }
 
 
 data class UserWithEncryptedPassword(
-    val username: String,
-    val encryptedPassword: String,
-    val clubId: Int
+        val username: String,
+        val encryptedPassword: String,
+        val clubId: Int
 )
 
 data class UserDTO(
-    val id: Int,
-    val email: String,
-    val clubNoAddressDTO: ClubNoAddressDTO
+        val id: Int,
+        val email: String,
+        val clubNoAddressDTO: ClubNoAddressDTO,
+        val role: String?
 )

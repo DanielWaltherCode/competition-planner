@@ -58,6 +58,12 @@
                     {{ $t("header.billing") }}
                   </router-link>
                 </li>
+                <li class="nav-item">
+                  <router-link class="nav-link" to="/admin" v-if="(isLoggedIn && isAdmin)"
+                               :class="$route.path === '/admin' ? 'active ' : ''">
+                    {{ $t("header.admin") }}
+                  </router-link>
+                </li>
                 <!--<li class="nav-item dropdown" v-if="isLoggedIn">
                   <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                      data-bs-toggle="dropdown" aria-expanded="false">
@@ -108,6 +114,9 @@ export default {
     competition: function () {
       return this.$store.getters.competition
     },
+    isAdmin: function () {
+      return this.$store.getters.isAdmin
+    }
   },
   methods: {
     logout() {

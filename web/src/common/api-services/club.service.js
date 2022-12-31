@@ -20,7 +20,7 @@ const ClubService = {
     },
     addClubForCompetition(competitionId, clubSpec) {
         return Axios.post(`${RESOURCE_NAME}/competition/${competitionId}`, clubSpec, {withCredentials: true})
-    }
+    },
 }
 
 export default ClubService

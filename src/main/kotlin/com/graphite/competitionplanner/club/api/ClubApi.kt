@@ -12,26 +12,14 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/club")
 class ClubApi(
     val paymentRepository: ClubPaymentRepository,
-    val deleteClub: DeleteClub,
     val createClub: CreateClub,
-    val updateClub: UpdateClub,
     val listAllClubs: ListAllClubs,
     val findClub: FindClub
 ) {
 
-    @PostMapping
-    fun addClub(@RequestBody clubSpec: ClubSpec): ClubDTO {
-        return createClub.execute(clubSpec)
-    }
-
     @PostMapping("/competition/{competitionId}")
     fun addClubForCompetition(@PathVariable competitionId: Int, @RequestBody clubSpec: ClubSpec): ClubDTO {
         return createClub.executeForCompetition(competitionId, clubSpec)
-    }
-
-    @PutMapping("/{clubId}")
-    fun updateClub(@PathVariable clubId: Int, @RequestBody clubSpec: ClubSpec): ClubDTO {
-        return updateClub.execute(clubId, clubSpec)
     }
 
     @GetMapping("/{clubId}")
@@ -47,11 +35,6 @@ class ClubApi(
     @GetMapping("competition/{competitionId}")
     fun getAllClubsForCompetition(@PathVariable competitionId: Int): List<ClubDTO> {
         return listAllClubs.executeForCompetition(competitionId)
-    }
-
-    @DeleteMapping("/{clubId}")
-    fun deleteClub(@PathVariable clubId: Int): Boolean {
-        return deleteClub.execute(clubId)
     }
 
     @GetMapping("/{clubId}/payment-info/")

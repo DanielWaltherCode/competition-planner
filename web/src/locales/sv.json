@@ -9,6 +9,7 @@
     "billing": "Fakturor",
     "logout": "Logga ut",
     "chosenCompetition": "Du hanterar ",
+    "admin": "Admin",
     "handle": {
       "title": "Hantera",
       "newCompetition": "Skapa en ny tävling",
@@ -430,6 +431,19 @@
       "toastErrorUpdate": "Kunde inte uppdatera betalningsinformation",
       "toastSaveSuccess": "Betalningsuppgifter sparade"
     }
+  },
+  "admin": {
+    "preamble": "Du behöver logga in som admin för att kunna se den här sidan",
+    "sidebarTitle": "Hantera",
+    "addClub": "Lägg till klubb",
+    "addUser": "Lägg till användare",
+    "handleCompetition": "Hantera tävling",
+    "clubName": "Namn",
+    "clubAddress": "Adress",
+    "username": "Epostadress",
+    "password": "Lösenord",
+    "club": "Klubb",
+    "chooseCompetition": "Välj en tävling att hantera"
   },
   "validations": {
     "required": "Fältet måste fyllas i",

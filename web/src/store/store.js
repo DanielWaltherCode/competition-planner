@@ -40,7 +40,8 @@ export default new Vuex.Store({
         user: state => state.user,
         accessToken: state => state.accessToken,
         refreshToken: state => state.refreshToken,
-        competition: state => state.competition
+        competition: state => state.competition,
+        isAdmin: state => state.user.role === "ROLE_ADMIN"
     },
     plugins: [createPersistedState()]
 })

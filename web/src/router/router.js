@@ -16,6 +16,10 @@ import PlayoffDraw from "@/components/draw/PlayoffDraw";
 import CreateNewPlayer from "@/components/player/CreateNewPlayer";
 import Billing from "@/components/billing/Billing";
 import RegisterPaymentDetails from "@/components/billing/RegisterPaymentDetails";
+import Admin from "@/components/admin/admin.vue";
+import NewClub from "@/components/admin/newClub.vue";
+import CompetitionAdmin from "@/components/admin/competitionAdmin.vue";
+import NewUser from "@/components/admin/newUser.vue";
 
 Vue.use(Router)
 
@@ -94,6 +98,24 @@ export default new Router({
             {
                 path: "/payment-info",
                 component: RegisterPaymentDetails
+            },
+            {
+                path: "/admin",
+                component: Admin,
+                children: [
+                    {
+                        path: "/newClub",
+                        component: NewClub
+                    },
+                    {
+                        path: "/newUser",
+                        component: NewUser
+                    },
+                    {
+                        path: "/competitionAdmin",
+                        component: CompetitionAdmin
+                    },
+                ]
             }
         ],
         scrollBehavior(to, from, savedPosition) {
