@@ -30,7 +30,7 @@
                     <div th:if="${registration.competitionCategory.type} == 'DOUBLES' and ${registration.accompanyingPlayer} != null">
                         <span th:text="#{player.playingWith}">
                         </span>
-                        <a th:href="'/open/players/' + ${competition.id} + '/' + ${registration.accompanyingPlayer.id}"
+                        <a th:href="'/players/' + ${competition.id} + '/' + ${registration.accompanyingPlayer.id}"
                            class="player-name me-2 text-black text-decoration-none"
                             th:text="${registration.accompanyingPlayer.firstName} + ' ' + ${registration.accompanyingPlayer.lastName}"></a>
                     </div>

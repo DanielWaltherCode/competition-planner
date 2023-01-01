@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 
-@RequestMapping("open/players")
+@RequestMapping("/players")
 @Controller
 class PlayerController(
         val findPlayer: FindPlayer,

@@ -36,7 +36,7 @@
                                     <p class="mb-0" th:text="${playerGrouping.key}"></p>
                                 </div>
                                 <div th:each="player : ${playerGrouping.value}" class="mt-2 d-flex">
-                                    <a class="player-name clickable text-black text-decoration-none" th:href="'/open/players/' + ${competitionId} + '/' + ${player.id}" th:text="${player.lastName + ', ' + player.firstName }"></a>
+                                    <a class="player-name clickable text-black text-decoration-none" th:href="'/players/' + ${competitionId} + '/' + ${player.id}" th:text="${player.lastName + ', ' + player.firstName }"></a>
                                 </div>
                             </div>
                         </div>

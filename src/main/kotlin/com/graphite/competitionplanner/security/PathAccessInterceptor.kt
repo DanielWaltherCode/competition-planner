@@ -25,7 +25,7 @@ class PathAccessInterceptor(val findCompetitions: FindCompetitions) : HandlerInt
             // If the path does not contain a competitionId, don't protect here
             val competitionId = pathVariables["competitionId"] ?: return true
             // If request is to Open, don't protect here
-            if (request.requestURI.contains("open")) {
+            if (!request.requestURI.contains("api")) {
                 return true
             }
 
