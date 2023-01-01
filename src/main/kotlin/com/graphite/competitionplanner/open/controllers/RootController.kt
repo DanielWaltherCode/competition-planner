@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import java.time.format.DateTimeFormatter
 
 @Controller
-@RequestMapping("open")
+@RequestMapping("")
 class RootController(
         val findCompetitions: FindCompetitions
 ) {

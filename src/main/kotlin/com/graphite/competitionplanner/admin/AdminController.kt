@@ -15,7 +15,7 @@ import java.time.LocalDate
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("admin")
+@RequestMapping("/api/admin")
 class AdminController(
         val createClub: CreateClub,
         val updateClub: UpdateClub,

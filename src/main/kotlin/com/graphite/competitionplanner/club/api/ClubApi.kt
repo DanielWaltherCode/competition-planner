@@ -9,7 +9,7 @@ import com.graphite.competitionplanner.club.repository.ClubPaymentRepository
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/club")
+@RequestMapping("api/club")
 class ClubApi(
     val paymentRepository: ClubPaymentRepository,
     val createClub: CreateClub,

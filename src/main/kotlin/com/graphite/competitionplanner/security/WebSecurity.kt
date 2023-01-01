@@ -29,29 +29,9 @@ class WebSecurity(
     override fun configure(http: HttpSecurity) {
         http.csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthEntryPoint)
-                .and() // These urls don't need authentication
-                .authorizeRequests().requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                .and()
-                .authorizeRequests().antMatchers("/admin/**").hasRole("ADMIN")
-                .and()
-                .authorizeRequests().antMatchers(
-                        "/v2/api-docs",
-                        "/swagger-resources/configuration/ui",
-                        "/swagger-resources",
-                        "/swagger-resources/configuration/security",
-                        "/swagger-ui.html",
-                        "/webjars/**",
-                        "/login/**",
-                        "/request-token/**",
-                        "/open/**",
-                        "/css/**",
-                        "/images/**",
-                        "/static/**",
-                        "/js/**",
-                        "/user"
-                ).permitAll()
-                .and().authorizeRequests().anyRequest()
-                .authenticated()
+                .and().authorizeRequests().antMatchers("/api/**").authenticated()
+                .and().authorizeRequests().antMatchers("/api/admin/**").hasRole("ADMIN")
+                .and().authorizeRequests().antMatchers("/**").permitAll()
                 .and().cors() // by default uses a Bean by the type CorsConfigurationSource (defined below)
                 .and()
                 .addFilter(AuthenticationFilter(authenticationManager()))

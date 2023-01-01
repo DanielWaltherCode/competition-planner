@@ -27,7 +27,7 @@ import java.time.temporal.TemporalAdjusters
 
 
 @Controller
-@RequestMapping("open/competitions")
+@RequestMapping("/competitions")
 class CompetitionController(
         val findCompetitions: FindCompetitions,
         val getCompetitionCategories: GetCompetitionCategories,

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 
 @RestController
-@RequestMapping("/match/{competitionId}")
+@RequestMapping("api/match/{competitionId}")
 class MatchApi(val matchService: MatchService) {
 
     @GetMapping("/{day}")

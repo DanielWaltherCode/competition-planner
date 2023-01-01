@@ -4,7 +4,7 @@ import com.graphite.competitionplanner.schedule.service.*
 import org.springframework.web.bind.annotation.*
 
 @RestController()
-@RequestMapping("/schedule/{competitionId}/metadata")
+@RequestMapping("api/schedule/{competitionId}/metadata")
 class ScheduleMetadataApi(val scheduleMetadataService: ScheduleMetadataService) {
 
     @PostMapping

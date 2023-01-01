@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
-@RequestMapping("/player")
+@RequestMapping("api/player")
 class PlayerApi(
     val listAllPlayersInClub: ListAllPlayersInClub,
     val createPlayer: CreatePlayer,

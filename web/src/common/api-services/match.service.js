@@ -1,5 +1,5 @@
 import Axios from "axios"
-const RESOURCE_NAME = "/match"
+const RESOURCE_NAME = "/api/match"
 
 const MatchService = {
     getMatchesInCompetition(competitionId) {

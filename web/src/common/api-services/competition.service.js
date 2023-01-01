@@ -1,6 +1,6 @@
 import Axios from "axios"
 
-const RESOURCE_NAME = "/competition"
+const RESOURCE_NAME = "/api/competition"
 
 const CompetitionService = {
     addCompetition(body) {

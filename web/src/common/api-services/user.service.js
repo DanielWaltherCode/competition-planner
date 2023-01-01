@@ -1,5 +1,5 @@
 import Axios from "axios"
-const RESOURCE_NAME = "/user"
+const RESOURCE_NAME = "/api/user"
 
 const UserService = {
     register(body) {

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
 @RestController
-@RequestMapping("/schedule/{competitionId}/available-tables")
+@RequestMapping("api/schedule/{competitionId}/available-tables")
 class AvailableTablesApi(
     val availableTablesService: AvailableTablesService,
 ) {

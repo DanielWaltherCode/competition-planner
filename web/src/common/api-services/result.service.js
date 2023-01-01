@@ -1,6 +1,6 @@
 import Axios from "axios"
 
-const RESOURCE_NAME = "/result"
+const RESOURCE_NAME = "/api/result"
 
 const ResultService = {
     updateFullMatchResult(competitionId, matchId, body) {

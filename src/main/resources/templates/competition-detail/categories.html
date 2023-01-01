@@ -31,7 +31,7 @@
                 </div>
                 <ul class="list-group">
                     <li class="list-group-item" th:each="category : ${categories}">
-                        <a th:href="'/open/competitions/' + ${competition.id} + '/categories/' + ${category.id}"
+                        <a th:href="'/competitions/' + ${competition.id} + '/categories/' + ${category.id}"
                         class="text-black text-decoration-none"
                         th:classappend="${selectedCategory.id == category.id} ? 'fw-bold' : ''"
                         th:text="${#strings.defaultString(#messages.msgOrNull('categories.name.' + category.category.name), category.category.name)}">

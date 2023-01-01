@@ -13,7 +13,7 @@ import java.time.LocalDate
 
 
 @RestController
-@RequestMapping("/competition")
+@RequestMapping("api/competition")
 class CompetitionApi(
     val createCompetition: CreateCompetition,
     val updateCompetition: UpdateCompetition,

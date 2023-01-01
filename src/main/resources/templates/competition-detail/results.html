@@ -26,7 +26,7 @@
             <div class="col-10 col-md-4 me-md-3">
                 <label class="form-label" for="results-category" th:text="#{results.chooseCategory}"></label>
                 <select class="form-select" id="results-category" name="categoryId"
-                        th:attr="hx-get='/open/competitions/' + ${competition.id} + '/results/table'"
+                        th:attr="hx-get='/competitions/' + ${competition.id} + '/results/table'"
                         hx-trigger="change, load"
                         hx-include="[name='date']"
                         hx-target="#results-table">
@@ -37,7 +37,7 @@
             <div class="col-10 col-md-4">
                 <label class="form-label" for="results-date" th:text="#{results.chooseDate}"></label>
                 <select class="form-select" id="results-date" name="date"
-                        th:attr="hx-get='/open/competitions/' + ${competition.id} + '/results/table'"
+                        th:attr="hx-get='/competitions/' + ${competition.id} + '/results/table'"
                         hx-trigger="change"
                         hx-target="#results-table"
                 hx-include="[name='categoryId']">

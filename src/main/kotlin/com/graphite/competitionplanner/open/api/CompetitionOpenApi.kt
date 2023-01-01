@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
 
 @RestController
-@RequestMapping("/open/competition")
+@RequestMapping("/competition")
 class CompetitionOpenApi(
     val drawService: DrawService,
     val registrationService: RegistrationService,

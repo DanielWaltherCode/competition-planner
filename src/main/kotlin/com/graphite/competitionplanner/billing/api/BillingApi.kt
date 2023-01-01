@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("billing/{competitionId}")
+@RequestMapping("api/billing/{competitionId}")
 class BillingApi(
     val getClubsInCompetition: GetClubsInCompetition,
     val getCostSummaryForClub: GetCostSummaryForClub,

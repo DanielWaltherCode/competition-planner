@@ -13,7 +13,7 @@ import com.graphite.competitionplanner.registration.service.RegistrationService
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("competition/{competitionId}/draw/{competitionCategoryId}")
+@RequestMapping("api/competition/{competitionId}/draw/{competitionCategoryId}")
 class CompetitionDrawApi(
     val createDraw: CreateDraw,
     val drawService: DrawService,

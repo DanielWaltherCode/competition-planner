@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 @RestController
-@RequestMapping("/schedule/{competitionId}/")
+@RequestMapping("api/schedule/{competitionId}/")
 class ScheduleApi(
         val competitionScheduler: CompetitionScheduler,
         val scheduleMetadataService: ScheduleMetadataService,

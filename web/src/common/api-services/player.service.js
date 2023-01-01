@@ -4,10 +4,10 @@ const RESOURCE_NAME = "/player"
 
 const PlayerService = {
     addPlayerInCompetition(competitionId, body,) {
-        return Axios.post(`/player/competition/${competitionId}`, body, {withCredentials: true})
+        return Axios.post(`/api/player/competition/${competitionId}`, body, {withCredentials: true})
     },
     getRegisteredPlayersInCompetition(searchParam, competitionId) {
-        return Axios.get(`/competition/${competitionId}/registration`, {
+        return Axios.get(`/api/competition/${competitionId}/registration`, {
             params: {
                 searchType: searchParam
             },
@@ -15,7 +15,7 @@ const PlayerService = {
         })
     },
     searchAllPlayers(competitionId, partOfName) {
-        return Axios.get(`/player/name-search/with-competition/${competitionId}`, {
+        return Axios.get(`/api/player/name-search/with-competition/${competitionId}`, {
             params: {
                 partOfName: partOfName
             },
@@ -23,7 +23,7 @@ const PlayerService = {
         })
     },
     findByNameInCompetition(partOfName, competitionId) {
-        return Axios.get(`/player/name-search/` + competitionId, {
+        return Axios.get(`/api/player/name-search/` + competitionId, {
             params: {
                 partOfName: partOfName
             },
