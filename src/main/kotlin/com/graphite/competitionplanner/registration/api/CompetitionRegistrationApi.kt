@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*
 
 
 @RestController
-@RequestMapping("/competition/{competitionId}/registration")
+@RequestMapping("api/competition/{competitionId}/registration")
 class CompetitionRegistrationApi(
         val registrationService: RegistrationService,
         val registrationRepository: RegistrationRepository,

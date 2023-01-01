@@ -6,7 +6,7 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.*
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/competition/{competitionId}/category")
+@RequestMapping("api/competition/{competitionId}/category")
 class CompetitionCategoryApi(
     val cancelCompetitionCategory: CancelCompetitionCategory,
     val findCompetitionCategory: FindCompetitionCategory,

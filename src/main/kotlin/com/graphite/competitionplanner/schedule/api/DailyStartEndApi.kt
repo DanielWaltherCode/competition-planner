@@ -9,7 +9,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 @RestController
-@RequestMapping("/schedule/{competitionId}/daily-start-end")
+@RequestMapping("api/schedule/{competitionId}/daily-start-end")
 class DailyStartEndApi(val dailyStartEndService: DailyStartEndService) {
 
     @PostMapping

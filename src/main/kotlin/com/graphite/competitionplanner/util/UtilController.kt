@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/util")
+@RequestMapping("api/util")
 @Profile("local")
 class UtilController(val setupTestData: SetupTestData) {
 

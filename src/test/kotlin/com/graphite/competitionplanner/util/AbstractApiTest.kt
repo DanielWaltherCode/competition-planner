@@ -26,10 +26,10 @@ abstract class AbstractApiTest(
     protected abstract val resource: String
 
     fun getUrl(): String {
-        return "http://localhost:$port$resource"
+        return "http://localhost:$port/api$resource"
     }
 
-    fun getUrlWithoutResourcePath(): String {
+    fun getBaseUrl(): String {
         return "http://localhost:$port"
     }
 
@@ -42,7 +42,7 @@ abstract class AbstractApiTest(
         val entityToSend = HttpEntity(valueToSend, httpHeaders)
 
         val loginResult = testRestTemplate.postForEntity(
-            getUrlWithoutResourcePath() + "/login",
+            getBaseUrl() + "/login",
             entityToSend, LoginDTO::class.java
         ).body
 

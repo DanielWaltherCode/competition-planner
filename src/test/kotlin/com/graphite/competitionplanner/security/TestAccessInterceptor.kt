@@ -82,7 +82,7 @@ class TestAccessInterceptor(
         val entityToSend = HttpEntity(valueToSend, httpHeaders)
 
         val loginResult = testRestTemplate.postForEntity(
-            getUrlWithoutResourcePath() + "/login",
+            getBaseUrl() + "/login",
             entityToSend, LoginDTO::class.java
         ).body
 

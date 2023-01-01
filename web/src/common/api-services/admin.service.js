@@ -1,6 +1,6 @@
 import Axios from "axios";
 
-const RESOURCE_NAME = "/admin"
+const RESOURCE_NAME = "/api/admin"
 
 const AdminService = {
     addClub(body) {

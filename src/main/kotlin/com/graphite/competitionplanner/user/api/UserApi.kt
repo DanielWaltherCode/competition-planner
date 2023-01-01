@@ -2,14 +2,11 @@ package com.graphite.competitionplanner.user.api
 
 import com.graphite.competitionplanner.user.service.UserDTO
 import com.graphite.competitionplanner.user.service.UserService
-import org.springframework.http.HttpStatus
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("api/user")
 class UserApi(val userService: UserService) {
 
     @GetMapping
@@ -20,7 +17,7 @@ class UserApi(val userService: UserService) {
 }
 
 @RestController
-@RequestMapping("/request-token")
+@RequestMapping("api/request-token")
 class RefreshTokenApi(val userService: UserService) {
 
     @GetMapping("/{refreshToken}")

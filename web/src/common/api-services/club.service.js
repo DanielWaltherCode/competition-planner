@@ -1,6 +1,6 @@
 import Axios from "axios"
 
-const RESOURCE_NAME = "/club"
+const RESOURCE_NAME = "/api/club"
 
 const ClubService = {
     getClubs() {

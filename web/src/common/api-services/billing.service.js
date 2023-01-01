@@ -1,6 +1,6 @@
 import Axios from "axios";
 
-const RESOURCE_NAME = "/billing"
+const RESOURCE_NAME = "/api/billing"
 
 const BillingService = {
     getParticipatingClubs(competitionId) {
