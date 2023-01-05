@@ -101,13 +101,6 @@ class CompetitionController(
         return "competition-detail/categories"
     }
 
-    private fun shouldShowPlayoff(playoff: List<PlayoffRoundDTO>?): Boolean {
-        if (playoff.isNullOrEmpty()) {
-            return false
-        }
-        return !playoff[0].matches.flatMap { m -> listOf(m.firstPlayer[0], m.secondPlayer[0])}.any { r -> r.id == -1 }
-    }
-
     @GetMapping("/{competitionId}/results")
     fun getResults(model: Model, @PathVariable competitionId: Int): String {
         val competition = findCompetitions.byId(competitionId)
@@ -201,6 +194,13 @@ class CompetitionController(
         val competitions = findCompetitions.thatStartOrEndWithin(startDate, endDate)
         model.addAttribute("competitions", competitions.map { convertCompetitionDTO(it) })
         return "fragments/competition-list"
+    }
+
+    private fun shouldShowPlayoff(playoff: List<PlayoffRoundDTO>?): Boolean {
+        if (playoff.isNullOrEmpty()) {
+            return false
+        }
+        return !playoff[0].matches.flatMap { m -> listOf(m.firstPlayer[0], m.secondPlayer[0])}.any { r -> r.id == -1 }
     }
 }
 

@@ -18,7 +18,7 @@
                   </p>
                 </div>
                 <div th:if="${!match.firstPlayer[0].firstName.equals('BYE')}">
-                  <p class="mb-0">
+                  <p class="mb-0" th:classappend="${match.winner == match.firstPlayer ? 'fw-bold' : ''}">
                     <span th:replace="fragments/player-fragment :: players(playerList=${match.firstPlayer})"></span>
                   </p>
                 </div>
@@ -35,7 +35,7 @@
                   </p>
                 </div>
                 <div th:if="${!match.secondPlayer[0].firstName.equals('BYE')}">
-                  <p class="mb-0">
+                  <p class="mb-0" th:classappend="${match.winner == match.secondPlayer ? 'fw-bold' : ''}">
                     <span th:replace="fragments/player-fragment :: players(playerList=${match.secondPlayer})"></span>
                   </p>
                 </div>

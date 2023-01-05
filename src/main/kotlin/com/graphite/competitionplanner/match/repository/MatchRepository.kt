@@ -174,7 +174,7 @@ class MatchRepository(
                 .join(MATCH)
                 .on(COMPETITION_CATEGORY.ID.eq(MATCH.COMPETITION_CATEGORY_ID))
                 .where(COMPETITION.ID.eq(competitionId))
-                .orderBy(MATCH.START_TIME.asc().nullsLast())
+                .orderBy(MATCH.START_TIME.asc().nullsLast(), MATCH.COMPETITION_CATEGORY_ID, MATCH.GROUP_OR_ROUND)
                 .fetchInto(MATCH)
     }
 
