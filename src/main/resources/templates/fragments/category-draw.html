@@ -71,10 +71,10 @@
                                             <td>
                                                 <span th:if="${match.startTime != null}" th:text="${#temporals.format(match.startTime, 'yyyy-MM-dd HH:mm')}"></span>
                                                 <span th:if="${match.startTime == null}" th:text="#{draw.pool.noTime}"></span>
-                                            <td>
+                                            <td th:classappend="${match.winner == match.firstPlayer ? 'fw-bold' : ''}">
                                                 <span th:replace="fragments/player-fragment :: players(playerList=${playerOneList})"></span>
                                             </td>
-                                            <td>
+                                            <td th:classappend="${match.winner == match.secondPlayer ? 'fw-bold' : ''}">
                                                 <span th:replace="fragments/player-fragment :: players(playerList=${playerTwoList})"></span>
                                             </td>
                                             <td>

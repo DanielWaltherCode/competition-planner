@@ -5,7 +5,7 @@
 <body>
 <span th:fragment="players(playerList)">
     <span th:if="${playerList.size == 1 && playerList.get(0).firstName.equalsIgnoreCase('placeholder')}"
-    th:text="PLACEHOLDER">
+    th:text="''">
     </span>
     <span th:if="${playerList.size == 1 && !playerList.get(0).firstName.equalsIgnoreCase('placeholder')}"
           th:text="${playerList.get(0).firstName} + ' ' + ${playerList.get(0).lastName} + ' ' + ${playerList.get(0).club.name}">

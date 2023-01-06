@@ -154,6 +154,7 @@
                             v-model="categorySchedule.selectedStartTime"
                             :minute-interval="5"
                             input-width="8em"
+                            :hour-range="[[7, 23]]"
                             @change="noteCategorySchedulingAsChanged(categorySchedule)"
                         />
                       </td>

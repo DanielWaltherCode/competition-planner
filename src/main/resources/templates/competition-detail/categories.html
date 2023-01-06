@@ -12,6 +12,9 @@
             margin-bottom: 5px;
             display: inline-block;
         }
+        .non-clickable:hover {
+            cursor: default !important;
+        }
     </style>
 </head>
 
@@ -30,7 +33,7 @@
                     </h3>
                 </div>
                 <ul class="list-group">
-                    <li class="list-group-item" th:each="category : ${categories}">
+                    <li class="list-group-item non-clickable" th:each="category : ${categories}">
                         <a th:href="'/competitions/' + ${competition.id} + '/categories/' + ${category.id}"
                         class="text-black text-decoration-none"
                         th:classappend="${selectedCategory.id == category.id} ? 'fw-bold' : ''"
