@@ -1,9 +1,9 @@
 <template>
   <div>
     <h1 class="p-4">
-      <i @click="$router.push('/schedule')" class="fas fa-arrow-left" style="float: left"></i>
+      <i class="fas fa-arrow-left" style="float: left" @click="$router.push('/schedule')" />
       {{ $t("results.title") }}
-      <i @click="$router.push('/billing')" class="fas fa-arrow-right" style="float: right"></i>
+      <i class="fas fa-arrow-right" style="float: right" @click="$router.push('/billing')" />
     </h1>
     <div class="container-fluid">
       <div class="row">
@@ -13,12 +13,13 @@
           <div class="row mb-2 d-flex align-items-center p-3 bg-grey">
             <div class="col-12 col-md-6">
               <div class="d-flex align-items-center mb-2">
-                <i class="fas fa-search me-2"></i>
+                <i class="fas fa-search me-2" />
                 <label for="playerSearch" class="form-label d-flex mb-0"> {{ $t("results.search") }}</label>
               </div>
               <div class="d-flex">
-                <input type="text" class="form-control me-3" v-model="searchString" id="playerSearch">
-                <button type="button" class="btn btn-primary" @click="searchString = ''">{{ $t("general.clear") }}
+                <input id="playerSearch" v-model="searchString" type="text" class="form-control me-3">
+                <button type="button" class="btn btn-primary" @click="searchString = ''">
+                  {{ $t("general.clear") }}
                 </button>
               </div>
             </div>
@@ -28,48 +29,66 @@
             </div>
             <div class="col-5 col-md-2">
               <label for="category-choice">{{ $t("schedule.main.dropdownPlaceholder") }}</label>
-              <select id="category-choice" class="form-select my-3 mx-auto" v-model="selectedCategory">
-                <option value="">{{$t("results.categoryDefaultChoice")}}</option>
+              <select id="category-choice" v-model="selectedCategory" class="form-select my-3 mx-auto">
+                <option value="">
+                  {{ $t("results.categoryDefaultChoice") }}
+                </option>
                 <option v-for="category in competitionCategories" :key="category" :value="category">
                   {{ tryTranslateCategoryName(category) }}
                 </option>
               </select>
             </div>
           </div>
-          <div id="table-container" class="table-responsive" v-if="matches.length > 0">
+          <div v-if="matches.length > 0" id="table-container" class="table-responsive">
             <table class="table table-borderless table-striped">
               <thead>
               <tr>
-                <th scope="col" class="col-1">{{ $t("results.startTime") }}</th>
-                <th scope="col" class="col-1 d-none d-md-table-cell">{{ $t("results.category") }}</th>
+                <th scope="col" class="col-1">
+                  {{ $t("results.startTime") }}
+                </th>
+                <th scope="col" class="col-1 d-none d-md-table-cell">
+                  {{ $t("results.category") }}
+                </th>
                 <th scope="col" class="col-1 d-none d-md-table-cell">
                   {{ $t("results.round") }}
                 </th>
-                <th scope="col" class="col-2"></th>
-                <th scope="col" class="col-2"></th>
-                <th scope="col" class="col-2 text-start">{{ $t("results.result") }}</th>
-                <th scope="col" class="col-1"> {{$t("results.report")}}</th>
+                <th scope="col" class="col-2" />
+                <th scope="col" class="col-2" />
+                <th scope="col" class="col-2 text-start">
+                  {{ $t("results.result") }}
+                </th>
+                <th scope="col" class="col-1">
+                  {{ $t("results.report") }}
+                </th>
               </tr>
               </thead>
               <tbody>
               <tr v-for="match in filterMatches" :key="match.id">
-                <td v-if="match.startTime !== null && match.startTime !== ''">{{ getTime(match) }}
+                <td v-if="match.startTime !== null && match.startTime !== ''">
+                  {{ getTime(match) }}
                 </td>
                 <td v-else>
-                  <datetime v-model="match.startTime" type="datetime" @close="setStartTime(match)"></datetime>
+                  <datetime v-model="match.startTime" type="datetime" @close="setStartTime(match)" />
                 </td>
-                <td class="d-none d-md-table-cell">{{ tryTranslateCategoryName(match.competitionCategory.name) }}</td>
+                <td class="d-none d-md-table-cell">
+                  {{ tryTranslateCategoryName(match.competitionCategory.name) }}
+                </td>
                 <td class="d-none d-md-table-cell">
                   <span v-if="match.matchType === 'GROUP'"> {{ $t("results.group") + ' ' + match.groupOrRound }}</span>
                   <span v-else>{{ $t("round." + match.groupOrRound) }}</span>
                 </td>
-                <td class="text-start" :class="isPlayerOneWinner(match) ? 'fw-bold': ''">{{ getPlayerOne(match) }}</td>
-                <td class="text-start" :class="isPlayerTwoWinner(match) ? 'fw-bold': ''">{{ getPlayerTwo(match) }}</td>
+                <td class="text-start" :class="isPlayerOneWinner(match) ? 'fw-bold': ''">
+                  {{ getPlayerOne(match) }}
+                </td>
+                <td class="text-start" :class="isPlayerTwoWinner(match) ? 'fw-bold': ''">
+                  {{ getPlayerTwo(match) }}
+                </td>
                 <td v-if="match !== null && match.result.gameList.length > 0" class="text-start">
                   <p v-for="game in match.result.gameList" :key="game.id" class="pe-2 pb-0 d-inline">
                     {{ game.firstRegistrationResult }} - {{ game.secondRegistrationResult }}
-                  </p></td>
-                <td v-else></td>
+                  </p>
+                </td>
+                <td v-else />
                 <td>
                   <button type="button" class="btn btn-outline-primary" @click="selectMatch(match)">
                     <span v-if="match.result.gameList.length === 0">{{ $t("results.register") }}</span>
@@ -83,12 +102,11 @@
             <vue-final-modal v-model="showModal" classes="modal-container" content-class="modal-content">
               <register-result
                   :selected-match="getMatchCopy()"
-                  v-on:close="hideModal"
-                  v-on:closeAndUpdate="hideModalAndUpdate"
-                  v-on:walkover="onWalkover"></register-result>
+                  @close="hideModal"
+                  @closeAndUpdate="hideModalAndUpdate"
+                  @walkover="onWalkover" />
             </vue-final-modal>
           </div>
-
         </div>
         <div v-if="matches.length === 0">
           <p>
@@ -213,10 +231,22 @@ export default {
         for (let i = 0; i < this.matches.length; i++) {
           if (this.matches[i].id === matchId) {
             this.$set(this.matches, i, res.data)
+            this.updateMatchesIfAllMatchesPlayedInRound(this.matches[i])
           }
         }
       })
       this.hideModal()
+    },
+    updateMatchesIfAllMatchesPlayedInRound(match) {
+      if (match.matchType === "PLAYOFF") {
+        let round = match.groupOrRound;
+        let competitionCategoryId = match.competitionCategory.id
+        let matchesInSameRoundAndCategory = this.matches.filter(m => m.groupOrRound === round && m.competitionCategory.id === competitionCategoryId)
+        let allMatchesPlayedInRound = matchesInSameRoundAndCategory.every(m => m.winner.length > 0)
+        if (allMatchesPlayedInRound) {
+          this.getMatches()
+        }
+      }
     },
     onWalkover() {
       this.getMatches()
