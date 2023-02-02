@@ -195,14 +195,7 @@ export default {
         this.$toasted.error(this.$tc("toasts.error.general.save")).goAway(5000)
       })
     },
-    validateSubmission() {
-      return true
-    },
     saveResults() {
-      if (!this.validateSubmission()) {
-        return
-      }
-
       let resultsToSubmit = this.setList.filter(result => this.isNonEmptyResult(result))
 
       ResultService.updateFullMatchResult(this.competition.id, this.selectedMatch.id, {gameList: resultsToSubmit})
