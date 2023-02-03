@@ -1,30 +1,36 @@
 <template>
   <div class="modal__content">
-    <i class="modal__close fas fa-times clickable" @click="$emit('close')"></i>
-    <div class="container-fluid p-md-5 p-sm-3 p-1 light-grey" v-if="selectedMatch != null">
+    <i class="modal__close fas fa-times clickable" @click="$emit('close')" />
+    <div v-if="selectedMatch != null" class="container-fluid p-md-5 p-sm-3 p-1 light-grey">
       <div id="player1" class="row">
         <div class="col-1 text-start">
-          <p class="fw-bold">{{$t("results.games")}}</p>
+          <p class="fw-bold">
+            {{ $t("results.games") }}
+          </p>
         </div>
         <div class="col-4">
-          <p class="fw-bold"> {{ getPlayerOne(selectedMatch) }}
+          <p class="fw-bold">
+            {{ getPlayerOne(selectedMatch) }}
             <br>
             <span class="fs-6 fw-light fst-italic clickable"
                   @click="giveWalkover(selectedMatch.competitionCategory.id, 'PLAYER_ONE')"> {{
                 $t("results.modal.walkover")
               }}
-         </span></p>
+         </span>
+          </p>
         </div>
         <div class="col-4">
-          <p class="fw-bold">{{ getPlayerTwo(selectedMatch) }}
+          <p class="fw-bold">
+            {{ getPlayerTwo(selectedMatch) }}
             <br>
             <span class="fs-6 fw-light fst-italic clickable"
                   @click="giveWalkover(selectedMatch.competitionCategory.id, 'PLAYER_TWO')">
               {{ $t("results.modal.walkover") }}
-         </span></p>
+         </span>
+          </p>
         </div>
       </div>
-      <div v-for="(game, index) in setList" class="row mb-3" :key="index">
+      <div v-for="(game, index) in setList" :key="index" class="row mb-3">
         <div class="d-flex align-items-center col-1">
           <span class="pe-4">{{ index + 1 }}</span>
         </div>
@@ -51,38 +57,45 @@
         <button type="button" class="btn btn-secondary" @click="$emit('closeAndUpdate', selectedMatch.id)">
           {{ $t("general.close") }}
         </button>
-        <button type="button" class="btn btn-primary" @click="saveResults">{{
+        <button type="button" class="btn btn-primary" @click="saveResults">
+          {{
             $t("results.modal.registerFinishedMatch")
           }}
         </button>
         <button type="button" class="btn btn-outline-warning" @click="savePartialResults">
           {{ $t("results.modal.savePartial") }}
         </button>
-        <button type="button" class="btn btn-outline-danger" @click="deleteResults">{{
+        <button type="button" class="btn btn-outline-danger" @click="deleteResults">
+          {{
             $t("results.modal.delete")
           }}
         </button>
       </div>
       <div v-if="error != null" class="p-2">
-        <p class="mb-1 text-danger"> {{ error }}</p>
+        <p class="mb-1 text-danger">
+          {{ error }}
+        </p>
         <span class="clickable text-decoration-underline text-primary"
               @click="$router.push('/classes')"> {{ $t("results.modal.linkToCategorySettings") }} </span>
       </div>
       <!-- Helper texts -->
       <div class="d-flex justify-content-center align-items-center clickable" @click="showInfo = !showInfo">
-        <p class="mb-0">{{ $t("results.modal.helperTexts") }}</p>
-        <i class="fas fa-info-circle mx-3"></i>
+        <p class="mb-0">
+          {{ $t("results.modal.helperTexts") }}
+        </p>
+        <i class="fas fa-info-circle mx-3" />
       </div>
-      <div class="modal-footer" v-if="showInfo">
-        <p class="text-start py-3">{{ $t("results.modal.info") }}
+      <div v-if="showInfo" class="modal-footer">
+        <p class="text-start py-3">
+          {{ $t("results.modal.info") }}
           <span class="clickable text-decoration-underline text-primary"
                 @click="$router.push('/classes')"> {{ $t("results.modal.linkToCategorySettings") }} </span>
         </p>
         <div>
           <definition-component :word="$t('results.modal.registerFinishedMatch')"
-                                :explanation="$t('results.modal.registerFinishedMatchExplanation')"></definition-component>
+                                :explanation="$t('results.modal.registerFinishedMatchExplanation')" />
           <definition-component :word="$t('results.modal.savePartial')"
-                                :explanation="$t('results.modal.savePartialExplanation')"></definition-component>
+                                :explanation="$t('results.modal.savePartialExplanation')" />
         </div>
       </div>
     </div>
@@ -145,8 +158,7 @@ export default {
         let numberOfSets
         if (this.shouldUseSpecialPlayoffRules(this.selectedMatch, this.matchRules)) {
           numberOfSets = this.matchRules.numberOfSetsInPlayoff
-        }
-        else {
+        } else {
           numberOfSets = this.matchRules.numberOfSets
         }
         while (counter < numberOfSets) {
@@ -161,7 +173,7 @@ export default {
       }
 
       if (Object.keys(this.rounds).includes(selectedMatch.groupOrRound) &&
-      Object.keys(this.rounds).includes(matchRules.differentNumberOfGamesFromRound)) {
+          Object.keys(this.rounds).includes(matchRules.differentNumberOfGamesFromRound)) {
         const differentRulesFromRound = this.rounds[matchRules.differentNumberOfGamesFromRound]
         const currentRound = this.rounds[selectedMatch.groupOrRound]
         if (currentRound >= differentRulesFromRound) {
@@ -175,31 +187,17 @@ export default {
       this.error = null
     },
     savePartialResults() {
-      const resultsToSubmit = []
-      this.setList.forEach(result => {
-        if (!(result.firstRegistrationResult === 0 || result.firstRegistrationResult === "" && result.secondRegistrationResult === 0 || result.secondRegistrationResult === "")) {
-          resultsToSubmit.push(result)
-        }
-      })
+      let resultsToSubmit = this.setList.filter(result => this.isNonEmptyResult(result))
+
       ResultService.addPartialResult(this.competition.id, this.selectedMatch.id, {gameList: resultsToSubmit}).then(() => {
         this.$toasted.success(this.$tc("toasts.temporaryResultRegistered")).goAway(3000)
       }).catch(() => {
         this.$toasted.error(this.$tc("toasts.error.general.save")).goAway(5000)
       })
     },
-    validateSubmission() {
-      return true
-    },
     saveResults() {
-      if (!this.validateSubmission()) {
-        return
-      }
-      const resultsToSubmit = []
-      this.setList.forEach(result => {
-        if (!(result.firstRegistrationResult === 0 || result.firstRegistrationResult === "" && result.secondRegistrationResult === 0 || result.secondRegistrationResult === "")) {
-          resultsToSubmit.push(result)
-        }
-      })
+      let resultsToSubmit = this.setList.filter(result => this.isNonEmptyResult(result))
+
       ResultService.updateFullMatchResult(this.competition.id, this.selectedMatch.id, {gameList: resultsToSubmit})
           .then(() => {
             this.$emit("closeAndUpdate", this.selectedMatch.id)
@@ -252,7 +250,18 @@ export default {
     },
     getPlayerOne: getPlayerOneWithClub,
     getPlayerTwo: getPlayerTwoWithClub,
-    errorHandler: generalErrorHandler
+    errorHandler: generalErrorHandler,
+
+    /**
+     * Return true if given game result is non-empty i.e. contains the empty string or is zero
+     */
+    isNonEmptyResult(result) {
+      return !(
+          (result.firstRegistrationResult.toString() === "0" && result.secondRegistrationResult.toString() === "0") ||
+          (result.firstRegistrationResult.toString() === "" && result.secondRegistrationResult.toString() === "0") ||
+          (result.firstRegistrationResult.toString() === "0" && result.secondRegistrationResult.toString() === "") ||
+          (result.firstRegistrationResult.toString() === "" && result.secondRegistrationResult.toString() === ""))
+    }
   }
 }
 </script>
