@@ -1,13 +1,12 @@
 <template>
   <main>
     <h1 class="p-4 fs-3 fs-md-1">
-      <i @click="$router.push('/draw')" class="fas fa-arrow-left" style="float: left"></i>
+      <i class="fas fa-arrow-left" style="float: left" @click="$router.push('/draw')" />
       {{ $t("schedule.main.heading") }}
-      <i @click="$router.push('/results')" class="fas fa-arrow-right" style="float: right"></i>
+      <i class="fas fa-arrow-right" style="float: right" @click="$router.push('/results')" />
     </h1>
     <div>
       <div class="row bg-grey">
-
         <!-- Main content -->
         <div id="main" class="col-lg-11 mx-auto ps-0 bg-grey">
           <!-- General information about competition -->
@@ -17,7 +16,8 @@
               <div class="row col-lg-11 mx-auto custom-card p-3 p-md-5">
                 <div>
                   <h3>{{ $t("schedule.generalInfo.startEnd") }}</h3>
-                  <p>{{ $t("schedule.generalInfo.startEndHelper") }}
+                  <p>
+                    {{ $t("schedule.generalInfo.startEndHelper") }}
                     <span> <router-link to="/overview">{{
                         $t("schedule.generalInfo.startEndHelperHere")
                       }}</router-link> </span>
@@ -27,10 +27,18 @@
                   <table class="table table-bordered">
                     <thead>
                     <tr>
-                      <th scope="col"> {{ $t("schedule.main.day") }}</th>
-                      <th scope="col"> {{ $t("schedule.generalInfo.startTime") }}</th>
-                      <th scope="col"> {{ $t("schedule.generalInfo.endTime") }}</th>
-                      <th scope="col"> {{ $t("schedule.generalInfo.nrTables") }}</th>
+                      <th scope="col">
+                        {{ $t("schedule.main.day") }}
+                      </th>
+                      <th scope="col">
+                        {{ $t("schedule.generalInfo.startTime") }}
+                      </th>
+                      <th scope="col">
+                        {{ $t("schedule.generalInfo.endTime") }}
+                      </th>
+                      <th scope="col">
+                        {{ $t("schedule.generalInfo.nrTables") }}
+                      </th>
                     </tr>
                     </thead>
                     <tbody>
@@ -39,18 +47,22 @@
                         {{ day.day }}
                       </td>
                       <td>
-                        <vue-timepicker v-model="day.startTime" input-width="8em"></vue-timepicker>
+                        <vue-timepicker v-model="day.startTime" input-width="8em" />
                       </td>
                       <td>
-                        <vue-timepicker v-model="day.endTime" input-width="8em"></vue-timepicker>
+                        <vue-timepicker v-model="day.endTime" input-width="8em" />
                       </td>
                       <td>
-                        <p v-if="getTablesForDay(day.day) === -1">{{
+                        <p v-if="getTablesForDay(day.day) === -1">
+                          {{
                             $t("schedule.generalInfo.cannotChangeTables")
-                          }}</p>
-                        <select v-if="getTablesForDay(day.day)  !== -1" id="table-selection" class="form-control"
+                          }}
+                        </p>
+                        <select v-if="getTablesForDay(day.day) !== -1" id="table-selection" class="form-control"
                                 @change="setTablesForDay(day.day, $event)">
-                          <option value="0"> {{ $t("schedule.generalInfo.availableTablesNotSet") }}</option>
+                          <option value="0">
+                            {{ $t("schedule.generalInfo.availableTablesNotSet") }}
+                          </option>
                           <option v-for="i in 100" :key="i" :value="i" :selected="getTablesForDay(day.day) === i">
                             {{ i }}
                           </option>
@@ -62,9 +74,12 @@
                 </div>
                 <!-- Average time per match -->
                 <div class="col-xl-4 mx-auto bg-grey shadow mb-2 pb-2">
-                  <h5 class="p-3 text-center">{{ $t("schedule.generalInfo.averageMatchTimeHeading") }}</h5>
+                  <h5 class="p-3 text-center">
+                    {{ $t("schedule.generalInfo.averageMatchTimeHeading") }}
+                  </h5>
                   <p>{{ $t("schedule.generalInfo.averageMatchTimeHelper") }}</p>
-                  <select id="match-length-selection" class="form-control mb-2" @change="setMinutesPerMatch($event)" v-model="scheduleMetadata.minutesPerMatch">
+                  <select id="match-length-selection" v-model="scheduleMetadata.minutesPerMatch"
+                          class="form-control mb-2" @change="setMinutesPerMatch($event)">
                     <option v-for="i in minutesPerMatchOptions" :key="i" :value="i">
                       {{ i + " " + $t("schedule.generalInfo.minutes") }}
                     </option>
@@ -72,7 +87,7 @@
                 </div>
                 <div v-if="metaOptionsChanged === true" class="bg-grey">
                   <div class="p-2">
-                    <button  type="button" class="btn btn-primary me-2" @click="saveChanges">
+                    <button type="button" class="btn btn-primary me-2" @click="saveChanges">
                       {{ $t("general.saveChanges") }}
                     </button>
                     <button type="button" class="btn btn-warning" @click="discardChanges">
@@ -80,7 +95,9 @@
                     </button>
                   </div>
                   <div class="d-flex justify-content-center">
-                    <p class="fs-6">{{$t("schedule.main.needSaving")}}</p>
+                    <p class="fs-6">
+                      {{ $t("schedule.main.needSaving") }}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -92,8 +109,12 @@
                  id="categories"
                  class="row p-5 col-lg-11 mx-auto custom-card">
               <div>
-                <h3 class="py-4">{{ $t("schedule.main.categoryStartTimes") }}</h3>
-                <p class="mx-auto py-2"> {{ $t("schedule.main.helperText") }}</p>
+                <h3 class="py-4">
+                  {{ $t("schedule.main.categoryStartTimes") }}
+                </h3>
+                <p class="mx-auto py-2">
+                  {{ $t("schedule.main.helperText") }}
+                </p>
               </div>
               <div class="table-responsive-md my-4">
                 <table class="table table-bordered">
@@ -114,9 +135,7 @@
                     <th>
                       {{ $t("schedule.main.tables") }}
                     </th>
-                    <th>
-
-                    </th>
+                    <th />
                   </tr>
                   </thead>
                   <tbody>
@@ -135,8 +154,8 @@
                       <td>
                         <select id="date-selection"
                                 v-model="categorySchedule.selectedDay"
-                                @change="noteCategorySchedulingAsChanged(categorySchedule)"
-                                class="form-control">
+                                class="form-control"
+                                @change="noteCategorySchedulingAsChanged(categorySchedule)">
                           <option value="">
                             {{ $t("schedule.main.notSelected") }}
                           </option>
@@ -176,7 +195,7 @@
                                      @change="noteCategorySchedulingAsChanged(categorySchedule)">
                               <label class="form-check-label" :for="'inlineCheckbox' + tableNr">{{ tableNr }}</label>
                             </div>
-                            <br/>
+                            <br>
                           </ul>
                         </div>
                         <div v-else>
@@ -184,18 +203,20 @@
                         </div>
                       </td>
                       <td>
-                        <button v-if="categorySchedule.categoryDTO.id + categorySchedule.selectedMatchType in changedCategories"
-                           class="btn btn-outline-primary me-4" @click="checkAndSubmitForScheduling(categorySchedule)">{{ $t("schedule.main.makeSchedule") }}
+                        <button
+                            v-if="categorySchedule.categoryDTO.id + categorySchedule.selectedMatchType in changedCategories"
+                            class="btn btn-outline-primary me-4" @click="checkAndSubmitForScheduling(categorySchedule)">
+                          {{ $t("schedule.main.makeSchedule") }}
                         </button>
                         <i v-if="categorySchedule.selectedTables.length >= 1"
-                           class="fas fa-trash fs-4 me-2 clickable" @click="resetCompetitionCategory(categorySchedule)"></i>
+                           class="fas fa-trash fs-4 me-2 clickable"
+                           @click="resetCompetitionCategory(categorySchedule)" />
                       </td>
                     </tr>
                   </template>
                   </tbody>
                 </table>
                 <div class="d-flex justify-content-end p-4">
-
                   <button type="button" class="btn btn-danger" @click="deleteSchedule">
                     {{ $t("schedule.main.delete") }}
                   </button>
@@ -205,8 +226,9 @@
           </div>
 
           <!-- See generated schedule -->
-          <div v-if="generatedScheduleContainer!== null && generatedScheduleContainer.excelScheduleList.length > 0 && metaOptionsChanged === false"
-               class="col-sm-11 mx-auto my-4 custom-card p-1">
+          <div
+              v-if="generatedScheduleContainer!== null && generatedScheduleContainer.excelScheduleList.length > 0 && metaOptionsChanged === false"
+              class="col-sm-11 mx-auto my-4 custom-card p-1">
             <!-- Select date -->
             <div>
               <h4> {{ $t("schedule.main.generatedSchedule") }}</h4>
@@ -231,8 +253,10 @@
               <table class="table table-bordered">
                 <thead>
                 <tr>
-                  <th></th>
-                  <th :colspan="selectedGeneratedSchedule.scheduleItemList.length">{{ $t("schedule.main.table") }}</th>
+                  <th />
+                  <th :colspan="selectedGeneratedSchedule.scheduleItemList.length">
+                    {{ $t("schedule.main.table") }}
+                  </th>
                 </tr>
                 <tr>
                   <th>Tid</th>
@@ -245,8 +269,9 @@
                 <tr v-for="time in selectedGeneratedSchedule.validStartTimes" :key="time">
                   <td>{{ getHoursMinutes(new Date(time)) }}</td>
                   <td v-for="item in selectedGeneratedSchedule.scheduleItemList"
+                      :key="item.tableNumber"
                       :style="{backgroundColor: colorCategoryMap[getCategoryAtTableTime(item.tableNumber, time, false)]}"
-                      :key="item.tableNumber" style="font-size: 80%">
+                      style="font-size: 80%">
                     {{ getCategoryAtTableTime(item.tableNumber, time, true) }}
                   </td>
                 </tr>
@@ -275,7 +300,7 @@ import ScheduleMetadataService from "@/common/api-services/schedule/schedule-met
 import CategoryService from "@/common/api-services/category.service";
 import ScheduleGeneralService from "@/common/api-services/schedule/schedule-general.service";
 import scheduleGeneralService from "@/common/api-services/schedule/schedule-general.service";
-import { tryTranslateCategoryName } from "@/common/util"
+import {tryTranslateCategoryName} from "@/common/util"
 
 export default {
   name: "Schedule",
@@ -358,10 +383,10 @@ export default {
       if (undefinedOrNull(categorySchedule) ||
           undefinedOrNullOrEmpty(categorySchedule.selectedDay) ||
           undefinedOrNullOrEmpty(categorySchedule.selectedStartTime) ||
-      categorySchedule.selectedTables.length < 1) {
+          categorySchedule.selectedTables.length < 1) {
         this.$toasted.info(this.$t("validations.allRequired")).goAway(4000)
       } else {
-        this.checkIfTimeAlreadyBooked(categorySchedule)
+        this.notifyUserIfCollisionsInSchedule(categorySchedule)
         const startTime = categorySchedule.selectedDay + 'T' + this.getTime(categorySchedule.selectedStartTime) + 'Z'
         const categorySpec = {
           "mode": "APPEND",
@@ -383,12 +408,18 @@ export default {
       }
     },
     // Checks if timeslot is booked and if so issues a warning. User can still proceed.
-    checkIfTimeAlreadyBooked(categorySchedule) {
+    notifyUserIfCollisionsInSchedule(categorySchedule) {
+      let collisionFound = this.checkForCollisionInSchedule(categorySchedule)
+
+      if (collisionFound) {
+        this.$toasted.info(this.$tc("toasts.scheduleCollision")).goAway(8000)
+      }
+    },
+    checkForCollisionInSchedule(categorySchedule) {
       for (let i = 0; i < this.generatedScheduleContainer.excelScheduleList.length; i++) {
         const currentScheduleDay = this.generatedScheduleContainer.excelScheduleList[0]
         const desiredStartTime = categorySchedule.selectedDay + ' ' + this.getTime(categorySchedule.selectedStartTime)
 
-        let collisionFound = false
         for (let j = 0; j < currentScheduleDay.scheduleItemList.length; j++) {
           const scheduleItem = currentScheduleDay.scheduleItemList[j]
           if (!categorySchedule.selectedTables.includes(scheduleItem.tableNumber)) {
@@ -398,16 +429,13 @@ export default {
             const currentMatch = scheduleItem.matchesAtTable[k]
             if (currentMatch.startTime === desiredStartTime) {
               if (currentMatch.category.id !== categorySchedule.categoryDTO.id) {
-                collisionFound = true
-                break
+                return true
               }
             }
           }
         }
-        if (collisionFound) {
-          this.$toasted.info(this.$tc("toasts.scheduleCollision")).goAway(8000)
-        }
       }
+      return false
     },
     resetCompetitionCategory(categorySchedule) {
       scheduleGeneralService.clearCategory(this.competition.id, categorySchedule.categoryDTO.id, categorySchedule.selectedMatchType).then(() => {
