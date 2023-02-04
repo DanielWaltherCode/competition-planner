@@ -66,10 +66,18 @@ class TestScheduleDailyTimes(
 
     @Test
     fun getDailyStartEndForCompetition() {
-        // This should be registered already when competition is added
+        // Act
         val dailyStartEnd = dailyStartEndService.getDailyStartAndEndForWholeCompetition(competitionId)
+
+        // Assert
         Assertions.assertNotNull(dailyStartEnd)
         Assertions.assertTrue(dailyStartEnd.dailyStartEndList.isNotEmpty())
+
+        val sorted = dailyStartEnd.dailyStartEndList.sortedBy { it.day }
+        Assertions.assertEquals(sorted, dailyStartEnd.dailyStartEndList, "StartEndList was not sorted")
+
+        val sortedAvailableDays = dailyStartEnd.availableDays.sorted()
+        Assertions.assertEquals(sortedAvailableDays, dailyStartEnd.availableDays, "Available days was not sorted")
     }
 
     @Test
