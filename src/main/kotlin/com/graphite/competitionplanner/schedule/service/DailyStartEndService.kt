@@ -60,8 +60,8 @@ class DailyStartEndService(
 
     fun getDailyStartAndEndForWholeCompetition(competitionId: Int): DailyStartAndEndWithOptionsDTO {
         val records = scheduleRepository.getDailyStartAndEndForCompetition(competitionId)
-        val startEndDTOList = records.map { dailyStartEndRecordToDTO(it) }
-        return DailyStartAndEndWithOptionsDTO(startEndDTOList.sortedBy { it.day }, startEndDTOList.map { it.day })
+        val startEndDTOList = records.map { dailyStartEndRecordToDTO(it) }.sortedBy { it.day }
+        return DailyStartAndEndWithOptionsDTO(startEndDTOList, startEndDTOList.map { it.day })
     }
 
 
