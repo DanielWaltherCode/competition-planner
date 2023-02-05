@@ -6,15 +6,17 @@ import com.graphite.competitionplanner.common.repository.BaseRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.*
-import com.graphite.competitionplanner.draw.interfaces.*
+import com.graphite.competitionplanner.draw.interfaces.CompetitionCategoryDrawDTO
+import com.graphite.competitionplanner.draw.interfaces.ICompetitionDrawRepository
+import com.graphite.competitionplanner.draw.interfaces.RegistrationSeedDTO
 import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.registration.domain.asInt
 import com.graphite.competitionplanner.tables.records.*
 import org.jetbrains.annotations.NotNull
 import org.jooq.DSLContext
-import org.springframework.stereotype.Repository
 import org.springframework.context.annotation.Lazy
+import org.springframework.stereotype.Repository
 
 @Repository
 class CompetitionDrawRepository(
@@ -48,6 +50,7 @@ class CompetitionDrawRepository(
                 is CupDrawSpec -> storeCupDraw(draw)
                 is PoolAndCupDrawSpec -> storePoolAndCupDraw(draw)
                 is PoolDrawSpec -> storePoolDraw(draw)
+                is PoolAndCupDrawWithBPlayoffSpec -> storePoolAndCupDrawWithBPlayoff(draw)
             }
         }
         return get(draw.competitionCategoryId)
@@ -132,6 +135,10 @@ class CompetitionDrawRepository(
                         }
 
         return poc1 + poc2
+    }
+
+    private fun storePoolAndCupDrawWithBPlayoff(draw: PoolAndCupDrawWithBPlayoffSpec) {
+
     }
 
     override fun getPool(competitionCategoryId: Int, poolName: String): PoolRecord {

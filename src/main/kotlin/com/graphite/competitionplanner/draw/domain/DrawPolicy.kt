@@ -24,7 +24,7 @@ sealed class DrawPolicy(
                     DrawType.POOL_ONLY -> PoolOnlyDrawPolicy(competitionCategory)
                     DrawType.CUP_ONLY -> CupDrawPolicy(competitionCategory)
                     DrawType.POOL_AND_CUP -> PoolAndCupDrawPolicy(PoolOnlyDrawPolicy(competitionCategory), CupDrawPolicy(competitionCategory), competitionCategory)
-                    DrawType.POOL_AND_CUP_WITH_B_PLAY_OFF -> PoolAndCupWithBPlayoffsDrawPolicy(competitionCategory)
+                    DrawType.POOL_AND_CUP_WITH_B_PLAY_OFF -> PoolAndCupWithBPlayoffsDrawPolicy(PoolOnlyDrawPolicy(competitionCategory), competitionCategory)
                 }
             }
         }
@@ -691,13 +691,16 @@ class PoolOnlyDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPoli
     }
 }
 
-class PoolAndCupWithBPlayoffsDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(competitionCategory) {
+class PoolAndCupWithBPlayoffsDrawPolicy(
+    private val poolDrawPolicy: PoolOnlyDrawPolicy,
+    competitionCategory: CompetitionCategoryDTO
+) : DrawPolicy(competitionCategory) {
     override fun createDraw(registrations: List<RegistrationSeedDTO>): CompetitionCategoryDrawSpec {
-        TODO("Not yet implemented")
+        return PoolAndCupDrawWithBPlayoffSpec(competitionCategory.id, listOf(), listOf())
     }
 
     override fun calculateNumberOfSeeds(numberOfRegistrations: Int): Int {
-        TODO("Not yet implemented")
+        return poolDrawPolicy.calculateNumberOfSeeds(numberOfRegistrations)
     }
 
     override fun throwExceptionIfNotEnoughRegistrations(registrations: List<RegistrationSeedDTO>) {
