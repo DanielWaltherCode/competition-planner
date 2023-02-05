@@ -24,6 +24,8 @@ sealed class DrawPolicy(
                     DrawType.POOL_ONLY -> PoolOnlyDrawPolicy(competitionCategory)
                     DrawType.CUP_ONLY -> CupDrawPolicy(competitionCategory)
                     DrawType.POOL_AND_CUP -> PoolAndCupDrawPolicy(PoolOnlyDrawPolicy(competitionCategory), CupDrawPolicy(competitionCategory), competitionCategory)
+                    // TODO: Should be another policy.
+                    DrawType.POOL_AND_CUP_WITH_B_PLAY_OFF -> PoolAndCupDrawPolicy(PoolOnlyDrawPolicy(competitionCategory), CupDrawPolicy(competitionCategory), competitionCategory)
                 }
             }
         }

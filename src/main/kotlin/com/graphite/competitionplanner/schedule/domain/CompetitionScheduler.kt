@@ -12,11 +12,6 @@ import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.schedule.api.ScheduleCategoryContainerDTO
 import com.graphite.competitionplanner.schedule.api.ScheduleCategoryDTO
-import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleDTO
-import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleDTOContainer
-import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleItemDTO
-import com.graphite.competitionplanner.schedule.interfaces.ExcelScheduleMatchDTO
-import com.graphite.competitionplanner.schedule.interfaces.ScheduleSettingsDTO
 import com.graphite.competitionplanner.schedule.interfaces.*
 import com.graphite.competitionplanner.schedule.service.AvailableTablesService
 import org.springframework.stereotype.Component
@@ -395,6 +390,7 @@ class CompetitionScheduler(
             DrawType.CUP_ONLY -> listOf(MatchType.PLAYOFF)
             DrawType.POOL_ONLY -> listOf(MatchType.GROUP)
             DrawType.POOL_AND_CUP -> listOf(MatchType.GROUP, MatchType.PLAYOFF)
+            DrawType.POOL_AND_CUP_WITH_B_PLAY_OFF -> listOf(MatchType.GROUP, MatchType.PLAYOFF, MatchType.B_PLAYOFF)
         }
     }
 

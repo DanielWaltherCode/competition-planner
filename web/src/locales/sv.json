@@ -143,7 +143,8 @@
     "drawTypes": {
       "POOL_ONLY": "Enbart gruppspel",
       "CUP_ONLY": "Bara cupspel",
-      "POOL_AND_CUP": "Grupper med cupslutspel"
+      "POOL_AND_CUP": "Grupper med endast A-slutspel",
+      "POOL_AND_CUP_WITH_B_PLAY_OFF": "Grupper med A- och B-slutspel"
     },
     "drawStrategy": "Lottningsstrategi",
     "drawStrategies": {
@@ -292,6 +293,7 @@
       "day": "Speldag",
       "GROUP": "Pool",
       "PLAYOFF": "Slutspel",
+      "B_PLAYOFF": "B-slutspel",
       "notSelected": "Inte valt",
       "startTime": "Önskad starttid",
       "helpMe": "Välj något åt mig",
