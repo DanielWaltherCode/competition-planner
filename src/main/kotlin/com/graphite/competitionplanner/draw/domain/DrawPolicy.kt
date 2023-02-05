@@ -696,7 +696,8 @@ class PoolAndCupWithBPlayoffsDrawPolicy(
     competitionCategory: CompetitionCategoryDTO
 ) : DrawPolicy(competitionCategory) {
     override fun createDraw(registrations: List<RegistrationSeedDTO>): CompetitionCategoryDrawSpec {
-        return PoolAndCupDrawWithBPlayoffSpec(competitionCategory.id, listOf(), listOf())
+        val pools: List<Pool> = (poolDrawPolicy.createDraw(registrations) as PoolDrawSpec).pools
+        return PoolAndCupDrawWithBPlayoffSpec(competitionCategory.id, pools)
     }
 
     override fun calculateNumberOfSeeds(numberOfRegistrations: Int): Int {
