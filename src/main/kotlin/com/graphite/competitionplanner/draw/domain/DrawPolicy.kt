@@ -24,8 +24,7 @@ sealed class DrawPolicy(
                     DrawType.POOL_ONLY -> PoolOnlyDrawPolicy(competitionCategory)
                     DrawType.CUP_ONLY -> CupDrawPolicy(competitionCategory)
                     DrawType.POOL_AND_CUP -> PoolAndCupDrawPolicy(PoolOnlyDrawPolicy(competitionCategory), CupDrawPolicy(competitionCategory), competitionCategory)
-                    // TODO: Should be another policy.
-                    DrawType.POOL_AND_CUP_WITH_B_PLAY_OFF -> PoolAndCupDrawPolicy(PoolOnlyDrawPolicy(competitionCategory), CupDrawPolicy(competitionCategory), competitionCategory)
+                    DrawType.POOL_AND_CUP_WITH_B_PLAY_OFF -> PoolAndCupWithBPlayoffsDrawPolicy(competitionCategory)
                 }
             }
         }
@@ -690,4 +689,19 @@ class PoolOnlyDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPoli
     private fun generateMatchesFor(registration: Registration.Real, others: List<Registration.Real>): List<PoolMatch> {
         return (1..others.size).map { registration }.zip(others).map { PoolMatch(it.first, it.second) }
     }
+}
+
+class PoolAndCupWithBPlayoffsDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPolicy(competitionCategory) {
+    override fun createDraw(registrations: List<RegistrationSeedDTO>): CompetitionCategoryDrawSpec {
+        TODO("Not yet implemented")
+    }
+
+    override fun calculateNumberOfSeeds(numberOfRegistrations: Int): Int {
+        TODO("Not yet implemented")
+    }
+
+    override fun throwExceptionIfNotEnoughRegistrations(registrations: List<RegistrationSeedDTO>) {
+        TODO("Not yet implemented")
+    }
+
 }
