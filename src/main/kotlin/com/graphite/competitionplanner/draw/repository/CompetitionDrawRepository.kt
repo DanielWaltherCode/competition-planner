@@ -138,7 +138,7 @@ class CompetitionDrawRepository(
     }
 
     private fun storePoolAndCupDrawWithBPlayoff(draw: PoolAndCupDrawWithBPlayoffSpec) {
-
+1
     }
 
     override fun getPool(competitionCategoryId: Int, poolName: String): PoolRecord {
