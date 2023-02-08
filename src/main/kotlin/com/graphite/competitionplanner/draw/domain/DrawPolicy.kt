@@ -705,6 +705,25 @@ class PoolAndCupWithBPlayoffsDrawPolicy(
     override fun createDraw(registrations: List<RegistrationSeedDTO>): CompetitionCategoryDrawSpec {
         val pools: List<Pool> = (poolDrawPolicy.createDraw(registrations) as PoolDrawSpec).pools
 
+        val numberOfSeededRegistrationsInPlayOff = when (pools.size) {
+            // Only consider number of pools when determining number of seeds in play off, even if snake-draw.
+            in 0 .. 1 -> {
+                0
+            }
+            in 2..3 -> {
+                2
+            }
+            in 4..7 -> {
+                4
+            }
+            in 8..15 -> {
+                8
+            }
+            else -> {
+                16
+            }
+        }
+
         val placeholdersA = pools.flatMap { group ->
             (1..competitionCategory.settings.playersToPlayOff).map { index ->
                 Registration.Placeholder(
@@ -729,13 +748,14 @@ class PoolAndCupWithBPlayoffsDrawPolicy(
         val placeholdersWithByeB: List<Registration> = placeholdersB.tryAddByes()
         val numberOfRoundsB: Int = ceil(log2(placeholdersWithByeB.size.toDouble())).toInt()
 
-        val firstRoundOfMatchesA: List<PlayOffMatch> = generatePlayOffMatchesForFirstRound(placeholdersWithByeA, 2 /*TODO: NOT HARD CODED*/).map {
+        val firstRoundOfMatchesA: List<PlayOffMatch> = generatePlayOffMatchesForFirstRound(placeholdersWithByeA, numberOfSeededRegistrationsInPlayOff).map {
             it.apply {
                 round = numberOfRoundsA.asRound()
             }
         }
 
-        val firstRoundOfMatchesB: List<PlayOffMatch> = generatePlayOffMatchesForFirstRound(placeholdersWithByeB, 2 /*TODO: NOT HARD CODED*/).map {
+        // TODO: How many should be considered seeded in B playoff? Do we care?
+        val firstRoundOfMatchesB: List<PlayOffMatch> = generatePlayOffMatchesForFirstRound(placeholdersWithByeB, 2).map {
             it.apply {
                 round = numberOfRoundsB.asRound()
             }

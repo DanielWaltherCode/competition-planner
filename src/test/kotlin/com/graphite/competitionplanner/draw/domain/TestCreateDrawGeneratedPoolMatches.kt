@@ -104,8 +104,14 @@ class TestCreateDrawGeneratedPoolMatches: TestBaseCreateDraw() {
             }
         }
 
+
+    private val inputTestData2 = listOf(
+        TestData(4, 6, 3),
+        TestData(5, 10, 4)
+    )
+
     @TestFactory
-    fun whenPoolAndCupWithBPlayoff() = inputTestData
+    fun whenPoolAndCupWithBPlayoff() = inputTestData2
         .map { testData ->
             DynamicTest.dynamicTest("When number of registrations are ${testData.numberOfRegistrations}") {
                 Mockito.reset(mockedCompetitionDrawRepository)
