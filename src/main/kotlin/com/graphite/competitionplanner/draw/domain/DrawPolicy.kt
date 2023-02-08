@@ -560,7 +560,7 @@ class PoolOnlyDrawPolicy(competitionCategory: CompetitionCategoryDTO) : DrawPoli
         }
     }
 
-    private fun numberOfPools(numberOfRegistrations: Int): Int {
+    fun numberOfPools(numberOfRegistrations: Int): Int {
         return ceil((numberOfRegistrations.toDouble() / competitionCategory.settings.playersPerGroup.toDouble())).toInt()
     }
 
@@ -752,7 +752,22 @@ class PoolAndCupWithBPlayoffsDrawPolicy(
     }
 
     override fun throwExceptionIfNotEnoughRegistrations(registrations: List<RegistrationSeedDTO>) {
-        TODO("Not yet implemented")
+        val numberOfPools = poolDrawPolicy.numberOfPools(registrations.size)
+
+        val numberOfRegistrationsInPlayoffA = numberOfPools * competitionCategory.settings.playersToPlayOff
+        val numberOfRegistrationInPlayoffB = registrations.size - numberOfRegistrationsInPlayoffA
+
+        if (numberOfRegistrationsInPlayoffA >= 2 && numberOfRegistrationInPlayoffB == 0) {
+            // Edge case. In theory, you can let all players in a group advance to play off A leaving play off B empty
+            return
+        }
+
+        if (numberOfRegistrationsInPlayoffA < 2 || numberOfRegistrationInPlayoffB < 2) {
+            throw BadRequestException(
+                BadRequestType.DRAW_NOT_ENOUGH_REGISTRATIONS,
+                "Failed to draw pool and cup. Too few people would have advanced to playoff."
+            )
+        }
     }
 
     /**
