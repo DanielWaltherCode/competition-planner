@@ -6,6 +6,7 @@ import com.graphite.competitionplanner.player.interfaces.PlayerSpec
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
 import com.graphite.competitionplanner.registration.service.PlayerCompetitionDTO
 import com.graphite.competitionplanner.registration.service.RegistrationService
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -58,7 +59,8 @@ class PlayerApi(
 
     @GetMapping
     fun getPlayersByClubId(@RequestParam clubId: Int): List<PlayerWithClubDTO> {
-        return listAllPlayersInClub.execute(clubId)
+        val players = listAllPlayersInClub.execute(clubId)
+        return players.sortedBy { it.lastName }
     }
 
     @DeleteMapping("/{playerId}")

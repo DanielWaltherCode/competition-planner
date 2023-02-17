@@ -12,6 +12,9 @@ const CompetitionService = {
     getCompetitions() {
         return Axios.get(`${RESOURCE_NAME}/for-club`, {withCredentials: true})
     },
+    getAll(startDate) {
+        return Axios.get(`${RESOURCE_NAME}`, {withCredentials: true, params: {startDate: startDate}})
+    },
     getDaysInCompetition(competitionId) {
         return Axios.get(`${RESOURCE_NAME}/${competitionId}/days`, {withCredentials: true})
     },

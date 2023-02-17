@@ -5,6 +5,9 @@
       <section id="hero" class="hero d-flex align-items-center">
         <div class="container">
           <div class="row">
+            <div v-if="isLoggedIn">
+              <router-link to="/externalRegistration">Anmäl till annan tävling</router-link>
+            </div>
             <div class="col-lg-6 d-flex flex-column justify-content-center">
               <h1 v-if="!isLoggedIn" data-aos="fade-up" >{{ $t("landing.heading.part1") }}</h1>
               <h2 v-if="isLoggedIn"> {{ getString("landing.heading.loggedInHelper") }}</h2>
@@ -224,6 +227,7 @@ export default {
     login() {
       UserService.login(this.username, this.password).then(res => {
         this.loginFailed = false
+        this.competition = "none"
         this.$store.commit("auth_success", res.data)
         UserService.getUser().then(res => {
           this.$store.commit("set_user", res.data)

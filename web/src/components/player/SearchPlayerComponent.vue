@@ -62,7 +62,7 @@ import {getFormattedDate} from "@/common/util";
 export default {
   name: "RegisterPlayerComponent",
   components: {Autocomplete},
-  props: ["clubs"],
+  props: ["withCompetition"],
   data() {
     return {
       playerNotFound: false,
@@ -79,14 +79,27 @@ export default {
       if (input.length < 1) {
         return [];
       }
-      return new Promise(resolve => {
-        PlayerService.searchAllPlayers(this.competition.id, input).then(res => {
-          this.playerNotFound = false
-          resolve(res.data)
-        }).catch(() => {
-          this.playerNotFound = true;
+      if (this.withCompetition) {
+        return new Promise(resolve => {
+          PlayerService.searchAllPlayersWithCompetition(this.competition.id, input).then(res => {
+            this.playerNotFound = false
+            resolve(res.data)
+          }).catch(() => {
+            this.playerNotFound = true;
+          })
         })
-      })
+      }
+      else {
+        return new Promise(resolve => {
+          PlayerService.searchPlayers(input).then(res => {
+            this.playerNotFound = false
+            resolve(res.data)
+          }).catch(() => {
+            this.playerNotFound = true;
+          })
+        })
+      }
+
     },
     getSearchResult(searchResult) {
       return searchResult.firstName + " " + searchResult.lastName + " " + searchResult.club.name
