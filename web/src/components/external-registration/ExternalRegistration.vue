@@ -74,7 +74,7 @@
                                            @player-found="playersToRegister.push($event)"></search-player-component>
 
                 </div>
-                <div v-else>
+                <div v-else class="py-3">
                   <i class="fas fa-caret-left clickable"
                      @click="removeFromRegister(playersToRegister[1])"/>
                   <input type="text" disabled :value="getFormattedPlayerName(playersToRegister[1])">
@@ -199,38 +199,42 @@ export default {
       })
     },
     registerPlayerSingles() {
-      this.playersToRegister.forEach(player => {
-        const registrationSpec = {
-          playerId: player.id,
-          competitionCategoryId: this.selectedCategory.id
+      if (confirm(this.$tc("confirm.registerPlayer"))) {
+        this.playersToRegister.forEach(player => {
+          const registrationSpec = {
+            playerId: player.id,
+            competitionCategoryId: this.selectedCategory.id
+          }
+
+          ExternalRegistrationService.registerPlayerSingles(registrationSpec).then(() => {
+            this.playersToRegister = []
+            this.getRegisteredPlayers()
+          }).catch(err => {
+            this.errorHandler(err.data)
+          })
+        })
+      }
+    },
+    registerDoublesPlayers() {
+      if (confirm(this.$tc("confirm.registerPlayer"))) {
+        if (this.playersToRegister.length !== 2) {
+          this.$toasted.error(this.$tc("toasts.player.doubleRegistrationError")).goAway(7000)
+          return;
         }
 
-        ExternalRegistrationService.registerPlayerSingles(registrationSpec).then(() => {
+        const registrationSpec = {
+          playerOneId: this.playersToRegister[0].id,
+          playerTwoId: this.playersToRegister[1].id,
+          competitionCategoryId: this.selectedCategory.id
+        }
+        ExternalRegistrationService.registerPlayerDoubles(registrationSpec).then(() => {
+          this.$toasted.success(this.$tc("toasts.player.added")).goAway(3000)
           this.playersToRegister = []
           this.getRegisteredPlayers()
         }).catch(err => {
           this.errorHandler(err.data)
         })
-      })
-    },
-    registerDoublesPlayers() {
-      if (this.playersToRegister.length !== 2) {
-        this.$toasted.error(this.$tc("toasts.player.doubleRegistrationError")).goAway(7000)
-        return;
       }
-
-      const registrationSpec = {
-        playerOneId: this.playersToRegister[0].id,
-        playerTwoId: this.playersToRegister[1].id,
-        competitionCategoryId: this.selectedCategory.id
-      }
-      ExternalRegistrationService.registerPlayerDoubles(registrationSpec).then(() => {
-        this.$toasted.success(this.$tc("toasts.player.added")).goAway(3000)
-        this.playersToRegister = []
-        this.getRegisteredPlayers()
-      }).catch(err => {
-        this.errorHandler(err.data)
-      })
     },
     getRegisteredPlayers() {
       ExternalRegistrationService.getRegisteredPlayersInCategoryForClub(this.selectedCategory.id, this.loggedInClub.id)
