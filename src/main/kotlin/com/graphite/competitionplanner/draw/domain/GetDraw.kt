@@ -2,9 +2,9 @@ package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.Tables.POOL
 import com.graphite.competitionplanner.Tables.POOL_TO_PLAYOFF_MAP
-import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.*
+import com.graphite.competitionplanner.match.domain.MatchType
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.match.service.MatchService
 import com.graphite.competitionplanner.player.interfaces.PlayerWithClubDTO
@@ -24,23 +24,32 @@ class GetDraw(
     fun execute(competitionCategoryId: Int): CompetitionCategoryDrawDTO {
         val matchesInCategory: List<MatchAndResultDTO> = matchService.getMatchesInCategory(competitionCategoryId)
 
-        val playOffMatches: List<MatchAndResultDTO> = matchesInCategory.filter { it.groupOrRound.isRound() }
+        val playOffMatches: List<MatchAndResultDTO> = matchesInCategory.filter { it.groupOrRound.isRound() && it.matchType == MatchType.PLAYOFF.name }
+        val playOffBMatches: List<MatchAndResultDTO> = matchesInCategory.filter { it.groupOrRound.isRound() && it.matchType == MatchType.B_PLAYOFF.name }
 
         // Front end assumes sorted list by order. TODO: Clean up and write tests
         val updatedPlayoffMatches: List<MatchAndResultDTO> =
             updatePlaceholderNamesInFirstRound(competitionCategoryId, playOffMatches).sortedBy { it.matchOrderNumber }
+        val updatedPlayoffBMatches: List<MatchAndResultDTO> =
+            updatePlaceholderNamesInFirstRound(competitionCategoryId, playOffBMatches).sortedBy { it.matchOrderNumber }
 
         val playoffRounds: List<PlayoffRoundDTO> = convertToPlayoffRound(updatedPlayoffMatches)
+        val playoffBRounds: List<PlayoffRoundDTO> = convertToPlayoffRound(updatedPlayoffBMatches)
+
         val groupDraws: List<GroupDrawDTO> =
             constructGroupDraw(matchesInCategory.filterNot { it.groupOrRound.isRound() })
+
         val playoffRoundsSorted = playoffRounds.sortedByDescending { p -> p.round }
+        val playoffBRoundsSorted = playoffBRounds.sortedByDescending { p -> p.round }
+
         val groupToPlayoffList: List<GroupToPlayoff> = getPoolToPlayoffList(competitionCategoryId)
 
         return CompetitionCategoryDrawDTO(
             competitionCategoryId,
             playoffRoundsSorted,
             groupDraws,
-            groupToPlayoffList
+            groupToPlayoffList,
+            playoffBRoundsSorted
         )
     }
 
