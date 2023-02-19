@@ -269,6 +269,14 @@
         "POINT_QUOTIENT": "Bollkvot",
         "DRAW": "Lottning"
       }
+    },
+    "playoff": {
+      "A": {
+        "name": "A-slutspel"
+      },
+      "B": {
+        "name": "B-slutspel"
+      }
     }
   },
   "schedule": {

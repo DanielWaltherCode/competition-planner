@@ -270,6 +270,14 @@
         "POINT_QUOTIENT": "Ball Quotient",
         "DRAW": "Draw"
       }
+    },
+    "playoff": {
+      "A": {
+        "name": "Playoff A"
+      },
+      "B": {
+        "name": "Playoff B"
+      }
     }
   },
   "schedule": {
