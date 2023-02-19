@@ -146,7 +146,6 @@ class TestAdvanceToPlayoff(
             service.addFinalMatchResult(it.id, resultSpec)
         }
 
-
         val drawAfterPoolCompleted = getDraw.execute(competitionCategory.id)
 
         // Assert that all players advanced to play off A or B
