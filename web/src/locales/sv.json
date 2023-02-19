@@ -432,6 +432,20 @@
       "toastSaveSuccess": "Betalningsuppgifter sparade"
     }
   },
+  "externalRegistration": {
+    "title": "Anmäl till extern tävling",
+    "pickCompetition": "Välj en tävling",
+    "pickCategory": "Välj en klass",
+    "secondTitle": "Anmäler till {category} ({competition})",
+    "playersInClub": "Spelare i {club} (ej anmälda)",
+    "toRegister": "Att anmäla",
+    "registered": "Redan anmälda",
+    "register": "Anmäl",
+    "thirdTitle": "Anmälda spelare i tävlingen",
+    "player": "Spelare",
+    "searchOtherClub": "Sök extern klubb",
+    "club": "Klubb"
+  },
   "admin": {
     "preamble": "Du behöver logga in som admin för att kunna se den här sidan",
     "sidebarTitle": "Hantera",
@@ -485,7 +499,8 @@
     "deleteDraw": "Är du säker på att du vill ta bort lottningen för klassen?",
     "deleteCategory": "Är du säker på att du vill ta bort klassen?",
     "deleteResult": "Är du säker på att du vill ta bort resultatet?",
-    "scheduleChange": "Ändringar här medför att all existerande schemaläggning tas bort. Är du säker på att du vill göra ändringar?"
+    "scheduleChange": "Ändringar här medför att all existerande schemaläggning tas bort. Är du säker på att du vill göra ändringar?",
+    "registerPlayer": "Registrera spelare till tävlingen. Anmälan kan inte tas bort utan att kontakta ansvarig klubb"
   },
   "errors": {
     "CATEGORY_CANNOT_DELETE_WITH_PLAYERS": "Kan inte ta bort en klass som har anmälda spelare",

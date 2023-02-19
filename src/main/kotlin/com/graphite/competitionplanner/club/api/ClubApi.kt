@@ -1,11 +1,10 @@
 package com.graphite.competitionplanner.club.api
 
 import com.graphite.competitionplanner.club.domain.*
-import com.graphite.competitionplanner.club.interfaces.ClubDTO
-import com.graphite.competitionplanner.club.interfaces.ClubSpec
-import com.graphite.competitionplanner.club.interfaces.PaymentInfoDTO
-import com.graphite.competitionplanner.club.interfaces.PaymentInfoSpec
+import com.graphite.competitionplanner.club.interfaces.*
 import com.graphite.competitionplanner.club.repository.ClubPaymentRepository
+import com.graphite.competitionplanner.user.service.UserDTO
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -49,5 +48,11 @@ class ClubApi(
         @RequestBody paymentInfoSpec: PaymentInfoSpec
     ): PaymentInfoDTO {
         return paymentRepository.update(paymentInfoId, clubId, paymentInfoSpec)
+    }
+
+    @GetMapping("/logged-in-club")
+    fun getLoggedInClubId(authentication: Authentication): ClubNoAddressDTO {
+        val principal = authentication.principal as UserDTO
+        return principal.clubNoAddressDTO
     }
 }

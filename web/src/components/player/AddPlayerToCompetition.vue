@@ -17,7 +17,9 @@
       <h2 class="p-3">
 {{ $t("player.addPlayerSingles") }}
 </h2>
-      <search-player-component ref="singles-search" class="justify-content-center" @clear-player="singlesPlayer = null"
+      <search-player-component ref="singles-search"
+                               :with-competition="true"
+                               class="justify-content-center" @clear-player="singlesPlayer = null"
                                @player-found="singlesPlayer = $event" />
       <div v-if="singlesPlayer !== null" class="row px-4">
         <div class="col-sm-4" />
@@ -53,14 +55,18 @@
 {{ $t("player.doublesPlayer1") }}
 </p>
       </div>
-      <search-player-component ref="double1" class="justify-content-center" @clear-player="doublesPlayer1 = null"
+      <search-player-component ref="double1"
+                               :with-competition="true"
+                               class="justify-content-center" @clear-player="doublesPlayer1 = null"
                                @player-found="doublesPlayer1 = $event" />
       <div class="d-flex justify-content-start px-4">
         <p class="mb-0">
 {{ $t("player.doublesPlayer2") }}
 </p>
       </div>
-      <search-player-component ref="double2" class="justify-content-center" @clear-player="doublesPlayer2 = null"
+      <search-player-component ref="double2"
+                               :with-competition="true"
+                               class="justify-content-center" @clear-player="doublesPlayer2 = null"
                                @player-found="doublesPlayer2 = $event" />
       <div v-if="doublesPlayer1 !== null && doublesPlayer2 !== null" class="row px-4 pb-4">
         <div class="col-sm-4" />

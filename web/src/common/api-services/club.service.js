@@ -21,6 +21,9 @@ const ClubService = {
     addClubForCompetition(competitionId, clubSpec) {
         return Axios.post(`${RESOURCE_NAME}/competition/${competitionId}`, clubSpec, {withCredentials: true})
     },
+    getLoggedInClub() {
+        return Axios.get(`${RESOURCE_NAME}/logged-in-club`, {withCredentials: true})
+    },
 }
 
 export default ClubService

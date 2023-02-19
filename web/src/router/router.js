@@ -20,6 +20,7 @@ import Admin from "@/components/admin/admin.vue";
 import NewClub from "@/components/admin/newClub.vue";
 import CompetitionAdmin from "@/components/admin/competitionAdmin.vue";
 import NewUser from "@/components/admin/newUser.vue";
+import ExternalRegistration from "@/components/external-registration/ExternalRegistration.vue";
 
 Vue.use(Router)
 
@@ -116,6 +117,10 @@ export default new Router({
                         component: CompetitionAdmin
                     },
                 ]
+            },
+            {
+                path: "/externalRegistration",
+                component: ExternalRegistration
             }
         ],
         scrollBehavior(to, from, savedPosition) {

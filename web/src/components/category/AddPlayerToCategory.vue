@@ -5,6 +5,7 @@
     <div class="row custom-card p-4" v-if="category.category.type === 'SINGLES'">
       <h2 class="p-3">{{ $t("categories.register") }}</h2>
       <search-player-component ref="singles-search" class="justify-content-center"
+                               :with-competition="true"
                                v-on:clear-player="singlesPlayer = null"
                                v-on:player-found="singlesPlayer = $event"></search-player-component>
       <div class="d-flex justify-content-end">
@@ -27,12 +28,16 @@
       <div class="d-flex justify-content-start px-4">
         <p class="mb-0">{{ $t("player.doublesPlayer1") }}</p>
       </div>
-      <search-player-component class="justify-content-center" ref="double1" v-on:clear-player="doublesPlayer1 = null"
+      <search-player-component class="justify-content-center"
+                               :with-competition="true"
+                               ref="double1" v-on:clear-player="doublesPlayer1 = null"
                                v-on:player-found="doublesPlayer1 = $event"></search-player-component>
       <div class="d-flex justify-content-start px-4">
         <p class="mb-0">{{ $t("player.doublesPlayer2") }}</p>
       </div>
-      <search-player-component class="justify-content-center" ref="double2" v-on:clear-player="doublesPlayer2 = null"
+      <search-player-component class="justify-content-center"
+                               :with-competition="true"
+                               ref="double2" v-on:clear-player="doublesPlayer2 = null"
                                v-on:player-found="doublesPlayer2 = $event"></search-player-component>
       <div class="d-flex justify-content-end">
         <button type="button" class="btn btn-primary" @click="registerDoublesPlayers">
@@ -77,7 +82,7 @@ export default {
   methods: {
     registerPlayerSingles() {
       if (this.singlesPlayer === null) {
-        this.$toasted.error(this.$tc("toasts.player.couldNotBeAddedToCompetition")).goAway(7000)
+        this.$toasted.error(this.$tc("toasts.player.couldNotBeAddedToCompetition")).goAway(5000)
         return;
       }
 
