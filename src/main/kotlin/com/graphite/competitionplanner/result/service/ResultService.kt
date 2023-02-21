@@ -127,7 +127,8 @@ class ResultService(
             return null
         }
 
-        val nextRound = this.playOff.filter { it.round < match.round }.maxByOrNull { it.round }!!
+        val playOff = this.getPlayoffMatchBelongsTo(match)
+        val nextRound = playOff.filter { it.round < match.round }.maxByOrNull { it.round }!!
         val nextOrderNumber = ceil(match.orderNumber / 2.0).toInt() // 1 -> 1, 2 -> 1, 3 -> 2, etc.
         return matchRepository.getMatch2(
             nextRound.matches.first { it.matchOrderNumber == nextOrderNumber }.id

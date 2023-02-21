@@ -8,6 +8,8 @@ import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.domain.CreateDraw
 import com.graphite.competitionplanner.draw.domain.GetDraw
+import com.graphite.competitionplanner.draw.interfaces.CompetitionCategoryDrawDTO
+import com.graphite.competitionplanner.draw.interfaces.PlayoffRoundDTO
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
@@ -155,6 +157,59 @@ class TestRemoveResult(
     }
 
     @Test
+    fun reverting_playoff_A_and_B_matches(){
+        // Setup
+        val club = newClub()
+        val competition = club.addCompetition()
+        val competitionCategory = competition.addCompetitionCategory(
+            DefaultCategory.MEN_1.name,
+            drawType = DrawType.POOL_AND_CUP_WITH_B_PLAY_OFF
+        )
+
+        val suffix = listOf("A", "B", "C", "D")
+        val players = suffix.map {
+            club.addPlayer("Player$it")
+        }
+
+        players.forEach { competitionCategory.registerPlayer(it) }
+
+        val draw = createDraw.execute(competitionCategory.id)
+
+        playAllPoolGames(draw)
+
+        // Play finals in each playoff
+        val gameResults = listOf(
+            GameSpec(1, 11, 0),
+            GameSpec(2, 11, 0),
+            GameSpec(3, 11, 0)
+        )
+        val finalA = draw.playOff.first().matches.first()
+        service.addFinalMatchResult(finalA.id, dataGenerator.newResultSpec(games = gameResults))
+
+        val finalB = draw.playOffB.first().matches.first()
+        service.addFinalMatchResult(finalB.id, dataGenerator.newResultSpec(games = gameResults))
+
+        // Act
+        service.deleteResults(finalA.id)
+        service.deleteResults(finalB.id)
+
+        // Assert
+        val drawAfterDeletedResult = getDraw.execute(competitionCategory.id)
+
+        val finalMatchA = drawAfterDeletedResult.playOff.first().matches.first()
+        Assertions.assertTrue(finalMatchA.firstPlayer.first().id > 0, "First player was reset")
+        Assertions.assertTrue(finalMatchA.secondPlayer.first().id > 0, "Second player was reset")
+        Assertions.assertTrue(finalMatchA.winner.isEmpty(), "Winner was not reset")
+        Assertions.assertTrue(finalMatchA.result.gameList.isEmpty(), "Result was not reset")
+
+        val finalMatchB = drawAfterDeletedResult.playOff.first().matches.first()
+        Assertions.assertTrue(finalMatchB.firstPlayer.first().id > 0, "First player was reset")
+        Assertions.assertTrue(finalMatchB.secondPlayer.first().id > 0, "Second player was reset")
+        Assertions.assertTrue(finalMatchB.winner.isEmpty(), "Winner was not reset")
+        Assertions.assertTrue(finalMatchB.result.gameList.isEmpty(), "Result was not reset")
+    }
+
+    @Test
     fun whenRemovingFinalPlayoffMatchResult() {
         // Setup
         val club = newClub()
@@ -250,5 +305,95 @@ class TestRemoveResult(
             "First player was not reset to be a Placeholder")
         Assertions.assertTrue(finalMatch.secondPlayer.first().id == Registration.Placeholder().asInt(),
             "Second player was not reset to be a Placeholder")
+    }
+
+    @Test
+    fun whenRemovingPreviousRoundResultInPlayoffB() {
+        // Setup
+        val club = newClub()
+        val competition = club.addCompetition()
+        val competitionCategory = competition.addCompetitionCategory(
+            DefaultCategory.MEN_1.name,
+            drawType = DrawType.POOL_AND_CUP_WITH_B_PLAY_OFF)
+
+        val suffix = listOf("A", "B", "C", "D", "E", "F", "G", "H")
+        val players = suffix.map {
+            club.addPlayer("Player$it")
+        }
+
+        players.forEach { competitionCategory.registerPlayer(it) }
+
+        val draw = createDraw.execute(competitionCategory.id)
+
+        // Play all matches up until finals
+        playAllPoolGames(draw)
+        playAllSemifinals(draw.playOff)
+        playAllSemifinals(draw.playOffB)
+
+        // Act
+        removeResultsInSemifinals(draw.playOff)
+        removeResultsInSemifinals(draw.playOffB)
+
+        // Assert
+        val drawAfterDeletedResult = getDraw.execute(competitionCategory.id)
+        assertAllSemifinalsWasRevertedProperly(drawAfterDeletedResult.playOff)
+        assertAllSemifinalsWasRevertedProperly(drawAfterDeletedResult.playOffB)
+
+        assertFinalWasRevertedProperly(drawAfterDeletedResult.playOff)
+        assertFinalWasRevertedProperly(drawAfterDeletedResult.playOffB)
+    }
+
+    private fun assertFinalWasRevertedProperly(playOff: List<PlayoffRoundDTO>) {
+        val finalMatch = playOff.first { it.round == Round.FINAL }.matches.first()
+        Assertions.assertTrue(finalMatch.firstPlayer.first().id == Registration.Placeholder().asInt() ,
+            "First player was not reset to be a Placeholder")
+        Assertions.assertTrue(finalMatch.secondPlayer.first().id == Registration.Placeholder().asInt(),
+            "Second player was not reset to be a Placeholder")
+    }
+
+    private fun assertAllSemifinalsWasRevertedProperly(playOff: List<PlayoffRoundDTO>) {
+        playOff.filter { it.round == Round.SEMI_FINAL }.forEach { round ->
+            round.matches.forEach { semifinal ->
+                Assertions.assertTrue(semifinal.firstPlayer.first().id > 0, "First player was reset")
+                Assertions.assertTrue(semifinal.secondPlayer.first().id > 0, "Second player was reset")
+                Assertions.assertTrue(semifinal.winner.isEmpty(), "Winner was not reset")
+                Assertions.assertTrue(semifinal.result.gameList.isEmpty(), "Result was not reset")
+            }
+        }
+    }
+
+    private fun removeResultsInSemifinals(playOff: List<PlayoffRoundDTO>) {
+        playOff.filter { it.round == Round.SEMI_FINAL }.forEach { round ->
+            round.matches.forEach { match ->
+                service.deleteResults(match.id)
+            }
+        }
+    }
+
+    private fun playAllSemifinals(playOff: List<PlayoffRoundDTO>) {
+        val gameResults = listOf(
+            GameSpec(1, 11, 0),
+            GameSpec(2, 11, 0),
+            GameSpec(3, 11, 0))
+
+        playOff.filter { it.round == Round.SEMI_FINAL }.forEach { round ->
+            round.matches.forEach { match ->
+                service.addFinalMatchResult(match.id, dataGenerator.newResultSpec(games = gameResults))
+            }
+        }
+    }
+
+    private fun playAllPoolGames(draw: CompetitionCategoryDrawDTO) {
+        val poolMatches = draw.groups.flatMap { it.matches }
+
+        val gameResults = listOf(
+            GameSpec(1, 11, 0),
+            GameSpec(2, 11, 0),
+            GameSpec(3, 11, 0)
+        )
+
+        for (match in poolMatches) {
+            service.addFinalMatchResult(match.id, dataGenerator.newResultSpec(games = gameResults))
+        }
     }
 }
