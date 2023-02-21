@@ -191,6 +191,15 @@ class ResultService(
 
 
     private fun removeAnyFinalGroupResult(match: PoolMatch) {
+        val draw = competitionDrawRepository.get(match.competitionCategoryId)
+        val playoffHasStarted = draw.playOff.first().matches.any { it.winner.isNotEmpty() } ||
+                    draw.playOffB.first().matches.any { it.winner.isNotEmpty() }
+
+        if (playoffHasStarted) {
+            throw BadRequestException(BadRequestType.RESULT_CANNOT_DELETE,
+                "Cannot delete result from pool match when play-off has started. Remove all play-off results first.")
+        }
+
         dslContext.deleteFrom(POOL_RESULT)
             .where(POOL_RESULT.POOL_ID.`in`(
                 dslContext

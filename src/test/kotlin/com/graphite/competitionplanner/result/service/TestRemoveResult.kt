@@ -3,6 +3,8 @@ package com.graphite.competitionplanner.result.service
 import com.graphite.competitionplanner.category.domain.DefaultCategory
 import com.graphite.competitionplanner.category.interfaces.ICategoryRepository
 import com.graphite.competitionplanner.club.interfaces.IClubRepository
+import com.graphite.competitionplanner.common.exception.BadRequestException
+import com.graphite.competitionplanner.common.exception.BadRequestType
 import com.graphite.competitionplanner.competition.interfaces.ICompetitionRepository
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
@@ -305,6 +307,36 @@ class TestRemoveResult(
             "First player was not reset to be a Placeholder")
         Assertions.assertTrue(finalMatch.secondPlayer.first().id == Registration.Placeholder().asInt(),
             "Second player was not reset to be a Placeholder")
+    }
+
+    @Test
+    fun should_not_be_able_to_remove_pool_results_if_playoff_has_started() {
+        // Setup
+        val club = newClub()
+        val competition = club.addCompetition()
+        val competitionCategory = competition.addCompetitionCategory(
+            DefaultCategory.MEN_1.name,
+            drawType = DrawType.POOL_AND_CUP_WITH_B_PLAY_OFF)
+
+        val suffix = listOf("A", "B", "C", "D", "E", "F", "G", "H")
+        val players = suffix.map {
+            club.addPlayer("Player$it")
+        }
+
+        players.forEach { competitionCategory.registerPlayer(it) }
+
+        val draw = createDraw.execute(competitionCategory.id)
+
+        playAllPoolGames(draw)
+        playAllSemifinals(draw.playOff)
+
+        // Act
+        val poolMatch = draw.groups.first().matches.first()
+        val exception = Assertions.assertThrows(BadRequestException::class.java) {
+            service.deleteResults(poolMatch.id)
+        }
+        Assertions.assertEquals(BadRequestType.RESULT_CANNOT_DELETE, exception.exceptionType)
+        Assertions.assertEquals("Cannot delete result from pool match when play-off has started. Remove all play-off results first.", exception.errorMessage)
     }
 
     @Test
