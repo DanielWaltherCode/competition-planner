@@ -208,7 +208,12 @@ class ResultService(
         val t = s.filter { it.groupOrRound == groupName }
         val registrationIdsInGroup = t.flatMap { listOf(it.firstRegistrationId, it.secondRegistrationId) }.distinct()
 
-        draw.playOff.forEach {
+        draw.playOff.reset(registrationIdsInGroup)
+        draw.playOffB.reset(registrationIdsInGroup)
+    }
+
+    fun List<PlayoffRoundDTO>.reset(registrationIdsInGroup: List<Int>) {
+        this.forEach {
             it.matches.forEach { m ->
                 val playoffMatch = matchRepository.getMatch2(m.id)
                 var resetResult = false

@@ -18,9 +18,7 @@ import com.graphite.competitionplanner.result.api.GameSpec
 import com.graphite.competitionplanner.result.interfaces.IResultRepository
 import com.graphite.competitionplanner.util.BaseRepositoryTest
 import com.graphite.competitionplanner.util.SetupTestData
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
@@ -55,74 +53,105 @@ class TestRemoveResult(
         setupTestData.trySetupByeAndPlaceHolder()
     }
 
+    private val inputTestData = listOf(
+        DrawType.POOL_AND_CUP_WITH_B_PLAY_OFF,
+        DrawType.POOL_AND_CUP)
+
     /**
      * This test works by playing all the matches except one in the pool stage. Then we record the state of the
      * draw at that moment. Followed by playing last game and immediately removing that game's result. Then
      * we expect the state of the draw to be equal to what we initially recorded.
      */
-    @Test
-    fun whenPlayoffHasJustStarted() {
-        // Setup
-        val club = newClub()
-        val competition = club.addCompetition()
-        val competitionCategory = competition.addCompetitionCategory(
-            DefaultCategory.MEN_1.name,
-            drawType = DrawType.POOL_AND_CUP)
+    @TestFactory
+    fun whenPlayoffHasJustStarted() = inputTestData
+        .map { drawType ->
+            DynamicTest.dynamicTest("When draw type is ${drawType.name}") {
+                // Setup
+                val club = newClub()
+                val competition = club.addCompetition()
+                val competitionCategory = competition.addCompetitionCategory(
+                    DefaultCategory.MEN_1.name,
+                    drawType = drawType
+                )
 
-        val suffix = listOf("A", "B", "C", "D")
-        val players = suffix.map {
-            club.addPlayer("Player$it")
-        }
+                val suffix = listOf("A", "B", "C", "D")
+                val players = suffix.map {
+                    club.addPlayer("Player$it")
+                }
 
-        players.forEach { competitionCategory.registerPlayer(it) }
+                players.forEach { competitionCategory.registerPlayer(it) }
 
-        val draw = createDraw.execute(competitionCategory.id)
+                val draw = createDraw.execute(competitionCategory.id)
 
-        val poolMatches = draw.groups.flatMap { it.matches }
+                val poolMatches = draw.groups.flatMap { it.matches }
 
-        val gameResults = listOf(
-            GameSpec(1, 11, 0),
-            GameSpec(2, 11, 0),
-            GameSpec(3, 11, 0))
+                val gameResults = listOf(
+                    GameSpec(1, 11, 0),
+                    GameSpec(2, 11, 0),
+                    GameSpec(3, 11, 0)
+                )
 
-        val lastMatch = poolMatches.last()
-        val rest = poolMatches.dropLast(1)
+                val lastMatch = poolMatches.last()
+                val rest = poolMatches.dropLast(1)
 
-        for (match in rest) {
-            service.addFinalMatchResult(match.id, dataGenerator.newResultSpec(games = gameResults))
-        }
+                for (match in rest) {
+                    service.addFinalMatchResult(match.id, dataGenerator.newResultSpec(games = gameResults))
+                }
 
-        // Record state
-        val drawJustBeforeLastMatch = getDraw.execute(competitionCategory.id)
+                // Record state
+                val drawJustBeforeLastMatch = getDraw.execute(competitionCategory.id)
 
-        // Act
-        service.addFinalMatchResult(lastMatch.id, dataGenerator.newResultSpec(games = gameResults))
-        service.deleteResults(lastMatch.id)
+                // Act
+                service.addFinalMatchResult(lastMatch.id, dataGenerator.newResultSpec(games = gameResults))
+                service.deleteResults(lastMatch.id)
 
-        // Assert
-        val afterRemovingResult = getDraw.execute(competitionCategory.id)
+                // Assert
+                val afterRemovingResult = getDraw.execute(competitionCategory.id)
 
-        val groupStandingBefore = drawJustBeforeLastMatch.groups.first().groupStandingList
-        val groupStandingAfter = afterRemovingResult.groups.first().groupStandingList
-        Assertions.assertEquals(groupStandingBefore[0], groupStandingAfter[0],
-            "Position 1 in the group is not the same as before we removed the result")
-        Assertions.assertEquals(groupStandingBefore[1], groupStandingAfter[1],
-            "Position 2 in the group is not the same as before we removed the result")
-        Assertions.assertEquals(2, groupStandingBefore[2].matchesPlayed, "Not the correct number of matches played")
-        Assertions.assertEquals(2, groupStandingBefore[3].matchesPlayed, "Not the correct number of matches played")
+                val groupStandingBefore = drawJustBeforeLastMatch.groups.first().groupStandingList
+                val groupStandingAfter = afterRemovingResult.groups.first().groupStandingList
+                Assertions.assertEquals(
+                    groupStandingBefore[0], groupStandingAfter[0],
+                    "Position 1 in the group is not the same as before we removed the result"
+                )
+                Assertions.assertEquals(
+                    groupStandingBefore[1], groupStandingAfter[1],
+                    "Position 2 in the group is not the same as before we removed the result"
+                )
+                Assertions.assertEquals(
+                    2,
+                    groupStandingBefore[2].matchesPlayed,
+                    "Not the correct number of matches played"
+                )
+                Assertions.assertEquals(
+                    2,
+                    groupStandingBefore[3].matchesPlayed,
+                    "Not the correct number of matches played"
+                )
 
-        val subGroupStandingBefore = drawJustBeforeLastMatch.groups.first().subGroupList
-        val subGroupStandingAfter = afterRemovingResult.groups.first().subGroupList
-        Assertions.assertEquals(subGroupStandingBefore.size, subGroupStandingAfter.size,
-            "Not expected size of sub group standing")
-        Assertions.assertEquals(
-            subGroupStandingBefore.flatMap { it.groupStandingList.flatMap { sub -> sub.player.map { p -> p.firstName } } }.sorted(),
-            subGroupStandingAfter.flatMap { it.groupStandingList.flatMap { sub -> sub.player.map { p -> p.firstName } } }.sorted(),
-            "Not the same players in the sub group")
+                val subGroupStandingBefore = drawJustBeforeLastMatch.groups.first().subGroupList
+                val subGroupStandingAfter = afterRemovingResult.groups.first().subGroupList
+                Assertions.assertEquals(
+                    subGroupStandingBefore.size, subGroupStandingAfter.size,
+                    "Not expected size of sub group standing"
+                )
+                Assertions.assertEquals(
+                    subGroupStandingBefore.flatMap { it.groupStandingList.flatMap { sub -> sub.player.map { p -> p.firstName } } }
+                        .sorted(),
+                    subGroupStandingAfter.flatMap { it.groupStandingList.flatMap { sub -> sub.player.map { p -> p.firstName } } }
+                        .sorted(),
+                    "Not the same players in the sub group"
+                )
 
-        Assertions.assertEquals(drawJustBeforeLastMatch.playOff, afterRemovingResult.playOff,
-            "The playoff was not rolled back properly"
-        )
+                Assertions.assertEquals(
+                    drawJustBeforeLastMatch.playOff, afterRemovingResult.playOff,
+                    "The playoff was not rolled back properly"
+                )
+                Assertions.assertEquals(
+                    drawJustBeforeLastMatch.playOffB, afterRemovingResult.playOffB,
+                    "The playoff B was not rolled back properly"
+                )
+            }
     }
 
     @Test
