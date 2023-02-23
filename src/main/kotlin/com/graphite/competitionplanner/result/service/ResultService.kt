@@ -192,8 +192,7 @@ class ResultService(
 
     private fun removeAnyFinalGroupResult(match: PoolMatch) {
         val draw = competitionDrawRepository.get(match.competitionCategoryId)
-        val playoffHasStarted = draw.playOff.first().matches.any { it.winner.isNotEmpty() } ||
-                    draw.playOffB.first().matches.any { it.winner.isNotEmpty() }
+        val playoffHasStarted = draw.playOff.hasStarted() || draw.playOffB.hasStarted()
 
         if (playoffHasStarted) {
             throw BadRequestException(BadRequestType.RESULT_CANNOT_DELETE,
@@ -208,6 +207,13 @@ class ResultService(
                     .where(POOL.COMPETITION_CATEGORY_ID.eq(match.competitionCategoryId).and(POOL.NAME.eq(match.name)))
             ))
             .execute()
+    }
+
+    /**
+     * Returns True if any match has a winner
+     */
+    fun List<PlayoffRoundDTO>.hasStarted(): Boolean {
+        return this.any { round -> round.matches.any { it.winner.isNotEmpty() } }
     }
 
     private fun revertAnyAdvancementsToPlayoffFromGivenGroup(competitionCategoryId: Int, groupName: String) {
