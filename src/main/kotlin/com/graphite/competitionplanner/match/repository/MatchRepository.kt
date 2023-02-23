@@ -122,19 +122,7 @@ class MatchRepository(
                     this.winner
                 )
             }
-            MatchType.PLAYOFF -> {
-                PlayoffMatch(
-                    Round.valueOf(this.groupOrRound),
-                    this.matchOrderNumber,
-                    this.id,
-                    this.competitionCategoryId,
-                    this.firstRegistrationId,
-                    this.secondRegistrationId,
-                    this.wasWalkover,
-                    this.winner
-                )
-            }
-            MatchType.B_PLAYOFF -> {
+            MatchType.PLAYOFF, MatchType.B_PLAYOFF -> {
                 PlayoffMatch(
                     Round.valueOf(this.groupOrRound),
                     this.matchOrderNumber,
