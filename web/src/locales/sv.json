@@ -444,7 +444,9 @@
     "thirdTitle": "Anmälda spelare i tävlingen",
     "player": "Spelare",
     "searchOtherClub": "Sök extern klubb",
-    "club": "Klubb"
+    "club": "Klubb",
+    "closedForRegistration": "Klassen är inte öppen för anmälningar",
+    "addAnotherDoublesPlayer": "Lägg till en spelare till för att anmäla"
   },
   "admin": {
     "preamble": "Du behöver logga in som admin för att kunna se den här sidan",

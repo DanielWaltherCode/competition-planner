@@ -227,7 +227,8 @@ export default {
     login() {
       UserService.login(this.username, this.password).then(res => {
         this.loginFailed = false
-        this.competition = "none"
+        this.selectedCompetition = "none"
+        this.setCompetition()
         this.$store.commit("auth_success", res.data)
         UserService.getUser().then(res => {
           this.$store.commit("set_user", res.data)

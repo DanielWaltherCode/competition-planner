@@ -24,7 +24,12 @@
         </div>
 
         <!-- Registrations -->
-        <div id="registration" v-if="selectedCompetition != null && selectedCategory != null">
+        <div v-if="selectedCompetition != null && selectedCategory != null && selectedCategory.status !== 'OPEN_FOR_REGISTRATION'">
+          <div class="p-5 custom-card">
+            <p>{{ $t("externalRegistration.closedForRegistration") }} </p>
+          </div>
+        </div>
+        <div id="registration" v-if="selectedCompetition != null && selectedCategory != null && selectedCategory.status === 'OPEN_FOR_REGISTRATION'">
           <h2> {{
               $t("externalRegistration.secondTitle",
                   {
@@ -67,6 +72,7 @@
                 <input type="text" disabled :value="getFormattedPlayerName(playersToRegister[0])">
 
                 <div v-if="playersToRegister.length === 1" class="pt-4">
+                  <p class="p-2 fs-6">{{ $t("externalRegistration.addAnotherDoublesPlayer") }}</p>
                   <button @click="searchOtherClub = !searchOtherClub" class="btn btn-secondary">
                     {{ $t("externalRegistration.searchOtherClub") }}
                   </button>
@@ -92,11 +98,14 @@
               <div v-if="registeredPlayers.length > 0">
                 <div v-for="(innerPlayerList, index) in registeredPlayers" :key="index">
                   <div v-if="innerPlayerList.length === 1" class="text-start mb-0 pb-0">
-                    <p> {{ getFormattedPlayerName(innerPlayerList[0]) }}</p>
+                    <p> {{ getFormattedPlayerName(innerPlayerList[0].player) }}
+                      <i class="fw-bolder" v-if="innerPlayerList[0].hasWithdrawn">Återbud</i>
+                    </p>
                   </div>
                   <div v-if="innerPlayerList.length === 2">
-                    <p> {{ getFormattedPlayerNameWithClub(innerPlayerList[0]) }} /
-                      {{ getFormattedPlayerNameWithClub(innerPlayerList[1]) }}
+                    <p> {{ getFormattedPlayerNameWithClub(innerPlayerList[0].player) }} /
+                      {{ getFormattedPlayerNameWithClub(innerPlayerList[1].player) }}
+                      <i class="fw-bolder" v-if="innerPlayerList[1].hasWithdrawn">Återbud</i>
                     </p>
                   </div>
                 </div>
@@ -147,7 +156,7 @@ export default {
       const idsThatCannotBeRegistered = []
       this.playersToRegister.forEach(it => idsThatCannotBeRegistered.push(it.id))
       this.registeredPlayers.forEach(playerList => {
-        playerList.forEach(player => idsThatCannotBeRegistered.push(player.id))
+        playerList.forEach(player => idsThatCannotBeRegistered.push(player.player.id))
       })
       return this.allPlayers.filter(it => !idsThatCannotBeRegistered.includes(it.id))
     }
