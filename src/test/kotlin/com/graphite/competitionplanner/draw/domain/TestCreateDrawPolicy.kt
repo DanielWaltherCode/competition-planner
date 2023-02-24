@@ -41,6 +41,7 @@ class TestCreateDrawPolicy {
         // Act
         val strategy = DrawPolicy.createDrawStrategy(competitionCategory)
 
+        // Assert
         Assertions.assertTrue(strategy is CupDrawPolicy, "Not the expected draw policy created")
     }
 
@@ -57,6 +58,24 @@ class TestCreateDrawPolicy {
         // Act
         val strategy = DrawPolicy.createDrawStrategy(competitionCategory)
 
+        // Assert
         Assertions.assertTrue(strategy is PoolAndCupDrawPolicy, "Not the expected draw policy created")
+    }
+
+    @Test
+    fun createPoolAndCubWithA_PlayoffAndB_Playoff() {
+        // Setup
+        val competitionCategory =
+            dataGenerator.newCompetitionCategoryDTO(
+                settings = dataGenerator.newGeneralSettingsDTO(
+                    drawType = DrawType.POOL_AND_CUP_WITH_B_PLAY_OFF
+                )
+            )
+
+        // Act
+        val strategy = DrawPolicy.createDrawStrategy(competitionCategory)
+
+        // Assert
+        Assertions.assertTrue(strategy is PoolAndCupWithBPlayoffsDrawPolicy, "Not the expected draw policy created")
     }
 }

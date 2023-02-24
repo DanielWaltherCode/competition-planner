@@ -28,7 +28,7 @@
         </select>
       </div>
     </div>
-    <div v-if="category.settings.drawType === 'POOL_AND_CUP'" class="row">
+    <div v-if="category.settings.drawType === 'POOL_AND_CUP' || category.settings.drawType === 'POOL_AND_CUP_WITH_B_PLAY_OFF' " class="row">
       <div class="col-sm-12 col-md-6 d-flex flex-column justify-content-end">
         <label class="h5 form-label" for="inputPlayersThatAdvance">{{ $t("categorySettings.playersToPlayoff") }}</label>
         <input v-model="category.settings.playersToPlayOff" type="text" class="form-control" id="inputPlayersThatAdvance" :disabled="isDrawMade">

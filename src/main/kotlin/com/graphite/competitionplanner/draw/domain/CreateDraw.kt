@@ -1,13 +1,13 @@
 package com.graphite.competitionplanner.draw.domain
 
 import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitionCategory
-import com.graphite.competitionplanner.competitioncategory.interfaces.*
-import com.graphite.competitionplanner.draw.interfaces.Round
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
+import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryStatus
+import com.graphite.competitionplanner.competitioncategory.interfaces.ICompetitionCategoryRepository
 import com.graphite.competitionplanner.draw.interfaces.*
 import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import org.springframework.stereotype.Component
-import java.time.LocalDateTime
 
 @Component
 class CreateDraw(
@@ -61,6 +61,13 @@ class PoolAndCupDrawSpec(
     competitionCategoryId: Int,
     val pools: List<Pool>,
     val matches: List<PlayOffMatch> = emptyList(),
+) : CompetitionCategoryDrawSpec(competitionCategoryId)
+
+class PoolAndCupDrawWithBPlayoffSpec(
+    competitionCategoryId: Int,
+    val pools: List<Pool>,
+    val aPlayoff: List<PlayOffMatch> = emptyList(),
+    val bPlayoff: List<PlayOffMatch> = emptyList()
 ) : CompetitionCategoryDrawSpec(competitionCategoryId)
 
 data class Pool(

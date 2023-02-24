@@ -11,10 +11,12 @@ data class CompetitionCategoryDrawDTO(
      * ID of the competition category
      */
     val competitionCategoryId: Int,
+
     /**
-     * List of matches played in play off
+     * List of matches played in playoff A
      */
     val playOff: List<PlayoffRoundDTO>,
+
     /**
      * List of groups including players and matches
      */
@@ -23,7 +25,13 @@ data class CompetitionCategoryDrawDTO(
     /**
      * Shows link between position in group and position in playoff
      */
-    val poolToPlayoffMap: List<GroupToPlayoff>
+    val poolToPlayoffMap: List<GroupToPlayoff>,
+
+    /**
+     * List of matches play in playoff B. This is only used for categories that are configured to have playoff B.
+     * By default this is empty.
+     */
+    val playOffB: List<PlayoffRoundDTO> = emptyList(),
 )
 
 /**

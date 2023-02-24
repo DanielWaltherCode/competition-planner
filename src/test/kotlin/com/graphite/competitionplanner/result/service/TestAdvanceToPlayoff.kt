@@ -11,6 +11,7 @@ import com.graphite.competitionplanner.draw.domain.GetDraw
 import com.graphite.competitionplanner.draw.interfaces.Round
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.player.interfaces.IPlayerRepository
+import com.graphite.competitionplanner.registration.domain.isReal
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
 import com.graphite.competitionplanner.result.interfaces.IResultRepository
 import com.graphite.competitionplanner.util.BaseRepositoryTest
@@ -109,5 +110,75 @@ class TestAdvanceToPlayoff(
 
         Assertions.assertEquals(b1VsBye.winner.first().id, b1VsPlaceholder.secondPlayer.first().id,
             "B1 did not immediately advance to next round")
+    }
+
+    @Test
+    fun advancing_players_to_playoff_B_and_A() {
+        // Setup
+        val club = newClub()
+        val competition = club.addCompetition()
+        val competitionCategory = competition.addCompetitionCategory(
+            DefaultCategory.MEN_1.name,
+            drawType = DrawType.POOL_AND_CUP_WITH_B_PLAY_OFF)
+
+        val suffix = listOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J")
+        val players = suffix.map {
+            club.addPlayer("Player$it")
+        }
+
+        players.map { competitionCategory.registerPlayer(it) }
+
+        createDraw.execute(competitionCategory.id)
+
+        val draw = getDraw.execute(competitionCategory.id)
+
+        val poolMatches = draw.groups.flatMap { it.matches }
+
+        val resultSpec = dataGenerator.newResultSpec(
+            games = listOf(
+                dataGenerator.newGameSpec(gameNumber = 1),
+                dataGenerator.newGameSpec(gameNumber = 2),
+                dataGenerator.newGameSpec(gameNumber = 3))
+        )
+
+        // Act
+        poolMatches.forEach {
+            service.addFinalMatchResult(it.id, resultSpec)
+        }
+
+        val drawAfterPoolCompleted = getDraw.execute(competitionCategory.id)
+
+        // Assert that all players advanced to play off A or B
+        val playerIdsFoundInPlayOffA = drawAfterPoolCompleted.playOff.flatMap {
+            it.matches.flatMap { match -> listOf(match.firstPlayer.first().id, match.secondPlayer.first().id ) }
+        }.distinct()
+        val playerIdsFoundInPlayoffB = drawAfterPoolCompleted.playOffB.flatMap {
+            it.matches.flatMap { match -> listOf(match.firstPlayer.first().id, match.secondPlayer.first().id ) }
+        }.distinct()
+
+        val playerIds = players.map { it.id }
+
+        Assertions.assertTrue((playerIdsFoundInPlayOffA + playerIdsFoundInPlayoffB).containsAll(playerIds),
+            "At least one player did not advance to neither playoff A or B ")
+        Assertions.assertEquals(6, playerIdsFoundInPlayOffA.filter { it.isReal() }.size,
+            "Not the expected number of players advanced to playoff A")
+        Assertions.assertEquals(4, playerIdsFoundInPlayoffB.filter { it.isReal() }.size,
+            "Not the expected number of players advanced to playoff B")
+
+        val samePlayerAdvancedToBothPlayoffs = playerIdsFoundInPlayOffA.filter { it.isReal() }.toSet().intersect(
+            playerIdsFoundInPlayoffB.filter { it.isReal() }.toSet()
+        ).isNotEmpty()
+        Assertions.assertFalse(samePlayerAdvancedToBothPlayoffs,
+            "At least one player advanced to both playoff A and B")
+
+        val playersToPlayoffA = competitionCategory.settings.playersToPlayOff
+        val groupWinnerIds = drawAfterPoolCompleted.groups.flatMap { group ->
+            group.groupStandingList.take(playersToPlayoffA).map { it.player.first().id } }
+        val groupLoserIds = playerIds.filterNot { playerId -> groupWinnerIds.contains(playerId) }
+
+        Assertions.assertTrue(playerIdsFoundInPlayOffA.containsAll(groupWinnerIds),
+            "At least one group winner did not advance to playoff A")
+        Assertions.assertTrue(playerIdsFoundInPlayoffB.containsAll(groupLoserIds),
+            "At least one group loser did not advance to playoff B")
     }
 }

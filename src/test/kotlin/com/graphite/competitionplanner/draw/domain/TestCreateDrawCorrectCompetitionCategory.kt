@@ -68,4 +68,25 @@ class TestCreateDrawCorrectCompetitionCategory : TestBaseCreateDraw() {
         // Assert
         Assertions.assertEquals(competitionCategory.id, draw.competitionCategoryId, "Wrong competition category id")
     }
+
+    @Test
+    fun whenDrawingPoolAndCupWithBPlayoff() {
+        // Setup
+        val competitionCategory = dataGenerator.newCompetitionCategoryDTO(
+            id = 33,
+            settings = dataGenerator.newGeneralSettingsDTO(
+                drawType = DrawType.POOL_AND_CUP_WITH_B_PLAY_OFF
+            )
+        )
+        val registrationRanks = generateRegistrationRanks(13, competitionCategory)
+
+        val poolDrawPolicy = DrawPolicy.createDrawStrategy(competitionCategory)
+        val seed = poolDrawPolicy.createSeed(registrationRanks)
+
+        // Act
+        val draw = poolDrawPolicy.createDraw(seed) as PoolAndCupDrawWithBPlayoffSpec
+
+        // Assert
+        Assertions.assertEquals(competitionCategory.id, draw.competitionCategoryId, "Wrong competition category id")
+    }
 }

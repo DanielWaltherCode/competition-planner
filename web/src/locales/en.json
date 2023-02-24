@@ -144,7 +144,8 @@
     "drawTypes": {
       "POOL_ONLY": "Pool play only",
       "CUP_ONLY": "Cup play only",
-      "POOL_AND_CUP": "Groups with cup playoffs"
+      "POOL_AND_CUP": "Groups with only A-playoffs",
+      "POOL_AND_CUP_WITH_B_PLAY_OFF": "Group with A- and B-playoffs "
     },
     "drawStrategy": "Drawing strategy",
     "drawStrategies": {
@@ -269,6 +270,14 @@
         "POINT_QUOTIENT": "Ball Quotient",
         "DRAW": "Draw"
       }
+    },
+    "playoff": {
+      "A": {
+        "name": "Playoff A"
+      },
+      "B": {
+        "name": "Playoff B"
+      }
     }
   },
   "schedule": {
@@ -293,6 +302,7 @@
       "day": "Game day",
       "GROUP": "Pool",
       "PLAYOFF": "Playoff",
+      "B_PLAYOFF": "B-playoff",
       "notSelected": "Not selected",
       "startTime": "Desired start time",
       "helpMe": "Choose something for me",

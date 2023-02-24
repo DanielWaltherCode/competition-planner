@@ -60,7 +60,8 @@ class BaseRepositoryTest(
 
     fun CompetitionDTO.addCompetitionCategory(
         categoryName: String,
-        drawType: DrawType = DrawType.POOL_ONLY
+        drawType: DrawType = DrawType.POOL_ONLY,
+        playersToPlayoff: Int = 2
     ): CompetitionCategoryDTO {
         val category = categoryRepository.addCustomCategory(this.id, CustomCategorySpec(categoryName, CategoryType.SINGLES))
         return competitionCategoryRepository.store(
@@ -72,7 +73,8 @@ class BaseRepositoryTest(
                     type = category.type
                 ),
                 settings = dataGenerator.newGeneralSettingsDTO(
-                    drawType = drawType
+                    drawType = drawType,
+                    playersToPlayOff = playersToPlayoff
                 )
             )
         )

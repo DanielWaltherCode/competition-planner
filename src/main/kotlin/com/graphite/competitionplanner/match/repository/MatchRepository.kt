@@ -85,16 +85,15 @@ class MatchRepository(
         when (this) {
             is PoolMatch -> {
                 record.groupOrRound = name
-                record.matchType = MatchType.GROUP.name
             }
             is PlayoffMatch -> {
                 record.groupOrRound = round.name
                 record.matchOrderNumber = orderNumber
-                record.matchType = MatchType.PLAYOFF.name
             }
         }
 
         // In JOOQ, you have to reset fields that you do not want to update. Not doing this would set fields to null
+        record.reset(MATCH.MATCH_TYPE)
         record.reset(MATCH.START_TIME)
         record.reset(MATCH.END_TIME)
 
@@ -111,8 +110,9 @@ class MatchRepository(
     }
 
     private fun MatchRecord.toMatch(): Match {
-        return if (this.matchType == MatchType.GROUP.name) {
-            PoolMatch(
+        return when (MatchType.valueOf(this.matchType)) {
+            MatchType.GROUP -> {
+                PoolMatch(
                     this.groupOrRound,
                     this.id,
                     this.competitionCategoryId,
@@ -120,9 +120,10 @@ class MatchRepository(
                     this.secondRegistrationId,
                     this.wasWalkover,
                     this.winner
-            )
-        } else {
-            PlayoffMatch(
+                )
+            }
+            MatchType.PLAYOFF, MatchType.B_PLAYOFF -> {
+                PlayoffMatch(
                     Round.valueOf(this.groupOrRound),
                     this.matchOrderNumber,
                     this.id,
@@ -131,7 +132,8 @@ class MatchRepository(
                     this.secondRegistrationId,
                     this.wasWalkover,
                     this.winner
-            )
+                )
+            }
         }
     }
 

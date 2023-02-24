@@ -145,8 +145,16 @@
                 </div>
               </div>
               <!-- If there is a playoff/cup -->
+              <h4 class="text-start mb-3 p-3">
+                {{ $t("draw.playoff.A.name") }}
+              </h4>
               <playoff-draw v-if="draw != null && draw.playOff != null && shouldShowPlayoff(draw.playOff)" id="playoff"
                             :playoff-rounds="draw.playOff" />
+              <h4 class="text-start mb-3 p-3">
+                {{ $t("draw.playoff.B.name") }}
+              </h4>
+              <playoff-draw v-if="draw != null && draw.playOffB != null && shouldShowPlayoff(draw.playOffB)" id="playoffB"
+                            :playoff-rounds="draw.playOffB" />
             </div>
           </div>
         </div>

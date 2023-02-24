@@ -13,7 +13,8 @@ class TestSnakeDraw : TestBaseCreateDraw() {
 
     private val inputDrawType = listOf(
         DrawType.POOL_ONLY,
-        DrawType.POOL_AND_CUP
+        DrawType.POOL_AND_CUP,
+        DrawType.POOL_AND_CUP_WITH_B_PLAY_OFF
     )
 
     @TestFactory

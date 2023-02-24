@@ -8,10 +8,7 @@ import com.graphite.competitionplanner.competitioncategory.domain.FindCompetitio
 import com.graphite.competitionplanner.competitioncategory.interfaces.CompetitionCategoryDTO
 import com.graphite.competitionplanner.competitioncategory.interfaces.DrawType
 import com.graphite.competitionplanner.draw.interfaces.*
-import com.graphite.competitionplanner.match.domain.Match
-import com.graphite.competitionplanner.match.domain.MatchType
-import com.graphite.competitionplanner.match.domain.PlayoffMatch
-import com.graphite.competitionplanner.match.domain.PoolMatch
+import com.graphite.competitionplanner.match.domain.*
 import com.graphite.competitionplanner.match.repository.MatchRepository
 import com.graphite.competitionplanner.match.service.MatchAndResultDTO
 import com.graphite.competitionplanner.registration.domain.Registration
@@ -26,7 +23,6 @@ import com.graphite.competitionplanner.tables.records.PoolRecord
 import com.graphite.competitionplanner.tables.records.PoolResultRecord
 import org.jooq.DSLContext
 import org.springframework.stereotype.Service
-import kotlin.jvm.Throws
 import kotlin.math.ceil
 
 @Service
@@ -89,8 +85,11 @@ class ResultService(
     private fun CompetitionCategoryDTO.handleAdvancementOf(match: PlayoffMatch) {
         if (match.round != Round.FINAL) {
             val draw = competitionDrawRepository.get(this.id)
+
+            val playoff = draw.getPlayoffMatchBelongsTo(match)
+
             val winner = matchRepository.getMatch(match.id).winner
-            val nextRound = draw.playOff.filter { it.round < match.round }.maxByOrNull { it.round }!!
+            val nextRound = playoff.filter { it.round < match.round }.maxByOrNull { it.round }!!
             val nextOrderNumber = ceil(match.orderNumber / 2.0).toInt() // 1 -> 1, 2 -> 1, 3 -> 2, etc.
             val nextMatch = matchRepository.getMatch2(
                     nextRound.matches.first { it.matchOrderNumber == nextOrderNumber }.id
@@ -105,6 +104,21 @@ class ResultService(
     }
 
     /**
+     * Return the playoff that the given match belongs to
+     */
+    private fun CompetitionCategoryDrawDTO.getPlayoffMatchBelongsTo(match: PlayoffMatch): List<PlayoffRoundDTO> {
+        val belongsToPlayoffA = this.playOff.flatMap { round ->
+            round.matches.map { match -> match.id }
+        }.contains(match.id)
+
+        return if (belongsToPlayoffA) {
+            this.playOff
+        } else {
+            this.playOffB
+        }
+    }
+
+    /**
      * Returns next rounds match that the winner of the given match will advance to. Returns null if the given
      * match is the final.
      */
@@ -113,7 +127,8 @@ class ResultService(
             return null
         }
 
-        val nextRound = this.playOff.filter { it.round < match.round }.maxByOrNull { it.round }!!
+        val playOff = this.getPlayoffMatchBelongsTo(match)
+        val nextRound = playOff.filter { it.round < match.round }.maxByOrNull { it.round }!!
         val nextOrderNumber = ceil(match.orderNumber / 2.0).toInt() // 1 -> 1, 2 -> 1, 3 -> 2, etc.
         return matchRepository.getMatch2(
             nextRound.matches.first { it.matchOrderNumber == nextOrderNumber }.id
@@ -176,6 +191,14 @@ class ResultService(
 
 
     private fun removeAnyFinalGroupResult(match: PoolMatch) {
+        val draw = competitionDrawRepository.get(match.competitionCategoryId)
+        val playoffHasStarted = draw.playOff.hasStarted() || draw.playOffB.hasStarted()
+
+        if (playoffHasStarted) {
+            throw BadRequestException(BadRequestType.RESULT_CANNOT_DELETE,
+                "Cannot delete result from pool match when play-off has started. Remove all play-off results first.")
+        }
+
         dslContext.deleteFrom(POOL_RESULT)
             .where(POOL_RESULT.POOL_ID.`in`(
                 dslContext
@@ -186,6 +209,13 @@ class ResultService(
             .execute()
     }
 
+    /**
+     * Returns True if any match has a winner
+     */
+    fun List<PlayoffRoundDTO>.hasStarted(): Boolean {
+        return this.any { round -> round.matches.any { it.winner.isNotEmpty() } }
+    }
+
     private fun revertAnyAdvancementsToPlayoffFromGivenGroup(competitionCategoryId: Int, groupName: String) {
         val draw = competitionDrawRepository.get(competitionCategoryId)
 
@@ -194,7 +224,12 @@ class ResultService(
         val t = s.filter { it.groupOrRound == groupName }
         val registrationIdsInGroup = t.flatMap { listOf(it.firstRegistrationId, it.secondRegistrationId) }.distinct()
 
-        draw.playOff.forEach {
+        draw.playOff.reset(registrationIdsInGroup)
+        draw.playOffB.reset(registrationIdsInGroup)
+    }
+
+    fun List<PlayoffRoundDTO>.reset(registrationIdsInGroup: List<Int>) {
+        this.forEach {
             it.matches.forEach { m ->
                 val playoffMatch = matchRepository.getMatch2(m.id)
                 var resetResult = false
