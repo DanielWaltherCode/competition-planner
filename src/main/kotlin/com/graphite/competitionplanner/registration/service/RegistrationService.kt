@@ -113,6 +113,7 @@ class RegistrationService(
         }
         return PlayerRegistrationDTO(player, registrationDTOs)
     }
+
 }
 
 data class PlayerCompetitionDTO(
