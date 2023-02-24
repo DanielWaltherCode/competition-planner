@@ -174,3 +174,18 @@ export function generalErrorHandler(error) {
         this.$toasted.error(this.$tc("toasts.error.general.standard")).goAway(5000)
     }
 }
+
+export function shouldShowPlayoff(playoff) {
+    if (playoff === null || playoff.length === 0) {
+        return false;
+    }
+    let nonPlaceholderPlayers = 0
+    playoff[0].matches.forEach(match => {
+        const firstPlayerId = match.firstPlayer[0].id
+        const secondPlayerId = match.secondPlayer[0].id
+        if ((firstPlayerId !== -1) && (secondPlayerId !== -1)) {
+            nonPlaceholderPlayers += 2
+        }
+    })
+    return nonPlaceholderPlayers === playoff[0].matches.length * 2;
+}

@@ -258,7 +258,7 @@ export default {
     tryTranslateCategoryName: tryTranslateCategoryName,
     getFormattedPlayerName: getFormattedPlayerName,
     getFormattedPlayerNameWithClub: getFormattedPlayerNameWithClub,
-    errorHandler: generalErrorHandler
+    errorHandler: generalErrorHandler,
   }
 }
 </script>

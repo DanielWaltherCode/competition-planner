@@ -1,6 +1,6 @@
 <template>
   <div class="modal__content">
-    <i class="modal__close fas fa-times clickable" @click="$emit('close')" />
+    <i class="modal__close fas fa-times clickable" @click="$emit('close')"/>
     <div v-if="selectedMatch != null" class="container-fluid p-md-5 p-sm-3 p-1 light-grey">
       <div id="player1" class="row">
         <div class="col-1 text-start">
@@ -83,7 +83,7 @@
         <p class="mb-0">
           {{ $t("results.modal.helperTexts") }}
         </p>
-        <i class="fas fa-info-circle mx-3" />
+        <i class="fas fa-info-circle mx-3"/>
       </div>
       <div v-if="showInfo" class="modal-footer">
         <p class="text-start py-3">
@@ -93,9 +93,9 @@
         </p>
         <div>
           <definition-component :word="$t('results.modal.registerFinishedMatch')"
-                                :explanation="$t('results.modal.registerFinishedMatchExplanation')" />
+                                :explanation="$t('results.modal.registerFinishedMatchExplanation')"/>
           <definition-component :word="$t('results.modal.savePartial')"
-                                :explanation="$t('results.modal.savePartialExplanation')" />
+                                :explanation="$t('results.modal.savePartialExplanation')"/>
         </div>
       </div>
     </div>
@@ -104,7 +104,7 @@
 
 <script>
 import ResultService from "@/common/api-services/result.service";
-import {generalErrorHandler, getPlayerOneWithClub, getPlayerTwoWithClub} from "@/common/util";
+import {generalErrorHandler, getPlayerOneWithClub, getPlayerTwoWithClub, tryTranslateCategoryName} from "@/common/util";
 import CategoryService from "@/common/api-services/category.service";
 import DefinitionComponent from "@/components/general/DefinitionComponent";
 import RegistrationService from "@/common/api-services/registration.service";
@@ -199,9 +199,18 @@ export default {
       let resultsToSubmit = this.setList.filter(result => this.isNonEmptyResult(result))
 
       ResultService.updateFullMatchResult(this.competition.id, this.selectedMatch.id, {gameList: resultsToSubmit})
-          .then(() => {
+          .then(res => {
+            this.$toasted.success(this.$tc("toasts.resultRegistered")).goAway(3000)
+
+            if (res.data.groupNowFinished) {
+              this.$toasted.info(this.$t("toasts.groupNowFinished",
+                  {
+                    pool:  this.$t("results.group") + ' ' + this.selectedMatch.groupOrRound,
+                    category: this.tryTranslateCategoryName(this.selectedMatch.competitionCategory.name)
+                  }
+              )).goAway(8000)
+            }
             this.$emit("closeAndUpdate", this.selectedMatch.id)
-            this.$toasted.success(this.$tc("toasts.resultRegistered")).goAway(5000)
           }).catch(err => {
         this.errorHandler(err.data)
       })
@@ -251,6 +260,7 @@ export default {
     getPlayerOne: getPlayerOneWithClub,
     getPlayerTwo: getPlayerTwoWithClub,
     errorHandler: generalErrorHandler,
+    tryTranslateCategoryName: tryTranslateCategoryName,
 
     /**
      * Return true if given game result is non-empty i.e. contains the empty string or is zero

@@ -481,6 +481,7 @@
     "categoryNotAdded": "Kunde inte lägga till klassen",
     "categoryDrawDeleted": "Lottningen är borttagen",
     "customCategoryIncomplete": "Både namn och typ behöver väljas",
+    "groupNowFinished": "{pool} i {category} är nu färdigspelad",
     "startTimesSet": "Starttider satta",
     "resultRegistered": "Resultatet är sparat",
     "temporaryResultRegistered": "Tillfälligt resultat är sparat",

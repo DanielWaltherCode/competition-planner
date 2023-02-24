@@ -18,6 +18,7 @@ import com.graphite.competitionplanner.registration.domain.Registration
 import com.graphite.competitionplanner.registration.domain.asInt
 import com.graphite.competitionplanner.registration.domain.isReal
 import com.graphite.competitionplanner.registration.interfaces.IRegistrationRepository
+import com.graphite.competitionplanner.result.api.FinalResultDTO
 import com.graphite.competitionplanner.result.api.ResultSpec
 import com.graphite.competitionplanner.result.domain.AddResult
 import com.graphite.competitionplanner.result.interfaces.IResultRepository
@@ -40,15 +41,16 @@ class ResultService(
         val dslContext: DSLContext
 ) {
 
-    fun addFinalMatchResult(matchId: Int, resultSpec: ResultSpec): ResultDTO {
+    fun addFinalMatchResult(matchId: Int, resultSpec: ResultSpec): FinalResultDTO {
         lateinit var result: ResultDTO
+        var groupNowFinished = false
         competitionDrawRepository.asTransaction {
             val match = matchRepository.getMatch2(matchId)
             val competitionCategory = findCompetitionCategory.byId(match.competitionCategoryId)
             result = addResult.execute(match, resultSpec, competitionCategory)
-            advanceRegistrations(competitionCategory, match)
+            groupNowFinished = advanceRegistrations(competitionCategory, match)
         }
-        return result
+        return FinalResultDTO(result.gameList, groupNowFinished)
     }
 
     /**
@@ -78,15 +80,16 @@ class ResultService(
         return ResultDTO(resultList)
     }
 
-    private fun advanceRegistrations(competitionCategory: CompetitionCategoryDTO, match: Match) {
+    private fun advanceRegistrations(competitionCategory: CompetitionCategoryDTO, match: Match): Boolean {
         // Match has now been completed, and we need to decide if we need to advance players (registrations) to next round
-        when (match) {
+        val groupStageNowFinished: Boolean = when (match) {
             is PlayoffMatch -> competitionCategory.handleAdvancementOf(match)
             is PoolMatch -> competitionCategory.handleAdvancementOf(match)
         }
+        return groupStageNowFinished
     }
 
-    private fun CompetitionCategoryDTO.handleAdvancementOf(match: PlayoffMatch) {
+    private fun CompetitionCategoryDTO.handleAdvancementOf(match: PlayoffMatch): Boolean {
         if (match.round != Round.FINAL) {
             val draw = competitionDrawRepository.get(this.id)
             val winner = matchRepository.getMatch(match.id).winner
@@ -102,6 +105,7 @@ class ResultService(
             }
             matchRepository.save(nextMatch)
         }
+        return false
     }
 
     /**
@@ -120,9 +124,9 @@ class ResultService(
         )
     }
 
-    private fun CompetitionCategoryDTO.handleAdvancementOf(match: PoolMatch) {
+    private fun CompetitionCategoryDTO.handleAdvancementOf(match: PoolMatch): Boolean {
         if (this.settings.drawType == DrawType.POOL_ONLY) {
-            return // Nothing to advance
+            return false// Nothing to advance
         } else {
             val draw: CompetitionCategoryDrawDTO = competitionDrawRepository.get(this.id)
             val matchesInPool: List<MatchAndResultDTO> = draw.groups.first { it.name == match.name }.matches
@@ -160,8 +164,10 @@ class ResultService(
                     }
                     record.update()
                 }
+                return true
             }
         }
+        return false
     }
 
     private fun handleDirectAdvancementWhenMeetingBye(competitionCategoryDTO: CompetitionCategoryDTO,
