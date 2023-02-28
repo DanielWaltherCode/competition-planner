@@ -125,7 +125,7 @@ import {
   getPlayerOneWithClub,
   getPlayerTwoWithClub,
   isPlayerOneWinner,
-  isPlayerTwoWinner
+  isPlayerTwoWinner, shouldShowPlayoff
 } from "@/common/util";
 import RegisterResult from "@/components/result/RegisterResult";
 import {tryTranslateCategoryName} from "@/common/util"

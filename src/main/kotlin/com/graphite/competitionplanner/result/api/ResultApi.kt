@@ -1,6 +1,7 @@
 package com.graphite.competitionplanner.result.api
 
 import com.graphite.competitionplanner.result.domain.AddPartialResult
+import com.graphite.competitionplanner.result.service.GameDTO
 import com.graphite.competitionplanner.result.service.ResultDTO
 import com.graphite.competitionplanner.result.service.ResultService
 import org.springframework.web.bind.annotation.*
@@ -19,7 +20,7 @@ class ResultApi(
 
     // This is a put request since it's possible that partial results have been added previously
     @PutMapping("/{matchId}")
-    fun addFinalMatchResult(@PathVariable matchId: Int, @RequestBody resultSpec: ResultSpec): ResultDTO {
+    fun addFinalMatchResult(@PathVariable matchId: Int, @RequestBody resultSpec: ResultSpec): FinalResultDTO {
         return resultService.addFinalMatchResult(matchId, resultSpec)
     }
 
@@ -33,6 +34,11 @@ class ResultApi(
         resultService.deleteResults(matchId)
     }
 }
+
+data class FinalResultDTO(
+        val gameList: List<GameDTO>,
+        val groupNowFinished: Boolean
+)
 
 data class ResultSpec(
     val gameList: List<GameSpec>
