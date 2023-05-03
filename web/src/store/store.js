@@ -16,7 +16,9 @@ export default new Vuex.Store({
         auth_success(state, body){
             state.isLoggedIn = true
             state.accessToken = body["accessToken"]
-            state.refreshToken = body["refreshToken"]
+            if (body["refreshToken"] !== '') {
+                state.refreshToken = body["refreshToken"]
+            }
         },
         logout(state){
             state.isLoggedIn = false

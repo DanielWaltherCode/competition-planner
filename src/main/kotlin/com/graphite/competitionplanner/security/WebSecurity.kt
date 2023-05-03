@@ -30,6 +30,7 @@ class WebSecurity(
         http.csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthEntryPoint)
                 .and().authorizeRequests().antMatchers("/api/util/**").permitAll()
+                .and().authorizeRequests().antMatchers("/api/request-token/**").permitAll()
                 .and().authorizeRequests().antMatchers("/api/**").authenticated()
                 .and().authorizeRequests().antMatchers("/api/admin/**").hasRole("ADMIN")
                 .and().authorizeRequests().antMatchers("/**").permitAll()

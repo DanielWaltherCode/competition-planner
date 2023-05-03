@@ -76,9 +76,7 @@ class UserService(
             SecurityHelper.validateToken(tokenRecord.refreshToken)
             val user: UserDTO = getUserById(tokenRecord.userId)
             val accessToken = SecurityHelper.generateAccessToken(user)
-            val newRefreshToken = SecurityHelper.generateRefreshToken(user)
-            storeRefreshToken(newRefreshToken, user.email)
-            return LoginDTO(accessToken, newRefreshToken)
+            return LoginDTO(accessToken, "")
         } catch (ex: Exception) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Refresh token expired")
         }
