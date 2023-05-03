@@ -367,7 +367,7 @@ class SetupTestData(
         createCompetition.execute(
             CompetitionSpec(
                 location = LocationSpec("Lund"),
-                name = "Eurofinans 2021",
+                name = "Eurofinans 2023",
                 welcomeText = "Välkomna till Eurofinans",
                 organizingClubId = util.getClubIdOrDefault("Lugi"),
                 competitionLevel=CompetitionLevel.A.name,

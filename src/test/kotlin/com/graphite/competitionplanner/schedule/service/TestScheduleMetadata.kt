@@ -52,7 +52,7 @@ class TestScheduleMetadata(
         competitionId = createCompetition.execute(
             CompetitionSpec(
                 location = LocationSpec("Lund"),
-                name = "Eurofinans 2021",
+                name = "Eurofinans 2023",
                 welcomeText = "Välkomna till Eurofinans",
                 organizingClubId = club.id,
                 competitionLevel = "A",

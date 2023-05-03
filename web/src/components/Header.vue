@@ -59,34 +59,19 @@
                   </router-link>
                 </li>
                 <li class="nav-item">
+                  <router-link class="nav-link" to="/externalRegistration" v-if="isLoggedIn & !competition"
+                               :class="$route.path === '/externalRegistration' ? 'active ' : ''">
+                    {{ $t("header.externalRegistration") }}
+                  </router-link>
+                </li>
+
+                <li class="nav-item">
                   <router-link class="nav-link" to="/admin" v-if="(isLoggedIn && isAdmin)"
                                :class="$route.path === '/admin' ? 'active ' : ''">
                     {{ $t("header.admin") }}
                   </router-link>
                 </li>
-                <!--<li class="nav-item dropdown" v-if="isLoggedIn">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                     data-bs-toggle="dropdown" aria-expanded="false">
-                    {{ $t("header.handle.title") }}
-                  </a>
-                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li class="nav-item">
-                      Note one exclamation point here for competition, all others have two
-                      <router-link class="nav-link submenu" to="/new-competition"
-                                   :class="$route.path === '/new-competition' ? 'active' : ''">
-                        {{ $t("header.handle.newCompetition") }}
-                      </router-link>
-                    </li>
-                    <li class="nav-item">
-                      Note one exclamation point here for competition, all others have twox
-                      <router-link class="nav-link submenu" to="/choose-competition"
-                                   :class="$route.path === '/choose-competition' ? 'active' : ''">
-                        {{ $t("header.handle.administerCompetition") }}
-                      </router-link>
-                    </li>
-                  </ul>
-                </li> -->
-                <li class="nav-item ms-2" v-if="isLoggedIn">
+                <li class="nav-item ms-2 d-flex justify-content-end" v-if="isLoggedIn">
                   <button class="btn btn-light" @click="logout"> {{ $t("header.logout") }}</button>
                 </li>
               </ul>

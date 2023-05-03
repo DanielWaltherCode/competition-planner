@@ -15,7 +15,7 @@ const UserService = {
         return Axios.get(RESOURCE_NAME, {withCredentials: true})
     },
     refreshToken(token) {
-        return Axios.get("/request-token/" + token)
+        return Axios.get("/api/request-token/" + token)
     }
 }
 

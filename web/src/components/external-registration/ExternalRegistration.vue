@@ -1,7 +1,7 @@
 <template>
   <div class="row bg-grey">
     <!-- Main content -->
-    <div id="main" class="col-lg-11 mx-auto ps-0 bg-grey">
+    <div id="main" class="col-lg-11 mx-auto ps-0 hero">
       <!-- General information about competition -->
       <div class="row p-3 m-md-2 custom-card bg-white">
         <h1>{{ $t("externalRegistration.title") }}</h1>
@@ -30,14 +30,14 @@
           </div>
         </div>
         <div id="registration" v-if="selectedCompetition != null && selectedCategory != null && selectedCategory.status === 'OPEN_FOR_REGISTRATION'">
-          <h2> {{
+          <h3 class="pt-3 text-primary"> {{
               $t("externalRegistration.secondTitle",
                   {
                     competition: selectedCompetition.name,
                     category: tryTranslateCategoryName(selectedCategory.category.name)
                   })
-            }}</h2>
-          <div class="row">
+            }}</h3>
+          <div class="row p-4">
             <div class="col-12 col-md-4 custom-card p-2">
               <p class="fw-bold"> {{ $t("externalRegistration.playersInClub", {club: loggedInClub.name}) }}</p>
               <div class="text-start">

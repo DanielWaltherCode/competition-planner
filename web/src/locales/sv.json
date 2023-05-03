@@ -10,6 +10,7 @@
     "logout": "Logga ut",
     "chosenCompetition": "Du hanterar ",
     "admin": "Admin",
+    "externalRegistration": "Anmäl till extern tävling",
     "handle": {
       "title": "Hantera",
       "newCompetition": "Skapa en ny tävling",
@@ -513,7 +514,7 @@
     "deleteCategory": "Är du säker på att du vill ta bort klassen?",
     "deleteResult": "Är du säker på att du vill ta bort resultatet?",
     "scheduleChange": "Ändringar här medför att all existerande schemaläggning tas bort. Är du säker på att du vill göra ändringar?",
-    "registerPlayer": "Registrera spelare till tävlingen. Anmälan kan inte tas bort utan att kontakta ansvarig klubb"
+    "registerPlayer": "Vill du göra registreringen? Anmälan kan inte tas bort utan att kontakta ansvarig klubb"
   },
   "errors": {
     "CATEGORY_CANNOT_DELETE_WITH_PLAYERS": "Kan inte ta bort en klass som har anmälda spelare",
@@ -525,6 +526,7 @@
     "DRAW_TOO_MANY_SEEDED": "För många antal seedade givet antalet registrerade i tävlingen",
     "PLAYER_ALREADY_REGISTERED": "Spelaren är redan registrerad i klassen",
     "REGISTRATION_WRONG_CATEGORY_TYPE": "Fel klasstyp. Var god kolla om det ska vara en singel- eller dubbelklass",
+    "RESULT_CANNOT_DELETE": "Resultatet kan inte tas bort, möjligen för att senare matcher i klassen redan spelats",
     "GAME_TOO_FEW_SETS_REPORTED": "För få set inrapporterade. Dubbelkolla gärna inställningarna för klassen för att se vilka regler som är uppsatta",
     "GAME_TOO_FEW_POINTS_IN_SET": "I minst ett av seten verkar båda spelare ha lägre resultat än det som krävs för att vinna. Dubbelkolla gärna inställningarna för klassen för att se vilka regler som är uppsatta",
     "GAME_COULD_NOT_DECIDE_WINNER": "Det gick inte att avgöra vem som vann matchen. Dubbelkolla det inmatade resultatet eller prova igen senare",

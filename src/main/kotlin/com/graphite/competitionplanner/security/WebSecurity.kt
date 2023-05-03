@@ -29,6 +29,7 @@ class WebSecurity(
     override fun configure(http: HttpSecurity) {
         http.csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthEntryPoint)
+                .and().authorizeRequests().antMatchers("/api/util/**").permitAll()
                 .and().authorizeRequests().antMatchers("/api/**").authenticated()
                 .and().authorizeRequests().antMatchers("/api/admin/**").hasRole("ADMIN")
                 .and().authorizeRequests().antMatchers("/**").permitAll()
@@ -46,6 +47,7 @@ class WebSecurity(
         configuration.allowCredentials = true
         configuration.allowedOrigins = listOf("http://localhost:8080",
                 "http://localhost:3000",
+                "http://localhost:8081",
                 "http://167.71.65.197",
                 "http://competition.travexperten.nu",
                 "https://competition.travexperten.nu",

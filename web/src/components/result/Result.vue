@@ -66,8 +66,9 @@
               <tr v-for="match in filterMatches" :key="match.id">
                 <td v-if="match.startTime !== null && match.startTime !== ''">
                   {{ getTime(match) }}
+                  <i class="fas fa-pen-square ms-1 fs-5 clickable" @click="editStartTime = true"></i>
                 </td>
-                <td v-else>
+                <td v-if="match.startTime === null || match.startTime === '' || editStartTime">
                   <datetime v-model="match.startTime" type="datetime" @close="setStartTime(match)" />
                 </td>
                 <td class="d-none d-md-table-cell">
@@ -148,7 +149,8 @@ export default {
       competitionCategories: [],
       selectedCategory: "",
       matchForTimeSetting: null,
-      selectedStartTime: null
+      selectedStartTime: null,
+      editStartTime: false
     }
   },
   computed: {
@@ -206,7 +208,6 @@ export default {
     },
     reset() {
       this.selectedMatch = null
-      this.matchForTimeSetting = null
       this.showModal = false
     },
     getPlayerOne: getPlayerOneWithClub,
@@ -264,15 +265,10 @@ export default {
               this.competition.id, match.id, {matchTime: formattedTime})
               .then(() => {
                 match.startTime = formattedTime
-                this.resetStartTime()
+                this.editStartTime = false
               })
         }
       }
-    },
-    resetStartTime() {
-      this.showSetTimeModal = false;
-      this.selectedStartTime = null;
-      this.matchForTimeSetting = null
     },
     tryTranslateCategoryName: tryTranslateCategoryName,
     getFormattedDate: getFormattedDate,

@@ -5,9 +5,6 @@
       <section id="hero" class="hero d-flex align-items-center">
         <div class="container">
           <div class="row">
-            <div v-if="isLoggedIn">
-              <router-link to="/externalRegistration">Anmäl till annan tävling</router-link>
-            </div>
             <div class="col-lg-6 d-flex flex-column justify-content-center">
               <h1 v-if="!isLoggedIn" data-aos="fade-up" >{{ $t("landing.heading.part1") }}</h1>
               <h2 v-if="isLoggedIn"> {{ getString("landing.heading.loggedInHelper") }}</h2>
@@ -26,9 +23,11 @@
                 <button
                     class="btn-get-started d-inline-flex align-items-center justify-content-center align-self-center"
                     @click="login">
-                  <span>{{ getString("landing.heading.login") }} </span>
+                  {{ getString("landing.heading.login") }}
                   <i class="bi bi-arrow-right"></i>
                 </button>
+                <button class="btn btn-secondary ms-3"
+                        @click="guestLogin">Gästinloggning</button>
                 <p v-if="loginFailed" class="text-danger">{{ getString("landing.heading.loginFailed") }}</p>
               </div>
               <div v-if="isLoggedIn">
@@ -247,6 +246,23 @@ export default {
           .catch(err => {
             this.loginFailed = true
           })
+    },
+    guestLogin() {
+      UserService.login("abraham", "anders").then(res => {
+        this.loginFailed = false
+        this.selectedCompetition = "none"
+        this.setCompetition()
+        this.$store.commit("auth_success", res.data)
+        UserService.getUser().then(res => {
+          this.$store.commit("set_user", res.data)
+            CompetitionService.getCompetitions().then(res => {
+              this.competitions = res.data
+        })
+      })
+          .catch(err => {
+            this.loginFailed = true
+          })
+      })
     },
     setCompetition() {
       if (this.selectedCompetition === "none") {

@@ -227,6 +227,8 @@ export default {
       if (confirm(this.$tc("confirm.deleteResult"))) {
         ResultService.deleteResult(this.competition.id, this.selectedMatch.id).then(() => {
           this.$emit("closeAndUpdate", this.selectedMatch.id)
+        }).catch(err => {
+          this.errorHandler(err.data)
         })
       }
     },
