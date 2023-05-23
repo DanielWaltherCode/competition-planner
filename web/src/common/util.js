@@ -121,6 +121,20 @@ export function getDisplayTime(time) {
     return time;
 }
 
+export function getMatchTime(match) {
+        if (match === undefined || match == null || match.startTime === null) {
+            return " "
+        }
+        const times = match.startTime.split("T")
+        if (times.length === 0) {
+            return ""
+        }
+        else if (times.length === 1) {
+            return times[0]
+        }
+        return times[0] + ' ' + times[1]
+}
+
 export function didPlayerOneGiveWO(match) {
     if (!match.wasWalkover) {
         return false;

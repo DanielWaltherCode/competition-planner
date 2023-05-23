@@ -124,7 +124,7 @@
 <script>
 import MatchService from "@/common/api-services/match.service";
 import {
-  getFormattedDate, getHoursMinutes,
+  getFormattedDate, getHoursMinutes, getMatchTime,
   getPlayerOneWithClub,
   getPlayerTwoWithClub,
   isPlayerOneWinner,
@@ -209,13 +209,7 @@ export default {
     },
     getPlayerOne: getPlayerOneWithClub,
     getPlayerTwo: getPlayerTwoWithClub,
-    getTime(match) {
-      if (match === undefined || match == null || match.startTime === null) {
-        return " "
-      }
-      const times = match.startTime.split("T")
-      return times[0] + ' ' + times[1]
-    },
+    getTime: getMatchTime,
     isPlayerOneWinner: isPlayerOneWinner,
     isPlayerTwoWinner: isPlayerTwoWinner,
     getMatchCopy() {
