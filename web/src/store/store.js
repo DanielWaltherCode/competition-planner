@@ -1,10 +1,9 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
 import createPersistedState from "vuex-persistedstate";
+import {createStore} from "vuex";
 
-Vue.use(Vuex)
 
-export default new Vuex.Store({
+const store = createStore({
     state: {
         isLoggedIn: false,
         accessToken: null,
@@ -47,3 +46,5 @@ export default new Vuex.Store({
     },
     plugins: [createPersistedState()]
 })
+
+export default store;

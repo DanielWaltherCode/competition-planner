@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import  {createApp} from 'vue'
 import App from './App.vue'
 import Axios from "axios";
 import router from "./router/router"
@@ -10,22 +10,27 @@ import "@/assets/css/style.css"
 import AOS from "aos";
 import "aos/dist/aos.css";
 import store from "@/store/store";
-import 'vue2-timepicker/dist/VueTimepicker.css'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 import Toasted from 'vue-toasted';
-import {vfmPlugin} from 'vue-final-modal'
-import {Datetime} from 'vue-datetime'
-import 'vue-datetime/dist/vue-datetime.css'
 
-Vue.use(Datetime)
-Vue.use(vfmPlugin)
-import VModal from 'vue-js-modal'
+// Main JS (in CommonJS format)
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
+import '@trevoreyre/autocomplete-vue/dist/style.css'
 import UserService from "@/common/api-services/user.service";
+import * as bootstrap from 'bootstrap';
+window.bootstrap = bootstrap;
 
-Vue.use(VModal)
-Vue.use(Toasted)
 
-Vue.config.productionTip = false
+const app = createApp({
+    ...App
+})
+app.config.productionTip = false
+app.use(Toasted)
+app.use(i18n)
+app.use(router)
+app.use(store)
+app.use(VueDatePicker)
 
 App.AOS = new AOS.init({
     disable: "phone",
@@ -102,12 +107,4 @@ function logout(error) {
     return Promise.reject(error);
 }
 
-new Vue({
-    el: '#app',
-    components: {App},
-    render: h => h(App),
-    store,
-    i18n,
-    router,
-    template: '<App/>'
-}).$mount('#app')
+app.mount('#app')

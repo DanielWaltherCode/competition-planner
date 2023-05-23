@@ -76,7 +76,7 @@
 import CompetitionService from "@/common/api-services/competition.service";
 
 export default {
-  name: "Overview",
+  name: "NewCompetitionOverview",
   data() {
     return {
       competitionName: null,

@@ -96,7 +96,7 @@ import ClubService from "@/common/api-services/club.service";
 import { tryTranslateCategoryName } from "@/common/util"
 
 export default {
-  name: "Billing",
+  name: "BillingPage",
   data() {
     return {
       clubs: [],

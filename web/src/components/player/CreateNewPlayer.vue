@@ -34,7 +34,7 @@
                   {{ club.name }}
                 </option>
               </select>
-              <p @click="showCreateClubModal = true" class="clickable fs-6 text-black-50 text-start pt-1"> {{ $t("club.title") }}</p>
+              <p data-bs-toggle="modal" :data-bs-target="'#exampleModal'" class="clickable fs-6 text-black-50 text-start pt-1"> {{ $t("club.title") }}</p>
               <p class="fs-6 text-danger" v-if="noClub">{{ $t("validations.required") }}</p>
             </div>
 
@@ -53,31 +53,32 @@
           </div>
         </div>
         <!-- Modal -->
-        <vue-final-modal v-model="showCreateClubModal" classes="modal-container" content-class="modal-content">
-          <div class="modal__content">
-            <i class="modal__close fas fa-times clickable" @click="showCreateClubModal = false"></i>
-            <div class="w-50 m-auto">
-            <h2>{{ $t("club.title") }}</h2>
-            <div>
-              <label for="club-name">{{ $t("club.name") }}</label>
-              <input v-model="clubName" id="club-name" type="text" class="form-control">
+        <div :id="'exampleModal'"
+             class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><h3> {{ $t("club.title") }}</h3></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div>
+                  <label for="club-name">{{ $t("club.name") }}</label>
+                  <input v-model="clubName" id="club-name" type="text" class="form-control">
 
-              <label for="club-address">{{ $t("club.address") }}</label>
-              <input v-model="clubAddress" id="club-address" type="text" class="form-control">
-            </div>
-            </div>
+                  <label for="club-address">{{ $t("club.address") }}</label>
+                  <input v-model="clubAddress" id="club-address" type="text" class="form-control">
+                </div>
+              </div>
+              <div class="modal-footer p-2">
+                <button type="button" class="btn btn-primary" @click="addClub" data-bs-dismiss="modal">
+                  {{ $t("general.save")}}
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ $t("general.close") }}</button>
+              </div>
           </div>
-          <div class="w-50 m-auto mt-3">
-            <div class="modal-footer p-2">
-              <button type="button" class="btn btn-primary" @click="addClub">
-                {{ $t("general.save")}}
-              </button>
-              <button type="button" class="btn btn-secondary" @click="showCreateClubModal = false">
-                {{ $t("general.close") }}
-              </button>
-            </div>
-          </div>
-        </vue-final-modal>
+        </div>
+        </div>
       </form>
     </div>
   </div>
@@ -152,7 +153,6 @@ export default {
         "address": this.clubAddress
       }
       clubService.addClubForCompetition(this.competition.id, clubSpec).then(() => {
-        this.showCreateClubModal = false;
         this.clubName = ""
         this.clubAddress = ""
         this.$toasted.success(this.$tc("toasts.clubAdded")).goAway(3000)

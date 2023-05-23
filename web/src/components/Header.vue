@@ -47,6 +47,12 @@
                   </router-link>
                 </li>
                 <li class="nav-item">
+                  <router-link class="nav-link" to="/schedule-manual" v-if="isLoggedIn && !!competition"
+                               :class="$route.path === '/schedule-manual' ? 'active ' : ''">
+                    {{ $t("header.scheduleManual") }}
+                  </router-link>
+                </li>
+                <li class="nav-item">
                   <router-link class="nav-link" to="/results" v-if="isLoggedIn && !!competition"
                                :class="$route.path === '/results' ? 'active ' : ''">
                     {{ $t("header.results") }}
@@ -85,7 +91,7 @@
 <script>
 
 export default {
-  name: "Header",
+  name: "NavHeader",
   data() {
     return {}
   },
