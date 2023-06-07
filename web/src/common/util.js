@@ -1,3 +1,5 @@
+import {$t, i18n} from "@/i18n";
+
 export function getFormattedDate(date) {
     if (date === null || date === undefined || date === "") {return ""}
     const dateObject = new Date(date)
@@ -119,6 +121,20 @@ export function getDisplayTime(time) {
     return time;
 }
 
+export function getMatchTime(match) {
+        if (match === undefined || match == null || match.startTime === null) {
+            return " "
+        }
+        const times = match.startTime.split("T")
+        if (times.length === 0) {
+            return ""
+        }
+        else if (times.length === 1) {
+            return times[0]
+        }
+        return times[0] + ' ' + times[1]
+}
+
 export function didPlayerOneGiveWO(match) {
     if (!match.wasWalkover) {
         return false;
@@ -159,7 +175,7 @@ export function undefinedOrNullOrEmpty(object) {
  */
 export function tryTranslateCategoryName(name) {
     let key = name
-    let translatedDefaultCategories = this.$t("categories.default")
+    let translatedDefaultCategories = categories[i18n.global.locale]
     if (key in translatedDefaultCategories) {
         return translatedDefaultCategories[key]
     }
@@ -167,6 +183,9 @@ export function tryTranslateCategoryName(name) {
 }
 
 export function generalErrorHandler(error) {
+    if (error === undefined) {
+        this.$toasted.error(this.$tc("toasts.error.general.standard")).goAway(5000)
+    }
     if (error.errorType !== null && error.errorType !== undefined) {
         this.$toasted.error(this.$tc("errors." + error.errorType)).goAway(8000)
     }
@@ -188,4 +207,71 @@ export function shouldShowPlayoff(playoff) {
         }
     })
     return nonPlaceholderPlayers === playoff[0].matches.length * 2;
+}
+
+const categories = {
+    "sv": {
+        "MEN_1": "Herrar 1",
+        "MEN_2": "Herrar 2",
+        "MEN_3": "Herrar 3",
+        "MEN_4": "Herrar 4",
+        "MEN_5": "Herrar 5",
+        "MEN_6": "Herrar 6",
+        "WOMEN_1": "Damer 1",
+        "WOMEN_2": "Damer 2",
+        "WOMEN_3": "Damer 3",
+        "WOMEN_4": "Damer 4",
+        "WOMEN_JUNIOR_17": "Damjuniorer 17",
+        "GIRLS_15": "Flickor 15",
+        "GIRLS_14": "Flickor 14",
+        "GIRLS_13": "Flickor 13",
+        "GIRLS_12": "Flickor 12",
+        "GIRLS_11": "Flickor 11",
+        "GIRLS_10": "Flickor 10",
+        "GIRLS_9": "Flickor 9",
+        "GIRLS_8": "Flickor 8",
+        "MEN_JUNIOR_17": "Herrjuniorer 17",
+        "BOYS_15": "Pojkar 15",
+        "BOYS_14": "Pojkar 14",
+        "BOYS_13": "Pojkar 13",
+        "BOYS_12": "Pojkar 12",
+        "BOYS_11": "Pojkar 11",
+        "BOYS_10": "Pojkar 10",
+        "BOYS_9": "Pojkar 9",
+        "BOYS_8": "Pojkar 8",
+        "MEN_TEAMS": "Herrdubbel",
+        "WOMEN_TEAMS": "Damdubbel"
+    },
+    "en": {
+        "MEN_1": "Men 1",
+        "MEN_2": "Men 2",
+        "MEN_3": "Men 3",
+        "MEN_4": "Men 4",
+        "MEN_5": "Men 5",
+        "MEN_6": "Men 6",
+        "WOMEN_1": "Women 1",
+        "WOMEN_2": "Women 2",
+        "WOMEN_3": "Women 3",
+        "WOMEN_4": "Women 4",
+        "WOMEN_JUNIOR_17": "Women Juniors 17",
+        "GIRLS_15": "Girls 15",
+        "GIRLS_14": "Girls 14",
+        "GIRLS_13": "Girls 13",
+        "GIRLS_12": "Girls 12",
+        "GIRLS_11": "Girls 11",
+        "GIRLS_10": "Girls 10",
+        "GIRLS_9": "Girls 9",
+        "GIRLS_8": "Girls 8",
+        "MEN_JUNIOR_17": "Men Juniors 17",
+        "BOYS_15": "Boys 15",
+        "BOYS_14": "Boys 14",
+        "BOYS_13": "Boys 13",
+        "BOYS_12": "Boys 12",
+        "BOYS_11": "Boys 11",
+        "BOYS_10": "Boys 10",
+        "BOYS_9": "Boys 9",
+        "BOYS_8": "Boys 8",
+        "MEN_TEAMS": "Men's doubles",
+        "WOMEN_TEAMS": "Women's doubles"
+    }
 }

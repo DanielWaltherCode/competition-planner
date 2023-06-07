@@ -47,7 +47,8 @@
 import {generalErrorHandler} from "@/common/util";
 
 export default {
-  name: "admin",
+  // eslint-disable-next-line
+  name: "AdminComponent",
   data() {
     return {
       username: "",

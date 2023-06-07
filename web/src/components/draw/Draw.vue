@@ -173,7 +173,8 @@ import PlayoffDraw from "@/components/draw/PlayoffDraw";
 import {generalErrorHandler, getFormattedPlayerName, shouldShowPlayoff, tryTranslateCategoryName} from "@/common/util"
 
 export default {
-  name: "Draw",
+  // eslint-disable-next-line
+  name: "CompetitionDraw",
   components: {PlayoffDraw, MatchListComponent, PoolDraw},
   data() {
     return {

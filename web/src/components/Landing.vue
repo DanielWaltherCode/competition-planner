@@ -172,7 +172,7 @@ import CompetitionService from "@/common/api-services/competition.service";
 import AdminService from "@/common/api-services/admin.service";
 
 export default {
-  name: "Landing",
+  name: "LandingPage",
   data() {
     return {
       username: "",

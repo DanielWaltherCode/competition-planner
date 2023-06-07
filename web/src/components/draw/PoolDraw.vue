@@ -27,20 +27,25 @@
           </tbody>
         </table>
       </div>
-      <div class="d-flex justify-content-end clickable" @click="showModal = true">
-        <i v-if="hasSubGroupRanking(group.groupStandingList)" class="fas fa-info-circle">
+      <div class="d-flex justify-content-end clickable">
+        <i v-if="hasSubGroupRanking(group.groupStandingList)" class="fas fa-info-circle"
+           data-bs-toggle="modal" :data-bs-target="'#exampleModal' + group.name">
           {{ $t("draw.pool.subgroupStanding.explanation") }}
         </i>
       </div>
       <!-- Modal -->
-      <vue-final-modal v-model="showModal" classes="modal-container" content-class="modal-content">
-        <pool-subgroup
-            :sub-group-list="group.subGroupList"
-            v-on:close="showModal = false">
 
-        </pool-subgroup>
-      </vue-final-modal>
+      <div :id="'exampleModal' + group.name"
+           class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <pool-subgroup
+              :sub-group-list="group.subGroupList">
+
+          </pool-subgroup>
+        </div>
+      </div>
     </div>
+
 
   </div>
 </template>
@@ -56,7 +61,8 @@ export default {
   },
   data() {
     return {
-      showModal: false
+      showModal: false,
+      subGroupList: {}
     }
   },
   methods: {

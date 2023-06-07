@@ -114,9 +114,9 @@ class MatchService(
 
 data class MatchAndResultDTO(
     val id: Int,
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     val startTime: LocalDateTime?,
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     val endTime: LocalDateTime?,
     val competitionCategory: SimpleCompetitionCategoryDTO,
     val matchType: String,

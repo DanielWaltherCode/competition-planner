@@ -43,7 +43,7 @@
 <script>
 
 export default {
-  name: "Player",
+  name: "PlayerComponent",
   data() {
     return {
       displayChoice: "overview",

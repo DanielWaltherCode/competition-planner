@@ -1,15 +1,17 @@
 <template>
   <div class="row">
-    <div class="d-flex p-3">
-      <autocomplete class="col-sm-8 me-2" id="autocomplete-field"
-                    ref="autocomplete"
+    <div class="col-sm-8">
+      <autocomplete id="autocomplete-field" ref="autocomplete"
+                    class="me-2"
                     :search="searchPlayers"
                     auto-select
                     :get-result-value="getSearchResult"
                     :placeholder="$t('player.add.search')"
                     @submit="handleSubmit">
       </autocomplete>
-      <button class="btn btn-primary" type="button" @click="clearPlayer"> {{
+    </div>
+    <div class="col-sm-2">
+      <button class="btn btn-primary p-3" type="button" @click="clearPlayer"> {{
           $t("player.add.clear")
         }}
       </button>

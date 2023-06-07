@@ -47,10 +47,10 @@
                         {{ day.day }}
                       </td>
                       <td>
-                        <vue-timepicker v-model="day.startTime" input-width="8em" />
+                        <input v-model="day.startTime" type="time" class="form-control" @change="metaOptionsChanged = true">
                       </td>
                       <td>
-                        <vue-timepicker v-model="day.endTime" input-width="8em" />
+                        <input v-model="day.endTime" type="time" class="form-control" @change="metaOptionsChanged = true">
                       </td>
                       <td>
                         <p v-if="getTablesForDay(day.day) === -1">
@@ -139,8 +139,8 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <template v-for="categorySchedule in scheduleCategoryContainerDTO.scheduleCategoryList">
-                    <tr :key="categorySchedule.categoryDTO.id + categorySchedule.selectedMatchType">
+                    <tr v-for="categorySchedule in scheduleCategoryContainerDTO.scheduleCategoryList"
+                        :key="categorySchedule.categoryDTO.id + categorySchedule.selectedMatchType">
                       <td>{{ tryTranslateCategoryName(categorySchedule.categoryDTO.category.name) }}</td>
                       <!-- Stage (group or playoff) -->
                       <td>
@@ -169,13 +169,8 @@
                       </td>
                       <!-- Select desired start time -->
                       <td>
-                        <vue-timepicker
-                            v-model="categorySchedule.selectedStartTime"
-                            :minute-interval="5"
-                            input-width="8em"
-                            :hour-range="[[7, 23]]"
-                            @change="noteCategorySchedulingAsChanged(categorySchedule)"
-                        />
+                        <input v-model="categorySchedule.selectedStartTime" type="time" class="form-control"
+                               min="09:00" max="22:00" @change="noteCategorySchedulingAsChanged(categorySchedule)">
                       </td>
                       <!-- Select tables -->
                       <td>
@@ -213,7 +208,6 @@
                            @click="resetCompetitionCategory(categorySchedule)" />
                       </td>
                     </tr>
-                  </template>
                   </tbody>
                 </table>
                 <div class="d-flex justify-content-end p-4">
@@ -293,7 +287,6 @@ import {
   undefinedOrNull,
   undefinedOrNullOrEmpty
 } from "@/common/util";
-import VueTimepicker from 'vue2-timepicker/src/vue-timepicker.vue'
 import DailyStartEndService from "@/common/api-services/schedule/daily-start-end.service";
 import AvailableTablesService from "@/common/api-services/schedule/available-tables.service";
 import ScheduleMetadataService from "@/common/api-services/schedule/schedule-metadata.service";
@@ -303,8 +296,7 @@ import scheduleGeneralService from "@/common/api-services/schedule/schedule-gene
 import {tryTranslateCategoryName} from "@/common/util"
 
 export default {
-  name: "Schedule",
-  components: {VueTimepicker},
+  name: "CompetitionSchedule",
   data() {
     return {
       sidebarChoice: "overview",
@@ -320,6 +312,7 @@ export default {
       generatedScheduleContainer: null,
       distinctPlannedCategories: [],
       selectedTimeTableDay: "",
+      testTime: "",
       changedCategories: {},
       colors: ["#46b1c9", "#84c0c6", "#9fb7b9", "#bcc1ba", "#f2e2d2", "#dcd6f7", "#d8d2e1", "#c5d5e4",
         "#a6b1e1", "#cacfd6", "#d6e5e3", "#ce7da5", "#bee5bf", "#dff3e3", "#ffd1ba",

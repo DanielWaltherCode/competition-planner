@@ -143,7 +143,8 @@ import AddPlayerToCategory from "@/components/category/AddPlayerToCategory";
 import {generalErrorHandler, tryTranslateCategoryName} from "@/common/util"
 
 export default {
-  name: "Categories",
+  /* eslint-disable */
+  name: "CompetitionCategories",
   components: {
     AddPlayerToCategory,
     CategoryGameSettings,

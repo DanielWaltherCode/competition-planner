@@ -1,9 +1,9 @@
 <template>
   <div>
     <h1 class="p-4">
-      <i class="fas fa-arrow-left" style="float: left" @click="$router.push('/schedule')" />
+      <i class="fas fa-arrow-left" style="float: left" @click="$router.push('/schedule')"/>
       {{ $t("results.title") }}
-      <i class="fas fa-arrow-right" style="float: right" @click="$router.push('/billing')" />
+      <i class="fas fa-arrow-right" style="float: right" @click="$router.push('/billing')"/>
     </h1>
     <div class="container-fluid">
       <div class="row">
@@ -13,7 +13,7 @@
           <div class="row mb-2 d-flex align-items-center p-3 bg-grey">
             <div class="col-12 col-md-6">
               <div class="d-flex align-items-center mb-2">
-                <i class="fas fa-search me-2" />
+                <i class="fas fa-search me-2"/>
                 <label for="playerSearch" class="form-label d-flex mb-0"> {{ $t("results.search") }}</label>
               </div>
               <div class="d-flex">
@@ -52,8 +52,8 @@
                 <th scope="col" class="col-1 d-none d-md-table-cell">
                   {{ $t("results.round") }}
                 </th>
-                <th scope="col" class="col-2" />
-                <th scope="col" class="col-2" />
+                <th scope="col" class="col-2"/>
+                <th scope="col" class="col-2"/>
                 <th scope="col" class="col-2 text-start">
                   {{ $t("results.result") }}
                 </th>
@@ -64,12 +64,8 @@
               </thead>
               <tbody>
               <tr v-for="match in filterMatches" :key="match.id">
-                <td v-if="match.startTime !== null && match.startTime !== ''">
+                <td>
                   {{ getTime(match) }}
-                  <i class="fas fa-pen-square ms-1 fs-5 clickable" @click="editStartTime = true"></i>
-                </td>
-                <td v-if="match.startTime === null || match.startTime === '' || editStartTime">
-                  <datetime v-model="match.startTime" type="datetime" @close="setStartTime(match)" />
                 </td>
                 <td class="d-none d-md-table-cell">
                   {{ tryTranslateCategoryName(match.competitionCategory.name) }}
@@ -89,9 +85,11 @@
                     {{ game.firstRegistrationResult }} - {{ game.secondRegistrationResult }}
                   </p>
                 </td>
-                <td v-else />
+                <td v-else/>
                 <td>
-                  <button type="button" class="btn btn-outline-primary" @click="selectMatch(match)">
+                  <button type="button" class="btn btn-outline-primary"
+                          data-bs-toggle="modal" :data-bs-target="'#exampleModal' + match.id"
+                          @click="selectedMatch = match">
                     <span v-if="match.result.gameList.length === 0">{{ $t("results.register") }}</span>
                     <span v-if="match.result.gameList.length > 0">{{ $t("results.update") }}</span>
                   </button>
@@ -100,13 +98,17 @@
               </tbody>
             </table>
             <!-- Modal -->
-            <vue-final-modal v-model="showModal" classes="modal-container" content-class="modal-content">
-              <register-result
-                  :selected-match="getMatchCopy()"
-                  @close="hideModal"
-                  @closeAndUpdate="hideModalAndUpdate"
-                  @walkover="onWalkover" />
-            </vue-final-modal>
+            <div v-for="match in filterMatches" :key="match.id">
+              <div :id="'exampleModal' + match.id"
+                   class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                  <register-result
+                      :selected-match="getMatchCopy()"
+                      @closeAndUpdate="hideModalAndUpdate"
+                      @walkover="onWalkover"/>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div v-if="matches.length === 0">
@@ -122,7 +124,7 @@
 <script>
 import MatchService from "@/common/api-services/match.service";
 import {
-  getFormattedDate, getHoursMinutes,
+  getFormattedDate, getHoursMinutes, getMatchTime,
   getPlayerOneWithClub,
   getPlayerTwoWithClub,
   isPlayerOneWinner,
@@ -131,11 +133,10 @@ import {
 import RegisterResult from "@/components/result/RegisterResult";
 import {tryTranslateCategoryName} from "@/common/util"
 import ScheduleGeneralService from "@/common/api-services/schedule/schedule-general.service";
-import {Datetime} from 'vue-datetime';
 
 export default {
-  name: "ResultComponent",
-  components: {RegisterResult, Datetime},
+  name: "CompetitionResult",
+  components: {RegisterResult},
   data() {
     return {
       activeResultsReporting: false,
@@ -148,9 +149,6 @@ export default {
       hideFinishedMatches: false,
       competitionCategories: [],
       selectedCategory: "",
-      matchForTimeSetting: null,
-      selectedStartTime: null,
-      editStartTime: false
     }
   },
   computed: {
@@ -183,7 +181,6 @@ export default {
           }
         })
       } else {
-
         return filteredMatches
       }
       return matchesWithSearchString
@@ -212,18 +209,9 @@ export default {
     },
     getPlayerOne: getPlayerOneWithClub,
     getPlayerTwo: getPlayerTwoWithClub,
-    getTime(match) {
-      if (match != null && match.startTime === null) {
-        return this.$t("draw.pool.noTime")
-      }
-      return match.startTime
-    },
+    getTime: getMatchTime,
     isPlayerOneWinner: isPlayerOneWinner,
     isPlayerTwoWinner: isPlayerTwoWinner,
-    selectMatch(selectedMatch) {
-      this.selectedMatch = selectedMatch
-      this.showModal = true
-    },
     getMatchCopy() {
       return JSON.parse(JSON.stringify(this.selectedMatch));
     },
@@ -236,7 +224,7 @@ export default {
           }
         }
       })
-      this.hideModal()
+      this.hideModal(matchId)
     },
     updateMatchesIfAllMatchesPlayedInRound(match) {
       if (match.matchType === "PLAYOFF") {
@@ -249,12 +237,14 @@ export default {
         }
       }
     },
-    onWalkover() {
+    onWalkover(matchId) {
       this.getMatches()
-      this.hideModal()
+      this.hideModal(matchId)
     },
-    hideModal() {
-      this.showModal = false
+    hideModal(matchId) {
+      const modalElement = document.querySelector("#exampleModal" + matchId)
+      const modal = window.bootstrap.Modal.getInstance(modalElement)
+      modal.hide()
     },
     setStartTime(match) {
       if (match.startTime !== null && match.startTime !== "") {
@@ -265,7 +255,6 @@ export default {
               this.competition.id, match.id, {matchTime: formattedTime})
               .then(() => {
                 match.startTime = formattedTime
-                this.editStartTime = false
               })
         }
       }

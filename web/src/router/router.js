@@ -1,43 +1,41 @@
-import Vue from "vue";
-import Router from "vue-router"
 import RegisteredPlayers from "@/components/player/RegisteredPlayers";
 import AddPlayerToCompetition from "@/components/player/AddPlayerToCompetition";
 import PlayerDetail from "@/components/player/PlayerDetail";
-import Player from "@/components/player/Player";
-import Categories from "@/components/category/Categories";
-import Landing from "@/components/Landing";
-import NewCompetition from "@/components/competition/NewCompetition";
+import PlayerComponent from "@/components/player/Player";
+import CompetitionCategories from "@/components/category/Categories";
+import LandingPage from "@/components/Landing";
+import NewCompetitionOverview from "@/components/competition/NewCompetition";
 import CompetitionOverview from "@/components/competition/CompetitionOverview";
-import Draw from "@/components/draw/Draw";
-import Schedule from "@/components/schedule/Schedule";
-import Result from "@/components/result/Result";
+import CompetitionDraw from "@/components/draw/Draw";
+import CompetitionResult from "@/components/result/Result.vue"
+import CompetitionSchedule from "@/components/schedule/Schedule";
 import ScheduleAdvanced from "@/components/schedule/ScheduleAdvanced";
 import PlayoffDraw from "@/components/draw/PlayoffDraw";
 import CreateNewPlayer from "@/components/player/CreateNewPlayer";
-import Billing from "@/components/billing/Billing";
+import BillingPage from "@/components/billing/Billing";
 import RegisterPaymentDetails from "@/components/billing/RegisterPaymentDetails";
-import Admin from "@/components/admin/admin.vue";
+import AdminComponent from "@/components/admin/admin.vue";
 import NewClub from "@/components/admin/newClub.vue";
 import CompetitionAdmin from "@/components/admin/competitionAdmin.vue";
 import NewUser from "@/components/admin/newUser.vue";
 import ExternalRegistration from "@/components/external-registration/ExternalRegistration.vue";
+import {createRouter, createWebHistory} from "vue-router";
+import ManualSchedule from "@/components/schedule/ManualSchedule.vue";
 
-Vue.use(Router)
-
-export default new Router({
-        mode: "history",
+export default createRouter({
+    history: createWebHistory(),
         routes: [
             {
                 path: "/",
-                component: Landing,
+                component: LandingPage,
             },
             {
                 path: "/landing",
-                component: Landing,
+                component: LandingPage,
             },
             {
                 path: "/new-competition",
-                component: NewCompetition,
+                component: NewCompetitionOverview,
             },
             {
                 path: "/overview",
@@ -46,12 +44,12 @@ export default new Router({
             {
                 path: "/classes",
                 name: "classes",
-                component: Categories
+                component: CompetitionCategories
             },
             {
                 path: "/players",
                 name: "players",
-                component: Player,
+                component: PlayerComponent,
                 children: [
                     {
                         path: "overview",
@@ -74,7 +72,7 @@ export default new Router({
             },
             {
                 path: "/draw",
-                component: Draw,
+                component: CompetitionDraw,
             },
             {
                 path: "/playoffDraw",
@@ -82,19 +80,23 @@ export default new Router({
             },
             {
                 path: "/schedule",
-                component: Schedule,
+                component: CompetitionSchedule,
             },
             {
                 path: "/schedule-advanced",
                 component: ScheduleAdvanced,
             },
             {
+                path: "/schedule-manual",
+                component: ManualSchedule,
+            },
+            {
                 path: "/results",
-                component: Result,
+                component: CompetitionResult,
             },
             {
                 path: "/billing",
-                component: Billing
+                component: BillingPage
             },
             {
                 path: "/payment-info",
@@ -102,7 +104,7 @@ export default new Router({
             },
             {
                 path: "/admin",
-                component: Admin,
+                component: AdminComponent,
                 children: [
                     {
                         path: "/newClub",

@@ -34,7 +34,7 @@
 
 <script>
 import {
-  didPlayerOneGiveWO, didPlayerTwoGiveWO,
+  didPlayerOneGiveWO, didPlayerTwoGiveWO, getMatchTime,
   getPlayerOne,
   getPlayerTwo,
   isPlayerOneWinner,
@@ -52,12 +52,7 @@ export default {
   methods: {
     getPlayerOne: getPlayerOne,
     getPlayerTwo: getPlayerTwo,
-    getTime(match) {
-      if (match.startTime === null) {
-        return this.$t("draw.pool.noTime")
-      }
-      return match.startTime
-    },
+    getTime: getMatchTime,
     isPlayerOneWinner: isPlayerOneWinner,
     isPlayerTwoWinner: isPlayerTwoWinner,
     didPlayerOneGiveWO: didPlayerOneGiveWO,

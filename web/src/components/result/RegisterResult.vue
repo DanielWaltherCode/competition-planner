@@ -1,6 +1,7 @@
 <template>
-  <div class="modal__content">
-    <i class="modal__close fas fa-times clickable" @click="$emit('close')"/>
+  <div class="modal-content">
+    <div class="modal-body">
+
     <div v-if="selectedMatch != null" class="container-fluid p-md-5 p-sm-3 p-1 light-grey">
       <div id="player1" class="row">
         <div class="col-1 text-start">
@@ -51,6 +52,7 @@
               min="0">
         </div>
       </div>
+    </div>
     </div>
     <div class="row mx-auto">
       <div class="modal-footer p-2">
@@ -246,7 +248,7 @@ export default {
         RegistrationService.getRegistrationId(this.competition.id, categoryId, playerId).then(res => {
           const registrationId = res.data
           RegistrationService.giveWalkover(this.competition.id, categoryId, registrationId).then(() => {
-            this.$emit("walkover")
+            this.$emit("walkover", this.selectedMatch.id)
             this.$toasted.success(this.$tc("toasts.resultRegistered")).goAway(3000)
           })
               .catch(() => {

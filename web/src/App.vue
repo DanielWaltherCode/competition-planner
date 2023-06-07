@@ -1,17 +1,17 @@
 <template>
   <div id="app">
-    <Header />
+    <NavHeader />
     <router-view id="router"></router-view>
   </div>
 </template>
 
 <script>
-import Header from "@/components/Header";
+import NavHeader from "@/components/Header.vue";
 
 export default {
   name: 'App',
   components: {
-    Header,
+    NavHeader,
   }
 }
 </script>
@@ -186,5 +186,9 @@ h1, h2, h3 {
 
 .modal-footer button {
   width: 200px;
+}
+
+.autocomplete-result-list {
+  padding-bottom: 0 !important;
 }
 </style>
